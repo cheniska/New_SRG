@@ -119,7 +119,7 @@ protected static ShipData FindShip / FindAliveShip;
 public static void ApplyHomePlanetBonus(ShipData payer, ShipData beneficiary, StarData star);
 ```
 
-При успешном перемирии — всем военным кораблям в звезде, у которых `HomePlanetUid == beneficiary.HomePlanetUid`, ставится `ApplyAllyBonus(payer.Uid)`. Эмулирует SR2-механику «взятка одному — благодарность планеты».
+При успешном перемирии — всем военным кораблям в звезде, у которых `HomePlanetUid == beneficiary.HomePlanetUid`, ставится `ApplyAllyBonus(payer.Uid)`. Военные одной планеты держатся заодно: откупился от одного — смягчаются и остальные.
 
 ### `FactionDirective`
 
