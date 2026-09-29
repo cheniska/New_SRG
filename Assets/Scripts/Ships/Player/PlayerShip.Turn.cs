@@ -207,7 +207,7 @@ namespace SRG.Ships.Player
         {
             if (ShipData.LandingPlanetUid == null) return false;
             var star = GalaxyManager.Instance?.CurrentStar;
-            var planet = star?.Planets?.Find(p => p.Uid == ShipData.LandingPlanetUid);
+            var planet = star?.FindPlanet(ShipData.LandingPlanetUid);
             if (planet != null)
             {
                 Vector2 aim = PredictLandingTarget(planet);

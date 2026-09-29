@@ -243,7 +243,7 @@ namespace SRG.Dialog
                 if (star == null) return;
                 foreach (var uid in player.PartnerFollowerUids)
                 {
-                    var follower = FindInStar(star, uid);
+                    var follower = star?.FindShip(uid);
                     if (follower == null || follower.CurrentHull <= 0) continue;
                     follower.PartnerOrder = kind;
                     follower.PartnerOrderTargetUid = kind == PartnerOrderKind.FlyToMe ? null : uidArg;
@@ -418,7 +418,7 @@ namespace SRG.Dialog
                 int n = 0;
                 foreach (var uid in p.PartnerFollowerUids)
                 {
-                    var f = FindInStar(star, uid);
+                    var f = star?.FindShip(uid);
                     if (f != null && f.CurrentHull > 0) n++;
                 }
                 return n.ToString();
@@ -434,14 +434,6 @@ namespace SRG.Dialog
             if (cfg == null) return fallback;
             if (!cfg.PartnerableShipTypes.TryGetValue(target.ShipTypeId ?? "", out var t)) return fallback;
             return Mathf.RoundToInt(cfg.Global.BasePrice * t.PriceMultiplier * cfg.Global.MinFeeRatio);
-        }
-
-        private static ShipData FindInStar(StarData star, string uid)
-        {
-            if (star == null || string.IsNullOrEmpty(uid)) return null;
-            for (int i = 0; i < star.Ships.Count; i++)
-                if (star.Ships[i].Uid == uid) return star.Ships[i];
-            return null;
         }
     }
 }

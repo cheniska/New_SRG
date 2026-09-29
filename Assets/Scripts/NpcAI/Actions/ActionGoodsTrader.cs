@@ -77,7 +77,7 @@ namespace SRG.NpcAI.Actions
             _jumpAction = null;
 
             // 3. Цель пропала из системы (захватили / уничтожили) — обнулим рейс и попробуем заново на следующем тике.
-            var targetPlanet = FindPlanetInStar(star, ship.TraderTargetPlanetUid);
+            var targetPlanet = star?.FindPlanet(ship.TraderTargetPlanetUid);
             if (targetPlanet == null)
             {
                 ship.TraderTargetPlanetUid = null;
@@ -100,7 +100,7 @@ namespace SRG.NpcAI.Actions
             {
                 // Момент посадки: ordering уже проставил LandedPlanetUid. Логируем «LAND»
                 // отсюда — order не знает про trader-специфику (cargo, money).
-                var planet = FindPlanetInStar(star, ship.LandedPlanetUid);
+                var planet = star?.FindPlanet(ship.LandedPlanetUid);
                 if (planet != null)
                 {
                     int turn = galaxy.CurrentTurn;
@@ -115,7 +115,7 @@ namespace SRG.NpcAI.Actions
 
         private void HandleLanded(ShipData ship, StarData star, GalaxyData galaxy, GalaxyConfig cfg, GalaxyGenerationContext ctx)
         {
-            var planet = FindPlanetInStar(star, ship.LandedPlanetUid);
+            var planet = star?.FindPlanet(ship.LandedPlanetUid);
             if (planet == null) { ship.LandedPlanetUid = null; return; }
 
             // Каждый ход «приклеиваем» корабль к текущей позиции планеты — иначе планета
@@ -201,13 +201,6 @@ namespace SRG.NpcAI.Actions
         {
             if (galaxy == null || string.IsNullOrEmpty(uid)) return "-";
             return galaxy.PlanetsMap.TryGetValue(uid, out var p) ? (p.Name ?? uid) : uid;
-        }
-
-        private static PlanetData FindPlanetInStar(StarData star, string uid)
-        {
-            if (star?.Planets == null || string.IsNullOrEmpty(uid)) return null;
-            foreach (var p in star.Planets) if (p.Uid == uid) return p;
-            return null;
         }
 
         private static PlanetData FindNearestInhabitedPlanet(ShipData ship, StarData star)

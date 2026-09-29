@@ -496,7 +496,7 @@ namespace SRG.Dialog.PlanetGreetings
             Vector2 targetPos;
             if (!string.IsNullOrEmpty(ship.NextPlanetUid) && star != null)
             {
-                var planet = star.Planets.Find(p => p.Uid == ship.NextPlanetUid);
+                var planet = star.FindPlanet(ship.NextPlanetUid);
                 targetPos = planet != null ? PlanetPos(planet) : ship.TargetPosition;
             }
             else targetPos = ship.TargetPosition;

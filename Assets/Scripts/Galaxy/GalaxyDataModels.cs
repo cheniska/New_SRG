@@ -659,6 +659,15 @@ namespace SRG.Galaxy
             return null;
         }
 
+        /// <summary>Планета этой звезды по UID; null если нет.</summary>
+        public PlanetData FindPlanet(string uid)
+        {
+            if (string.IsNullOrEmpty(uid) || Planets == null) return null;
+            for (int i = 0; i < Planets.Count; i++)
+                if (Planets[i].Uid == uid) return Planets[i];
+            return null;
+        }
+
         // Симуляция дневного хода вынесена в StarSimulator (этап T1 рефакторинга, июнь 2026):
         // StarData теперь содержит только данные и связанные с ними утилиты (Power-кэш для NpcBrain).
         public void StarNextDay(TurnAnimationData anim, GalaxyGenerationContext ctx = null)

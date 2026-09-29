@@ -195,7 +195,7 @@ namespace SRG.Presentation.World
             // Обнаружение взлёта: был посажен, сейчас нет, BeginTakeoff ещё не вызывался явно
             if (_prevLandedPlanetUid != null && _data.LandedPlanetUid == null && !IsTakingOff)
             {
-                var p = star?.Planets?.Find(pl => pl.Uid == _prevLandedPlanetUid);
+                var p = star?.FindPlanet(_prevLandedPlanetUid);
                 if (p != null) _landingPlanet = p;
                 BeginTakeoff();
                 // Кадры этого хода в StarSimulator были посчитаны, когда корабль ещё был посажен
@@ -222,7 +222,7 @@ namespace SRG.Presentation.World
             // Обнаружение посадки: был в полёте, теперь сел
             if (_data.LandedPlanetUid != null && _prevLandedPlanetUid == null)
             {
-                var p = star?.Planets?.Find(pl => pl.Uid == _data.LandedPlanetUid);
+                var p = star?.FindPlanet(_data.LandedPlanetUid);
                 if (p != null) _landingPlanet = p;
             }
 

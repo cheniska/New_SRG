@@ -437,7 +437,7 @@ namespace SRG.Ships.Player
         private void UndockFromCarrier()
         {
             var star = GalaxyManager.Instance?.CurrentStar;
-            var carrier = star?.Ships?.Find(s => s.Uid == ShipData.LandedOnShipUid);
+            var carrier = star?.FindShip(ShipData.LandedOnShipUid);
             ShipDockingService.Undock(ShipData, carrier);
             BeginTakeoffRoute();
             GameConsoleController.AddEntry($"[Стыковка] Взлёт с {carrier?.Name ?? "носителя"}.");

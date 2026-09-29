@@ -583,13 +583,7 @@ namespace SRG.Combat
             return true;
         }
 
-        static ShipData FindShip(StarData star, string uid)
-        {
-            if (string.IsNullOrEmpty(uid)) return null;
-            foreach (var ship in star.Ships)
-                if (ship.Uid == uid) return ship;
-            return null;
-        }
+        static ShipData FindShip(StarData star, string uid) => star?.FindShip(uid);
 
         static void RestoreAmmo(ShipData ship, string slotKey)
         {
