@@ -254,7 +254,7 @@ namespace SRG.NpcAI.Spawning
 
             float radiusUnits = ChooseStationOrbitRadius(star);
             float ang = Random.Range(0f, Mathf.PI * 2f);
-            Vector2 pos = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * SRUnits.ToWorld(radiusUnits);
+            Vector2 pos = Angles.Dir(ang) * SRUnits.ToWorld(radiusUnits);
             ship.Position         = pos;
             ship.PreviousPosition = pos;
             ship.TargetPosition   = pos;

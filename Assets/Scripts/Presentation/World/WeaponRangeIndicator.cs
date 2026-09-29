@@ -95,7 +95,7 @@ namespace SRG.Presentation.World
             for (int i = 0; i < pool.DotCount; i++)
             {
                 float angleRad = i * DotAngularStep * Mathf.Deg2Rad;
-                Vector2 pos = center + new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * radius;
+                Vector2 pos = center + Angles.Dir(angleRad) * radius;
                 var sr = pool.Dots[i];
                 sr.transform.position = new Vector3(pos.x, pos.y, 0f);
                 sr.enabled = (i % dashPeriod) < (dashPeriod * DashRatio);

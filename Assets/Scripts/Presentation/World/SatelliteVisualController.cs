@@ -135,11 +135,6 @@ namespace SRG.Presentation.World
             if (AtmosphereRenderer) AtmosphereRenderer.sortingOrder = order + 1;
         }
 
-        private static float WrapAngle(float angle)
-        {
-            if (angle >= 360f) angle -= 360f;
-            if (angle < 0f) angle += 360f;
-            return angle;
-        }
+        private static float WrapAngle(float angle) => Mathf.Repeat(angle, 360f);
     }
 }

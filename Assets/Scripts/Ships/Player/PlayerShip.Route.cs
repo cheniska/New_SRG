@@ -456,7 +456,7 @@ namespace SRG.Ships.Player
             float heading = ShipData.CurrentHeading;
             var dir = float.IsNaN(heading)
                 ? Vector2.right
-                : new Vector2(Mathf.Cos(heading), Mathf.Sin(heading));
+                : Angles.Dir(heading);
             var target = ShipData.Position + dir * 1.5f;
 
             _targets.Clear();

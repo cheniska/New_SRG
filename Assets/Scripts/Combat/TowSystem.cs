@@ -153,7 +153,7 @@ namespace SRG.Combat
             float step = Mathf.Min(perSubturnWorld, dist);
             target.PreviousPosition = target.Position;
             target.Position += (delta / dist) * step;
-            target.CurrentHeading = Mathf.Atan2(delta.y, delta.x);
+            target.CurrentHeading = Angles.Of(delta);
         }
 
         /// <summary>

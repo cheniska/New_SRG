@@ -137,7 +137,7 @@ namespace SRG.Presentation.World
             // Станции (FixedRotation-корпус) не поворачивают графику по курсу — висят фиксированно.
             if (_data != null && _data.SpriteFixedRotation) return;
             if (direction.sqrMagnitude < 0.001f) return;
-            _targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            _targetAngle = Angles.Of(direction) * Mathf.Rad2Deg - 90f;
         }
 
         /// <summary>Мгновенно ставит визуал в направление текущего ship.HyperjumpHeading — без плавного разворота.</summary>

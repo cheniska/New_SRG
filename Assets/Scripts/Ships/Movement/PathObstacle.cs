@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Galaxy;
+using SRG.Utils;
 
 namespace SRG.Ships.Movement
 {
@@ -74,12 +75,12 @@ namespace SRG.Ships.Movement
             if (distSq <= r * r + 1e-6f) { a = b = external; return false; }
             float dist = Mathf.Sqrt(distSq);
             float theta = Mathf.Acos(r / dist);          // полуугол конуса касания
-            float baseA = Mathf.Atan2(d.y, d.x);          // направление на центр окружности
+            float baseA = Angles.Of(d);          // направление на центр окружности
             // Точки касания — на самой окружности.
             float a1 = baseA + theta;
             float a2 = baseA - theta;
-            Vector2 r1 = new Vector2(Mathf.Cos(a1 + Mathf.PI), Mathf.Sin(a1 + Mathf.PI));
-            Vector2 r2 = new Vector2(Mathf.Cos(a2 + Mathf.PI), Mathf.Sin(a2 + Mathf.PI));
+            Vector2 r1 = Angles.Dir(a1 + Mathf.PI);
+            Vector2 r2 = Angles.Dir(a2 + Mathf.PI);
             a = Center + r1 * r;
             b = Center + r2 * r;
             return true;

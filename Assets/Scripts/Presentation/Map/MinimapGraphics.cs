@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using SRG.Utils;
 
 namespace SRG.Presentation.Map
 {
@@ -72,8 +73,8 @@ namespace SRG.Presentation.Map
                 float a0 = (float)i / Segments * Mathf.PI * 2f;
                 float a1 = (float)(i + 1) / Segments * Mathf.PI * 2f;
 
-                Vector2 d0 = new Vector2(Mathf.Cos(a0), Mathf.Sin(a0));
-                Vector2 d1 = new Vector2(Mathf.Cos(a1), Mathf.Sin(a1));
+                Vector2 d0 = Angles.Dir(a0);
+                Vector2 d1 = Angles.Dir(a1);
 
                 Vector2 pInner0 = HoleCenter + d0 * innerR;
                 Vector2 pInner1 = HoleCenter + d1 * innerR;
@@ -116,8 +117,8 @@ namespace SRG.Presentation.Map
                 float a0 = (float)i / Segments * Mathf.PI * 2f;
                 float a1 = (float)(i + 1) / Segments * Mathf.PI * 2f;
 
-                Vector2 d0 = new Vector2(Mathf.Cos(a0), Mathf.Sin(a0));
-                Vector2 d1 = new Vector2(Mathf.Cos(a1), Mathf.Sin(a1));
+                Vector2 d0 = Angles.Dir(a0);
+                Vector2 d1 = Angles.Dir(a1);
 
                 int idx = i * 4;
                 vh.AddVert(d0 * InnerRadius, color, Vector2.zero);
@@ -173,8 +174,8 @@ namespace SRG.Presentation.Map
             {
                 float a0 = (float)i / Segments * Mathf.PI * 2f;
                 float a1 = (float)(i + 1) / Segments * Mathf.PI * 2f;
-                Vector2 d0 = new Vector2(Mathf.Cos(a0), Mathf.Sin(a0));
-                Vector2 d1 = new Vector2(Mathf.Cos(a1), Mathf.Sin(a1));
+                Vector2 d0 = Angles.Dir(a0);
+                Vector2 d1 = Angles.Dir(a1);
 
                 vh.AddVert(d0 * innerR, OutlineColor, Vector2.zero);
                 vh.AddVert(d1 * innerR, OutlineColor, Vector2.zero);

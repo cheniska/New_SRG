@@ -628,7 +628,7 @@ namespace SRG.Presentation.Effects
                     sr.gameObject.SetActive(vis);
                     if (!vis) continue;
                     float ang = (float)i / count * Mathf.PI * 2f;
-                    sr.transform.position = V3(center + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * radius);
+                    sr.transform.position = V3(center + Angles.Dir(ang) * radius);
                     Color c = impCol; c.a = alpha; sr.color = c;
                 }
                 // hide unused pre-allocated dots
@@ -692,7 +692,7 @@ namespace SRG.Presentation.Effects
             if (v.Dots == null) return;
             bool trav = it < 0.001f;
             Vector2 dir       = (v.To - v.From).normalized;
-            float   baseAngle = Mathf.Atan2(dir.y, dir.x);
+            float   baseAngle = Angles.Of(dir);
             float   halfSpread = 18f * Mathf.Deg2Rad;
             float   dist      = (v.To - v.From).magnitude;
 
@@ -702,7 +702,7 @@ namespace SRG.Presentation.Effects
                 if (!trav) continue;
                 float frac   = (float)i / 3f - 0.5f;
                 float angle  = baseAngle + frac * halfSpread * 2f;
-                Vector2 dest = v.From + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
+                Vector2 dest = v.From + Angles.Dir(angle) * dist;
                 v.Dots[i].transform.position = V3(Vector2.Lerp(v.From, dest, t));
             }
             DrawImpact(v, it, v.To);
@@ -765,7 +765,7 @@ namespace SRG.Presentation.Effects
                 if (sr == null || sr.gameObject == null) continue;
                 sr.gameObject.SetActive(true);
                 float ang = (float)i / count * Mathf.PI * 2f;
-                sr.transform.position = V3(v.From + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * radius);
+                sr.transform.position = V3(v.From + Angles.Dir(ang) * radius);
                 Color c = sr.color; c.a = 1f - t; sr.color = c;
             }
             for (int i = count; i < v.Dots.Length; i++) Show(v.Dots[i], false);
@@ -794,7 +794,7 @@ namespace SRG.Presentation.Effects
                 sr.gameObject.SetActive(vis);
                 if (!vis) continue;
                 float ang = (float)(i - 1) / 12f * Mathf.PI * 2f;
-                sr.transform.position = V3(v.To + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * ringT * 0.50f);
+                sr.transform.position = V3(v.To + Angles.Dir(ang) * ringT * 0.50f);
                 Color c = sr.color; c.a = 1f - ringT; sr.color = c;
             }
 

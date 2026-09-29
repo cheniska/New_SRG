@@ -18,6 +18,7 @@ using SRG.Science;
 using SRG.Ships;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
+using SRG.Utils;
 
 namespace SRG.Galaxy
 {
@@ -1370,7 +1371,7 @@ namespace SRG.Galaxy
                         continue;
                     }
 
-                    CurrentHeading = Mathf.Atan2(dir.y, dir.x);
+                    CurrentHeading = Angles.Of(dir);
                     if (dist <= remaining)
                     {
                         remaining -= dist;
@@ -1401,7 +1402,7 @@ namespace SRG.Galaxy
                     float toDist = toTarget.magnitude;
                     if (toDist < 0.001f) break;
 
-                    CurrentHeading = Mathf.Atan2(toTarget.y, toTarget.x);
+                    CurrentHeading = Angles.Of(toTarget);
 
                     if (toDist <= remaining)
                     {

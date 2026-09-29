@@ -276,7 +276,7 @@ namespace SRG.Combat
 
             target.PreviousPosition = target.Position;
             target.Position += dir * step;
-            target.CurrentHeading = Mathf.Atan2(delta.y, delta.x);
+            target.CurrentHeading = Angles.Of(delta);
         }
 
         // ── Завершение Pull-состояния ──────────────────────────────────────────

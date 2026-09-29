@@ -234,7 +234,7 @@ namespace SRG.Ships.Movement
                 }
 
                 float desiredA = Angles.Toward(cur, target, curA);
-                if (Mathf.Abs(NormalizeAnglePi(desiredA - curA)) <= stepTurn)
+                if (Mathf.Abs(Angles.WrapPi(desiredA - curA)) <= stepTurn)
                 {
                     curA = desiredA;   // уже выровнялись — прямой шаг
                 }
@@ -275,7 +275,6 @@ namespace SRG.Ships.Movement
 
         // ─── Утилиты ────────────────────────────────────────────────────────
 
-        public static float NormalizeAnglePi(float a) => Angles.WrapPi(a);
 
         public static bool SegmentIntersectsCircle(Vector2 a, Vector2 b, Vector2 center, float radius)
         {
