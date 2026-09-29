@@ -1,0 +1,2149 @@
+﻿{
+	"Settings": {
+		"SystemSizeMult": 1,
+		"InitialDate": "01.01.2700",
+		"DefaultOwner": "Coalition",
+		"Expansion": 1
+	},
+	"Skills": {
+		"ProgressionCap":   10,
+		"EffectiveMin":     -5,
+		"EffectiveMax":     12,
+		"DamageRollScale":  15,
+		"DiminishingK":     0.0001,
+		"UpgradeCosts":     [100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200]
+	},
+	"Races": {
+		"Race1": {
+			"EmblemPath": null,
+			"Color": "231,76,60",
+			"ColonizationStartDate": "01.01.2400",
+			"ColonizationSpeed": 0.35,
+			"PriceCoef": 0.7,
+			"TechGrowthCoef": 0.7,
+			"ScienceBias": { "Medicine": 0.7, "Materials": 1.2, "Propulsion": 1.0, "Weapons": 1.4, "Computing": 0.9, "BioTech": 0.8, "Energy": 1.0 },
+			"FleetSizeModifier": 1,
+			"AvailableShipTypes": ["Ranger", "Warrior", "Linkor", "Transport", "Liner", "Diplomat", "Pirate"],
+			"PlanetConditions": {
+				"WaterAbundance": [0.3, 0.7],
+				"OxygenPartialPressure": [0.04, 0.22],
+				"g":              [6.0, 25.0],
+				"AtmPressure":      [0.3, 8.0],
+				"SurfaceRadiation": [50.0, 900.0],
+				"SurfaceTemp": {
+					"Optimal":    [248.0, 292.0],
+					"Acceptable": [220.0, 320.0],
+					"Limit":      [185.0, 355.0],
+					"Terraformable": [150.0, 400.0]
+				},
+				"WaterAbundanceTerraformable":        [0.05, 0.95],
+				"OxygenPartialPressureTerraformable": [0.01, 0.45],
+				"gTerraformable":                    [3.0, 45.0],
+				"AtmPressureTerraformable":           [0.05, 22.0],
+				"SurfaceRadiationTerraformable":      [5.0, 3000.0]
+			},
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {
+					"Anarchy":      [],
+					"Dictatorship": [],
+					"Democracy":    [],
+					"Socialism":    [],
+					"Monarchy":     [],
+					"Republic":     []
+				}
+			}
+		},
+		"Race2": {
+			"EmblemPath": null,
+			"Color": "46,204,113",
+			"ColonizationStartDate": "01.01.2470",
+			"ColonizationSpeed": 0.25,
+			"PriceCoef": 0.9,
+			"TechGrowthCoef": 0.9,
+			"ScienceBias": { "Medicine": 1.3, "Materials": 0.8, "Propulsion": 0.9, "Weapons": 0.6, "Computing": 1.0, "BioTech": 1.5, "Energy": 0.9 },
+			"FleetSizeModifier": 0,
+			"AvailableShipTypes": ["Ranger", "Warrior", "Linkor", "Transport", "Liner", "Diplomat", "Pirate"],
+			"PlanetConditions": {
+				"WaterAbundance": [0.6, 1.0],
+				"OxygenPartialPressure": [0.15, 0.35],
+				"g":              [3.0, 18.0],
+				"AtmPressure":      [0.5, 2.5],
+				"SurfaceRadiation": [150.0, 1000.0],
+				"SurfaceTemp": {
+					"Optimal":    [270.0, 300.0],
+					"Acceptable": [260.0, 310.0],
+					"Limit":      [235.0, 335.0],
+					"Terraformable": [210.0, 360.0]
+				},
+				"WaterAbundanceTerraformable":        [0.15, 1.0],
+				"OxygenPartialPressureTerraformable": [0.05, 0.55],
+				"gTerraformable":                    [1.5, 28.0],
+				"AtmPressureTerraformable":           [0.15, 6.0],
+				"SurfaceRadiationTerraformable":      [30.0, 2500.0]
+			},
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {
+					"Anarchy":      [],
+					"Dictatorship": [],
+					"Democracy":    [],
+					"Socialism":    [],
+					"Monarchy":     [],
+					"Republic":     []
+				}
+			}
+		},
+		"Race3": {
+			"EmblemPath": null,
+			"Color": "74,144,217",
+			"ColonizationStartDate": "01.01.2350",
+			"ColonizationSpeed": 0.20,
+			"PriceCoef": 1.0,
+			"TechGrowthCoef": 1.0,
+			"ScienceBias": { "Medicine": 1.0, "Materials": 0.9, "Propulsion": 1.0, "Weapons": 0.8, "Computing": 1.5, "BioTech": 0.9, "Energy": 1.2 },
+			"FleetSizeModifier": 0,
+			"AvailableShipTypes": ["Ranger", "Warrior", "Linkor", "Transport", "Liner", "Diplomat", "Pirate"],
+			"PlanetConditions": {
+				"WaterAbundance": [0.2, 0.8],
+				"OxygenPartialPressure": [0.14, 0.28],
+				"g":              [5.0, 15.0],
+				"AtmPressure":      [0.5, 2.0],
+				"SurfaceRadiation": [0.0, 2000.0],
+				"SurfaceTemp": {
+					"Optimal":    [278.0, 298.0],
+					"Acceptable": [233.0, 318.0],
+					"Limit":      [203.0, 328.0],
+					"Terraformable": [170.0, 370.0]
+				},
+				"WaterAbundanceTerraformable":        [0.05, 0.95],
+				"OxygenPartialPressureTerraformable": [0.05, 0.50],
+				"gTerraformable":                    [2.0, 28.0],
+				"AtmPressureTerraformable":           [0.1, 6.0],
+				"SurfaceRadiationTerraformable":      [0.0, 5000.0]
+			},
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {
+					"Anarchy":      [],
+					"Dictatorship": [],
+					"Democracy":    [],
+					"Socialism":    [],
+					"Monarchy":     [],
+					"Republic":     []
+				}
+			}
+		},
+		"Race4": {
+			"EmblemPath": null,
+			"Color": "155,89,182",
+			"ColonizationStartDate": "01.01.2530",
+			"ColonizationSpeed": 0.50,
+			"PriceCoef": 1.15,
+			"TechGrowthCoef": 1.15,
+			"ScienceBias": { "Medicine": 0.8, "Materials": 1.4, "Propulsion": 1.2, "Weapons": 1.0, "Computing": 0.8, "BioTech": 0.9, "Energy": 1.0 },
+			"FleetSizeModifier": 1,
+			"AvailableShipTypes": ["Ranger", "Warrior", "Linkor", "Transport", "Liner", "Diplomat", "Pirate"],
+			"PlanetConditions": {
+				"WaterAbundance": [0.4, 0.7],
+				"OxygenPartialPressure": [0.13, 0.32],
+				"g":              [4.0, 14.0],
+				"AtmPressure":      [0.4, 3.0],
+				"SurfaceRadiation": [150.0, 1300.0],
+				"SurfaceTemp": {
+					"Optimal":    [278.0, 302.0],
+					"Acceptable": [270.0, 310.0],
+					"Limit":      [245.0, 335.0],
+					"Terraformable": [200.0, 380.0]
+				},
+				"WaterAbundanceTerraformable":        [0.1, 0.95],
+				"OxygenPartialPressureTerraformable": [0.05, 0.55],
+				"gTerraformable":                    [1.5, 25.0],
+				"AtmPressureTerraformable":           [0.08, 9.0],
+				"SurfaceRadiationTerraformable":      [20.0, 3500.0]
+			},
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {
+					"Anarchy":      [],
+					"Dictatorship": [],
+					"Democracy":    [],
+					"Socialism":    [],
+					"Monarchy":     [],
+					"Republic":     []
+				}
+			}
+		},
+		"Race5": {
+			"EmblemPath": null,
+			"Color": "255,215,0",
+			"ColonizationStartDate": "01.01.2490",
+			"ColonizationSpeed": 0.15,
+			"PriceCoef": 1.3,
+			"TechGrowthCoef": 1.3,
+			"ScienceBias": { "Medicine": 1.0, "Materials": 1.0, "Propulsion": 1.1, "Weapons": 1.0, "Computing": 1.1, "BioTech": 1.0, "Energy": 1.1 },
+			"FleetSizeModifier": -1,
+			"AvailableShipTypes": ["Ranger", "Warrior", "Linkor", "Transport", "Liner", "Diplomat", "Pirate"],
+			"PlanetConditions": {
+				"WaterAbundance": [0.1, 1.0],
+				"OxygenPartialPressure": [0.03, 0.50],
+				"g":              [2.0, 30.0],
+				"AtmPressure":      [0.1, 12.0],
+				"SurfaceRadiation": [20.0, 2500.0],
+				"SurfaceTemp": {
+					"Optimal":    [235.0, 330.0],
+					"Acceptable": [200.0, 380.0],
+					"Limit":      [165.0, 415.0],
+					"Terraformable": [120.0, 470.0]
+				},
+				"WaterAbundanceTerraformable":        [0.0, 1.0],
+				"OxygenPartialPressureTerraformable": [0.005, 0.85],
+				"gTerraformable":                    [0.5, 55.0],
+				"AtmPressureTerraformable":           [0.01, 35.0],
+				"SurfaceRadiationTerraformable":      [0.0, 7500.0]
+			},
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {
+					"Anarchy":      [],
+					"Dictatorship": [],
+					"Democracy":    [],
+					"Socialism":    [],
+					"Monarchy":     [],
+					"Republic":     []
+				}
+			}
+		},
+		"RaceDominators1": {
+			"EmblemPath": null,
+			"Color": "170,0,255",
+			"NonPlanetary": 1,
+			"PriceCoef": 1.0,
+			"TechGrowthCoef": 1.0,
+			"UseShipTypeTable": true,
+			"AvailableShipTypes": ["Dom1", "Dom2", "Dom3", "Dom4", "Dom5", "Dom6", "Dom7"],
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {}
+			}
+		},
+		"RaceDominators2": {
+			"EmblemPath": null,
+			"Color": "0,180,180",
+			"NonPlanetary": 1,
+			"PriceCoef": 1.0,
+			"TechGrowthCoef": 1.0,
+			"UseShipTypeTable": true,
+			"AvailableShipTypes": ["Dom1", "Dom2", "Dom3", "Dom4", "Dom5", "Dom6", "Dom7"],
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {}
+			}
+		},
+		"RaceDominators3": {
+			"EmblemPath": null,
+			"Color": "200,160,0",
+			"NonPlanetary": 1,
+			"PriceCoef": 1.0,
+			"TechGrowthCoef": 1.0,
+			"UseShipTypeTable": true,
+			"AvailableShipTypes": ["Dom1", "Dom2", "Dom3", "Dom4", "Dom5", "Dom6", "Dom7"],
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {}
+			}
+		},
+		"Race6": {
+			"EmblemPath": null,
+			"Color": "120,200,255",
+			"ColonizationStartDate": "01.01.2450",
+			"ColonizationSpeed": 0.3,
+			"PriceCoef": 0.85,
+			"TechGrowthCoef": 0.9,
+			"ScienceBias": { "Medicine": 1.0, "Materials": 1.0, "Propulsion": 1.3, "Weapons": 0.9, "Computing": 1.2, "BioTech": 0.8, "Energy": 1.1 },
+			"FleetSizeModifier": 1,
+			"AvailableShipTypes": ["Ranger", "Warrior", "Linkor", "Transport", "Liner", "Diplomat", "Pirate"],
+			"PlanetConditions": {
+				"WaterAbundance": [0.4, 0.8],
+				"OxygenPartialPressure": [0.06, 0.24],
+				"g":              [5.0, 22.0],
+				"AtmPressure":      [0.4, 6.0],
+				"SurfaceRadiation": [80.0, 900.0],
+				"SurfaceTemp": {
+					"Optimal":    [250.0, 295.0],
+					"Acceptable": [225.0, 320.0],
+					"Limit":      [190.0, 355.0],
+					"Terraformable": [155.0, 400.0]
+				},
+				"WaterAbundanceTerraformable":        [0.08, 0.95],
+				"OxygenPartialPressureTerraformable": [0.02, 0.45],
+				"gTerraformable":                    [2.5, 42.0],
+				"AtmPressureTerraformable":           [0.08, 20.0],
+				"SurfaceRadiationTerraformable":      [8.0, 2800.0]
+			},
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {
+					"Anarchy":      [],
+					"Dictatorship": [],
+					"Democracy":    [],
+					"Socialism":    [],
+					"Monarchy":     [],
+					"Republic":     []
+				}
+			}
+		},
+		"Race7": {
+			"EmblemPath": null,
+			"Color": "220,150,255",
+			"ColonizationStartDate": "01.01.2500",
+			"ColonizationSpeed": 0.28,
+			"PriceCoef": 0.9,
+			"TechGrowthCoef": 0.85,
+			"ScienceBias": { "Medicine": 1.1, "Materials": 1.1, "Propulsion": 0.9, "Weapons": 1.0, "Computing": 1.3, "BioTech": 1.2, "Energy": 0.9 },
+			"FleetSizeModifier": 0,
+			"AvailableShipTypes": ["Ranger", "Warrior", "Linkor", "Transport", "Liner", "Diplomat", "Pirate"],
+			"PlanetConditions": {
+				"WaterAbundance": [0.3, 0.7],
+				"OxygenPartialPressure": [0.05, 0.22],
+				"g":              [4.0, 20.0],
+				"AtmPressure":      [0.3, 5.0],
+				"SurfaceRadiation": [60.0, 850.0],
+				"SurfaceTemp": {
+					"Optimal":    [255.0, 300.0],
+					"Acceptable": [230.0, 325.0],
+					"Limit":      [195.0, 360.0],
+					"Terraformable": [160.0, 405.0]
+				},
+				"WaterAbundanceTerraformable":        [0.07, 0.95],
+				"OxygenPartialPressureTerraformable": [0.02, 0.45],
+				"gTerraformable":                    [2.0, 40.0],
+				"AtmPressureTerraformable":           [0.07, 18.0],
+				"SurfaceRadiationTerraformable":      [7.0, 2600.0]
+			},
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {
+					"Anarchy":      [],
+					"Dictatorship": [],
+					"Democracy":    [],
+					"Socialism":    [],
+					"Monarchy":     [],
+					"Republic":     []
+				}
+			}
+		},
+		"RaceThreat1": {
+			"EmblemPath": null,
+			"Color": "220,40,60",
+			"NonPlanetary": 1,
+			"PriceCoef": 1.0,
+			"TechGrowthCoef": 1.0,
+			"UseShipTypeTable": true,
+			"AvailableShipTypes": ["Dom1", "Dom2", "Dom3", "Dom4", "Dom5", "Dom6", "Dom7"],
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {}
+			}
+		},
+		"None": {
+			"EmblemPath": null,
+			"Color": null,
+			"PriceCoef": 0,
+			"TechGrowthCoef": 0,
+			"Trade": {
+				"GoodPriceModifiers": {},
+				"BannedGoodsByGovernment": {}
+			}
+		}
+	},
+	"Goods": {
+		"food":      { "DisplayName": "Продовольствие", "BasePrice": 22  },
+		"medicine":  { "DisplayName": "Медикаменты",    "BasePrice": 30  },
+		"technics":  { "DisplayName": "Техника",        "BasePrice": 60  },
+		"luxury":    { "DisplayName": "Роскошь",        "BasePrice": 150 },
+		"minerals":  { "DisplayName": "Минералы",       "BasePrice": 9   },
+		"alcohol":   { "DisplayName": "Алкоголь",       "BasePrice": 30  },
+		"arms":      { "DisplayName": "Оружие",         "BasePrice": 75  },
+		"narcotics": { "DisplayName": "Наркотики",      "BasePrice": 300 }
+	},
+	"Trade": {
+		"ContrabandPriceMultiplier": 3.0,
+		"MinPriceMultiplier": 0.4,
+		"MaxPriceMultiplier": 3.0,
+		"PriceStockCurve": "Hyperbolic",
+		"ContrabandRelationPenalty": -20,
+		"PrisonSentenceMonths": 6,
+		"BaseStockBySize": {
+			"Tiny":   50,
+			"Small":  100,
+			"Normal": 200,
+			"Big":    400,
+			"Giant":  700
+		},
+		"SpecialLegality": {
+			"StationsAlwaysLegal": true,
+			"NewMolizonContrabandGoods": ["food", "medicine"]
+		},
+		"MaxStockMultiplier": 5.0
+	},
+	"Inflation": {
+		"MonthlyDelta": 0.0021,
+		"MaxFactor": 5.0,
+		"WarBoost": 0.02,
+		"RevolutionBoost": 0.01
+	},
+	"Ratings": [
+		{
+			"Id": "Rangers",
+			"DisplayName": "Рейтинг рейнджеров",
+			"ShipTypes": ["Ranger"],
+			"Score": { "KillsDominator": 3, "KillsPirate": 1 },
+			"IncludePlayer": true,
+			"MinScore": 1,
+			"NewsStrideTurns": 90,
+			"TopN": 3
+		},
+		{
+			"Id": "Pirates",
+			"DisplayName": "Пиратский рейтинг",
+			"ShipTypes": ["Pirate"],
+			"Owners": ["Pirates"],
+			"Score": { "KillsTransport": 2, "KillsRanger": 3, "CrimeRating": 1 },
+			"IncludePlayer": false,
+			"MinScore": 1,
+			"NewsStrideTurns": 90,
+			"TopN": 3
+		},
+		{
+			"Id": "Traders",
+			"DisplayName": "Торговый рейтинг",
+			"ShipTypes": ["Ranger", "Transport"],
+			"Score": { "TradeProfit": 0.01 },
+			"IncludePlayer": true,
+			"MinScore": 1,
+			"NewsStrideTurns": 90,
+			"TopN": 3
+		}
+	],
+	"Events": {
+		"Epidemic": {
+			"DisplayName": "Эпидемия",
+			"DurationMonths": [3, 8],
+			"NewsMessage": "На планете {planet} вспышка эпидемии!",
+			"Triggers": [
+				{ "Type": "RandomChance", "ChancePerDay": 0.0001 }
+			],
+			"Cooldown": 120,
+			"Trade": {
+				"GoodPriceModifiers": { "medicine": 2.5 },
+				"GoodStockDelta": { "medicine": -3.0 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.05,
+				"PopulationEffect": -0.02
+			},
+			"Science": { "Medicine": 1.4, "BioTech": 1.2 }
+		},
+		"Famine": {
+			"DisplayName": "Голод",
+			"DurationMonths": [2, 6],
+			"NewsMessage": "На планете {planet} неурожай и голод.",
+			"Triggers": [
+				{ "Type": "StockBelow", "GoodId": "food", "Threshold": 20, "ForDays": 5 }
+			],
+			"Cooldown": 90,
+			"Trade": {
+				"GoodPriceModifiers": { "food": 2.2 },
+				"GoodStockDelta": { "food": -2.0 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.05,
+				"PopulationEffect": -0.02
+			},
+			"Science": { "BioTech": 1.3 }
+		},
+		"Unrest": {
+			"DisplayName": "Беспорядки",
+			"DurationMonths": [7, 14],
+			"NewsMessage": "Растёт народное недовольство.",
+			"Triggers": [
+				{ "Type": "PriceAbove", "GoodId": "food",     "MultiplierVsBase": 2.0, "ForDays": 7 },
+				{ "Type": "PriceAbove", "GoodId": "medicine", "MultiplierVsBase": 2.5, "ForDays": 7 }
+			],
+			"TriggerLogic": "Or",
+			"Cooldown": 30,
+			"Trade": {
+				"GoodPriceModifiers": { "food": 1.3, "alcohol": 1.4 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.5,
+				"PopulationEffect": 0.0
+			},
+			"ChainOnExpire": { "EventId": "Protests", "Chance": 0.4 }
+		},
+		"Protests": {
+			"DisplayName": "Массовые протесты",
+			"DurationMonths": [10, 20],
+			"NewsMessage": "Тысячи людей вышли на улицы.",
+			"Cooldown": 60,
+			"Trade": {
+				"GoodPriceModifiers": { "food": 1.4, "alcohol": 1.5, "luxury": 1.6 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.3,
+				"PopulationEffect": 0.0
+			},
+			"ChainOnExpire": { "EventId": "Revolution", "Chance": 0.25 }
+		},
+		"Revolution": {
+			"DisplayName": "Революция",
+			"DurationMonths": [3, 5],
+			"NewsMessage": "На планете произошла революция!",
+			"Cooldown": 180,
+			"Trade": {
+				"GoodPriceModifiers": { "food": 1.6, "arms": 1.4 },
+				"GoodStockDelta": { "food": -1.5 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.0,
+				"PopulationEffect": -0.01,
+				"PTUPenalty": 1
+			},
+			"ImmediateActions": [
+				{ "Type": "ChangeGovernment", "Mode": "Weighted",
+				  "Weights": { "Anarchy": 0.3, "Democracy": 0.3, "Dictatorship": 0.3, "Monarchy": 0.1 } },
+				{ "Type": "InflationShock", "ShockType": "Revolution" }
+			],
+			"Science": { "Medicine": 0.7, "BioTech": 0.7, "Computing": 0.7 }
+		},
+		"MineralDeposit": {
+			"DisplayName": "Крупное месторождение минералов",
+			"DurationMonths": [4, 8],
+			"NewsMessage": "На планете {planet} найдено крупное месторождение. Цены на руды и минералы обвалились — самое время для перевозчиков.",
+			"Triggers": [
+				{ "Type": "RandomChance", "ChancePerDay": 0.00005 }
+			],
+			"Cooldown": 240,
+			"Trade": {
+				"GoodPriceModifiers": { "minerals": 0.55 },
+				"GoodStockDelta":     { "minerals": 4.0 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 1.15,
+				"PopulationEffect": 0.005
+			},
+			"Science": { "Geology": 1.3 }
+		},
+		"MineralShortage": {
+			"DisplayName": "Нехватка минералов",
+			"DurationMonths": [3, 10],
+			"NewsMessage": "На планете {planet} дефицит минералов.",
+			"Trade": {
+				"GoodPriceModifiers": { "minerals": 1.8 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.4,
+				"PopulationEffect": 0.0
+			}
+		},
+		"TechShortage": {
+			"DisplayName": "Нехватка техники",
+			"DurationMonths": [3, 10],
+			"NewsMessage": "На планете {planet} дефицит техники.",
+			"Trade": {
+				"GoodPriceModifiers": { "technics": 1.8 }
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.4,
+				"PopulationEffect": 0.0
+			}
+		},
+		"ManyFood": {
+			"DisplayName": "Изобилие продовольствия",
+			"DurationMonths": [2, 5],
+			"NewsMessage": "На планете {planet} собран рекордный урожай — цены на продовольствие обвалились. Отличный шанс для перевозчиков.",
+			"Triggers": [
+				{ "Type": "StockAbove", "GoodId": "food", "Threshold": 200 }
+			],
+			"Cooldown": 120,
+			"Trade": {
+				"GoodPriceModifiers": { "food": 0.55 },
+				"GoodStockDelta":     { "food": 3.0 }
+			},
+			"PTU": { "GrowthMultiplier": 1.05, "PopulationEffect": 0.005 }
+		},
+		"ManyFoodNeedTechnics": {
+			"DisplayName": "Урожай без техники",
+			"DurationMonths": [2, 4],
+			"NewsMessage": "На планете {planet} невиданный урожай, но не хватает техники для сбора. Правительство готово покупать технику по завышенным ценам.",
+			"Triggers": [
+				{ "Type": "StockAbove", "GoodId": "food",     "Threshold": 180 },
+				{ "Type": "StockBelow", "GoodId": "technics", "Threshold": 30  }
+			],
+			"TriggerLogic": "And",
+			"Cooldown": 180,
+			"Trade": {
+				"GoodPriceModifiers": { "food": 0.7, "technics": 1.7 },
+				"GoodStockDelta":     { "technics": -2.0 }
+			},
+			"PTU": { "GrowthMultiplier": 1.0, "PopulationEffect": 0.0 }
+		},
+		"NeedFood": {
+			"DisplayName": "Продовольственный кризис",
+			"DurationMonths": [3, 7],
+			"NewsMessage": "Ужасные новости с планеты {planet}: население голодает. Требуются продовольствие и медикаменты. Цены на продукты и лекарства взлетели.",
+			"Triggers": [
+				{ "Type": "StockBelow", "GoodId": "food", "Threshold": 15, "ForDays": 7 }
+			],
+			"Cooldown": 120,
+			"Trade": {
+				"GoodPriceModifiers": { "food": 2.4, "medicine": 1.6 }
+			},
+			"PTU": { "GrowthMultiplier": 0.3, "PopulationEffect": -0.01 }
+		},
+		"ManyAlcohol": {
+			"DisplayName": "Изобилие алкоголя",
+			"DurationMonths": [2, 4],
+			"NewsMessage": "На планете {planet} рекордный урожай винограда — цены на алкоголь обрушены. Все желающие подзаработать — сюда.",
+			"Triggers": [
+				{ "Type": "StockAbove", "GoodId": "alcohol", "Threshold": 150 }
+			],
+			"Cooldown": 150,
+			"Trade": {
+				"GoodPriceModifiers": { "alcohol": 0.55 },
+				"GoodStockDelta":     { "alcohol": 2.5 }
+			},
+			"PTU": { "GrowthMultiplier": 1.0, "PopulationEffect": 0.0 }
+		},
+		"NeedAlcohol": {
+			"DisplayName": "Сухой закон отменён",
+			"DurationMonths": [2, 5],
+			"NewsMessage": "На планете {planet} отменён многолетний сухой закон. Оптовые закупщики скупают спиртное партиями.",
+			"Triggers": [
+				{ "Type": "StockBelow", "GoodId": "alcohol", "Threshold": 10, "ForDays": 5 }
+			],
+			"Cooldown": 200,
+			"Trade": {
+				"GoodPriceModifiers": { "alcohol": 2.0 }
+			},
+			"PTU": { "GrowthMultiplier": 0.9, "PopulationEffect": 0.0 }
+		},
+		"ManyArms": {
+			"DisplayName": "Оружейная распродажа",
+			"DurationMonths": [3, 6],
+			"NewsMessage": "На планете {planet} распродажа устаревшего вооружения — цены минимальны.",
+			"Triggers": [
+				{ "Type": "StockAbove", "GoodId": "arms", "Threshold": 120 }
+			],
+			"Cooldown": 180,
+			"Trade": {
+				"GoodPriceModifiers": { "arms": 0.6 },
+				"GoodStockDelta":     { "arms": 2.5 }
+			},
+			"PTU": { "GrowthMultiplier": 1.0, "PopulationEffect": 0.0 }
+		},
+		"NeedArms": {
+			"DisplayName": "Оружейная лихорадка",
+			"DurationMonths": [2, 5],
+			"NewsMessage": "На планете {planet} резко подскочили цены на вооружение — мирные жители в панике скупают оружие после слухов о готовящихся атаках.",
+			"Triggers": [
+				{ "Type": "StockBelow", "GoodId": "arms", "Threshold": 20, "ForDays": 5 }
+			],
+			"Cooldown": 150,
+			"Trade": {
+				"GoodPriceModifiers": { "arms": 2.2 }
+			},
+			"PTU": { "GrowthMultiplier": 0.9, "PopulationEffect": 0.0 }
+		},
+		"NeedArmsForRevolution": {
+			"DisplayName": "Спрос на оружие: переворот",
+			"DurationMonths": [2, 4],
+			"NewsMessage": "Демократический строй на планете {planet} под угрозой: местные боевики готовят переворот. Спрос на вооружение зашкаливает.",
+			"Triggers": [
+				{ "Type": "EventActive", "EventId": "Unrest" },
+				{ "Type": "StockBelow",  "GoodId":  "arms", "Threshold": 25 }
+			],
+			"TriggerLogic": "And",
+			"Cooldown": 240,
+			"Trade": {
+				"GoodPriceModifiers": { "arms": 2.5 }
+			},
+			"PTU": { "GrowthMultiplier": 0.6, "PopulationEffect": -0.005 }
+		},
+		"ManyLuxury": {
+			"DisplayName": "Распродажа роскоши",
+			"DurationMonths": [2, 5],
+			"NewsMessage": "На планете {planet} нашли древние захоронения — коллекционеры скупают предметы старины по минимальным ценам.",
+			"Triggers": [
+				{ "Type": "StockAbove", "GoodId": "luxury", "Threshold": 80 }
+			],
+			"Cooldown": 200,
+			"Trade": {
+				"GoodPriceModifiers": { "luxury": 0.6 },
+				"GoodStockDelta":     { "luxury": 2.0 }
+			},
+			"PTU": { "GrowthMultiplier": 1.05, "PopulationEffect": 0.005 }
+		},
+		"NeedLuxury": {
+			"DisplayName": "Культурный подъём",
+			"DurationMonths": [3, 6],
+			"NewsMessage": "На планете {planet} культурная революция — почитание предметов роскоши возведено в абсолют. Цены высокие.",
+			"Triggers": [
+				{ "Type": "StockBelow", "GoodId": "luxury", "Threshold": 15, "ForDays": 5 }
+			],
+			"Cooldown": 200,
+			"Trade": {
+				"GoodPriceModifiers": { "luxury": 2.0 }
+			},
+			"PTU": { "GrowthMultiplier": 1.0, "PopulationEffect": 0.0 }
+		},
+		"ManyTechnics": {
+			"DisplayName": "Кризис перепроизводства техники",
+			"DurationMonths": [2, 5],
+			"NewsMessage": "На планете {planet} — перепроизводство технической продукции. Отличный шанс для покупателей техники.",
+			"Triggers": [
+				{ "Type": "StockAbove", "GoodId": "technics", "Threshold": 130 }
+			],
+			"Cooldown": 180,
+			"Trade": {
+				"GoodPriceModifiers": { "technics": 0.6 },
+				"GoodStockDelta":     { "technics": 2.5 }
+			},
+			"PTU": { "GrowthMultiplier": 1.05, "PopulationEffect": 0.0 }
+		},
+		"ManyMedicine": {
+			"DisplayName": "Гуманитарная программа",
+			"DurationMonths": [2, 4],
+			"NewsMessage": "На планете {planet} стартовала гуманитарная программа: широкий ассортимент медикаментов по необычайно низким ценам.",
+			"Triggers": [
+				{ "Type": "StockAbove", "GoodId": "medicine", "Threshold": 100 }
+			],
+			"Cooldown": 180,
+			"Trade": {
+				"GoodPriceModifiers": { "medicine": 0.6 },
+				"GoodStockDelta":     { "medicine": 2.5 }
+			},
+			"PTU": { "GrowthMultiplier": 1.05, "PopulationEffect": 0.005 }
+		},
+		"NeedMineral": {
+			"DisplayName": "Промышленный голод",
+			"DurationMonths": [3, 7],
+			"NewsMessage": "Промышленность планеты {planet} задыхается без сырья. Цены на минералы взлетели — первые поставщики получат сверхприбыль.",
+			"Triggers": [
+				{ "Type": "StockBelow", "GoodId": "minerals", "Threshold": 20, "ForDays": 6 }
+			],
+			"Cooldown": 150,
+			"Trade": {
+				"GoodPriceModifiers": { "minerals": 2.2, "technics": 0.85 }
+			},
+			"PTU": { "GrowthMultiplier": 0.85, "PopulationEffect": 0.0 }
+		},
+		"GovernmentChange": {
+			"DisplayName": "Смена власти",
+			"DurationMonths": [1, 1],
+			"NewsMessage": "На планете {planet} сменилось правительство.",
+			"Trade": {
+				"GoodPriceModifiers": { "arms": 1.8 }
+			},
+			"PTU": null
+		},
+		"PirateOccupation": {
+			"DisplayName": "Захват пиратами",
+			"DurationMonths": null,
+			"NewsMessage": "Планета {planet} захвачена пиратами!",
+			"Trade": {
+				"GoodPriceModifiers": {}
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.6,
+				"PopulationEffect": 0.0,
+				"PTUPenalty": 0
+			}
+		},
+		"DominatorOccupation": {
+			"DisplayName": "Захват доминаторами",
+			"DurationMonths": null,
+			"NewsMessage": "Планета {planet} захвачена доминаторами!",
+			"Trade": {
+				"GoodPriceModifiers": {}
+			},
+			"PTU": {
+				"GrowthMultiplier": 0.0,
+				"PopulationEffect": -0.1,
+				"PTUPenalty": 1
+			}
+		}
+	},
+	"OwnerRelations": {
+		"Coalition-Pirates":    10,
+		"Coalition-Dominators": 5,
+		"Pirates-Dominators":   5,
+		"Alliance-Threat":      5,
+		"Alliance-Pirates":     10,
+		"Alliance-Dominators":  60,
+		"Alliance-Coalition":   75
+	},
+	"RaceRelations": {},
+	"Galaxies": {
+		"MilkyWay": {
+			"Name": "Млечный путь",
+			"Races": ["Race1", "Race2", "Race3", "Race4", "Race5", "RaceDominators1", "RaceDominators2", "RaceDominators3"],
+			"GalaxyGridSize": [140, 100],
+			"StarsCount": 75,
+			"ConstCount": 20,
+			"MinStarsPerConstellation": 2,
+			"MaxStarsPerConstellation": 8,
+			"MinPlanetsPerStar": 0,
+			"MaxPlanetsPerStar": 20,
+			"StartingStarName": "Солнце",
+			"MinStarDistanceParsecs": 5,
+			"MapPixelsPerParsec": 8,
+			"VoronoiBorderColor": "90,100,130",
+			"GTU": {
+				"MinValue": 1,
+				"MaxValue": 8,
+				"Levels": [
+					{ "Level": 2, "RequiredPlanets": 5 },
+					{ "Level": 3, "RequiredPlanets": 5 },
+					{ "Level": 4, "RequiredPlanets": 6 },
+					{ "Level": 5, "RequiredPlanets": 6 },
+					{ "Level": 6, "RequiredPlanets": 7 },
+					{ "Level": 7, "RequiredPlanets": 7 },
+					{ "Level": 8, "RequiredPlanets": 8 }
+				],
+				"HDMode": {
+					"Enabled": false,
+					"BlockUseAboveGTU": true,
+					"BlockRepairAboveGTU": true
+				},
+				"WeaponUnlockThresholds": {}
+			},
+			"TargetSystemsPerRace": {
+				"BaseFractionMin": 0.85,
+				"BaseFractionMax": 0.9,
+				"Multiplier": 2.0,
+				"Jitter": 2
+			}
+		},
+		"Andromeda": {
+			"Name": "Андромеда",
+			"Races": ["Race6", "Race7", "RaceThreat1"],
+			"GalaxyGridSize": [140, 100],
+			"StarsCount": 75,
+			"ConstCount": 20,
+			"MinStarsPerConstellation": 2,
+			"MaxStarsPerConstellation": 8,
+			"MinPlanetsPerStar": 0,
+			"MaxPlanetsPerStar": 20,
+			"StartingStarName": "Aegis",
+			"MinStarDistanceParsecs": 5,
+			"MapPixelsPerParsec": 8,
+			"VoronoiBorderColor": "140,90,160",
+			"GTU": {
+				"MinValue": 1,
+				"MaxValue": 8,
+				"Levels": [
+					{ "Level": 2, "RequiredPlanets": 5 },
+					{ "Level": 3, "RequiredPlanets": 5 },
+					{ "Level": 4, "RequiredPlanets": 6 },
+					{ "Level": 5, "RequiredPlanets": 6 },
+					{ "Level": 6, "RequiredPlanets": 7 },
+					{ "Level": 7, "RequiredPlanets": 7 },
+					{ "Level": 8, "RequiredPlanets": 8 }
+				],
+				"HDMode": {
+					"Enabled": false,
+					"BlockUseAboveGTU": true,
+					"BlockRepairAboveGTU": true
+				},
+				"WeaponUnlockThresholds": {}
+			},
+			"TargetSystemsPerRace": {
+				"BaseFractionMin": 0.9,
+				"BaseFractionMax": 0.95,
+				"Multiplier": 2.0,
+				"Jitter": 2
+			}
+		}
+	},
+	"Stars": {
+		"Types": {
+			"Dwarf": {
+				"GraphicSizeMult": 0.75,
+				"MaxPlanets": 3,
+				"MassSolar": 0.312,
+				"HZ_SizeMult": 0.533
+			},
+			"Small": {
+				"GraphicSizeMult": 1,
+				"MaxPlanets": 6,
+				"MassSolar": 0.69,
+				"HZ_SizeMult": 0.868
+			},
+			"Normal": {
+				"GraphicSizeMult": 1.25,
+				"MaxPlanets": 9,
+				"MassSolar": 1.0,
+				"HZ_SizeMult": 1.0
+			},
+			"Big": {
+				"GraphicSizeMult": 1.5,
+				"MaxPlanets": 13,
+				"MassSolar": 2.231,
+				"HZ_SizeMult": 1.786
+			},
+			"Giant": {
+				"GraphicSizeMult": 2,
+				"MaxPlanets": 20,
+				"MassSolar": 6.66,
+				"HZ_SizeMult": 3.533
+			}
+		},
+		"Colors": {
+			"Red": {
+				"VariantsCount": 5,
+				"Path": "Graphics/SpaceObjects/Stars/Red",
+				"TempK": 3500,
+				"RadiationMult": 0.168,
+				"HabitableZoneMin_u": 700,
+				"HabitableZoneMax_u": 1500,
+				"HabitableZoneMid_u": 1100
+			},
+			"Yellow": {
+				"VariantsCount": 11,
+				"Path": "Graphics/SpaceObjects/Stars/Yellow",
+				"TempK": 5800,
+				"RadiationMult": 1.0,
+				"HabitableZoneMin_u": 1800,
+				"HabitableZoneMax_u": 3900,
+				"HabitableZoneMid_u": 2860
+			},
+			"White": {
+				"VariantsCount": 2,
+				"Path": "Graphics/SpaceObjects/Stars/White",
+				"TempK": 8500,
+				"RadiationMult": 1.835,
+				"HabitableZoneMin_u": 2800,
+				"HabitableZoneMax_u": 5100,
+				"HabitableZoneMid_u": 3934
+			},
+			"Blue": {
+				"VariantsCount": 4,
+				"Path": "Graphics/SpaceObjects/Stars/Blue",
+				"TempK": 25000,
+				"RadiationMult": 6.086,
+				"HabitableZoneMin_u": 3700,
+				"HabitableZoneMax_u": 8900,
+				"HabitableZoneMid_u": 6300
+			},
+			"Green": {
+				"VariantsCount": 2,
+				"Path": "Graphics/SpaceObjects/Stars/Green",
+				"TempK": 6500,
+				"RadiationMult": 1.302,
+				"HabitableZoneMin_u": 2200,
+				"HabitableZoneMax_u": 4400,
+				"HabitableZoneMid_u": 3295
+			},
+			"Black": {
+				"VariantsCount": 1,
+				"Path": "Graphics/SpaceObjects/Stars/Black",
+				"TempK": 5800,
+				"RadiationMult": 1.0,
+				"HabitableZoneMin_u": 1800,
+				"HabitableZoneMax_u": 3900,
+				"HabitableZoneMid_u": 2860
+			},
+			"Purple": {
+				"VariantsCount": 1,
+				"Path": "Graphics/SpaceObjects/Stars/Purple",
+				"TempK": 50000,
+				"RadiationMult": 6.842,
+				"HabitableZoneMin_u": 3200,
+				"HabitableZoneMax_u": 9600,
+				"HabitableZoneMid_u": 6400
+			}
+		}
+	},
+	"Planets": {
+		"OrbitsEccentricity": [0.0, 0.05],
+		"Sizes": {
+			"Tiny":   { "BaseScale": 0.75,  "MaxSatellites": 0, "AtmosphereChance": 0,   "SatOrbitPixelRadius": 120, "Population": [0,    0],    "DensityRange": [1.5, 4.0], "GravityRange": [0.5,  2.5],  "GeoK": 0.069, "SurfaceArea": [270, 292], "Weight": 15 },
+			"Small":  { "BaseScale": 0.875, "MaxSatellites": 2, "AtmosphereChance": 30,  "SatOrbitPixelRadius": 140, "Population": [10,   200],  "DensityRange": [2.5, 6.0], "GravityRange": [2.0,  6.0],  "GeoK": 0.128, "SurfaceArea": [368, 398], "Weight": 25 },
+			"Normal": { "BaseScale": 1.0,   "MaxSatellites": 3, "AtmosphereChance": 60,  "SatOrbitPixelRadius": 160, "Population": [100,  1000], "DensityRange": [3.0, 7.5], "GravityRange": [5.0,  14.0], "GeoK": 0.229, "SurfaceArea": [480, 520], "Weight": 30 },
+			"Big":    { "BaseScale": 1.125, "MaxSatellites": 3, "AtmosphereChance": 100, "SatOrbitPixelRadius": 180, "Population": [500,  5000], "DensityRange": [3.5, 9.0], "GravityRange": [10.0, 25.0], "GeoK": 0.327, "SurfaceArea": [608, 658], "Weight": 20 },
+			"Giant":  { "BaseScale": 1.3,   "MaxSatellites": 5, "AtmosphereChance": 100, "SatOrbitPixelRadius": 200, "Population": [0,    0],    "DensityRange": [0.5, 8.0], "GravityRange": [20.0, 60.0], "GeoK": 0.327, "SurfaceArea": [812, 878], "Weight": 10 }
+		  },
+		"GovernmentTypes": {
+			"Anarchy":      { "TechGrowthCoef": 0.7,  "AlwaysLegal": true,  "GoodPriceModifiers": {}, "EquipmentShopMods": { "Hull": -1, "Weapons":  1, "Radar": -1, "Scanner": -1, "Shield": -1 }, "ScienceBias": { "Medicine": 0.7, "Materials": 0.9, "Propulsion": 1.0, "Weapons": 1.2, "Computing": 0.7, "BioTech": 0.8, "Energy": 0.9 } },
+			"Dictatorship": { "TechGrowthCoef": 0.85, "AlwaysLegal": false, "GoodPriceModifiers": {}, "EquipmentShopMods": { "Weapons":  2, "Shield":   1 }, "ScienceBias": { "Medicine": 0.8, "Materials": 1.1, "Propulsion": 1.0, "Weapons": 1.3, "Computing": 0.9, "BioTech": 0.8, "Energy": 1.1 } },
+			"Democracy":    { "TechGrowthCoef": 1.2,  "AlwaysLegal": false, "GoodPriceModifiers": {}, "EquipmentShopMods": { "Hull":  1, "Weapons": -1, "Radar":  1, "Scanner":  1 }, "ScienceBias": { "Medicine": 1.2, "Materials": 1.0, "Propulsion": 1.0, "Weapons": 0.8, "Computing": 1.2, "BioTech": 1.1, "Energy": 1.0 } },
+			"Socialism":    { "TechGrowthCoef": 1.0,  "AlwaysLegal": false, "GoodPriceModifiers": {}, "EquipmentShopMods": { "Engine":  1, "Droid":  1, "Shield":  1 }, "ScienceBias": { "Medicine": 1.1, "Materials": 1.1, "Propulsion": 1.0, "Weapons": 0.9, "Computing": 1.0, "BioTech": 1.0, "Energy": 1.2 } },
+			"Monarchy":     { "TechGrowthCoef": 1.0,  "AlwaysLegal": false, "GoodPriceModifiers": {}, "EquipmentShopMods": {}, "ScienceBias": { "Medicine": 1.0, "Materials": 1.1, "Propulsion": 0.9, "Weapons": 1.0, "Computing": 0.9, "BioTech": 1.0, "Energy": 1.0 } },
+			"Republic":     { "TechGrowthCoef": 1.1,  "AlwaysLegal": false, "GoodPriceModifiers": {}, "EquipmentShopMods": { "Hull":  1, "Engine":  1 }, "ScienceBias": { "Medicine": 1.1, "Materials": 1.0, "Propulsion": 1.1, "Weapons": 0.9, "Computing": 1.1, "BioTech": 1.0, "Energy": 1.0 } }
+		},
+		"EconomyTypes": {
+			"Agrarian": {
+				"TechGrowthCoef": 0.8,
+				"Trade": {
+					"GoodPriceModifiers": { "food": 0.6, "technics": 1.4, "minerals": 1.2 },
+					"GoodStockModifiers": { "food": 1.5 },
+					"GoodProductionDelta": {
+						"food":     5.0,
+						"alcohol":  2.0,
+						"medicine":-0.5,
+						"technics":-2.0,
+						"arms":    -1.0,
+						"minerals":-0.5,
+						"luxury":  -0.5
+					}
+				},
+				"EquipmentShopMods": { "Hull": -1, "Engine": -1, "Weapons": -1, "Shield": -1, "Droid":  1 },
+				"ScienceBias": { "Medicine": 1.2, "Materials": 0.8, "Propulsion": 0.8, "Weapons": 0.7, "Computing": 0.7, "BioTech": 1.5, "Energy": 0.8 }
+			},
+			"Industrial": {
+				"TechGrowthCoef": 1.2,
+				"Trade": {
+					"GoodPriceModifiers": { "minerals": 0.7, "technics": 0.6, "food": 1.4 },
+					"GoodStockModifiers": { "minerals": 1.5, "technics": 1.5 },
+					"GoodProductionDelta": {
+						"technics": 3.0,
+						"arms":     1.5,
+						"luxury":   1.0,
+						"minerals":-2.0,
+						"food":    -1.5,
+						"alcohol": -0.5,
+						"medicine":-0.5
+					}
+				},
+				"EquipmentShopMods": { "Hull":  1, "Engine":  1, "Weapons":  1, "Shield":  1, "FuelTank":  1 },
+				"ScienceBias": { "Medicine": 0.9, "Materials": 1.3, "Propulsion": 1.1, "Weapons": 1.2, "Computing": 1.0, "BioTech": 0.7, "Energy": 1.3 }
+			},
+			"Mixed": {
+				"TechGrowthCoef": 1.0,
+				"Trade": {
+					"GoodPriceModifiers": {},
+					"GoodStockModifiers": {},
+					"GoodProductionDelta": {
+						"food":     1.0,
+						"medicine": 0.5,
+						"technics": 1.0,
+						"alcohol":  0.5,
+						"minerals":-0.5,
+						"arms":    -0.3,
+						"luxury":  -0.2
+					}
+				},
+				"EquipmentShopMods": {},
+				"ScienceBias": { "Medicine": 1.0, "Materials": 1.0, "Propulsion": 1.0, "Weapons": 1.0, "Computing": 1.0, "BioTech": 1.0, "Energy": 1.0 }
+			}
+		},
+		"PTU": {
+			"TickMonths": 1,
+			"BaseGrowthRate": 1.0,
+			"LagBonus": 1.5,
+			"DifficultyEquipmentBonus": 1.5,
+			"Research": {
+				"ProgressPerLevel": 100
+			}
+		}
+	},
+	"Science": {
+		"Categories": ["Medicine", "Materials", "Propulsion", "Weapons", "Computing", "BioTech", "Energy"],
+		"BasePerCapita": 0.0006,
+		"MoodGrowthPerTurn": 0.5,
+		"MoodCostPerTier": 8.0,
+		"MoodSpendPerTier": 0.5,
+		"DistributeStrideTurns": 7,
+		"CreditsPerPtuLevel": 2,
+		"MainContributorThreshold": 0.4,
+		"LogDistribute": false,
+		"Inventions": {
+			"AntibioticsGen2": {
+				"DisplayName": "Антибиотики 2-го поколения",
+				"Tier": 2,
+				"Cost": { "Medicine": 250, "BioTech": 80 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Epidemic", "Multiplier": 0.6 },
+					{ "Type": "ModifyGoodPrice", "GoodId": "medicine", "Multiplier": 0.9 }
+				]
+			},
+			"AntibioticsGen3": {
+				"DisplayName": "Антибиотики 3-го поколения",
+				"Tier": 4,
+				"Prerequisites": ["AntibioticsGen2"],
+				"Cost": { "Medicine": 600, "BioTech": 180 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Epidemic", "Multiplier": 0.4 },
+					{ "Type": "ModifyGoodPrice", "GoodId": "medicine", "Multiplier": 0.85 }
+				]
+			},
+			"HighYieldFarming": {
+				"DisplayName": "Высокоурожайные культуры",
+				"Tier": 2,
+				"Cost": { "BioTech": 240, "Medicine": 60 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Famine", "Multiplier": 0.5 },
+					{ "Type": "ModifyGoodPrice", "GoodId": "food", "Multiplier": 0.9 }
+				]
+			},
+			"AdvancedMetallurgy": {
+				"DisplayName": "Продвинутая металлургия",
+				"Tier": 3,
+				"Cost": { "Materials": 350, "Energy": 100 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "minerals", "Multiplier": 0.85 }
+				]
+			},
+			"FusionReactor": {
+				"DisplayName": "Микротермоядерный реактор",
+				"Tier": 5,
+				"Prerequisites": ["AdvancedMetallurgy"],
+				"Cost": { "Energy": 700, "Materials": 200 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.9 }
+				]
+			},
+			"QuantumNavigation": {
+				"DisplayName": "Квантовая навигация",
+				"Tier": 4,
+				"Race": "Race3",
+				"Cost": { "Computing": 500, "Energy": 120 },
+				"Effects": [
+					{ "Type": "AddItemTemplate", "Category": "Radar", "TemplateId": "R_Coalition_T5", "MinTL": 4, "OwnerRaceFilter": "Race3" }
+				]
+			},
+			"BioEngineering": {
+				"DisplayName": "Биоинженерия",
+				"Tier": 5,
+				"Race": "Race2",
+				"Cost": { "BioTech": 600, "Medicine": 200 },
+				"Effects": [
+					{ "Type": "AddGood", "GoodId": "biofuel", "DisplayName": "Биотопливо", "BasePrice": 45 },
+					{ "Type": "ModifyGoodPrice", "GoodId": "alcohol", "Multiplier": 0.9 }
+				]
+			},
+			"NeuralAI": {
+				"DisplayName": "Нейронный ИИ",
+				"Tier": 6,
+				"Prerequisites": ["QuantumNavigation"],
+				"Race": "Race3",
+				"Cost": { "Computing": 900, "Energy": 250 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Unrest", "Multiplier": 0.7 },
+					{ "Type": "TriggerNews", "Message": "{planet}: запущен нейронный ИИ — рынок управленцев в шоке." }
+				]
+			},
+			"PlasmaArmor": {
+				"DisplayName": "Плазменная броня",
+				"Tier": 5,
+				"Race": "Race1",
+				"Cost": { "Materials": 600, "Weapons": 250 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "arms", "Multiplier": 1.1 }
+				]
+			},
+			"SocialReforms": {
+				"DisplayName": "Социальные реформы",
+				"Tier": 3,
+				"Cost": { "Medicine": 200, "Computing": 200 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Revolution", "Multiplier": 0.5 },
+					{ "Type": "ModifyEventChance", "EventId": "Unrest", "Multiplier": 0.7 }
+				]
+			},
+			"OrbitalAgronomy": {
+				"DisplayName": "Орбитальная агрономия",
+				"Tier": 6,
+				"Prerequisites": ["HighYieldFarming"],
+				"Cost": { "BioTech": 750, "Materials": 250 },
+				"Effects": [
+					{ "Type": "AddGood", "GoodId": "synth_food", "DisplayName": "Синтетическая еда", "BasePrice": 18 },
+					{ "Type": "RemoveGood", "GoodId": "alcohol" }
+				]
+			},
+
+			"BasicVaccines": {
+				"DisplayName": "Базовые вакцины",
+				"Tier": 1,
+				"Cost": { "Medicine": 80 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Epidemic", "Multiplier": 0.85 }
+				]
+			},
+			"GeneTherapy": {
+				"DisplayName": "Генная терапия",
+				"Tier": 6,
+				"Prerequisites": ["AntibioticsGen3", "BioEngineering"],
+				"Cost": { "Medicine": 900, "BioTech": 400, "Computing": 150 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Epidemic", "Multiplier": 0.25 },
+					{ "Type": "ModifyGoodPrice", "GoodId": "medicine", "Multiplier": 0.8 },
+					{ "Type": "TriggerNews", "Message": "{planet}: первые успешные клинические испытания генной терапии." }
+				]
+			},
+			"LongevityProtocol": {
+				"DisplayName": "Протокол долгожительства",
+				"Tier": 8,
+				"Prerequisites": ["GeneTherapy"],
+				"Cost": { "Medicine": 1500, "BioTech": 700, "Energy": 300 },
+				"Effects": [
+					{ "Type": "AddGood", "GoodId": "longevity_drugs", "DisplayName": "Препараты долгожительства", "BasePrice": 420 },
+					{ "Type": "ModifyGoodPrice", "GoodId": "luxury", "Multiplier": 1.15 }
+				]
+			},
+
+			"ImprovedAlloys": {
+				"DisplayName": "Улучшенные сплавы",
+				"Tier": 1,
+				"Cost": { "Materials": 100 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "minerals", "Multiplier": 0.95 }
+				]
+			},
+			"NanoComposites": {
+				"DisplayName": "Нанокомпозиты",
+				"Tier": 5,
+				"Prerequisites": ["AdvancedMetallurgy"],
+				"Cost": { "Materials": 700, "Computing": 200 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.9 }
+				]
+			},
+			"AdaptiveArmor": {
+				"DisplayName": "Адаптивная броня",
+				"Tier": 7,
+				"Prerequisites": ["NanoComposites", "PlasmaArmor"],
+				"Cost": { "Materials": 1100, "Weapons": 400, "Energy": 250 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "arms", "Multiplier": 1.05 },
+					{ "Type": "TriggerNews", "Message": "{planet}: новый стандарт брони — рынок переходит на «адаптив»." }
+				]
+			},
+
+			"ImprovedThrust": {
+				"DisplayName": "Оптимизация тяги",
+				"Tier": 1,
+				"Cost": { "Propulsion": 90, "Materials": 20 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.97 }
+				]
+			},
+			"IonDrive": {
+				"DisplayName": "Ионный двигатель",
+				"Tier": 3,
+				"Prerequisites": ["ImprovedThrust"],
+				"Cost": { "Propulsion": 350, "Energy": 120 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.93 }
+				]
+			},
+			"PlasmaDrive": {
+				"DisplayName": "Плазменный двигатель",
+				"Tier": 5,
+				"Prerequisites": ["IonDrive", "FusionReactor"],
+				"Cost": { "Propulsion": 700, "Energy": 250, "Materials": 150 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.88 }
+				]
+			},
+			"WarpStabilization": {
+				"DisplayName": "Стабильный варп-туннель",
+				"Tier": 8,
+				"Prerequisites": ["PlasmaDrive", "QuantumNavigation"],
+				"Cost": { "Propulsion": 1300, "Computing": 600, "Energy": 500 },
+				"Effects": [
+					{ "Type": "TriggerNews", "Message": "{planet}: первое стабильное варп-окно — эпоха быстрой связи." }
+				]
+			},
+
+			"BetterAmmo": {
+				"DisplayName": "Улучшенный боезапас",
+				"Tier": 1,
+				"Cost": { "Weapons": 100, "Materials": 30 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "arms", "Multiplier": 1.02 }
+				]
+			},
+			"GuidedMissiles": {
+				"DisplayName": "Управляемые ракеты",
+				"Tier": 3,
+				"Prerequisites": ["BetterAmmo"],
+				"Cost": { "Weapons": 350, "Computing": 100 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "arms", "Multiplier": 1.05 }
+				]
+			},
+			"RailGuns": {
+				"DisplayName": "Рельсотроны",
+				"Tier": 4,
+				"Prerequisites": ["GuidedMissiles", "AdvancedMetallurgy"],
+				"Cost": { "Weapons": 500, "Energy": 200, "Materials": 150 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "arms", "Multiplier": 1.1 }
+				]
+			},
+			"PlasmaCannons": {
+				"DisplayName": "Плазменные орудия",
+				"Tier": 6,
+				"Race": "Race1",
+				"Prerequisites": ["RailGuns", "PlasmaArmor"],
+				"Cost": { "Weapons": 850, "Energy": 350 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "arms", "Multiplier": 1.18 },
+					{ "Type": "TriggerNews", "Message": "{planet}: серийный запуск плазменных орудий — новый виток гонки вооружений." }
+				]
+			},
+
+			"NetworkProtocols": {
+				"DisplayName": "Сетевые протоколы",
+				"Tier": 2,
+				"Cost": { "Computing": 200, "Energy": 50 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.95 }
+				]
+			},
+			"DistributedAI": {
+				"DisplayName": "Распределённый ИИ",
+				"Tier": 4,
+				"Prerequisites": ["NetworkProtocols"],
+				"Cost": { "Computing": 450, "Energy": 150 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Unrest", "Multiplier": 0.8 }
+				]
+			},
+			"QuantumEncryption": {
+				"DisplayName": "Квантовая криптография",
+				"Tier": 5,
+				"Race": "Race3",
+				"Prerequisites": ["DistributedAI"],
+				"Cost": { "Computing": 650, "Materials": 100 },
+				"Effects": [
+					{ "Type": "ModifyEventChance", "EventId": "Revolution", "Multiplier": 0.7 }
+				]
+			},
+
+			"Hydroponics": {
+				"DisplayName": "Гидропоника",
+				"Tier": 1,
+				"Cost": { "BioTech": 90, "Materials": 30 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "food", "Multiplier": 0.95 }
+				]
+			},
+			"Terraforming": {
+				"DisplayName": "Терраформирование",
+				"Tier": 7,
+				"Prerequisites": ["OrbitalAgronomy", "FusionReactor"],
+				"Cost": { "BioTech": 1100, "Materials": 500, "Energy": 500 },
+				"Effects": [
+					{ "Type": "AddGood", "GoodId": "terra_kits", "DisplayName": "Терраформ-комплекты", "BasePrice": 320 },
+					{ "Type": "TriggerNews", "Message": "{planet}: запуск первого промышленного терраформ-комплекта." }
+				]
+			},
+
+			"SolarPanels": {
+				"DisplayName": "Солнечные панели",
+				"Tier": 1,
+				"Cost": { "Energy": 100, "Materials": 30 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.97 }
+				]
+			},
+			"BatteryDensity": {
+				"DisplayName": "Высокая ёмкость накопителей",
+				"Tier": 3,
+				"Prerequisites": ["SolarPanels"],
+				"Cost": { "Energy": 350, "Materials": 100 },
+				"Effects": [
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.92 }
+				]
+			},
+			"AntimatterContainment": {
+				"DisplayName": "Удержание антиматерии",
+				"Tier": 8,
+				"Prerequisites": ["FusionReactor", "QuantumEncryption"],
+				"Cost": { "Energy": 1500, "Materials": 600, "Computing": 400 },
+				"Effects": [
+					{ "Type": "AddGood", "GoodId": "antimatter_cell", "DisplayName": "Антиматерия", "BasePrice": 800 },
+					{ "Type": "ModifyGoodPrice", "GoodId": "technics", "Multiplier": 0.85 },
+					{ "Type": "TriggerNews", "Message": "{planet}: антиматерия впервые удержана в промышленном масштабе." }
+				]
+			}
+		}
+	},
+	"Satellites": {
+		"Sizes": {
+			"Tiny": { "BaseScale": 0.125  },
+			"Mid":  { "BaseScale": 0.1875 },
+			"Big":  { "BaseScale": 0.25   }
+		}
+	},
+	"Asteroids": {
+		"SpawnChancePerTurn": 0.3,
+		"GravityConst": 500.0,
+		"DampingConstant": 10000.0,
+		"Types": {
+			"Rocky": {
+				"Name": "Каменный",
+				"MassMin": 50.0,
+				"MassMax": 200.0,
+				"SpeedMin": 1.5,
+				"SpeedMax": 4.0,
+				"SelfRotationSpeedMin": 20.0,
+				"SelfRotationSpeedMax": 120.0,
+				"CollisionRadius": 0.3,
+				"GraphicPath": "Graphics/SpaceObjects/Asteroids/Rocky",
+				"CommonMineralChance": 0.9,
+				"PreciousMineralChance": 0.05,
+				"MineralDropMin": 1,
+				"MineralDropMax": 50,
+				"EquipmentDropChance": 0.02,
+				"SpawnWeight": 70
+			},
+			"Metallic": {
+				"Name": "Металлический",
+				"MassMin": 100.0,
+				"MassMax": 400.0,
+				"SpeedMin": 1.0,
+				"SpeedMax": 3.0,
+				"SelfRotationSpeedMin": 10.0,
+				"SelfRotationSpeedMax": 60.0,
+				"CollisionRadius": 0.4,
+				"GraphicPath": "Graphics/SpaceObjects/Asteroids/Metallic",
+				"CommonMineralChance": 0.6,
+				"PreciousMineralChance": 0.3,
+				"MineralDropMin": 5,
+				"MineralDropMax": 80,
+				"EquipmentDropChance": 0.1,
+				"SpawnWeight": 30
+			}
+		}
+	},
+	"Ships": {
+		"Owners": {
+			"Coalition":  { "DefaultInternalRelation": 100, "Color": "46,204,113", "ColorPriority": false, "SeparateRaceDomination": true,  "DialogCluster": "Coalition" },
+			"Pirates":    { "DefaultInternalRelation": 100, "Color": "255,140,0",  "ColorPriority": true,  "SeparateRaceDomination": false, "DialogCluster": "Coalition" },
+			"Dominators": { "DefaultInternalRelation": 0,   "Color": "170,0,255",  "ColorPriority": true,  "SeparateRaceDomination": false, "DialogCluster": "Dominators" },
+			"Alliance":   { "DefaultInternalRelation": 100, "Color": "120,200,255","ColorPriority": false, "SeparateRaceDomination": true,  "DialogCluster": "Coalition" },
+			"Threat":     { "DefaultInternalRelation": 0,   "Color": "220,40,60",  "ColorPriority": true,  "SeparateRaceDomination": false, "DialogCluster": "Dominators" },
+			"None":       { "DefaultInternalRelation": 100, "Color": null,        "ColorPriority": false}
+		},
+		"PersonalityProfiles": {
+			"Military":  { "Aggression": [40, 70],  "Caution": [20, 50],  "Greed": [0, 20],   "Discipline": [70, 100],  "Tribalism": [40, 80], "Vendetta": [30, 60] },
+			"Pirate":    { "Aggression": [60, 95],  "Caution": [40, 80],  "Greed": [50, 90],  "Discipline": [10, 50],   "Tribalism": [20, 60], "Vendetta": [20, 70] },
+			"Trader":    { "Aggression": [0, 30],   "Caution": [60, 100], "Greed": [60, 100], "Discipline": [40, 80],   "Tribalism": [30, 70], "Vendetta": [0, 30] },
+			"Drone":     { "Aggression": [0, 20],   "Caution": [40, 70],  "Greed": [0, 10],   "Discipline": [90, 100],  "Tribalism": [50, 80], "Vendetta": [0, 10] },
+			"Dominator": { "Aggression": [95, 100], "Caution": [0, 0],    "Greed": [0, 0],    "Discipline": [100, 100], "Tribalism": [80, 100], "Vendetta": [90, 100] },
+			"Default":   { "Aggression": [30, 70],  "Caution": [30, 70],  "Greed": [20, 60],  "Discipline": [30, 70],   "Tribalism": [30, 70], "Vendetta": [30, 70] }
+		},
+		"ShipTypes": {
+			"Ranger": {
+				"DisplayName": "Рейнджер",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Mercenary",
+				"Personality": "Default",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_R_T1",
+					"Engine":  "E_Coalition_T7",
+					"FuelTank":"FT_Coalition_T1",
+					"Radar":   "R_Coalition_T1",
+					"Scanner": "SC_Coalition_T1",
+					"BoardingHook": "BH_Coalition_T1",
+					"TowingRig":    "TR_Coalition_T1",
+					"CargoGrabber": "CG_Coalition_T4",
+					"Forsage":"AB_Coalition_T4"
+				},
+				"StarterWeapons": ["W_Laser","W_Rocket","W_Torpedo"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Warrior": {
+				"DisplayName": "Военный",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Military",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_W_T2",
+					"Engine":  "E_Coalition_T2",
+					"FuelTank":"FT_Coalition_T1",
+					"Radar":   "R_Coalition_T1",
+					"Scanner": "SC_Coalition_T1",
+					"Shield":  "SH_Coalition_T2"
+				},
+				"StarterWeapons": ["W_Cannon"],
+				"BaseSkills": [3, 3, 2, 2, 2, 3]
+			},
+			"Linkor": {
+				"DisplayName": "Линкор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Military",
+				"CanBeLandedOn": true,
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_BW_T3",
+					"Engine":  "E_Coalition_T3",
+					"FuelTank":"FT_Coalition_T2",
+					"Radar":   "R_Coalition_T2",
+					"Scanner": "SC_Coalition_T1",
+					"Shield":  "SH_Coalition_T3"
+				},
+				"StarterWeapons": ["W_Rocket"],
+				"BaseSkills": [3, 2, 3, 2, 2, 3]
+			},
+			"Transport": {
+				"DisplayName": "Транспорт",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Civilian",
+				"Personality": "Trader",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_T_T1",
+					"Engine":  "E_Coalition_T1",
+					"FuelTank":"FT_Coalition_T3",
+					"Radar":   "R_Coalition_T1",
+					"Scanner": "SC_Coalition_T1"
+				},
+				"StarterWeapons": ["W_Rocket"],
+				"BaseSkills": [2, 2, 2, 3, 3, 2]
+			},
+			"Liner": {
+				"DisplayName": "Лайнер",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Civilian",
+				"Personality": "Trader",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_L_T1",
+					"Engine":  "E_Coalition_T1",
+					"FuelTank":"FT_Coalition_T2",
+					"Radar":   "R_Coalition_T1",
+					"Scanner": "SC_Coalition_T1",
+					"Shield":  "SH_Coalition_T1"
+				},
+				"StarterWeapons": ["W_Laser"],
+				"BaseSkills": [2, 2, 2, 3, 3, 2]
+			},
+			"Diplomat": {
+				"DisplayName": "Дипломат",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Civilian",
+				"Personality": "Trader",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_D_T2",
+					"Engine":  "E_Coalition_T2",
+					"FuelTank":"FT_Coalition_T2",
+					"Radar":   "R_Coalition_T1",
+					"Scanner": "SC_Coalition_T2",
+					"Shield":  "SH_Coalition_T2"
+				},
+				"StarterWeapons": ["W_Rocket"],
+				"BaseSkills": [2, 2, 2, 2, 3, 3]
+			},
+			"Pirate": {
+				"DisplayName": "Пират",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Pirate",
+				"Personality": "Pirate",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_P_T2",
+					"Engine":  "E_Coalition_T2",
+					"FuelTank":"FT_Coalition_T1",
+					"Radar":   "R_Coalition_T1",
+					"Scanner": "SC_Coalition_T1"
+				},
+				"StarterWeapons": ["W_Rocket"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Drone": {
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Civilian",
+				"Personality": "Drone",
+				"IsDrone": true,
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_R_T1",
+					"Engine":  "E_Coalition_T7",
+					"FuelTank":"FT_Coalition_T1",
+					"Radar":   "R_Coalition_T1",
+					"Scanner": "SC_Coalition_T1",
+					"CargoGrabber": "CG_Coalition_T4"
+				},
+				"StarterWeapons": ["W_Laser"],
+				"BaseSkills": [2, 3, 2, 1, 1, 1]
+			},
+			"Dom1": {
+				"DisplayName": "Доминатор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Dominator",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Dom1_T1",
+					"Engine":  "E_Dominators_T1",
+					"FuelTank":"FT_Dominators_T1",
+					"Radar":   "R_Dominators_T1",
+					"Scanner": "SC_Dominators_T1",
+					"Shield":  "SH_Dominators_T1"
+				},
+				"StarterWeapons": ["W_ChainBolt"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Dom2": {
+				"DisplayName": "Доминатор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Dominator",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Dom2_T2",
+					"Engine":  "E_Dominators_T2",
+					"FuelTank":"FT_Dominators_T2",
+					"Radar":   "R_Dominators_T2",
+					"Scanner": "SC_Dominators_T2",
+					"Shield":  "SH_Dominators_T2"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Cannon", "W_Rocket"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Dom3": {
+				"DisplayName": "Доминатор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Dominator",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Dom3_T3",
+					"Engine":  "E_Dominators_T3",
+					"FuelTank":"FT_Dominators_T3",
+					"Radar":   "R_Dominators_T3",
+					"Scanner": "SC_Dominators_T3",
+					"Shield":  "SH_Dominators_T3"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Laser"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Dom4": {
+				"DisplayName": "Доминатор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Dominator",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Dom4_T4",
+					"Engine":  "E_Dominators_T4",
+					"FuelTank":"FT_Dominators_T4",
+					"Radar":   "R_Dominators_T4",
+					"Scanner": "SC_Dominators_T4",
+					"Shield":  "SH_Dominators_T4"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Cannon", "W_Laser"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Dom5": {
+				"DisplayName": "Доминатор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Dominator",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Dom5_T5",
+					"Engine":  "E_Dominators_T5",
+					"FuelTank":"FT_Dominators_T5",
+					"Radar":   "R_Dominators_T5",
+					"Scanner": "SC_Dominators_T5",
+					"Shield":  "SH_Dominators_T5"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_Cannon", "W_Rocket"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Dom6": {
+				"DisplayName": "Доминатор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Dominator",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Dom6_T6",
+					"Engine":  "E_Dominators_T6",
+					"FuelTank":"FT_Dominators_T6",
+					"Radar":   "R_Dominators_T6",
+					"Scanner": "SC_Dominators_T6",
+					"Shield":  "SH_Dominators_T6"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Cannon", "W_Rocket"],
+				"BaseSkills": [3, 3, 2, 2, 2, 2]
+			},
+			"Dom7": {
+				"DisplayName": "Доминатор",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
+				"CombatClass": "Military",
+				"Personality": "Dominator",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Dom7_T7",
+					"Engine":  "E_Dominators_T7",
+					"FuelTank":"FT_Dominators_T7",
+					"Radar":   "R_Dominators_T7",
+					"Scanner": "SC_Dominators_T7",
+					"Shield":  "SH_Dominators_T7"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Cannon", "W_Rocket", "W_PiercingRailgun"],
+				"BaseSkills": [4, 4, 3, 3, 3, 3]
+			},
+
+			"Station_BK": {
+				"DisplayName": "Бизнес-центр",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/BK",
+				"CombatClass": "Civilian",
+				"Personality": "Trader",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_BK_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Rocket", "W_Laser"],
+				"BaseSkills": [2, 1, 3, 4, 3, 2]
+			},
+			"Station_CB": {
+				"DisplayName": "Боевая станция",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/CB",
+				"CombatClass": "Military",
+				"Personality": "Military",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_CB_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Cannon", "W_Rocket", "W_PiercingRailgun", "W_Torpedo", "W_Laser"],
+				"BaseSkills": [4, 1, 3, 2, 2, 3]
+			},
+			"Station_MC": {
+				"DisplayName": "Медцентр",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/MC",
+				"CombatClass": "Civilian",
+				"Personality": "Default",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_MC_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Laser", "W_Rocket"],
+				"BaseSkills": [2, 1, 4, 2, 3, 2]
+			},
+			"Station_PB": {
+				"DisplayName": "Перевалочная база",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/PB",
+				"CombatClass": "Civilian",
+				"Personality": "Trader",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_PB_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Rocket", "W_Cannon", "W_Torpedo"],
+				"BaseSkills": [2, 1, 3, 4, 3, 2]
+			},
+			"Station_RC": {
+				"DisplayName": "Ремонтный комплекс",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/RC",
+				"CombatClass": "Civilian",
+				"Personality": "Default",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_RC_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Rocket", "W_Laser"],
+				"BaseSkills": [2, 1, 4, 3, 2, 2]
+			},
+			"Station_RG": {
+				"DisplayName": "Радарный узел",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/RG",
+				"CombatClass": "Civilian",
+				"Personality": "Default",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_RG_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Laser", "W_Rocket"],
+				"BaseSkills": [3, 1, 4, 2, 2, 2]
+			},
+			"Station_WB": {
+				"DisplayName": "Военная база",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/WB",
+				"CombatClass": "Military",
+				"Personality": "Military",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_WB_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Cannon", "W_Rocket", "W_PiercingRailgun", "W_Torpedo", "W_Laser"],
+				"BaseSkills": [4, 1, 3, 2, 2, 3]
+			},
+			"Station_SB": {
+				"DisplayName": "Научная база",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/SB",
+				"CombatClass": "Civilian",
+				"Personality": "Default",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Coalition_SB_T<GTU>",
+					"Radar":   "R_Coalition_T<GTU>",
+					"Scanner": "SC_Coalition_T<GTU>",
+					"Shield":  "SH_Coalition_T<GTU>",
+					"CargoGrabber": "CG_Coalition_T<GTU>"
+				},
+				"StarterWeapons": ["W_Laser", "W_Rocket"],
+				"BaseSkills": [2, 1, 4, 2, 3, 2]
+			},
+			"Station_Blazer": {
+				"DisplayName": "Станция блэйзеров",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Blazer",
+				"CombatClass": "Military",
+				"Personality": "Military",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Blazer_T<GTU>",
+					"Radar":   "R_Dominators_T<GTU>",
+					"Scanner": "SC_Dominators_T<GTU>",
+					"Shield":  "SH_Dominators_T<GTU>",
+					"CargoGrabber": "CG_Dominators_T<GTU>"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Cannon", "W_Rocket", "W_PiercingRailgun"],
+				"BaseSkills": [4, 1, 4, 1, 1, 4]
+			},
+			"Station_Keller": {
+				"DisplayName": "Станция келлероидов",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Keller",
+				"CombatClass": "Military",
+				"Personality": "Military",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Keller_T<GTU>",
+					"Radar":   "R_Dominators_T<GTU>",
+					"Scanner": "SC_Dominators_T<GTU>",
+					"Shield":  "SH_Dominators_T<GTU>",
+					"CargoGrabber": "CG_Dominators_T<GTU>"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Cannon", "W_Rocket", "W_PiercingRailgun"],
+				"BaseSkills": [4, 1, 4, 1, 1, 4]
+			},
+			"Station_Terron": {
+				"DisplayName": "Станция терроноидов",
+				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Terron",
+				"CombatClass": "Military",
+				"Personality": "Military",
+				"Animations": {},
+				"Thrusters": [],
+				"StarterKit": {
+					"Hull":    "Hull_Dominators_Terron_T<GTU>",
+					"Radar":   "R_Dominators_T<GTU>",
+					"Scanner": "SC_Dominators_T<GTU>",
+					"Shield":  "SH_Dominators_T<GTU>",
+					"CargoGrabber": "CG_Dominators_T<GTU>"
+				},
+				"StarterWeapons": ["W_GravBomb", "W_ChainBolt", "W_Cannon", "W_Rocket", "W_PiercingRailgun"],
+				"BaseSkills": [4, 1, 4, 1, 1, 4]
+			}
+		}
+	},
+	"CustomProperties": {
+		"Stars": {
+			"isCustom": {
+				"Values": ["Yes", "No"],
+				"Default": "No"
+			},
+			"isDwarf": {
+				"Values": ["No", "Yes"],
+				"Default": {
+					"Type": { "Dwarf": "Yes" }
+				}
+			},
+			"Habitable": {
+				"Values": ["Yes", "Colony", "No"],
+				"Default": [
+					{ "Conditions": { "Color": ["Red", "White"], "Type": ["Dwarf"] }, "Result": "Yes"    },
+					{ "Conditions": { "Color": ["Red", "White"], "Type": ["Small"] }, "Result": "Colony" },
+					{ "Conditions": { "Color": ["Red", "White"] },                   "Result": "No"     },
+					{ "Conditions": { "Color": ["Green"], "Type": ["Dwarf"] },        "Result": "Colony" },
+					{ "Conditions": { "Color": ["Green"] },                           "Result": "No"     },
+					{ "Conditions": { "Color": ["Black"] },                           "Result": "No"     },
+					{ "Conditions": { "Type": ["Dwarf"] },                            "Result": "Random" },
+					{ "Conditions": { "Type": ["Small"] },                            "Result": "Random" },
+					{ "Conditions": {},                                               "Result": "No"     }
+				]
+			}
+		},
+		"Planets": {
+			"Size": {
+				"Values": ["Small", "Big"],
+				"Default": {
+					"Type": {
+						"Rocky":    "Small",
+						"GasGiant": "Big"
+					}
+				}
+			},
+			"isFirst": {
+				"Values": ["No", "Yes"],
+				"Default": {
+					"OrbitIndex": { "1": "Yes" }
+				}
+			}
+		}
+	},
+	"Explosion": {
+		"Duration": 0.7,
+		"FPS": 12,
+		"Scale": 1.5
+	},
+	"PlanetUI": {
+		"NavBarWidth": 130,
+		"ButtonHeight": 52,
+		"ButtonSpacing": 8,
+		"TitleBarHeight": 42,
+		"BottomBarHeight": 48,
+		"BackgroundAlpha": 0.97,
+		"SkipTurnButtonLabel": "Пропустить ход",
+		"LeavePlanetButtonLabel": "Взлететь",
+		"DialogButtonLabel": "Правительство",
+		"Screens": {
+			"Overview":   { "Title": "Планета",       "BgPath": null },
+			"Hangar":     { "Title": "Ангар",         "BgPath": null },
+			"GoodsShop":  { "Title": "Магазин",       "BgPath": null },
+			"EquipShop":  { "Title": "Оборудование",  "BgPath": null },
+			"InfoCenter": { "Title": "Инфо-центр",    "BgPath": null }
+		},
+		"NavButtons": [
+			{ "Id": "Overview",   "Label": "Планета"       },
+			{ "Id": "Hangar",     "Label": "Ангар"         },
+			{ "Id": "GoodsShop",  "Label": "Магазин"       },
+			{ "Id": "EquipShop",  "Label": "Оборудование"  },
+			{ "Id": "InfoCenter", "Label": "Инфо-центр"    }
+		]
+	},
+	"LandingUI": {
+		"Profiles": {
+			"Planet": {
+				"InitialScreen": "Overview",
+				"DialogButtonLabel": "Правительство",
+				"NavButtons": [
+					{ "Id": "Overview",   "Label": "Планета"      },
+					{ "Id": "Hangar",     "Label": "Ангар"        },
+					{ "Id": "GoodsShop",  "Label": "Магазин"      },
+					{ "Id": "EquipShop",  "Label": "Оборудование" },
+					{ "Id": "InfoCenter", "Label": "Инфо-центр"   }
+				],
+				"ScreenTitles": {
+					"Overview": "Планета"
+				}
+			},
+			"Station": {
+				"InitialScreen": "Overview",
+				"DialogButtonLabel": "Командование станции",
+				"NavButtons": [
+					{ "Id": "Overview",   "Label": "Командование" },
+					{ "Id": "Hangar",     "Label": "Ангар"        },
+					{ "Id": "GoodsShop",  "Label": "Магазин"      },
+					{ "Id": "EquipShop",  "Label": "Оборудование" },
+					{ "Id": "InfoCenter", "Label": "Инфо-центр"   }
+				],
+				"ScreenTitles": {
+					"Overview": "Командование станции"
+				}
+			},
+			"Carrier": {
+				"InitialScreen": "Hangar",
+				"DialogButtonLabel": "Капитанский мостик",
+				"NavButtons": [
+					{ "Id": "Hangar", "Label": "Ангар" }
+				],
+				"ScreenTitles": {
+					"Hangar": "Ангар"
+				}
+			}
+		},
+		"HullOverrides": {
+			"SB": {
+				"ExtraNavButtons": [
+					{ "Id": "SbImprovement", "Label": "Улучшение" }
+				]
+			}
+		}
+	},
+	"Spawn": {
+		"Domination": {
+			"SideThreshold": 0.75,
+			"RaceCoefficient": 0.75,
+			"Tiers": [
+				{ "Name": "0-25",   "Min": 0.00, "Max": 0.25 },
+				{ "Name": "25-50",  "Min": 0.25, "Max": 0.50 },
+				{ "Name": "50-75",  "Min": 0.50, "Max": 0.75 },
+				{ "Name": "75-100", "Min": 0.75, "Max": 1.01 }
+			]
+		},
+		"InitialDistribution": {
+			"PerHabitablePlanet": { "Transport": 1, "Liner": 1, "Diplomat": 1, "Warrior": 2 },
+			"PerSystem":          { "Ranger": 1, "Pirate": 1 },
+			"PerSector":          { "Linkor": 1 }
+		},
+		"DefaultPolicy": {
+			"Model": "TopUpPerPlanet",
+			"BaseChance": 0,
+			"BaseTarget": 0
+		},
+		"Policies": {
+			"Transport": {
+				"Model": "TopUpPerPlanet",
+				"BaseChance": 0.05,
+				"TargetByRace": { "Race1": 4, "Race2": 3, "Race3": 3, "Race4": 4, "Race5": 2, "Race6": 3, "Race7": 3 },
+				"EconomyBonus": { "Industrial": 1 },
+				"AllowedOwners": ["Coalition", "Alliance"],
+				"StartingMoney": 2000
+			},
+			"Liner": {
+				"Model": "TopUpPerPlanet",
+				"BaseChance": 0.03,
+				"TargetByRace": { "Race1": 2, "Race2": 2, "Race3": 1, "Race4": 2, "Race5": 1, "Race6": 2, "Race7": 2 },
+				"AllowedOwners": ["Coalition", "Alliance"],
+				"StartingMoney": 1500
+			},
+			"Diplomat": {
+				"Model": "TopUpPerPlanet",
+				"BaseChance": 0.02,
+				"TargetByRace": { "Race1": 2, "Race2": 1, "Race3": 1, "Race4": 2, "Race5": 1, "Race6": 1, "Race7": 1 },
+				"AllowedOwners": ["Coalition", "Alliance"],
+				"StartingMoney": 1000
+			},
+			"Warrior": {
+				"Model": "TopUpPerPlanet",
+				"BaseChance": 0.015,
+				"BaseTarget": 2,
+				"RadiusBonus": { "Small": 0, "Medium": 1, "Large": 2 },
+				"GovernmentBonus": {
+					"Dictatorship": 1,
+					"Monarchy": 1,
+					"Republic": 0,
+					"Democracy": 0,
+					"Socialism": 0,
+					"Anarchy": -1
+				},
+				"UseFleetSizeModifier": true,
+				"AllowedOwners": ["Coalition", "Alliance"],
+				"StartingMoney": 300
+			},
+			"Ranger": {
+				"Model": "TopUpPerGalaxy",
+				"BaseChance": 0.04,
+				"TargetFromNormalsMultiplier": 1.5,
+				"TargetGlobalCap": 60,
+				"SpawnLocation": "CoalitionPlanet",
+				"StartingMoney": 1000
+			},
+			"Pirate": {
+				"Model": "TopUpPerGalaxy",
+				"BaseChance": 0.05,
+				"TargetFromNormalsMultiplier": 0.3,
+				"CrimeMultiplier": { "Divisor": 50, "Min": 0.5, "Max": 2.0 },
+				"SpawnLocation": "CoalitionPlanet",
+				"StartingMoney": 500
+			},
+			"Linkor": {
+				"Model": "TopUpPerSector",
+				"BaseChance": 0.005,
+				"BaseTarget": 1,
+				"SpawnLocation": "SectorCapital",
+				"AllowedOwners": ["Coalition", "Alliance"],
+				"StartingMoney": 1500
+			},
+			"Dominator": {
+				"Model": "TopUpPerStar",
+				"BaseChance": 0.10,
+				"TargetByRace": { "RaceDominators1": 13, "RaceDominators2": 12, "RaceDominators3": 10, "RaceThreat1": 14 },
+				"SpawnLocation": "ClingStar",
+				"AllowedOwners": ["Dominators", "Threat"],
+				"StartingMoney": 0
+			}
+		},
+		"SubtypeTables": {
+			"RaceDominators1": {
+				"0-25":   { "Dom1": 15, "Dom2": 25, "Dom3": 25, "Dom4": 20, "Dom5": 10, "Dom6": 5 },
+				"25-50":  { "Dom1": 10, "Dom2": 20, "Dom3": 25, "Dom4": 25, "Dom5": 15, "Dom6": 5 },
+				"50-75":  { "Dom1": 5,  "Dom2": 15, "Dom3": 20, "Dom4": 25, "Dom5": 25, "Dom6": 10 },
+				"75-100": { "Dom1": 0,  "Dom2": 5,  "Dom3": 15, "Dom4": 20, "Dom5": 30, "Dom6": 30 }
+			},
+			"RaceDominators2": {
+				"0-25":   { "Dom1": 20, "Dom2": 25, "Dom3": 25, "Dom4": 15, "Dom5": 10, "Dom6": 5 },
+				"25-50":  { "Dom1": 12, "Dom2": 22, "Dom3": 25, "Dom4": 22, "Dom5": 14, "Dom6": 5 },
+				"50-75":  { "Dom1": 5,  "Dom2": 15, "Dom3": 20, "Dom4": 25, "Dom5": 25, "Dom6": 10 },
+				"75-100": { "Dom1": 0,  "Dom2": 5,  "Dom3": 15, "Dom4": 20, "Dom5": 30, "Dom6": 30 }
+			},
+			"RaceDominators3": {
+				"0-25":   { "Dom1": 10, "Dom2": 20, "Dom3": 30, "Dom4": 20, "Dom5": 15, "Dom6": 5 },
+				"25-50":  { "Dom1": 8,  "Dom2": 17, "Dom3": 27, "Dom4": 25, "Dom5": 18, "Dom6": 5 },
+				"50-75":  { "Dom1": 4,  "Dom2": 12, "Dom3": 22, "Dom4": 25, "Dom5": 27, "Dom6": 10 },
+				"75-100": { "Dom1": 0,  "Dom2": 5,  "Dom3": 15, "Dom4": 22, "Dom5": 28, "Dom6": 30 }
+			},
+			"RaceThreat1": {
+				"0-25":   { "Dom1": 15, "Dom2": 25, "Dom3": 25, "Dom4": 20, "Dom5": 10, "Dom6": 5 },
+				"25-50":  { "Dom1": 10, "Dom2": 20, "Dom3": 25, "Dom4": 25, "Dom5": 15, "Dom6": 5 },
+				"50-75":  { "Dom1": 5,  "Dom2": 15, "Dom3": 20, "Dom4": 25, "Dom5": 25, "Dom6": 10 },
+				"75-100": { "Dom1": 0,  "Dom2": 5,  "Dom3": 15, "Dom4": 20, "Dom5": 30, "Dom6": 30 }
+			}
+		}
+	}
+}

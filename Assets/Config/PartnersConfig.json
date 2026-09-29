@@ -1,0 +1,44 @@
+{
+  "Global": {
+    "BasePrice": 5000,
+    "MinFeeRatio": 0.3,
+    "AttitudePerLeadership": 2.0,
+    "CharmFeeReductionMax": 0.5,
+    "MaxPartnersBase": 0,
+    "MaxPartnersPerLeadership": 1.0,
+    "RiotBaseThreshold": 30,
+    "RiotDisciplineScale": 0.3,
+    "LoyaltyCheckPeriodTurns": 5,
+    "TurnsPerYear": 365
+  },
+  "PartnerableShipTypes": {
+    "Ranger": {
+      "PriceMultiplier": 1.2,
+      "PowerRatio": 1.5,
+      "BaseAttitudeRequired": 55,
+      "ContractTermYears": 2,
+      "Requires": {}
+    },
+    "Pirate": {
+      "PriceMultiplier": 1.0,
+      "PowerRatio": 1.2,
+      "BaseAttitudeRequired": 40,
+      "ContractTermYears": 1,
+      "Requires": {}
+    },
+    "Transport": {
+      "PriceMultiplier": 0.8,
+      "PowerRatio": 2.0,
+      "BaseAttitudeRequired": 60,
+      "ContractTermYears": 5,
+      "Requires": {}
+    },
+    "Warrior": {
+      "PriceMultiplier": 1.5,
+      "PowerRatio": 1.3,
+      "BaseAttitudeRequired": 65,
+      "ContractTermYears": 3,
+      "Requires": {}
+    }
+  }
+}

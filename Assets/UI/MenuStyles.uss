@@ -1,0 +1,570 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MenuStyles.uss
+   Общие стили для главного меню и меню настроек.
+   Путь: Assets/UI/MenuStyles.uss
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── ПЕРЕМЕННЫЕ (USS custom properties через class-переопределения) ─────────
+   UI Toolkit не поддерживает CSS var(), поэтому цвета вынесены
+   как именованные константы в комментариях и используются напрямую.
+
+   --bg:        #04060D
+   --accent:    #00D4FF
+   --text:      #C8DDF0
+   --text-dim:  #4A6A88
+   --border:    rgba(0,212,255,0.2)   → #336680 с opacity
+   --danger:    #FF4060
+   --ok:        #00FFAA
+*/
+
+/* ── ROOT ────────────────────────────────────────────────────────────────── */
+
+.root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: #04060D;
+    overflow: hidden;
+}
+
+/* ── SCANLINES ───────────────────────────────────────────────────────────── */
+
+.scanlines {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    /* В USS нельзя repeating-gradient — рисуется через C# (StarfieldElement) */
+    /* Здесь оставляем как placeholder для тонкого затемнения */
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ── PLANET (главное меню) ───────────────────────────────────────────────── */
+
+.planet {
+    position: absolute;
+    right: -120px;
+    top: 50%;
+    translate: 0 -50%;
+    width: 680px;
+    height: 680px;
+    border-radius: 340px;           /* USS: border-radius в px, не % */
+    background-color: #0D1F3C;
+    /* Градиент: USS поддерживает только linear/radial без repeat */
+    /* Планета рисуется как VisualElement с кастомным фоном через C# или Painter2D */
+}
+
+.planet-glow {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    border-radius: 340px;
+    background-color: rgba(0, 212, 255, 0.03);
+}
+
+/* ── HUD CORNER ──────────────────────────────────────────────────────────── */
+
+.hud-corner {
+    position: absolute;
+    left: 32px;
+    top: 32px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.hud-line {
+    height: 1px;
+    margin-bottom: 4px;
+    background-color: #00D4FF;
+}
+
+.hud-line--l { width: 120px; opacity: 1.0; }
+.hud-line--m { width: 80px;  opacity: 0.5; }
+.hud-line--s { width: 40px;  opacity: 0.25; }
+
+.hud-label {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #4A6A88;
+    letter-spacing: 3px;
+    -unity-font-style: normal;
+}
+
+/* ── HUD BOTTOM ──────────────────────────────────────────────────────────── */
+
+.hud-bottom {
+    position: absolute;
+    right: 36px;
+    bottom: 28px;
+    align-items: flex-end;
+}
+
+.hud-coords {
+    font-size: 10px;
+    color: #4A6A88;
+    letter-spacing: 2px;
+}
+
+/* ── MAIN PANEL ──────────────────────────────────────────────────────────── */
+
+.panel {
+    position: absolute;
+    left: 10%;
+    top: 0; bottom: 0;
+    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* ── LOGO ────────────────────────────────────────────────────────────────── */
+
+.logo {
+    flex-direction: column;
+    margin-bottom: 52px;
+}
+
+.logo-title-row {
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.logo-title {
+    font-size: 56px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    letter-spacing: 6px;
+    /* Свечение через outline/shadow не поддерживается в USS напрямую.
+       Добавляем через Painter2D в StarfieldElement или оставляем без glow. */
+}
+
+.logo-title--accent {
+    color: #00D4FF;
+}
+
+.logo-sub {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #4A6A88;
+    letter-spacing: 4px;
+}
+
+/* ── MENU LIST ───────────────────────────────────────────────────────────── */
+
+.menu-list {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 360px;
+}
+
+/* ── MENU BUTTON ─────────────────────────────────────────────────────────── */
+
+.menu-btn {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(0,0,0,0);
+    border-color: rgba(0,0,0,0);
+    border-width: 0;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 212, 255, 0.06);
+    padding: 18px 36px 18px 0;
+    width: 100%;
+    cursor: link;
+    /* USS не поддерживает box-shadow, glow делаем через C# transition */
+    transition: border-bottom-color 0.25s;
+}
+
+.menu-btn:hover {
+    background-color: rgba(0, 212, 255, 0.03);
+    border-bottom-color: rgba(0, 212, 255, 0.2);
+}
+
+.menu-btn:active {
+    background-color: rgba(0, 212, 255, 0.06);
+}
+
+/* Вертикальная полоска слева (btn-bar) */
+.btn-bar {
+    width: 3px;
+    height: 0;
+    background-color: #00D4FF;
+    margin-right: 18px;
+    flex-shrink: 0;
+    transition: height 0.2s;
+}
+
+.menu-btn:hover .btn-bar {
+    height: 28px;
+}
+
+.menu-btn--danger:hover .btn-bar {
+    background-color: #FF4060;
+}
+
+/* Иконка */
+.btn-icon {
+    font-size: 16px;
+    color: #4A6A88;
+    width: 22px;
+    -unity-text-align: middle-center;
+    margin-right: 14px;
+    transition: color 0.2s;
+}
+
+.menu-btn:hover .btn-icon {
+    color: #C8DDF0;
+    translate: 3px 0;
+}
+
+.menu-btn--danger:hover .btn-icon {
+    color: #FF4060;
+}
+
+/* Текст кнопки */
+.btn-label {
+    font-size: 13px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    color: #4A6A88;
+    transition: color 0.2s;
+}
+
+.menu-btn:hover .btn-label {
+    color: #FFFFFF;
+}
+
+.menu-btn--danger:hover .btn-label {
+    color: #FF4060;
+}
+
+/* ── VERSION ─────────────────────────────────────────────────────────────── */
+
+.version-label {
+    margin-top: 48px;
+    font-size: 10px;
+    color: #4A6A88;
+    letter-spacing: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SETTINGS MENU
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── SETTINGS PANEL ──────────────────────────────────────────────────────── */
+
+.settings-panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    width: 720px;
+    height: 640px;
+    max-height: 90%;
+    flex-direction: column;
+    background-color: rgba(8, 18, 36, 0.95);
+    border-width: 1px;
+    border-color: rgba(0, 212, 255, 0.15);
+    padding: 0;
+    overflow: hidden;
+}
+
+/* ── SETTINGS HEADER ─────────────────────────────────────────────────────── */
+
+.s-header {
+    flex-direction: column;
+    flex-shrink: 0;
+    padding: 24px 28px 16px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 212, 255, 0.15);
+}
+
+.s-header-title-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.s-title {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    letter-spacing: 4px;
+    margin-right: 12px;
+}
+
+.s-title-sep {
+    font-size: 20px;
+    color: #00D4FF;
+    letter-spacing: 2px;
+}
+
+.s-subtitle {
+    margin-top: 4px;
+    font-size: 10px;
+    color: #4A6A88;
+    letter-spacing: 3px;
+}
+
+.s-header-line {
+    height: 1px;
+    background-color: rgba(0, 212, 255, 0.08);
+    margin-top: 16px;
+}
+
+/* ── SETTINGS SCROLL ─────────────────────────────────────────────────────── */
+
+.settings-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    padding: 0 28px;
+}
+
+/* Кастомизация скроллбара */
+.settings-scroll > .unity-scroll-view__vertical-scroller {
+    width: 4px;
+    background-color: rgba(0,0,0,0);
+}
+
+.settings-scroll > .unity-scroll-view__vertical-scroller > .unity-base-slider__tracker {
+    background-color: rgba(0, 212, 255, 0.08);
+    border-radius: 2px;
+}
+
+.settings-scroll > .unity-scroll-view__vertical-scroller > .unity-base-slider__dragger {
+    background-color: #0057A8;
+    border-radius: 2px;
+    border-width: 0;
+}
+
+/* ── SECTION LABEL ───────────────────────────────────────────────────────── */
+
+.section-label {
+    margin-top: 20px;
+    margin-bottom: 4px;
+    padding-bottom: 8px;
+    font-size: 9px;
+    color: #4A6A88;
+    letter-spacing: 4px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 212, 255, 0.06);
+}
+
+/* ── SETTING ROW ─────────────────────────────────────────────────────────── */
+
+.s-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 212, 255, 0.05);
+    transition: background-color 0.15s;
+}
+
+.s-row:hover {
+    background-color: rgba(0, 212, 255, 0.04);
+}
+
+.s-row-label {
+    flex: 1;
+    flex-direction: column;
+    margin-right: 24px;
+}
+
+.s-row-name {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: #C8DDF0;
+    letter-spacing: 1px;
+}
+
+.s-row-desc {
+    margin-top: 2px;
+    font-size: 10px;
+    color: #4A6A88;
+}
+
+/* ── TOGGLE ──────────────────────────────────────────────────────────────── */
+
+.s-toggle {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Скрываем стандартный checkmark UI Toolkit */
+.s-toggle > .unity-toggle__input {
+    display: none;
+}
+
+.toggle-track {
+    width: 44px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: rgba(0, 212, 255, 0.08);
+    border-width: 1px;
+    border-color: rgba(0, 212, 255, 0.2);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.toggle-thumb {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 7px;
+    background-color: #4A6A88;
+    transition: translate 0.2s, background-color 0.2s;
+}
+
+.toggle-track--on {
+    background-color: rgba(0, 212, 255, 0.15);
+    border-color: #00D4FF;
+}
+
+.toggle-thumb--on {
+    translate: 22px 0;
+    background-color: #00D4FF;
+}
+
+/* ── SLIDER ──────────────────────────────────────────────────────────────── */
+
+.s-slider-wrap {
+    flex-direction: row;
+    align-items: center;
+}
+
+.s-slider {
+    width: 140px;
+    margin: 0 10px 0 0;
+}
+
+.s-slider > .unity-base-slider__tracker {
+    height: 2px;
+    background-color: rgba(0, 212, 255, 0.2);
+    border-radius: 1px;
+    border-width: 0;
+}
+
+.s-slider > .unity-base-slider__dragger {
+    width: 14px;
+    height: 14px;
+    border-radius: 7px;
+    background-color: #00D4FF;
+    border-width: 0;
+    top: -6px;
+}
+
+.s-slider > .unity-base-slider__dragger:hover {
+    background-color: #80EAFF;
+}
+
+.s-slider-val {
+    font-size: 11px;
+    color: #00D4FF;
+    min-width: 36px;
+    -unity-text-align: upper-right;
+    letter-spacing: 1px;
+}
+
+/* ── SELECT (DropdownField) ──────────────────────────────────────────────── */
+
+.s-select {
+    min-width: 120px;
+}
+
+.s-select > .unity-base-field__input {
+    background-color: rgba(0, 212, 255, 0.04);
+    border-width: 1px;
+    border-color: rgba(0, 212, 255, 0.2);
+    border-radius: 2px;
+    padding: 4px 8px;
+    color: #C8DDF0;
+    font-size: 12px;
+}
+
+.s-select > .unity-base-field__input:hover {
+    border-color: rgba(0, 212, 255, 0.6);
+}
+
+/* ── KEYBIND ─────────────────────────────────────────────────────────────── */
+
+.keybind-btn {
+    min-width: 80px;
+    background-color: rgba(0, 212, 255, 0.06);
+    border-width: 1px;
+    border-color: rgba(0, 212, 255, 0.2);
+    border-radius: 2px;
+    padding: 4px 10px;
+    color: #00D4FF;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: link;
+    -unity-text-align: middle-center;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.keybind-btn:hover {
+    border-color: rgba(0, 212, 255, 0.6);
+    background-color: rgba(0, 212, 255, 0.12);
+}
+
+.keybind-btn--listening {
+    border-color: #00D4FF;
+    color: #FFFFFF;
+    background-color: rgba(0, 212, 255, 0.15);
+}
+
+/* ── FOOTER ──────────────────────────────────────────────────────────────── */
+
+.s-footer {
+    flex-direction: column;
+    flex-shrink: 0;
+    padding: 16px 28px 24px;
+}
+
+.s-footer-line {
+    height: 1px;
+    background-color: rgba(0, 212, 255, 0.15);
+    margin-bottom: 16px;
+}
+
+.s-footer-buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.footer-btn {
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-self: center;
+    font-size: 11px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    padding: 10px 24px;
+    border-radius: 0;
+    cursor: link;
+    margin-left: 12px;
+    transition: background-color 0.2s;
+}
+
+.footer-btn--back {
+    background-color: rgba(0,0,0,0);
+    border-width: 1px;
+    border-color: rgba(200, 221, 240, 0.2);
+    color: #4A6A88;
+}
+
+.footer-btn--back:hover {
+    background-color: rgba(200, 221, 240, 0.05);
+    color: #C8DDF0;
+    border-color: rgba(200, 221, 240, 0.4);
+}
+
+.footer-btn--ok {
+    background-color: rgba(0,0,0,0);
+    border-width: 1px;
+    border-color: rgba(0, 255, 170, 0.4);
+    color: #00FFAA;
+}
+
+.footer-btn--ok:hover {
+    background-color: rgba(0, 255, 170, 0.08);
+    border-color: rgba(0, 255, 170, 0.7);
+}

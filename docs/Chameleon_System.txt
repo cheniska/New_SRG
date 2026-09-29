@@ -1,0 +1,459 @@
+CHAMELEON (маскировка под Дом­инаторов)
+==========================================
+Space Rangers HD «камуфляж» — покупается на Пиратской базе (PB),
+позволяет Player выглядеть как миньон определённой серии дом­инаторов
+(Blazer / Keller / Terron). Реализован как ГИБРИД: игровая логика в
+скриптах (RScript), а Delphi-ядро предоставляет визуальный оверрайд
+и аксессоры к 5 полям TPlayer через ScriptVM.
+
+═════════════════════════════════════════════════════════════════
+I. Фиксированные адреса и поля
+═════════════════════════════════════════════════════════════════
+
+  Поля TPlayer (all offsets from TPlayer object base):
+    +0x461  byte           IsChameleonActive       (0/1)
+    +0x462  byte           CurChameleonType        (0..2 или 0..N-1)
+    +0x463  byte           MappedKlingSeries       (0..7, из PickKlingSeriesBySize)
+    +0x468  byte[N]        DetectedBySeries[]      (флаг «эта серия нас раскрыла»)
+    +0x46C  dword[3]       ChameleonCharges[3]     (заряды: Blazer/Keller/Terron)
+    +0x49C  byte           GraphOverrideActive     (1 — визуал заменён скриптом Chameleon())
+    +0xDEC  byte[N]        LogicChameleon[]        (уровень логики маскировки; проверка <2 в TryDetect)
+
+    (N = число серий; фактически проверяется 0..2 в TfDlg_BuildIllnessListItem
+     и 0..7 в TShip_SetKlingVisualModel_Chameleon — тип 0/1/2, серия 0..7)
+
+  Внешние скриптовые функции (регистрация — MB_about_Scripts @ 0x65F050):
+    "Chameleon"                 → SE_Chameleon_ApplyVisual         @ 0x64A2C8
+    "IsChameleon"               → SE_IsChameleon                    @ 0x64A570
+    "PlayerChameleonCharges"    → SE_PlayerChameleonCharges_getset  @ 0x64A620
+    "PlayerChameleonCurType"    → SE_PlayerChameleonCurType_getset  @ 0x64A6E4
+    "PlayerChameleonDetected"   → SE_PlayerChameleonDetected_getset @ 0x64A78C
+    "PlayerLogicChameleon"      → SE_PlayerLogicChameleon_getset    @ 0x64A858
+    "SwitchToMirrorImage"       → SE_SwitchToMirrorImage            @ 0x64A91C
+
+  Ключевые Delphi-функции:
+    TPlayer_HasAnyChameleonCharge       @ 0x701568
+    TShip_PickKlingSeriesBySize         @ 0x7015A4
+    TShip_OnChameleonConfusion          @ 0x701698   (Ship_IsChameleon — auto-name IDA)
+    TShip_ApplyFanatismVisualOverride   @ 0x7017B0
+    TShip_SetKlingVisualModel_Chameleon @ 0x7020DC
+    TPlayer_ChameleonHotkeyToType       @ 0x6E44F8
+    TPlayer_TryActivateChameleon        @ 0x6E452C
+    TfDlg_ChameleonColorTagByType       @ 0x6F352C
+    TKling_TryDetectChameleon           @ 0x5CCEAC
+    TfDlg_BuildIllnessListItem          @ 0x6F35F0 (панель Ship Info)
+    Galaxy_ApplyFanatismVisualOverride  @ 0x844380 (walk-all-ships)
+
+  Строки/скриптовые ключи:
+    aScript_*                    @ 0x667C18…0x667CE8  — имена скриптовых функций
+    aIpInfo_AddInfo_Chameleon_Detect @ 0x5CCFA4       — key сообщения «раскрыт»
+    rmRuins.PB.Chameleon.*       @ 0x572974…0x57B154 — тексты диалога PB (RScript)
+    ShipInfo.AddInfo.Chameleon.* @ 0x6F4930…0x6F4A80 — тексты панели инфо
+    ShipGreetings.Standart.FemaleChameleon/War       — приветствия при маске
+    Talk.Dominator.Chameleon.Boss @ 0x60D0B4         — реплика босса
+    lk.Dominator.Chameleon.Boss*  @ 0x60CFB0..0x60D05C — блокировки боссов
+    OnChameleonConfusion          @ 0x7D9C70          — имя скриптового события
+
+═════════════════════════════════════════════════════════════════
+II. Модель данных: три ортогональных состояния
+═════════════════════════════════════════════════════════════════
+
+Chameleon состоит из ТРЁХ раздельных подсистем, не путать:
+
+  1) ВИЗУАЛ (что видно на карте / скрине)
+     ─ управляется _49C и вызовом SE_Chameleon_ApplyVisual (script).
+     ─ Заменяет TShip.GraphShip на кастомный TShip2SE (skin+anim+size),
+       сбрасывает _461, _458 в 0.
+     ─ Существует независимо от игровой маскировки: пользовательский
+       скрипт может дать любой корабль без всякого расхода зарядов.
+
+  2) ИГРОВАЯ МАСКИРОВКА (влияет на AI, диалоги, миссии)
+     ─ управляется _461 (on/off) и _462 (тип 0/1/2).
+     ─ Включается TPlayer_TryActivateChameleon (хоткей),
+       выключается автоматически или через
+       SE_PlayerChameleonCurType_getset с value<0.
+     ─ Кушает 1 заряд Player+0x46C[type].
+     ─ Визуал перегенерируется через ApplyFanatismVisualOverride ⇒
+       SetKlingVisualModel_Chameleon (см. §V).
+
+  3) ЛОГИЧЕСКАЯ МАСКА (для нужд скриптов/квестов)
+     ─ Player+0xDEC[series] хранит 0..2 «уровень»
+       (какой уровень доверия у серии series).
+     ─ SE_PlayerLogicChameleon_getset — чистый accessor.
+     ─ TKling_TryDetectChameleon требует _98C[series]<2 (иначе
+       детект пропускается — «Kling всё понимает, но молчит»).
+     ─ Player+0x468[series] — бинарный флаг «эта серия нас уже раскрыла»,
+       так же выставляется TryDetect и читается скриптами.
+
+Заряды +0x46C[3] и типы (0/1/2) соответствуют трём боссам-дом­инаторам:
+цветовая раскраска в UI (TfDlg_ChameleonColorTagByType @ 0x6F352C):
+    type 0 → <color=255,0,0>   ⇒ Blazer   (красный)
+    type 1 → <color=0,128,255> ⇒ Keller   (синий)
+    type 2 → <color=0,255,0>   ⇒ Terron   (зелёный)
+
+═════════════════════════════════════════════════════════════════
+III. Скриптовые аксессоры — API для RScript
+═════════════════════════════════════════════════════════════════
+
+Все getset-функции устроены единообразно:
+  arg count = 1 → getter, возвращает текущее значение
+  arg count > 1 → setter, дополнительный аргумент — новое значение
+
+──────────────────────────────────────────────────────────────
+▍ SE_Chameleon(Ship, LibraryFun|null[, closeGForm]) @ 0x64A2C8
+──────────────────────────────────────────────────────────────
+Чисто-визуальный скрипт (пользователь задаёт корабль/анимацию).
+  • arg1 = Ship (или null → Player())
+  • arg2 = null / "GraphName"    → возвращает Ship.Skin
+           / <LibraryFun>         → берёт (Type, Size, Anim, GraphName)
+                                    и билдит TShip2SE
+  • arg3 = 1 при *off_882BF4==16 → закрывает GForm
+
+Действие setter-режима:
+  • sub_7D32CC (Free) старого GraphShip → sub_7CE410 (Create) нового
+    → sub_7D32A8 (Assign) → WStrAsg(Skin) → инициализация
+  • _49C := 1, _461 := 0 (игровая маскировка сбрасывается!)
+  • TShip_CalcParam + TShip_sub_7475D0 (refresh статов)
+
+Reset-режим (1 арг):
+  • _49C := 0, вызывает sub_7D32CC (сброс на дефолт) и
+    TShip_ApplyFanatismVisualOverride (возврат к обычному виду
+    или к дом­инаторскому если Galaxy._14C=1 Св.Фанатизм).
+
+──────────────────────────────────────────────────────────────
+▍ SE_IsChameleon(Ship) → bool  @ 0x64A570
+──────────────────────────────────────────────────────────────
+Отдаёт Ship._461 (активна ли ИГРОВАЯ маскировка на этом корабле).
+Из скрипта используется для условий «если игрок сейчас в маске».
+
+──────────────────────────────────────────────────────────────
+▍ SE_PlayerChameleonCharges(i[, v]) @ 0x64A620
+──────────────────────────────────────────────────────────────
+Player+0x46C[i] (dword). i=0..2. Get/set количество зарядов.
+PB на прокачке начисляет через set; при активации хоткеем
+списывается один заряд в TPlayer_TryActivateChameleon.
+
+──────────────────────────────────────────────────────────────
+▍ SE_PlayerChameleonCurType([v]) @ 0x64A6E4
+──────────────────────────────────────────────────────────────
+Пара (_461, _462):
+  • Get: если _461==0 → возвращает -1
+         иначе → возвращает _462
+  • Set: value < 0 → _461 := 0 (выключить)
+         value ≥ 0 → _461 := 1, _462 := value (включить + тип)
+
+Это ЕДИНСТВЕННЫЙ путь скрипта выключить маскировку без
+списания зарядов (например, при вскрытии PB после дет­екции).
+
+──────────────────────────────────────────────────────────────
+▍ SE_PlayerChameleonDetected(i[, v]) @ 0x64A78C
+──────────────────────────────────────────────────────────────
+Player+0x468[i] (byte). i = индекс серии Kling (0..N-1).
+Читает/пишет «серия i нас распознала». Основной writer в Delphi —
+TKling_TryDetectChameleon (см. §VI).
+
+──────────────────────────────────────────────────────────────
+▍ SE_PlayerLogicChameleon(i[, v]) @ 0x64A858
+──────────────────────────────────────────────────────────────
+Player+0xDEC[i] (byte). Логический уровень маскировки для серии.
+Значения 0/1/2 — интерпретируются скриптами (например, 2 =
+«полностью раскрыт, никогда больше не поверят»).
+TKling_TryDetectChameleon пропускает проверку если _98C[series]≥2.
+
+Имя IDA «MB_Error.Script_PlayerLogicChameleon» — АВТО-имя
+(из-за строки exception "Error.Script …"), реально это рабочий
+handler, идентичный по паттерну другим *_getset.
+
+──────────────────────────────────────────────────────────────
+▍ SE_SwitchToMirrorImage(Ship, v) @ 0x64A91C
+──────────────────────────────────────────────────────────────
+Специальный визуал для АРКИНСКОГО хула (hull_type == t_SB).
+  • Если _49C && v==4 → перекрашивает уже кастомный TShip2SE
+    (двойник аркинца)
+  • Иначе требует hull_type==t_SB, устанавливает
+    hull.MicroModule2 := v+1 и билдит "Ship.Akrin.<v22>"
+
+Не относится напрямую к chameleon-зарядам, но исторически объединён
+в тот же файл: обе функции используют механизм TShip2SE-подмены.
+
+═════════════════════════════════════════════════════════════════
+IV. Активация маскировки (хоткей)
+═════════════════════════════════════════════════════════════════
+
+Функция: TPlayer_TryActivateChameleon @ 0x6E452C
+Вызывается из sub_6E5254 и sub_6E65C8 (Player-хоткей диспетчеры).
+
+Пред­условия (все ДОЛЖНЫ выполниться):
+  !gvar_0087BBD8[69].Count byte1 (Player какой-то busy-флаг)
+  gvar_0088216C.Count <= 0       (нет открытых диалогов)
+  !gvar_0087BBD8[73].Capacity    (не мёртв)
+  HasAnyChameleonCharge() ИЛИ уже _461 (можно выключить)
+
+Ход:
+  1. sub_846A40(427)                  — lock threading
+  2. sub_6E49B4                       — build menu
+  3. TShip_PickKlingSeriesBySize      — определить какая серия Kling
+                                        подходит под РАЗМЕР Player-корабля
+                                        → результат уйдёт в _463
+  4. sub_503FA4                       — показать 3-кнопочное меню
+                                        (index 2/3/4 → тип 0/1/2)
+  5. Если выбран cancel (result==1):
+       _461 := 0  (выключить)
+       далее для каждого другого корабля в галактике вызывает
+       VMT+32 (перестроить визуал, снять «фейк-Kling»).
+  6. Иначе:
+       type = ChameleonHotkeyToType(result)
+       ChameleonCharges[type] := max(0, ChameleonCharges[type]-1)
+       _463 := type   (BYTE2 гварда)
+       _461 := 1
+       Sleep(1)
+       если charge изменился, sub_4BA240(gvar_00882218, 1)
+                              (звук/анимация)
+  7. sub_7D32CC(GraphShip)             — сбросить старый
+  8. TShip_ApplyFanatismVisualOverride — перегенерировать (см. §V)
+
+═════════════════════════════════════════════════════════════════
+V. Визуальный оверрайд — как Player превращается в Kling
+═════════════════════════════════════════════════════════════════
+
+Пайплайн (per-ship) @ 0x7017B0 — TShip_ApplyFanatismVisualOverride:
+
+  result = (!IsPlayer(target) && Galaxy._14C)  ||  Player._461
+
+  Другими словами оверрайд включается ЛИБО:
+    (a) У Player активно Св.Фанатизм (Galaxy._14C=1) И target — не Player
+        (все ВОКРУГ становятся дом­инаторами)
+    (b) У самого target установлен _461 (то есть Player-с-chameleon)
+
+  if target._49C != 0 (кастом-визуал от скрипта Chameleon()):
+      target._458 := result       (без пере-билда модели)
+  else if !target.GraphShip OR result != target._458:
+      if result: TShip_SetKlingVisualModel_Chameleon(target)
+      else:      TShip_UpdateGraphicObject(target)  (вернуть штатный)
+
+Galaxy_ApplyFanatismVisualOverride @ 0x844380 — walk-all-ships-in-galaxy,
+триггерится по Galaxy._14C (взводится при активации Св.Фанатизма
+и, вероятно, при переключении _461 Player'а).
+
+TShip_SetKlingVisualModel_Chameleon @ 0x7020DC:
+
+  if target — не TNormalShip: fallback UpdateGraphicObject.
+  Создаёт TShip2SE_Create, затем ветвление:
+
+     if target._461:               // Player-with-chameleon
+         v9 = target._462           // выбранный тип 0/1/2
+         v8 = target._463           // MappedKlingSeries 0..7 из PickKlingSeriesBySize
+     else:                         // Fanatism-effect на чужом корабле
+         v9 = target.Id % 3         // случайный тип 0/1/2 по Id
+         v8 = (target.Id>>1)%7 + 1  // случайная серия 1..7
+
+  Индексирует ОДНУ ИЗ ТРЁХ таблиц моделей:
+     v9==0 → gvar_00882AF4[v8]     (тип 0 — Blazer models)
+     v9==1 → gvar_00882A60[v8]     (тип 1 — Keller models)
+     v9==2 → gvar_008823F0[v8]     (тип 2 — Terron models)
+
+  Далее WStrAsg(Skin), Init, sub_871960 (scale по _420),
+  вызов VMT+11 и VMT+9 (initGraph/refresh), _458 := 1,
+  TShip_sub_7475D0 (пересчёт статов под новую модель).
+
+TShip_PickKlingSeriesBySize @ 0x7015A4:
+  target_size = round(THull.Size / g_HullAvgSize)
+  для i=1..7:
+      diff = |avg(off_882670[14*i+3..4]) - target_size|
+      если ближе — v5 := i
+  возвращает лучший series (0..7).
+
+Смысл: чтобы «фейк-Kling» не оказался несоразмерным нашему хулу —
+для маленького ScoutShip'а подсунут маленький минион, для BigShip'а — крупный.
+
+═════════════════════════════════════════════════════════════════
+VI. Детекция маскировки (со стороны Klings)
+═════════════════════════════════════════════════════════════════
+
+TKling_TryDetectChameleon @ 0x5CCEAC — триггерится когда Player
+вступает в диалог/контакт с Kling (или проходит зону).
+
+Формально:
+  target = this (Kling)
+  actor  = Player
+
+Пред­условия:
+  Player() == a2                                 // это Player затеял контакт
+  Player.CurStar == this.CurStar                 // в одной системе
+  !Player._468[this.Series]                      // серия ещё не раскрыла
+  Player._98C[this.Series] < 2                   // логика позволяет
+  !sub_72E5C4(this)                              // некий per-Kling gate
+
+Действие:
+  Player._468[this.Series] := 1                  // теперь раскрыла
+  if Player._461 && Player._462 == this.Series:
+      // Мы РЕАЛЬНО маскировались под серию, которую эта серия
+      // раскрыла в лицо → показать плашку об этом:
+      TGalaxy_PostMessage("ipInfo.AddInfo.Chameleon.Detect")
+
+Про­пуска­ется если Kling нас не «видит» (offset 1233 Series
+в TKling = обычный member). Как только флаг _468[series]=1 —
+последующие Klings серии тоже «в курсе», и повторная плашка
+не выскочит (условие !_468).
+
+Обратите внимание: сама факт «раскрыл-не-раскрыл» — только
+скриптовый флаг. Реального боевого поведения (аггро) в этом
+Delphi-хендлере НЕТ; аггро — на совести RScript-логики, которая
+читает эти флаги через getset-функции.
+
+═════════════════════════════════════════════════════════════════
+VII. Событие OnChameleonConfusion — NPC «дезориентированы»
+═════════════════════════════════════════════════════════════════
+
+TShip_OnChameleonConfusion @ 0x701698 (auto-имя IDA — Ship_IsChameleon,
+на самом деле это триггер события, а не проверка):
+
+Вход: target ship a1.
+Условия отправки:
+  Player._461 && Player != a1                         // маска включена, цель ≠ Player
+  a1.Type != 3                                        // цель — не рейнджер (нельзя одурачить рейнджера)
+  Player != a1.HomePlanet                             // цель — не свой найм?
+  ЕСЛИ у a1 есть скрипт «Script.PC_fem_rangers»
+       И имя-группы == "GroupFem":
+      считаем что fem-rangers группа НЕ обманывается
+  (иначе v5 := 1)
+
+Далее:
+  TShip_ProcessMissileHit(Player, 17, a1, ...)        // событие 17 = OnChameleonConfusion
+  TShip_ProcessMissileHit(a1, 17, ...)
+
+Message-type 17 передаётся на скриптовый обработчик под именем
+«OnChameleonConfusion» (строка @ 0x7D9C70). RScript решает,
+что именно делать (замешательство таргета, отказ от аггро,
+задержка выстрела и т. п.).
+
+═════════════════════════════════════════════════════════════════
+VIII. Панель Ship Info — как показывает статус маскировки
+═════════════════════════════════════════════════════════════════
+
+TfDlg_BuildIllnessListItem @ 0x6F35F0 (одна большая функция строит
+блок «Add.Info» справа от корабля в дет­альном окне).
+
+Если Player._461 ИЛИ HasAnyChameleonCharge():
+  — Get "ShipInfo.AddInfo.Chameleon.Name"
+  — Если _461 (маска активна):
+      выводит "ShipType.Dominator.<pbstr[_462]>.0" — название серии,
+      подставляет её через <Type> в "ShipInfo.AddInfo.Chameleon.Text"
+  — Если есть заряды (HasAnyChameleonCharge):
+      "ShipInfo.AddInfo.Chameleon.Charge" — заголовок
+      цикл i=0..2:
+          если ChameleonCharges[i] > 0:
+              color = ChameleonColorTagByType(i)
+              "ShipInfo.AddInfo.Chameleon.Count" (i, count) через " - "
+
+═════════════════════════════════════════════════════════════════
+IX. Диалог PB (покупка/предложение)
+═════════════════════════════════════════════════════════════════
+
+Строки диалога Pirate Base (в конфиг-локали, вызываются из RScript):
+  rmRuins.PB.Chameleon.PlayerAsk    (0x572974) — «дайте маскировку»
+  rmRuins.PB.Chameleon.PBAsk        (0x57AE7C) — PB спрашивает цену
+  rmRuins.PB.Chameleon.PlayerOk     (0x57ADB4) — Player согласен
+  rmRuins.PB.Chameleon.PlayerNo     (0x57AEDC) — Player отказ
+  rmRuins.PB.Chameleon.PBAfterOk    (0x57B01C) — PB после согласия
+  rmRuins.PB.Chameleon.PBAfterNo    (0x57B10C) — PB после отказа
+  rmRuins.PB.Chameleon.PBAfterNoAlt (0x57B154) — альт­ернатива
+
+Логика (кто-что-когда, цена, условия) — целиком в RScript;
+единственная точка контакта с Delphi — set через
+SE_PlayerChameleonCharges(i, oldValue + purchased).
+
+Дом­инатор-босс тоже комментирует маскировку через
+Talk_Dominator_ChameleonBossDialog @ 0x60C9CC
+(строка Talk.Dominator.Chameleon.Boss @ 0x60D0B4).
+
+═════════════════════════════════════════════════════════════════
+X. Связанное — TKling_Boss_PickFreeMinion (chameleon как минион)
+═════════════════════════════════════════════════════════════════
+
+TKling_Boss_PickFreeMinion @ 0x5C99CC — при выборе миньона босс
+Bertor (KlingType=6) МОЖЕТ включить Player'а в pool:
+
+  if Player.CurStar == this.CurStar:
+      if TShip_CanAct(Player):
+          if TKling_Boss_SpawnMinions_Helper(Player):
+              if Player._461 && Player._463 == 6:
+                  ← Player присоединяется к pool кандидатов
+
+Т.е. если Player замаскирован (_461) под серию 6 (Bertor), Bertor'ов
+босс может назначить именно его как миньона для миссии.
+_463 (MappedKlingSeries) — вычисленный по размеру индекс серии
+(см. PickKlingSeriesBySize).
+
+═════════════════════════════════════════════════════════════════
+XI. Сводная диаграмма
+═════════════════════════════════════════════════════════════════
+
+  ┌──────────────────────────────────────────────────────────┐
+  │  PB dialog (RScript)                                     │
+  │     → SE_PlayerChameleonCharges(i, +N)                   │
+  │        Player+0x46C[i] += N                              │
+  └──────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  Player-хоткей                                           │
+  │     TPlayer_TryActivateChameleon @ 0x6E452C              │
+  │       menu → ChameleonHotkeyToType (2/3/4 → 0/1/2)       │
+  │       ChameleonCharges[type]−−                           │
+  │       PickKlingSeriesBySize → _463                       │
+  │       _461:=1, _462:=type                                │
+  │       ApplyFanatismVisualOverride                        │
+  └──────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  Визуал                                                  │
+  │  TShip_ApplyFanatismVisualOverride @ 0x7017B0            │
+  │     if _49C: только _458 (custom-script визуал)          │
+  │     else: SetKlingVisualModel_Chameleon @ 0x7020DC       │
+  │            → gvar_00882AF4[_463]/A60/23F0 по _462        │
+  └──────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  Игровые эффекты (проверки Delphi):                      │
+  │   • TKling_TryDetectChameleon (0x5CCEAC)                 │
+  │       Player+0x468[series] := 1                          │
+  │       если _462 совпал → GalaxyMessage «Detected»        │
+  │   • TShip_OnChameleonConfusion (0x701698)                │
+  │       MessageHit type=17 → RScript OnChameleonConfusion  │
+  │   • NormalShip_GetGreetingKey (0x788330)                 │
+  │       выбор ShipGreetings.Standart.FemaleChameleon[...]  │
+  │   • TKling_Boss_PickFreeMinion (0x5C99CC)                │
+  │       Player-с-chameleon пул миньонов Bertor'а           │
+  │   • TfDlg_BuildIllnessListItem (0x6F35F0)                │
+  │       блок статуса «Маскировка активна: <тип>, заряды…»  │
+  └──────────────────────────────────────────────────────────┘
+
+═════════════════════════════════════════════════════════════════
+XII. Что делать модеру — важные крючки
+═════════════════════════════════════════════════════════════════
+
+  1. Добавить новый тип: нужен не только четвёртый слот в +0x46C
+     (dword[3] жёстко), но и расширение gvar_00882AF4/A60/23F0
+     таблиц моделей + строки «ShipType.Dominator.<name>.0».
+     Проще всего — переиспользовать существующий индекс, а разный
+     цвет реализовать в RScript'ах через LogicChameleon.
+
+  2. Изменить цену/условия покупки — только в RScript'ах PB;
+     Delphi-ядро в этом не участвует.
+
+  3. Настроить логику дет­екции: HP-условие, время «раскрыт»
+     тоже задаются в RScript, но фундамент — Delphi-функция
+     TKling_TryDetectChameleon. Если убрать её вызов из места,
+     которое она хукает (диалог с Kling), скрипты никогда не
+     установят _468[series].
+
+  4. OnChameleonConfusion можно расширять чисто скриптово: имя
+     события зафиксировано (aOnChameleonConfusion @ 0x7D9C70),
+     Delphi лишь диспетчерит message-type 17.
+
+  5. Помнить: SE_Chameleon (0x64A2C8) — ЧИСТО ВИЗУАЛЬНЫЙ.
+     Его использование не расходует зарядов и не влияет на
+     детекцию/аггро. Идеален для «cinematics» и для отладки.

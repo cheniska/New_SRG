@@ -1,0 +1,288 @@
+Слабые места и предложения
+
+  1. Приоритеты в EvaluateSituation — «водопад if-ов»
+
+  NpcBrain.EvaluateSituation — длинная цепочка условий: OfferMoney → Flee → RetreatAndRepair → Frustration→Flee →
+  SystemPower→Flee → Attacker→Pursue → далее class-specific. Порядок жёсткий, комбинации ломаются:
+
+  - Проблема: «низкий HP + деньги + не Civilian → OfferMoney», но Frustration>70 уводит в Flee ещё до этого, если
+  проверка идёт в другом порядке. И RetreatAndRepair вызывается без проверки, есть ли поблизости враг — раненый военный
+  побежит домой чиниться, даже если рядом добить его успеют за 2 хода.
+  - Проблема: PursueAndAttack пересоздаётся каждый раз, когда EvaluateSituation возвращает тот же ключ, но SetActivity не
+  сравнивает целевой UID (if (key == _currentActivityName) return; покрывает случай, но фрустрация/HP атакующего
+  кэшируются в _targetHpAtLastCheck — при пересоздании action метрика фрустрации сбрасывается).
+
+  Решение: заменить водопад на utility/scoring-подход — каждая опция даёт float от 0 до 1 (влияет HP%, Caution,
+  Frustration, ChanceToWin, дистанция), берётся максимальная. Даст естественные комбинации без «сначала это, потом то».
+
+  2. ChanceToWin не учитывает союзников
+
+  NpcBrain.ChanceToWin(enemy) сравнивает только свою силу с силой конкретной цели. Но:
+  - ShouldFleeFromSystemPower уже суммирует GetHostilePower/GetFriendlyPower по всей системе.
+  - Атака в MilitaryLogic/MercenaryLogic фильтруется через ctw >= EngageThreshold, где EngageThreshold — соло-порог.
+
+  Итог: одинокий Warrior не полезет в бой с равным по силе Pirate, даже если рядом три союзника.
+
+  Решение: ChanceToWin(target, star) — учитывать локальный FriendlyPower/HostilePower в радиусе (например,
+  MaxEngageRange), а не только 1×1. Или ввести PartyChanceToWin для дефолтного пути и оставить ChanceToWin для реактивной
+  защиты.
+
+  3. Дубль вычислений: star.RebuildPowerCache + NpcBrain.CalculateStrength каждый ход
+
+  - DirectiveManager.AutoIssueReactiveDirectives вызывает RebuildPowerCache и ещё раз CalculateStrength для каждого
+  корабля в звезде каждый ход.
+  - Параллельно NpcBrain.TickStrengthCache пересчитывает свою силу раз в 3–10 ходов.
+  - EvaluateTarget в фильтре FindBestTarget вызывает ChanceToWin → CalculateStrength(enemy) — цена O(вражеских кораблей ×
+  циклов оценки).
+
+  Решение: хранить strength корабля в ShipData._cachedStrength с инвалидацией при изменении оборудования/HP (single point
+  of truth). Убрать двойной обсчёт в DirectiveManager.
+
+  4. SetActivity — конверсия строк
+
+  EvaluateSituation возвращает string вроде "PursueAndAttack:uid", а SetActivity парсит StartsWith/Substring. Тратит GC,
+  легко ломается опечаткой:
+
+  Решение: ввести struct Decision { DecisionKind Kind; string TargetUid; } — компилятор ловит опечатки, ноль аллокаций.
+
+  5. Партнёрская директива обходит EvaluateSituation полностью
+
+  В NpcBrain.Tick: если директива (в т.ч. Partner) есть — EvaluateSituation не вызывается. Значит партнёр:
+  - не убежит при hullPct < FleeHullPercent (кроме сценария «Desert» в ActionPartnerAttend, но там условие — только
+  Discipline<25);
+  - не будет отвечать на конкретного LastAttackerUid, если это не «Berserk-режим лидера»;
+  - не откупится OfferMoney.
+
+  Проблема: дисциплинированный партнёр с высокой Caution молча тонет, следуя за лидером. ActionPartnerAttend.DecideKind
+  содержит клочки этой логики, но она не пересекается с EvaluateSituation.
+
+  Решение: дать директивам «мягкое право первого выбора» — сначала EvaluateSituation смотрит на критические угрозы
+  (HP<20%, конкретный агрессор), и только если он не срабатывает — идёт директива. Или сделать EvaluateSituation
+  первичным, а директиву — источником ChooseDefaultActivity (не interrupt-loop).
+
+  6. LastAttackerUid теряется при выборе первой же цели
+
+  Как только EvaluateSituation возвращает "PursueAndAttack:{atk}" — Action создаётся с UID агрессора. Если атакующий
+  сменился, LastAttackerUid тут же перезапишется в WeaponSystem, но _currentActivity продолжит гоняться за старым.
+  Reactive-defense триггер только один раз при смене активности.
+
+  Решение: периодически (раз в N ходов) сверять CombatTargetUid c актуальным LastAttackerUid и переключать цель, если
+  новый агрессор ближе/опаснее.
+
+  7. RetreatAndRepair — деревянный ремонт «на халяву»
+
+  ship.CurrentHull = ship.MaxHull;  // мгновенно после N ходов idle
+  - Не тратит деньги, не отражается в экономике.
+  - Никак не связан с планетным Shop (нет «ремонт-стоимости»).
+  - «Дружественная планета» = ближайшая не-hostile, без учёта Owner (может сесть на планету другой фракции с плохим
+  отношением, если она не «hostile»).
+
+  Решение: через Shop.RepairPrice списывать деньги, лечить порциями по ходу, требовать AreFriendly (Good+), а не
+  «не-hostile».
+
+  8. Директивы игнорируют друг друга
+
+  DirectiveManager.GetDirectiveActionFor возвращает первую подходящую директиву в порядке добавления. Нет:
+  - приоритетов между AttackSystem и DefendSystem, если оба висят на владельце;
+  - проверки на «противоречие» (Retreat vs Defend того же UID);
+  - «слоёв»: strategic/tactical/emergency.
+
+  Решение: каждой директиве — Priority int, сортировать foreach (var d in ownerList.OrderByDescending(x => x.Priority)).
+  Ещё лучше — enum DirectiveLayer { Strategic, Tactical, Reactive } и по одному активному на каждом слое.
+
+  9. Ноль координации между NPC
+
+  NPC решают независимо:
+  - пять пиратов бросятся на одну жертву одинаково (нет распределения);
+  - эскортёры не знают, что уже двое «прикрыли» лидера — все трое лезут в тот же threat;
+  - FindAlliedUnderAttackUid — каждый NPC делает O(n²) обход по всем парам ally×enemy раз в ход.
+
+  Решение: ввести per-star «threat board»:
+  - на этапе TickStar один раз построить карту «этот враг vs эта группа своих»;
+  - Actions читают board вместо O(n²) обхода;
+  - при выборе цели атаки штрафовать за количество уже атакующих (concentration penalty), чтобы пираты разделялись.
+
+  10. Много allocations в hot path
+
+  - PersonalRelationModifiers.TickPersonalRelations() — каждый ход у каждого NPC создаёт List<string> из ключей (для safe
+  iteration).
+  - SetActivity парсит строки → substrings в heap.
+  - ChooseDefaultActivity создаёт новый ActionTrade/ActionPatrol каждый раз при TickActivity, когда _currentActivity ==
+  null или done.
+  - TraderAI.GetReachableCached использует Dictionary<string,List<>> с ключом-конкатенацией, string + "|" + int — 2
+  alloc.
+
+  Решение: держать переиспользуемый буфер ключей, поменять string-состояние на enum, cache-key заменить на struct
+  (string,int).
+
+  11. PopulateStarWithNpcs — стартовая раздача независима от роли планеты
+
+  Спавн распределяет одинаковые счётчики на каждую обитаемую планету (PerHabitablePlanet, PerSystem). Нет учёта:
+  - население планеты (богатая столица должна иметь больше кораблей);
+  - специализация владельца (Military-Owner — больше warriors);
+  - уже существующих кораблей (двойной запуск раздачи задваивает).
+
+  Не критично, но фрустрирует настройку баланса.
+
+  12. Обход HyperEnter через continue
+
+  NpcSystem.TickStar пропускает корабль в HyperEnter, но:
+  - если корабль был в директиве Escort, sub-order Attack продолжает висеть с UID из исходной системы;
+  - при HyperExit _currentActivity не сбрасывается — ActionPursueAndAttack найдёт FindAliveShip(star, uid) == null и
+  завершит себя, но 1 ход после HyperExit корабль будет ставить TargetPosition = null (OrderAttack вернёт true без
+  изменения target).
+
+  Решение: при CompleteJump явно Brain.ForceActivity(ChooseDefault…) или хотя бы обнулять _currentActivity.
+
+  13. TraderAI.PlanRoute — O(candidates²)
+
+  При MaxJumpHops=1 работает, но topSells — линейный сорт по всем (good, planet) парам, потом двойной цикл через
+  candidates. Кэш reachable — правильный шаг, но:
+  - PLAN пересчитывается на каждой посадке (HandleLanded), даже если груз тот же и рынок не менялся;
+  - инфляция/production per-turn формально может сдвинуть цену, но не обычно.
+
+  Решение: кэшировать TradeRoute на N ходов; проверять только «цель ещё выгодна?» после посадки.
+
+  14. Frustration слабо декейится
+
+  AddFrustration растёт, ReduceFrustration(20f) только при убийстве цели. Если долго нет боя — Frustration заморожена.
+  TickPersonality() тикает PersonalRelationModifiers, но не Frustration.
+
+  Решение: пассивный decay Frustration в мирное время (−1 за ход, если нет LastAttackerUid).
+
+  15. ShipPersonality.EngageThreshold считается каждый вызов
+
+  [JsonIgnore] float EngageThreshold => Mathf.Clamp01(0.5f - (Aggression - 50f) / 100f) — property без бэкинга, дёргается
+  в горячем пути (FindBestTarget, ApplyPersonalityOverride, ShouldObey). Мелочь, но тысячи вызовов за ход.
+
+  Решение: пересчитывать в момент модификации Aggression.
+
+  ---
+  Что предложил бы делать первым
+
+  Быстрые (≤ полдня каждая):
+  - #14 decay Frustration
+  - #6 обновлять target при смене LastAttackerUid
+  - #12 сбрасывать активность после HyperExit
+  - #7 связать RetreatAndRepair с деньгами и Shop
+
+  Средние (день–два):
+  - #2 групповой ChanceToWin
+  - #5 партнёрство vs критические угрозы
+  - #8 приоритеты директив
+
+  Большое (крупный рефакторинг):
+  - #1 utility-scoring вместо if-водопада
+  - #9 per-star threat board + координация — даст самый большой видимый эффект
+> сразу нужно решить, чег оне хватает для полноценной симуляции                                                          
+  Searched for 3 patterns, read 1 file (ctrl+o to expand)
+
+● Ключевой пробел — никто не думает выше уровня одного корабля. Directive* классы описаны, но
+  AttackSystem/DefendSystem/Retreat/PatrolTraderoutes не выдаются кодом никогда (только auto SuppressPiracy). Значит
+  галактика статична, у Owner'ов нет стратегии.
+
+  Чего не хватает для «живой» симуляции
+
+  A. Мета-уровень: Faction-AI (нет вообще)
+
+  Нужен слой между DirectiveManager и NpcSystem, который решает за фракцию:
+
+  - Оценка ситуации раз в N ходов на Owner: где мои границы, где враг сильнее, какие звёзды под угрозой, где сгущается
+  криминал, куда провалилась экономика.
+  - Выдача директив — то, для чего уже написан DirectiveAttackSystem/Defend/Retreat/EscortConvoy/LockdownTrade, но никем
+  не вызывается.
+  - Ресурсный бюджет — фракция не может выдать «атаковать всё» одновременно, есть казна/производство кораблей.
+
+  Без этого война между фракциями невозможна в принципе.
+
+  B. Динамика владения (нет)
+
+  Сейчас Owner/Race планеты навечно заданы генератором.
+
+  Не хватает:
+  - Смена владельца планеты — условия захвата (нет обороны + враг находится N ходов в системе), процедура
+  (GovernmentChangeService есть — но он не про войну).
+  - Осада/блокада — как долго система «во власти» противника, прежде чем перейти.
+  - Реколонизация — необитаемые планеты никогда не заселяются.
+
+  C. Отношения между Owner'ами меняются (частично)
+
+  OwnerRaceRelationsManager есть, но нужно проверить:
+  - Меняется ли relation от событий (атака гражданского → штраф всей фракции vs Owner атакующего)?
+  - Есть ли decay к нейтралу?
+  - Есть ли пороги «объявление войны» / «мир»?
+
+  Без этого дипломатия — константа.
+
+  D. Экономика без связи с политикой
+
+  Экономика (инфляция/production/EquipmentShop) реализована для локальной планеты, но:
+  - Торговые эмбарго между враждебными Owner'ами (пока Diplomat-ы, Transport-ы летают куда угодно).
+  - Пиратство влияет на цены через LockdownTrade — но директива не выдаётся.
+  - Изобретения двигают ПТУ/ГТУ, но нет эффекта на военную мощь фракции в масштабе (богатая-технологичная фракция должна
+  давить бедную).
+
+  E. Население и рост (нет)
+
+  - PlanetData.Population — фиксировано с генерации?
+  - Нет роста, нет миграций, нет депрессии от войны/пиратства.
+  - Спавн NPC привязан к «есть население», но само население не колеблется.
+
+  F. Восполнение потерь / жизненный цикл кораблей
+
+  - SpawnSystem уже есть (per memory), политики Warrior/Pirate/Ranger — но:
+  - Нужно, чтобы потери в войне ускоряли спавн у пострадавшего Owner (баланс сил).
+  - Пираты должны множиться в системах с высокой безнаказанностью и жирными транспортами.
+  - Военные должны реагировать на давление (эскалация постановки гарнизонов).
+
+  Не уверен, что все три политики уже это делают — надо проверить Systems/Spawning/Policies/*.
+
+  G. События и цепочки поведений (частично)
+
+  PlanetaryEventSystem есть — но события планетарные (голод, эпидемия и т.п.). Нет:
+  - Галактических событий — миграция расы, вторжение чужих, коллапс фракции.
+  - Триггеров, порождающих директивы — например, «эпидемия на нашей столице → отзыв флота домой».
+
+  H. News/awareness для игрока (нет)
+
+  Симуляция должна быть видна. Без ленты новостей игрок ощущает мир статичным, даже если внутри всё крутится. Нужен
+  GalaxyNewsFeed: «Rusar атаковал Krym в системе X», «Пиратский рейд на Y», «Мир заключён между A и B».
+
+  I. Персональная репутация игрока по фракциям (проверить)
+
+  CrimeRating есть, но:
+  - Игрок может быть «плохим для Rusar, хорошим для Krym» — независимо?
+  - Реагируют ли фракционные патрули на его репутацию, а не только на CrimeRating?
+  - Есть ли амнистия/выкуп статуса?
+
+  J. Контракты / квесты как самостоятельная система
+
+  Сейчас NpcAction-ы задают поведение NPC, но нет:
+  - Игровых контрактов от фракций/планет («доставь X», «убей Y»);
+  - Bounty-система на конкретный Uid с CrimeRating выше порога.
+
+  Партнёры/дипломаты есть → игрок общается — но нет generator'а миссий.
+
+  ---
+  Что реально нужно решить в первую очередь
+
+  Приоритет = «одно без другого не работает».
+
+  Обязательный минимум (без этого симуляция статична):
+  1. Faction-AI слой (A) — иначе DirectiveAttackSystem/Defend/Retreat мёртвый код.
+  2. Динамика владения (B) — иначе войны бессмысленны, ничего не меняется.
+  3. Изменяемые отношения Owner↔Owner (C) — иначе войну некому начать и закончить.
+
+  Придаёт глубину (после базы):
+  4. Восполнение потерь привязать к военным событиям (F).
+  5. News-feed (H) — иначе игрок не видит происходящего.
+  6. Экономика ↔ политика: эмбарго, блокады (D).
+
+  Контент-роскошь (в конце):
+  7. Контракты/bounty (J).
+  8. Динамическое население (E).
+  9. Галактические события (G).
+
+  Если начнёшь с (1)+(3)+(H) — сразу получишь ощущение, что галактика живёт: относительно недорого, а видимый эффект
+  максимальный. С этого и стартовал бы. Хочешь — распишу дизайн Faction-AI детально или сначала уточним, что уже сделано
+  в Spawning/Policies и OwnerRaceRelationsManager?

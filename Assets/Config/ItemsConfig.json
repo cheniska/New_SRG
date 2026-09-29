@@ -1,0 +1,6075 @@
+{
+  "HullSeries": {
+    "HullSeries_Universal": {
+      "Name": "Универсальная серия",
+      "Description": "Открывает все слоты без ограничений. Нет особой уязвимости.",
+      "WeaponVulnerability": {
+        "Kinetic": 1,
+        "Explosive": 1,
+        "Energy": 1
+      },
+      "Slots": {
+        "Engine": 1,
+        "FuelTank": 1,
+        "Forsage": 1,
+        "Shield": 1,
+        "Radar": 1,
+        "Scanner": 1,
+        "Droid": 2,
+        "CargoGrabber": 2,
+        "Weapons": 5,
+        "Artefacts": 4
+      }
+    },
+    "HullSeries_Light": {
+      "Name": "Лёгкая серия",
+      "Description": "Манёвренность в ущерб огневой мощи и грузовместимости.",
+      "WeaponVulnerability": {
+        "Kinetic": 1,
+        "Explosive": 0.9,
+        "Energy": 1.2
+      },
+      "Slots": {
+        "Engine": 1,
+        "FuelTank": 1,
+        "Forsage": 1,
+        "Shield": 1,
+        "Radar": 1,
+        "Scanner": 1,
+        "Droid": 0,
+        "CargoGrabber": 0,
+        "Weapons": 2,
+        "Artefacts": 2
+      }
+    },
+    "HullSeries_Combat": {
+      "Name": "Боевая серия",
+      "Description": "Максимальное вооружение, уязвим к ракетам.",
+      "WeaponVulnerability": {
+        "Kinetic": 0.9,
+        "Explosive": 1.1,
+        "Energy": 1
+      },
+      "Slots": {
+        "Engine": 1,
+        "FuelTank": 1,
+        "Forsage": 1,
+        "Shield": 1,
+        "Radar": 1,
+        "Scanner": 1,
+        "Droid": 1,
+        "CargoGrabber": 0,
+        "Weapons": 5,
+        "Artefacts": 3
+      }
+    },
+    "HullSeries_Freighter": {
+      "Name": "Грузовая серия",
+      "Description": "Максимальная вместимость, слабая защита от всего.",
+      "WeaponVulnerability": {
+        "Kinetic": 1.1,
+        "Explosive": 1,
+        "Energy": 1.1
+      },
+      "Slots": {
+        "Engine": 1,
+        "FuelTank": 1,
+        "Forsage": 0,
+        "Shield": 1,
+        "Radar": 1,
+        "Scanner": 1,
+        "Droid": 2,
+        "CargoGrabber": 2,
+        "Weapons": 1,
+        "Artefacts": 1
+      }
+    },
+    "HullSeries_Diplomat": {
+      "Name": "Дипломатическая серия",
+      "Description": "Лёгкая броня, упор на артефакты и переговоры. Слабая огневая мощь.",
+      "WeaponVulnerability": {
+        "Kinetic": 1.1,
+        "Explosive": 1,
+        "Energy": 1.1
+      },
+      "Slots": {
+        "Engine": 1,
+        "FuelTank": 1,
+        "Forsage": 1,
+        "Shield": 1,
+        "Radar": 1,
+        "Scanner": 1,
+        "Droid": 1,
+        "CargoGrabber": 2,
+        "Weapons": 2,
+        "Artefacts": 5
+      }
+    },
+    "HullSeries_Ranger": {
+      "Name": "Рейнджерская серия",
+      "Description": "Сбалансированный корпус для исследования и боя.",
+      "WeaponVulnerability": {
+        "Kinetic": 1,
+        "Explosive": 1,
+        "Energy": 1
+      },
+      "Slots": {
+        "Engine": 1,
+        "FuelTank": 1,
+        "Forsage": 1,
+        "Shield": 1,
+        "Radar": 1,
+        "Scanner": 1,
+        "Droid": 1,
+        "CargoGrabber": 1,
+        "Weapons": 3,
+        "Artefacts": 3
+      }
+    },
+    "HullSeries_Pirate": {
+      "Name": "Пиратская серия",
+      "Description": "Быстрый, хищный, мало артефактов и брони — много пушек.",
+      "WeaponVulnerability": {
+        "Kinetic": 1,
+        "Explosive": 1,
+        "Energy": 1.1
+      },
+      "Slots": {
+        "Engine": 1,
+        "FuelTank": 1,
+        "Forsage": 1,
+        "Shield": 1,
+        "Radar": 1,
+        "Scanner": 1,
+        "Droid": 1,
+        "CargoGrabber": 1,
+        "Weapons": 4,
+        "Artefacts": 2
+      }
+    }
+  },
+  "Categories": {
+    "Weapons": {
+      "DisplayName": "Оружие",
+      "MaxSlots": 5,
+      "CanBeDamagedByWeapon": false,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 1,
+      "WearOnTurn": 0,
+      "ContainerGraphic": "Container_1",
+      "ShotEffects": {
+        "Point": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 6,
+            "Radius": 0.3,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Burst",
+            "Count": 8,
+            "Radius": 0.4,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 8,
+            "Radius": 0.25,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "Piercing": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 4,
+            "Radius": 0.22,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.28,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Sparks",
+            "Count": 4,
+            "Radius": 0.22,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "Shotgun": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 6,
+            "Radius": 0.35,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Burst",
+            "Count": 9,
+            "Radius": 0.42,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 6,
+            "Radius": 0.3,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "Ricochet": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.28,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.32,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 5,
+            "Radius": 0.24,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "Chain": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 4,
+            "Radius": 0.22,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Sparks",
+            "Count": 4,
+            "Radius": 0.25,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 6,
+            "Radius": 0.2,
+            "ColorMain": "#FFFF88",
+            "ColorSpark": "#FFFFCC"
+          }
+        },
+        "AoE": {
+          "Kinetic": {
+            "Shape": "Ring",
+            "Count": 12,
+            "Radius": 0.6,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Ring",
+            "Count": 14,
+            "Radius": 0.7,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 12,
+            "Radius": 0.6,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "PointAoE": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 7,
+            "Radius": 0.32,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Burst",
+            "Count": 8,
+            "Radius": 0.42,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 8,
+            "Radius": 0.35,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "Falloff": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 4,
+            "Radius": 0.25,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.3,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 4,
+            "Radius": 0.22,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "Beam": {
+          "Kinetic": {
+            "Shape": "Flash",
+            "Count": 1,
+            "Radius": 0.18,
+            "ColorMain": "#FFE090",
+            "ColorSpark": "#FFE090"
+          },
+          "Explosive": {
+            "Shape": "Flash",
+            "Count": 1,
+            "Radius": 0.22,
+            "ColorMain": "#FF8030",
+            "ColorSpark": "#FF8030"
+          },
+          "Energy": {
+            "Shape": "Flash",
+            "Count": 1,
+            "Radius": 0.2,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#88FFFF"
+          }
+        },
+        "Homing": {
+          "Kinetic": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.3,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Burst",
+            "Count": 8,
+            "Radius": 0.45,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.3,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        },
+        "Mine": {
+          "Kinetic": {
+            "Shape": "Burst",
+            "Count": 8,
+            "Radius": 0.42,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          },
+          "Explosive": {
+            "Shape": "Burst",
+            "Count": 10,
+            "Radius": 0.55,
+            "ColorMain": "#FFA040",
+            "ColorSpark": "#FF7010"
+          },
+          "Energy": {
+            "Shape": "Ring",
+            "Count": 8,
+            "Radius": 0.42,
+            "ColorMain": "#88FFFF",
+            "ColorSpark": "#10CCFF"
+          }
+        }
+      }
+    },
+    "Artefacts": {
+      "DisplayName": "Артефакты",
+      "MaxSlots": 4,
+      "CanBeDamagedByWeapon": false,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "ContainerGraphic": "Container_3"
+    }
+  },
+  "Items": {
+    "Weapons": {
+      "W_Laser": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_01_a",
+        "Name": "Лазер",
+        "Description": "Точное энергетическое оружие. Не пробивает броню.",
+        "Weight": 30,
+        "Price": 500,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "TechLevel": 1,
+        "StartGTL": 1,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 10,
+          "BaseMaxDmg": 20,
+          "Range": 400,
+          "DamageType": "Energy",
+          "EquipmentHitChance": 0.1,
+          "EquipmentDamage": 3,
+          "ShotPattern": "Beam",
+          "ArmorPenetration": 0,
+          "ShieldPenetration": 0,
+          "Ammo": -1,
+          "ShotDuration": 2,
+          "Effects": []
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Flash",
+            "Count": 6,
+            "Radius": 0.1,
+            "ColorMain": "#FFF0A0",
+            "ColorSpark": "#FFCC60"
+          }
+        },
+        "Stackable": false
+      },
+      "W_Cannon": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_02_a",
+        "Name": "Пушка",
+        "Description": "Кинетическое орудие с хорошим пробитием брони.",
+        "Weight": 60,
+        "Price": 800,
+        "Durability": 150,
+        "MaxDurability": 150,
+        "TechLevel": 1,
+        "StartGTL": 1,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 25,
+          "BaseMaxDmg": 50,
+          "Range": 300,
+          "DamageType": "Kinetic",
+          "EquipmentHitChance": 0.15,
+          "EquipmentDamage": 5,
+          "ShotPattern": "Point",
+          "ArmorPenetration": 15,
+          "ShieldPenetration": 0,
+          "Ammo": -1,
+          "ShotDuration": 2,
+          "Effects": []
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Sparks",
+            "Count": 6,
+            "Radius": 0.2,
+            "ColorMain": "#FFA500",
+            "ColorSpark": "#FFE066"
+          }
+        },
+        "Stackable": false
+      },
+      "W_Rocket": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_04_a",
+        "Name": "Ракетница",
+        "Description": "Управляемые ракеты. Высокий шанс повредить оборудование.",
+        "Weight": 80,
+        "Price": 1200,
+        "Durability": 120,
+        "MaxDurability": 120,
+        "TechLevel": 2,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 40,
+          "BaseMaxDmg": 80,
+          "Range": 1500,
+          "DamageType": "Explosive",
+          "EquipmentHitChance": 0.3,
+          "EquipmentDamage": 8,
+          "ShotPattern": "Homing",
+          "ArmorPenetration": 5,
+          "ShieldPenetration": 20,
+          "Ammo": -1,
+          "ShotDuration": 3,
+          "Effects": [
+            "EngineDisable:2:15:0.3"
+          ]
+        },
+        "Missile": {
+          "Hp": 30,
+          "Speed": 1,
+          "Lifedays": 5,
+          "GraphicPath": "Graphics/Missiles/Rocket00",
+          "Scale": 1,
+          "SalvoCount": 3,
+          "TurnDeg": 720
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Burst",
+            "Count": 8,
+            "Radius": 0.45,
+            "ColorMain": "#FF4400",
+            "ColorSpark": "#FF9944"
+          }
+        },
+        "Stackable": false
+      },
+      "W_ChainGun": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_03_a",
+        "Name": "Цепная пушка",
+        "Description": "Серия кинетических снарядов с рикошетом — поражает сразу несколько целей.",
+        "Weight": 70,
+        "Price": 1400,
+        "Durability": 120,
+        "MaxDurability": 120,
+        "TechLevel": 2,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 20,
+          "BaseMaxDmg": 35,
+          "Range": 200,
+          "DamageType": "Kinetic",
+          "ShotPattern": "Ricochet",
+          "ArmorPenetration": 8,
+          "ShieldPenetration": 0,
+          "EquipmentHitChance": 0.1,
+          "EquipmentDamage": 4,
+          "Ammo": -1,
+          "ShotDuration": 2,
+          "Effects": []
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.28,
+            "ColorMain": "#FFD700",
+            "ColorSpark": "#FFFACD"
+          }
+        },
+        "Stackable": false
+      },
+      "W_PlasmaCannon": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_01bon_a",
+        "Name": "Плазменная пушка",
+        "Description": "Энергетический выстрел с замедлением. Быстро разряжает щиты.",
+        "Weight": 85,
+        "Price": 2200,
+        "Durability": 140,
+        "MaxDurability": 140,
+        "TechLevel": 3,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 30,
+          "BaseMaxDmg": 55,
+          "Range": 250,
+          "DamageType": "Energy",
+          "ShotPattern": "PointAoE",
+          "ArmorPenetration": 0,
+          "ShieldPenetration": 0,
+          "EquipmentHitChance": 0.05,
+          "EquipmentDamage": 2,
+          "Ammo": -1,
+          "ShotDuration": 2,
+          "Effects": [
+            "Slow:2:0.25:0.6"
+          ]
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Sparks",
+            "Count": 7,
+            "Radius": 0.32,
+            "ColorMain": "#8844FF",
+            "ColorSpark": "#CC99FF"
+          }
+        },
+        "Stackable": false
+      },
+      "W_CorrosionGun": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_02droid_a",
+        "Name": "Коррозионный излучатель",
+        "Description": "Наносит химический взрывной урон, снижающий броню цели.",
+        "Weight": 95,
+        "Price": 2800,
+        "Durability": 110,
+        "MaxDurability": 110,
+        "TechLevel": 3,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 25,
+          "BaseMaxDmg": 45,
+          "Range": 200,
+          "DamageType": "Explosive",
+          "ShotPattern": "Point",
+          "ArmorPenetration": 10,
+          "ShieldPenetration": 0,
+          "EquipmentHitChance": 0.1,
+          "EquipmentDamage": 3,
+          "Ammo": -1,
+          "ShotDuration": 2,
+          "Effects": [
+            "ArmorDebuff:3:30:1.0"
+          ]
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Sparks",
+            "Count": 5,
+            "Radius": 0.25,
+            "ColorMain": "#44FF44",
+            "ColorSpark": "#AAFFAA"
+          }
+        },
+        "Stackable": false
+      },
+      "W_EMIPulse": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_03block_a",
+        "Name": "ЭМИ-пушка",
+        "Description": "Электромагнитный импульс. Шанс отключить все системы корабля на 1 ход.",
+        "Weight": 60,
+        "Price": 3000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "TechLevel": 4,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "AllowModules": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 15,
+          "BaseMaxDmg": 25,
+          "Range": 300,
+          "DamageType": "Energy",
+          "ShotPattern": "Point",
+          "ArmorPenetration": 0,
+          "ShieldPenetration": 50,
+          "EquipmentHitChance": 0,
+          "EquipmentDamage": 0,
+          "Ammo": -1,
+          "ShotDuration": 3,
+          "Effects": [
+            "Shutdown:1:1:0.35",
+            "Jamming:2:1:0.5"
+          ]
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Ring",
+            "Count": 8,
+            "Radius": 0.3,
+            "ColorMain": "#4488FF",
+            "ColorSpark": "#AACCFF"
+          }
+        },
+        "Stackable": false
+      },
+      "W_VampireLaser": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_01dmg_a",
+        "Name": "Лазер-вампир",
+        "Description": "Восстанавливает HP атакующего за 40% нанесённого урона.",
+        "Weight": 55,
+        "Price": 2500,
+        "Durability": 120,
+        "MaxDurability": 120,
+        "TechLevel": 4,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 18,
+          "BaseMaxDmg": 30,
+          "Range": 220,
+          "DamageType": "Energy",
+          "ShotPattern": "Beam",
+          "ArmorPenetration": 0,
+          "ShieldPenetration": 0,
+          "EquipmentHitChance": 0,
+          "EquipmentDamage": 0,
+          "Ammo": -1,
+          "ShotDuration": 2,
+          "Effects": [
+            "Drain:1:0.4:1.0"
+          ]
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Flash",
+            "Count": 1,
+            "Radius": 0.2,
+            "ColorMain": "#FF0066",
+            "ColorSpark": "#FF4488"
+          }
+        },
+        "Stackable": false
+      },
+      "W_Torpedo": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_02overheat_a",
+        "Name": "Торпедный аппарат",
+        "Description": "Самонаводящаяся торпеда. Мощный взрывной урон, ограниченный боезапас.",
+        "Weight": 120,
+        "Price": 3500,
+        "Durability": 150,
+        "MaxDurability": 150,
+        "TechLevel": 3,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "AllowModules": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 80,
+          "BaseMaxDmg": 140,
+          "Range": 2000,
+          "DamageType": "Explosive",
+          "ShotPattern": "Homing",
+          "ArmorPenetration": 20,
+          "ShieldPenetration": 30,
+          "EquipmentHitChance": 0.4,
+          "EquipmentDamage": 12,
+          "Ammo": 6,
+          "ShotDuration": 4,
+          "Effects": []
+        },
+        "Missile": {
+          "Hp": 50,
+          "Speed": 0.6,
+          "Lifedays": 7,
+          "GraphicPath": "Graphics/Missiles/Torpedo01",
+          "Scale": 1,
+          "ReturnsOnTargetDeath": true,
+          "TurnDeg": 360
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Burst",
+            "Count": 10,
+            "Radius": 0.5,
+            "ColorMain": "#CC3300",
+            "ColorSpark": "#FF8833"
+          }
+        },
+        "Stackable": false
+      },
+      "W_PiercingRailgun": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_03dmg_a",
+        "Name": "Рейлган",
+        "Description": "Пробивающий кинетический снаряд. Проходит через несколько целей.",
+        "Weight": 150,
+        "Price": 4000,
+        "Durability": 160,
+        "MaxDurability": 160,
+        "TechLevel": 4,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 50,
+          "BaseMaxDmg": 90,
+          "Range": 450,
+          "DamageType": "Kinetic",
+          "ShotPattern": "Piercing",
+          "ArmorPenetration": 40,
+          "ShieldPenetration": 10,
+          "EquipmentHitChance": 0.2,
+          "EquipmentDamage": 8,
+          "Ammo": -1,
+          "ShotDuration": 1,
+          "Effects": []
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Sparks",
+            "Count": 4,
+            "Radius": 0.22,
+            "ColorMain": "#88CCFF",
+            "ColorSpark": "#EEEEFF"
+          }
+        },
+        "Stackable": false
+      },
+      "W_Shotgun": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_01drop_a",
+        "Name": "Дробовик",
+        "Description": "Взрывной залп кинетической картечи. Смертоносен вблизи, теряет силу на дистанции.",
+        "Weight": 55,
+        "Price": 700,
+        "Durability": 130,
+        "MaxDurability": 130,
+        "TechLevel": 1,
+        "StartGTL": 1,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 15,
+          "BaseMaxDmg": 35,
+          "Range": 120,
+          "DamageType": "Kinetic",
+          "EquipmentHitChance": 0.2,
+          "EquipmentDamage": 6,
+          "ShotPattern": "Shotgun",
+          "ArmorPenetration": 5,
+          "ShieldPenetration": 0,
+          "Ammo": -1,
+          "ShotDuration": 1,
+          "Effects": []
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Sparks",
+            "Count": 6,
+            "Radius": 0.35,
+            "ColorMain": "#FFCC44",
+            "ColorSpark": "#FFE8AA"
+          }
+        },
+        "Stackable": false
+      },
+      "W_ChainBolt": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_03bon_a",
+        "Name": "Цепная молния",
+        "Description": "Энергетический разряд, перескакивающий между ближайшими кораблями.",
+        "Weight": 65,
+        "Price": 1800,
+        "Durability": 110,
+        "MaxDurability": 110,
+        "TechLevel": 2,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "AllowModules": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 20,
+          "BaseMaxDmg": 35,
+          "Range": 250,
+          "DamageType": "Energy",
+          "EquipmentHitChance": 0.05,
+          "EquipmentDamage": 2,
+          "ShotPattern": "Chain",
+          "ArmorPenetration": 0,
+          "ShieldPenetration": 15,
+          "Ammo": -1,
+          "ShotDuration": 2,
+          "Effects": []
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Ring",
+            "Count": 6,
+            "Radius": 0.2,
+            "ColorMain": "#FFFF44",
+            "ColorSpark": "#FFFFAA"
+          }
+        },
+        "Stackable": false
+      },
+      "W_GravBomb": {
+        "GraphicPath": "Graphics/Items/Equipment/Weapon/W2_02goods_a",
+        "Name": "Гравитационная бомба",
+        "Description": "Взрывная волна бьёт по площади и замедляет всех в зоне поражения.",
+        "Weight": 110,
+        "Price": 3200,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "TechLevel": 3,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "AllowModules": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "GTLDamageMultipliers": [
+            1,
+            1.2,
+            1.45,
+            1.75,
+            2.1,
+            2.55,
+            3.05,
+            3.65,
+            4.35,
+            5.15
+          ],
+          "BaseMinDmg": 35,
+          "BaseMaxDmg": 65,
+          "Range": 300,
+          "DamageType": "Explosive",
+          "EquipmentHitChance": 0.2,
+          "EquipmentDamage": 5,
+          "ShotPattern": "AoE",
+          "ArmorPenetration": 8,
+          "ShieldPenetration": 10,
+          "Ammo": 8,
+          "ShotDuration": 3,
+          "Effects": [
+            "Slow:2:0.2:0.5"
+          ]
+        },
+        "Visual": {
+          "Mode": "Code",
+          "Palette": {
+            "Shape": "Ring",
+            "Count": 14,
+            "Radius": 0.7,
+            "ColorMain": "#993399",
+            "ColorSpark": "#CC66CC"
+          }
+        },
+        "Stackable": false
+      }
+    },
+    "Artefacts": {
+      "AF_SpeedBoost": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Speed_i",
+        "Name": "Ускоритель",
+        "Description": "Пассивно увеличивает скорость корабля. Можно поставить в слот артефактов или встроить в двигатель.",
+        "Weight": 10,
+        "Price": 600,
+        "Durability": 80,
+        "MaxDurability": 80,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "IsEmbeddable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Artefacts.SpeedMult": 1.2
+          }
+        },
+        "Embed": {
+          "Tier": "T2",
+          "Priority": 55,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Engine"
+            ],
+            "CarrierRaces": [
+              "*"
+            ],
+            "Tags": [
+              "Artefact"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.3,
+            "SizeMul": 1.1,
+            "DurabilityMul": 0.9
+          },
+          "Bonuses": {
+            "Engine.Speed": 20
+          }
+        },
+        "Stackable": false
+      },
+      "AF_HullRepair": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Nano_i",
+        "Name": "Нанороботы",
+        "Description": "Пассивно восстанавливают корпус. Можно встроить прямо в корпус — тогда работают, даже если слот артефактов занят.",
+        "Weight": 15,
+        "Price": 800,
+        "Durability": 80,
+        "MaxDurability": 80,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "IsEmbeddable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Artefacts.HealPerTurn": 3
+          }
+        },
+        "Embed": {
+          "Tier": "T2",
+          "Priority": 60,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Hull"
+            ],
+            "CarrierRaces": [
+              "*"
+            ],
+            "Tags": [
+              "Artefact"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.3,
+            "SizeMul": 1.05,
+            "DurabilityMul": 1.15
+          },
+          "Bonuses": {
+            "Hull.Armor": 3
+          }
+        },
+        "Stackable": false
+      },
+      "AF_LootFocus": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Analyzer_i",
+        "Name": "Хирургический модуль",
+        "Description": "Аккуратно разрушает корпус, повышая дроп оборудования при уничтожении.",
+        "Weight": 20,
+        "Price": 1200,
+        "Durability": 80,
+        "MaxDurability": 80,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "ShotEffects": "LootFocus:1:1:1.0"
+        },
+        "Stackable": false
+      },
+      "AF_ExecuteChip": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_PDTurret_i",
+        "Name": "Процессор добивания",
+        "Description": "Вычисляет уязвимости врага — до +33% урона по повреждённым целям. Можно встроить в оружие.",
+        "Weight": 12,
+        "Price": 1500,
+        "Durability": 80,
+        "MaxDurability": 80,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "IsEmbeddable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "ShotEffects": "ExecuteBonus:1:1:1.0"
+        },
+        "Embed": {
+          "Tier": "T3",
+          "Priority": 80,
+          "Removable": 0,
+          "Compat": {
+            "CarrierCategories": [
+              "Weapons"
+            ],
+            "CarrierRaces": [
+              "*"
+            ],
+            "Tags": [
+              "Artefact"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.5,
+            "SizeMul": 1,
+            "DurabilityMul": 1
+          },
+          "AddedWeaponEffects": [
+            {
+              "Type": "ExecuteBonus",
+              "Duration": 1,
+              "Magnitude": 1,
+              "Chance": 1
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtAnalyzer": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Analyzer_i",
+        "Name": "Вероятностный анализатор",
+        "Description": "Обрабатывает статистику галактики. Раз в несколько ходов вбрасывает в ленту прогнозы атак и трендов ГТУ.",
+        "Weight": 12,
+        "Price": 5000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "PeriodTurns": 5,
+          "ScopeSectors": 10
+        },
+        "ScriptParams": {
+          "RemoteCompatible": true
+        },
+        "TurnScript": "if not ship.IsPlayer then return end\nlocal period = math.max(1, math.floor(Api.GetParam(item, 'PeriodTurns', 5) + 0.5))\nlocal scope  = Api.GetParam(item, 'ScopeSectors', 10)\nlocal turn = Api.CurrentTurn()\nif turn == 0 or turn % period ~= 0 then return end\nlocal list = Api.AttackDirectivesNear(ship, scope)\nfor i = 0, list.Count - 1 do\n  local info = list[i]\n  Api.PostNews(Api.News.ATTACK, string.format('Анализатор: сторона <b>%s</b> готовит удар по системе <b>%s</b>.', info.OwnerId, info.TargetStarName))\nend",
+        "Stackable": false
+      },
+      "ArtAntigrav": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Antigrav_i",
+        "Name": "Антигравитатор",
+        "Description": "Создаёт вокруг корабля пузырь отрицательной кинетики. Эффективная масса корпуса снижается на 25%.",
+        "Weight": 18,
+        "Price": 4000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Hull.MassMult": -0.25
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtArtefactor": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Artefactor_i",
+        "Name": "Артефактор",
+        "Description": "Кристаллический разветвитель. Позволяет трём совместимым артефактам из трюма работать с половинной силой, не занимая слот.",
+        "Weight": 20,
+        "Price": 8000,
+        "Durability": 120,
+        "MaxDurability": 120,
+        "StartGTL": 5,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "ScriptParams": {
+          "RemoteArtefactor": {
+            "MaxCount": 3,
+            "Scale": 0.5
+          }
+        },
+        "Stackable": false
+      },
+      "ArtBio": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
+        "Name": "Биомир",
+        "Description": "Биокибернетический модуль. Повышает устойчивость пилота к болезням и восприимчивость к стимуляторам.",
+        "Weight": 8,
+        "Price": 3500,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "ScriptParams": {
+          "RemoteCompatible": true
+        },
+        "Stackable": false
+      },
+      "ArtBlackHole": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_BlackHole_i",
+        "Name": "Субпортал",
+        "Description": "Одноразовый множитель антиматерии. При активации порождает червоточину рядом с кораблём и самопоглощается.",
+        "Weight": 25,
+        "Price": 12000,
+        "Durability": 1,
+        "MaxDurability": 1,
+        "StartGTL": 6,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Activatable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "ScriptParams": {
+          "SpawnRadius": 5
+        },
+        "UseScript": "if ship.CurrentStar == nil then\n  return { ok=false, message=string.format('[Активация] %s: корабль не в системе.', item.Name) }\nend\nlocal radius = Api.GetConfigFloat(cfg, item, 'SpawnRadius', 5)\nlocal wh = Api.SpawnWormholeNearShip(ship, radius)\nif wh == nil then\n  return { ok=false, message=string.format('[Активация] %s: не удалось создать субпортал.', item.Name) }\nend\nreturn { ok=true, consume=true, message=string.format('[Активация] %s: субпортал открыт в системе %s.', item.Name, ship.CurrentStar.Name) }",
+        "Stackable": false
+      },
+      "ArtBomb": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Bomb_i",
+        "Name": "Кварковая бомба",
+        "Description": "Крайне разрушительный заряд. Выкиньте в космос и подорвите выстрелом — взрыв нанесёт мощный урон всем поблизости.",
+        "Weight": 30,
+        "Price": 15000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 5,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "OnContainerHit": "BigExplosion",
+          "Radius": 250,
+          "MinDamage": 400,
+          "MaxDamage": 800
+        },
+        "Stackable": false
+      },
+      "ArtDecelerate": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Decelerate_i",
+        "Name": "Вжик",
+        "Description": "Киборг-минизавод, откладывающий термические заряды в осколочные снаряды. Замедляет двигатели врага.",
+        "Weight": 14,
+        "Price": 3800,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Triggers": [
+            {
+              "On": "Fire",
+              "Filter": {
+                "DamageType": "Explosive"
+              },
+              "Chance": 1,
+              "Effects": [
+                {
+                  "Op": "AddWeaponEffect",
+                  "Type": "Slow",
+                  "Duration": 2,
+                  "Magnitude": 0.25,
+                  "Chance": 1
+                }
+              ]
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtDef": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Def_i",
+        "Name": "Поляризатор",
+        "Description": "Источник высокоактивных электронов. Усиливает защитное поле на 5% и с небольшой вероятностью отражает урон.",
+        "Weight": 12,
+        "Price": 2500,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Shield.BlockPercent": 5,
+            "Shield.ReflectChance": 0.1
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtDefToArms1": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_DefToArms1_i",
+        "Name": "Протон",
+        "Description": "Встраивается в энергоблок защитного поля. Забирает 10% его мощности и активирует дополнительную орудийную турель.",
+        "Weight": 20,
+        "Price": 6000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "SlotBonuses": {
+            "Weapons": 1
+          },
+          "Bonuses": {
+            "Shield.BlockPercent": -10
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtDefToArms2": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_DefToArms2_i",
+        "Name": "Армс",
+        "Description": "Стационарный комплект переоснастки: снимает слот генератора защитного поля и разворачивает вместо него две орудийные турели.",
+        "Weight": 24,
+        "Price": 9000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 5,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "SlotBonuses": {
+            "Shield": -1,
+            "Weapons": 2
+          }
+        },
+        "Stackable": false
+      },
+      "ArtDefToEnergy": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_DefToEnergy_i",
+        "Name": "Пропорционар",
+        "Description": "Маршрутизатор энергосистемы. Урезает подпитку защитного поля вдвое, за счёт этого усиливает энергетическое оружие на 60%.",
+        "Weight": 22,
+        "Price": 7500,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 5,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Shield.BlockPercent": -50,
+            "Weapons.EnergyDamageMult": 0.6
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtDroid": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Droid_i",
+        "Name": "Дроид младший",
+        "Description": "Облегчённый ремонтник. Подчиняется общему дроиду, восстанавливая до 10 единиц корпуса за ход и снижая износ основного дроида вдвое.",
+        "Weight": 10,
+        "Price": 2200,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Artefacts.HealPerTurn": 10,
+            "Droid.WearMult": -0.5
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtEnergyDef": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_EnergyDef_i",
+        "Name": "Проглот",
+        "Description": "Раздвижной энергоабсорбент. В 30% случаев поглощает тепловую составляющую попадания энергооружия, обнуляя урон.",
+        "Weight": 18,
+        "Price": 5500,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Triggers": [
+            {
+              "On": "Hit",
+              "Filter": {
+                "DamageType": "Energy"
+              },
+              "Chance": 0.3,
+              "Effects": [
+                {
+                  "Op": "NullifyDamage"
+                }
+              ]
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtEnergyPulse": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_EnergyPulse_i",
+        "Name": "Пятерик",
+        "Description": "Энергонакопитель. Каждый третий энерговыстрел усиливается на 30% за счёт накопленного заряда.",
+        "Weight": 16,
+        "Price": 4200,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Triggers": [
+            {
+              "On": "Fire",
+              "Filter": {
+                "DamageType": "Energy"
+              },
+              "EveryN": 3,
+              "Effects": [
+                {
+                  "Op": "DamageMult",
+                  "Value": 1.3
+                }
+              ]
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtFastRacks": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_FastRacks_i",
+        "Name": "Ралс",
+        "Description": "Оптимизатор ракетных стеллажей. Даёт 15% шанс запустить двойной ракетный залп.",
+        "Weight": 14,
+        "Price": 3600,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Triggers": [
+            {
+              "On": "MissileFire",
+              "Chance": 0.15,
+              "Effects": [
+                {
+                  "Op": "ExtraSalvo",
+                  "Value": 1
+                }
+              ]
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtForsage": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Forsage_i",
+        "Name": "Обливионный коннектор",
+        "Description": "Наномодули келлероидов на сопле. В режиме форсажа износ двигателя сокращается вдвое.",
+        "Weight": 12,
+        "Price": 4800,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Triggers": [
+            {
+              "On": "Wear",
+              "Filter": {
+                "Slot": "Engine",
+                "Cause": "Forsage"
+              },
+              "Effects": [
+                {
+                  "Op": "WearMult",
+                  "Value": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtFuel": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Fuel_i",
+        "Name": "Чёрная жижа",
+        "Description": "Древний катализатор. Каждый ход добавляет топливо в бак, расходуя собственный ресурс.",
+        "Weight": 20,
+        "Price": 6000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "FuelPerTurn": 2
+        },
+        "TurnScript": "local perTurn = math.max(1, math.floor(Api.GetParam(item, 'FuelPerTurn', 2) + 0.5))\nlocal added = Api.AddFuel(ship, perTurn)\nif added > 0 then Api.SpendDurability(item, 1) end",
+        "Stackable": false
+      },
+      "ArtGiperJump": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_GiperJump_i",
+        "Name": "Гипергенератор",
+        "Description": "Уникальное дополнение к двигателю. Сокращает продолжительность каждого гиперперехода на один ход.",
+        "Weight": 18,
+        "Price": 7000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Artefacts.TurnsDelta": -1
+          }
+        },
+        "Stackable": false
+      },
+      "ArtHook": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Hook_i",
+        "Name": "Эриметр",
+        "Description": "Фокусатор луча захвата. Увеличивает грузоподъёмность и радиус действия захвата.",
+        "Weight": 14,
+        "Price": 3200,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "CargoGrabber.Power": 30,
+            "CargoGrabber.Range": 25
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtHull": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Hull_i",
+        "Name": "Железные жупи",
+        "Description": "Колония металлических симбионтов на обшивке. Увеличивает броню корпуса на 5 единиц.",
+        "Weight": 15,
+        "Price": 2800,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 2,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Hull.Armor": 5
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtMiniExpl": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_MiniExpl_i",
+        "Name": "Локализатор взрывной волны",
+        "Description": "Отводит энергию попадания на внешнюю поверхность врага — при уничтожении цели сохраняется больше её оборудования как трофей.",
+        "Weight": 12,
+        "Price": 3400,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Triggers": [
+            {
+              "On": "Kill",
+              "Effects": [
+                {
+                  "Op": "PreserveLoot",
+                  "Value": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtMissileDef": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_MissileDef_i",
+        "Name": "Ракетанг",
+        "Description": "Наномеханическая плёнка. Блокирует до 25% урона от ракетных попаданий.",
+        "Weight": 16,
+        "Price": 4200,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Hull.MissileDamageMult": -0.25
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtNano": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Nano_i",
+        "Name": "Нанитоиды",
+        "Description": "Интеллектуальные нанороботы. Раз в ход чинят 10% случайно выбранного повреждённого предмета (прочность ниже 60%).",
+        "Weight": 10,
+        "Price": 3800,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "HealPercent": 0.1,
+          "RepairThreshold": 0.6
+        },
+        "TurnScript": "local threshold = Api.GetParam(item, 'RepairThreshold', 0.60)\nlocal healPct   = Api.GetParam(item, 'HealPercent', 0.10)\nif healPct <= 0 then return end\nlocal list = Api.DamagedItems(ship, threshold, item)\nif list.Count == 0 then return end\nlocal target = Api.PickRandom(list)\nlocal healed = Api.RepairItemPercent(target, healPct)\nif healed > 0 and ship.IsPlayer then\n  Api.PostPlayerNews(string.format('Нанитоиды подлатали <b>%s</b> (+%d).', target.Name, healed))\nend",
+        "Stackable": false
+      },
+      "ArtPDTurret": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_PDTurret_i",
+        "Name": "а'Эгис",
+        "Description": "Автоматическая ПРО-турель. Сбивает до 5 вражеских ракет в радиусе 150 единиц каждый ход.",
+        "Weight": 18,
+        "Price": 5500,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "Params": {
+          "Range": 150,
+          "MaxShots": 5
+        },
+        "Subturns": [5],
+        "TurnScript": "local range = Api.SRToWorld(Api.GetParam(item, 'Range', 150))\nlocal maxShots = math.max(1, math.floor(Api.GetParam(item, 'MaxShots', 5) + 0.5))\nif range <= 0 then return end\nlocal killed = Api.KillMissilesInRadius(ship, range, maxShots, true)\nif killed > 0 and ship.IsPlayer then\n  Api.PostPlayerNews(string.format('а\\'Эгис сбил ракет: %d.', killed))\nend",
+        "Stackable": false
+      },
+      "ArtPower": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Power_i",
+        "Name": "Отморозки",
+        "Description": "Колония сверххолодных бактерий. Быстрее восстанавливают скорость после замедления и защищают корпус от теплового поражения звезды.",
+        "Weight": 14,
+        "Price": 3000,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Artefacts.SpeedRecoveryMult": 1,
+            "Hull.SunDamageMult": -0.5
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtRadar": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Radar_i",
+        "Name": "Пролонгер",
+        "Description": "Усилитель радара. Увеличивает радиус действия на 600 единиц и показывает сводку кораблей в удалённых системах на галакарте.",
+        "Weight": 10,
+        "Price": 3500,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Radar.Range": 600,
+            "Artefacts.GalaxyMapScope": 40
+          },
+          "ShipScope": true
+        },
+        "ScriptParams": {
+          "RemoteCompatible": true
+        },
+        "Stackable": false
+      },
+      "ArtScaner": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Scaner_i",
+        "Name": "Сканерный кэш",
+        "Description": "Программный усилитель сканера. Увеличивает мощность сканирования на 10 единиц.",
+        "Weight": 8,
+        "Price": 3200,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Scanner.Power": 10
+          },
+          "ShipScope": true
+        },
+        "ScriptParams": {
+          "RemoteCompatible": true
+        },
+        "Stackable": false
+      },
+      "ArtSpeed": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Speed_i",
+        "Name": "Пси-ускоритель материи",
+        "Description": "Пси-симбионт двигателя. Прибавляет к скорости 150 единиц независимо от массы корабля.",
+        "Weight": 12,
+        "Price": 5200,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Bonuses": {
+            "Engine.Speed": 150
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtSplinter": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Splinter_i",
+        "Name": "Навинт",
+        "Description": "Минизавод боеголовок-расщепителей. Осколочное оружие наносит на 20% больше урона.",
+        "Weight": 14,
+        "Price": 3600,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "Triggers": [
+            {
+              "On": "Fire",
+              "Filter": {
+                "DamageType": "Explosive"
+              },
+              "Effects": [
+                {
+                  "Op": "DamageMult",
+                  "Value": 1.2
+                }
+              ]
+            }
+          ]
+        },
+        "Stackable": false
+      },
+      "ArtTransmitter": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Transmitter_i",
+        "Name": "Трансфакторный маяк",
+        "Description": "Одноразовое устройство дальнего вызова. Активация направляет флот выбранной стороны в текущую систему.",
+        "Weight": 20,
+        "Price": 9500,
+        "Durability": 1,
+        "MaxDurability": 1,
+        "StartGTL": 5,
+        "EndGTL": 0,
+        "NoWear": true,
+        "AllowEmbeds": false,
+        "Activatable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "ScriptParams": {
+          "Summon": {
+            "Side": "Dominators",
+            "DurationTurns": 30,
+            "RequiredStagingPower": 0
+          }
+        },
+        "UseScript": "if ship.CurrentStar == nil then\n  return { ok=false, message=string.format('[Активация] %s: корабль не в системе.', item.Name) }\nend\nif not Api.SummonSideFromConfig(ship, cfg, item, 'Summon') then\n  return { ok=false, message=string.format('[Активация] %s: призыв не удался.', item.Name) }\nend\nreturn { ok=true, consume=true, message=string.format('[Активация] %s: сторона направлена в %s.', item.Name, ship.CurrentStar.Name) }",
+        "Stackable": false
+      },
+      "ArtWeaponToSpeed": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Speed_i",
+        "Name": "Сопланатор",
+        "Description": "Комплект дополнительных сопел, разворачиваемый на месте одной орудийной турели. Прибавляет 100 единиц скорости.",
+        "Weight": 20,
+        "Price": 4400,
+        "Durability": 100,
+        "MaxDurability": 100,
+        "StartGTL": 3,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "SlotCode": {
+          "SlotBonuses": {
+            "Weapons": -1
+          },
+          "Bonuses": {
+            "Engine.Speed": 100
+          },
+          "ShipScope": true
+        },
+        "Stackable": false
+      },
+      "ArtDisguiseDom1": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
+        "Name": "Камуфляж-Доминаторы I",
+        "Description": "Активируемое устройство: маскирует корабль под доминатора I расы. Работает до раскрытия. Активация только в фазе планирования.",
+        "Weight": 15,
+        "Price": 12000,
+        "Durability": 40,
+        "MaxDurability": 40,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Activatable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "UseScript": "return Api.ToggleDisguiseFromConfig(ship, cfg, item)",
+        "ScriptParams": {
+          "TargetRace": "RaceDominators1",
+          "TargetOwner": "Dominators",
+          "VisualPath": "Graphics/Items/Equipment/Hull/Hull_RaceDominators1_Dom3_c",
+          "DisplayName": "Доминатор I расы",
+          "WearOnActivate": 2
+        },
+        "Stackable": false
+      },
+      "ArtDisguiseDom2": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
+        "Name": "Камуфляж-Доминаторы II",
+        "Description": "Активируемое устройство: маскирует корабль под доминатора II расы. Работает до раскрытия. Активация только в фазе планирования.",
+        "Weight": 15,
+        "Price": 12000,
+        "Durability": 40,
+        "MaxDurability": 40,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Activatable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "UseScript": "return Api.ToggleDisguiseFromConfig(ship, cfg, item)",
+        "ScriptParams": {
+          "TargetRace": "RaceDominators2",
+          "TargetOwner": "Dominators",
+          "VisualPath": "Graphics/Items/Equipment/Hull/Hull_RaceDominators2_Dom3_c",
+          "DisplayName": "Доминатор II расы",
+          "WearOnActivate": 2
+        },
+        "Stackable": false
+      },
+      "ArtDisguiseDom3": {
+        "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
+        "Name": "Камуфляж-Доминаторы III",
+        "Description": "Активируемое устройство: маскирует корабль под доминатора III расы. Работает до раскрытия. Активация только в фазе планирования.",
+        "Weight": 15,
+        "Price": 12000,
+        "Durability": 40,
+        "MaxDurability": 40,
+        "StartGTL": 4,
+        "EndGTL": 0,
+        "NoWear": false,
+        "AllowEmbeds": false,
+        "Activatable": true,
+        "Manufacturer": {
+          "Race": null,
+          "Side": null
+        },
+        "UseScript": "return Api.ToggleDisguiseFromConfig(ship, cfg, item)",
+        "ScriptParams": {
+          "TargetRace": "RaceDominators3",
+          "TargetOwner": "Dominators",
+          "VisualPath": "Graphics/Items/Equipment/Hull/Hull_RaceDominators3_Dom3_c",
+          "DisplayName": "Доминатор III расы",
+          "WearOnActivate": 2
+        },
+        "Stackable": false
+      }
+    },
+    "Useless": {
+      "Nod": {
+        "Name": "Ноды",
+        "BasePrice": 20,
+        "Stackable": true,
+        "DropWeightMin": 10,
+        "DropWeightMax": 300,
+        "SpritePath": "Graphics/Items/Stackable/Nod",
+        "GraphicSteps": [
+          {
+            "MinAmount": 0,
+            "Icon": "Graphics/Items/Stackable/Nod/Nod_mini_i",
+            "Sprite": "Graphics/Items/Stackable/Nod/Nod_mini_c"
+          },
+          {
+            "MinAmount": 50,
+            "Icon": "Graphics/Items/Stackable/Nod/Nod_small_i",
+            "Sprite": "Graphics/Items/Stackable/Nod/Nod_small_c"
+          },
+          {
+            "MinAmount": 200,
+            "Icon": "Graphics/Items/Stackable/Nod/Nod_aver_i",
+            "Sprite": "Graphics/Items/Stackable/Nod/Nod_aver_c"
+          },
+          {
+            "MinAmount": 500,
+            "Icon": "Graphics/Items/Stackable/Nod/Nod_big_i",
+            "Sprite": "Graphics/Items/Stackable/Nod/Nod_big_c"
+          },
+          {
+            "MinAmount": 1000,
+            "Icon": "Graphics/Items/Stackable/Nod/Nod_huge_i",
+            "Sprite": "Graphics/Items/Stackable/Nod/Nod_huge_c"
+          }
+        ]
+      }
+    },
+    "Goods": {
+      "Food": {
+        "Name": "Еда",
+        "BasePrice": 5,
+        "Illegal": false,
+        "Description": "Продовольствие",
+        "Icon": "Graphics/Items/Stackable/Goods/Food_i",
+        "Stackable": true
+      },
+      "Medicine": {
+        "Name": "Медикаменты",
+        "BasePrice": 40,
+        "Illegal": false,
+        "Description": "Лечебные препараты",
+        "Icon": "Graphics/Items/Stackable/Goods/Medicine_i",
+        "Stackable": true
+      },
+      "Alcohol": {
+        "Name": "Алкоголь",
+        "BasePrice": 15,
+        "Illegal": false,
+        "Description": "Спиртные напитки",
+        "Icon": "Graphics/Items/Stackable/Goods/Alcohol_i",
+        "Stackable": true
+      },
+      "Minerals": {
+        "Name": "Минералы",
+        "BasePrice": 12,
+        "Illegal": false,
+        "Description": "Сырьё и руды",
+        "Icon": "Graphics/Items/Stackable/Goods/Minerals_i",
+        "GraphicSteps": [
+          {
+            "MinAmount": 0,
+            "Icon": "Graphics/Items/Stackable/Goods/Minerals_i",
+            "Sprite": "Graphics/Items/Stackable/Goods/Minerals/Mineral_mini_c"
+          },
+          {
+            "MinAmount": 10,
+            "Icon": "Graphics/Items/Stackable/Goods/Minerals_i",
+            "Sprite": "Graphics/Items/Stackable/Goods/Minerals/Mineral_small_c"
+          },
+          {
+            "MinAmount": 25,
+            "Icon": "Graphics/Items/Stackable/Goods/Minerals_i",
+            "Sprite": "Graphics/Items/Stackable/Goods/Minerals/Mineral_aver_c"
+          },
+          {
+            "MinAmount": 40,
+            "Icon": "Graphics/Items/Stackable/Goods/Minerals_i",
+            "Sprite": "Graphics/Items/Stackable/Goods/Minerals/Mineral_big_c"
+          }
+        ],
+        "Stackable": true
+      },
+      "Tech": {
+        "Name": "Техника",
+        "BasePrice": 80,
+        "Illegal": false,
+        "Description": "Электроника и оборудование",
+        "Icon": "Graphics/Items/Stackable/Goods/Tech_i",
+        "Stackable": true
+      },
+      "Weapons": {
+        "Name": "Оружие",
+        "BasePrice": 150,
+        "Illegal": false,
+        "Description": "Стрелковое вооружение",
+        "Icon": "Graphics/Items/Stackable/Goods/Weapons_i",
+        "Stackable": true
+      },
+      "Narcotics": {
+        "Name": "Наркотики",
+        "BasePrice": 250,
+        "Illegal": true,
+        "Description": "Запрещённые вещества",
+        "Icon": "Graphics/Items/Stackable/Goods/Narcotics_i",
+        "Stackable": true
+      },
+      "Luxury": {
+        "Name": "Роскошь",
+        "BasePrice": 300,
+        "Illegal": false,
+        "Description": "Предметы роскоши и антиквариат",
+        "Icon": "Graphics/Items/Stackable/Goods/Luxury_i",
+        "Stackable": true
+      }
+    },
+    "MicroModules": {
+      "MM_T1_Apper": {
+        "Name": "Аппер I",
+        "Description": "Увеличивает мощность двигателя или дальность радара.",
+        "Icon": "Graphics/Items/MicroModules/MM_T1_i",
+        "BasePrice": 200,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T1",
+        "Embed": {
+          "Tier": "T1",
+          "Priority": 15,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Engine",
+              "Radar"
+            ],
+            "CarrierRaces": [
+              "*"
+            ],
+            "CarrierSides": [
+              "*"
+            ],
+            "Tags": [
+              "Signal"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.15,
+            "SizeMul": 1.05,
+            "DurabilityMul": 0.9
+          },
+          "Bonuses": {
+            "Engine.Speed": 5,
+            "Radar.Range": 100
+          }
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.02,
+              "Dominators": 0.03
+            },
+            "GtlWindow": [
+              1,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 1
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T1_Torpedo": {
+        "Name": "Тормоз I",
+        "Description": "Оружие получает слабый эффект замедления цели.",
+        "Icon": "Graphics/Items/MicroModules/MM_T1_i",
+        "BasePrice": 250,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T1",
+        "Embed": {
+          "Tier": "T1",
+          "Priority": 20,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Weapons"
+            ],
+            "CarrierRaces": [
+              "*"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.2,
+            "SizeMul": 1.1,
+            "DurabilityMul": 1
+          },
+          "AddedWeaponEffects": [
+            {
+              "Type": "Slow",
+              "Duration": 1,
+              "Magnitude": 0.15,
+              "Chance": 0.75
+            }
+          ]
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.02,
+              "Dominators": 0.03
+            },
+            "GtlWindow": [
+              1,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 1
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T1_Armor": {
+        "Name": "Скорлупа I",
+        "Description": "Небольшая прибавка к броне корпуса.",
+        "Icon": "Graphics/Items/MicroModules/MM_T1_i",
+        "BasePrice": 300,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T1",
+        "Embed": {
+          "Tier": "T1",
+          "Priority": 25,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Hull"
+            ],
+            "CarrierRaces": [
+              "*"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.2,
+            "SizeMul": 1.05,
+            "DurabilityMul": 1.1
+          },
+          "Bonuses": {
+            "Hull.Armor": 2
+          }
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.02,
+              "Dominators": 0.03
+            },
+            "GtlWindow": [
+              1,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 1
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T2_Apper": {
+        "Name": "Аппер II",
+        "Description": "Заметно улучшает двигатель или радар.",
+        "Icon": "Graphics/Items/MicroModules/MM_T2_i",
+        "BasePrice": 800,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T2",
+        "Embed": {
+          "Tier": "T2",
+          "Priority": 50,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Engine",
+              "Radar"
+            ],
+            "CarrierRaces": [
+              "*"
+            ],
+            "CarrierSides": [
+              "*"
+            ],
+            "Tags": [
+              "Signal"
+            ],
+            "ConflictsWith": [
+              "Signal"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.3,
+            "SizeMul": 1.1,
+            "DurabilityMul": 0.9
+          },
+          "Bonuses": {
+            "Engine.Speed": 15,
+            "Radar.Range": 300
+          }
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.015,
+              "Dominators": 0.025
+            },
+            "GtlWindow": [
+              2,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 3
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T2_Sharpshot": {
+        "Name": "Прицел II",
+        "Description": "Оружие получает точность (уменьшает разброс урона) и повышенный шанс попасть по оборудованию.",
+        "Icon": "Graphics/Items/MicroModules/MM_T2_i",
+        "BasePrice": 900,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T2",
+        "Embed": {
+          "Tier": "T2",
+          "Priority": 55,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Weapons"
+            ],
+            "CarrierRaces": [
+              "*"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.3,
+            "SizeMul": 1,
+            "DurabilityMul": 1
+          },
+          "Bonuses": {
+            "Weapons.EquipmentHitChance": 0.1,
+            "Weapons.EquipmentDamage": 5
+          },
+          "WeaponFlags": [
+            "NoDamageDelta"
+          ]
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.015,
+              "Dominators": 0.025
+            },
+            "GtlWindow": [
+              2,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 3
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T2_Slotter": {
+        "Name": "Расширитель II",
+        "Description": "Прибавляет корпусу дополнительный слот оружия.",
+        "Icon": "Graphics/Items/MicroModules/MM_T2_i",
+        "BasePrice": 1200,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T2",
+        "Embed": {
+          "Tier": "T2",
+          "Priority": 60,
+          "Removable": 0,
+          "Compat": {
+            "CarrierCategories": [
+              "Hull"
+            ],
+            "CarrierRaces": [
+              "*"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.4,
+            "SizeMul": 1.15,
+            "DurabilityMul": 0.95
+          },
+          "SlotBonuses": {
+            "Weapons": 1
+          }
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.01,
+              "Dominators": 0.02
+            },
+            "GtlWindow": [
+              2,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 4
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T3_Apper": {
+        "Name": "Аппер III",
+        "Description": "Сильно улучшает двигатель или радар.",
+        "Icon": "Graphics/Items/MicroModules/MM_T3_i",
+        "BasePrice": 2500,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T3",
+        "Embed": {
+          "Tier": "T3",
+          "Priority": 85,
+          "Removable": 1,
+          "Compat": {
+            "CarrierCategories": [
+              "Engine",
+              "Radar"
+            ],
+            "CarrierRaces": [
+              "*"
+            ],
+            "CarrierSides": [
+              "*"
+            ],
+            "Tags": [
+              "Signal"
+            ],
+            "ConflictsWith": [
+              "Signal"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.5,
+            "SizeMul": 1.2,
+            "DurabilityMul": 0.85
+          },
+          "Bonuses": {
+            "Engine.Speed": 30,
+            "Radar.Range": 600
+          }
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.008,
+              "Dominators": 0.015
+            },
+            "RaceChance": {
+              "RaceDominators1": 0.01,
+              "RaceDominators2": 0.01,
+              "RaceDominators3": 0.01
+            },
+            "GtlWindow": [
+              3,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 5
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T3_Piercer": {
+        "Name": "Пробойник III",
+        "Description": "Оружие полностью игнорирует броню и щит цели.",
+        "Icon": "Graphics/Items/MicroModules/MM_T3_i",
+        "BasePrice": 3200,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T3",
+        "Embed": {
+          "Tier": "T3",
+          "Priority": 90,
+          "Removable": 0,
+          "Compat": {
+            "CarrierCategories": [
+              "Weapons"
+            ],
+            "CarrierRaces": [
+              "*"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.6,
+            "SizeMul": 1.1,
+            "DurabilityMul": 0.9
+          },
+          "WeaponFlags": [
+            "IgnoreArmorAndShield"
+          ]
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.008,
+              "Dominators": 0.015
+            },
+            "RaceChance": {
+              "RaceDominators1": 0.01,
+              "RaceDominators2": 0.01,
+              "RaceDominators3": 0.01
+            },
+            "GtlWindow": [
+              3,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 5
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      },
+      "MM_T3_Fortress": {
+        "Name": "Крепость III",
+        "Description": "Существенно повышает броню корпуса и его прочность.",
+        "Icon": "Graphics/Items/MicroModules/MM_T3_i",
+        "BasePrice": 3500,
+        "Weight": 1,
+        "ContainerGraphic": "MM_T3",
+        "Embed": {
+          "Tier": "T3",
+          "Priority": 95,
+          "Removable": 0,
+          "Compat": {
+            "CarrierCategories": [
+              "Hull"
+            ],
+            "CarrierRaces": [
+              "*"
+            ]
+          },
+          "CarrierMods": {
+            "PriceMul": 1.7,
+            "SizeMul": 1.15,
+            "DurabilityMul": 1.3
+          },
+          "Bonuses": {
+            "Hull.Armor": 8
+          }
+        },
+        "Sources": {
+          "NpcDrop": {
+            "SideChance": {
+              "Pirates": 0.008,
+              "Dominators": 0.015
+            },
+            "RaceChance": {
+              "RaceDominators1": 0.01,
+              "RaceDominators2": 0.01,
+              "RaceDominators3": 0.01
+            },
+            "GtlWindow": [
+              3,
+              10
+            ]
+          },
+          "Shop": {
+            "RaceWhitelist": [
+              "*"
+            ],
+            "SideWhitelist": [
+              "*"
+            ],
+            "MinPtu": 5
+          },
+          "RangerCenter": true
+        },
+        "Stackable": false
+      }
+    }
+  },
+  "EquipmentTemplates": {
+    "Clusters": {
+      "Coalition": {
+        "Name": "Коалиция",
+        "Lines": {
+          "T1": "Спутник",
+          "T2": "Ион",
+          "T3": "Импульс",
+          "T4": "Резонанс",
+          "T5": "Антиматерия-Старт",
+          "T6": "Гравикор",
+          "T7": "Фазовик",
+          "T8": "Сингуляр",
+          "T9": "Нейрокор",
+          "T10": "Квант"
+        }
+      },
+      "Dominators": {
+        "Name": "Доминаторы",
+        "Lines": {
+          "T1": "Киберугроза",
+          "T2": "Киберугроза",
+          "T3": "Киберугроза",
+          "T4": "Киберугроза",
+          "T5": "Киберугроза",
+          "T6": "Киберугроза",
+          "T7": "Киберугроза",
+          "T8": "Киберугроза",
+          "T9": "Киберугроза",
+          "T10": "Киберугроза"
+        },
+        "GraphicIgnoresTechLevel": true
+      }
+    },
+    "Hull": {
+      "DisplayName": "Корпус",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": false,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "HullSizeSmall": 250,
+      "HullSizeBig": 1000,
+      "HullSizeHuge": 2000,
+      "BaseWeight": 500,
+      "BasePrice": 2000,
+      "IdPrefix": "Hull_",
+      "IdSegments": [
+        "Side",
+        "Race",
+        "HullType",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> корпус <HullTypeAdj>",
+      "BaseDesc": "Стойкость корпуса <Weight>, обшивка блокирует до <Armor> урона.",
+      "GraphicTemplate": "Graphics/Items/Equipment/Hull/Hull_<Race>_<HullType>_a",
+      "GraphicCosmicTemplate": "Graphics/Items/Equipment/Hull/Hull_<Race>_<HullType>_c",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Container_5",
+        "GraphicByManufacturer": true
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Стальной",
+          "Armor": 1,
+          "AsteroidProtection": 1
+        },
+        "T2": {
+          "Adj": "Композитный",
+          "Armor": 2,
+          "AsteroidProtection": 1
+        },
+        "T3": {
+          "Adj": "Жаростойкий",
+          "Armor": 3,
+          "AsteroidProtection": 1
+        },
+        "T4": {
+          "Adj": "Резонансный",
+          "Armor": 4,
+          "AsteroidProtection": 1
+        },
+        "T5": {
+          "Adj": "Антирадиационный",
+          "Armor": 5,
+          "AsteroidProtection": 1
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "Armor": 6,
+          "AsteroidProtection": 1
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "Armor": 7,
+          "AsteroidProtection": 1
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "Armor": 8,
+          "AsteroidProtection": 1
+        },
+        "T9": {
+          "Adj": "Нейросетевой",
+          "Armor": 9,
+          "AsteroidProtection": 1
+        },
+        "T10": {
+          "Adj": "Квантовый",
+          "Armor": 10,
+          "AsteroidProtection": 1
+        }
+      },
+      "HullType": {
+        "R": {
+          "Adj": "рейнджера",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.7,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              10,
+              5
+            ],
+            [
+              -10,
+              5
+            ]
+          ],
+          "Tails": [
+            [
+              0,
+              -18
+            ]
+          ],
+          "BoardAnchor": [
+            85,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -100
+            ],
+            "Left": [
+              -95,
+              0
+            ],
+            "Right": [
+              95,
+              0
+            ],
+            "Front": [
+              0,
+              100
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left",
+            "Front"
+          ]
+        },
+        "T": {
+          "Adj": "транспорта",
+          "CostCoef": 1,
+          "CapacityMult": [
+            1,
+            1.2
+          ],
+          "WeaponPorts": [
+            [
+              15,
+              8
+            ],
+            [
+              -15,
+              8
+            ],
+            [
+              0,
+              10
+            ]
+          ],
+          "Tails": [
+            [
+              8,
+              -25
+            ],
+            [
+              -8,
+              -25
+            ]
+          ],
+          "BoardAnchor": [
+            110,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -130
+            ],
+            "Left": [
+              -120,
+              0
+            ],
+            "Right": [
+              120,
+              0
+            ],
+            "Front": [
+              0,
+              130
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left",
+            "Front"
+          ]
+        },
+        "W": {
+          "Adj": "военного",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.5,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              12,
+              5
+            ],
+            [
+              -12,
+              5
+            ]
+          ],
+          "Tails": [
+            [
+              0,
+              -20
+            ],
+            [
+              5,
+              -18
+            ],
+            [
+              -5,
+              -18
+            ]
+          ],
+          "BoardAnchor": [
+            95,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -115
+            ],
+            "Right": [
+              105,
+              0
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right"
+          ]
+        },
+        "PC": {
+          "Adj": "кланового пирата",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.5,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              13,
+              6
+            ],
+            [
+              -13,
+              6
+            ],
+            [
+              0,
+              8
+            ]
+          ],
+          "Tails": [
+            [
+              4,
+              -22
+            ],
+            [
+              -4,
+              -22
+            ]
+          ],
+          "BoardAnchor": [
+            105,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -125
+            ],
+            "Left": [
+              -115,
+              0
+            ],
+            "Right": [
+              115,
+              0
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left"
+          ]
+        },
+        "BW": {
+          "Adj": "линкора",
+          "CostCoef": 1,
+          "CapacityMult": [
+            1.5,
+            2
+          ],
+          "WeaponPorts": [
+            [
+              13,
+              6
+            ],
+            [
+              -13,
+              6
+            ],
+            [
+              0,
+              8
+            ]
+          ],
+          "Tails": [
+            [
+              4,
+              -22
+            ],
+            [
+              -4,
+              -22
+            ]
+          ],
+          "BoardAnchor": [
+            105,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -125
+            ],
+            "Left": [
+              -115,
+              0
+            ],
+            "Right": [
+              115,
+              0
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left"
+          ]
+        },
+        "D": {
+          "Adj": "дипломата",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.5,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              10,
+              5
+            ],
+            [
+              -10,
+              5
+            ]
+          ],
+          "Tails": [
+            [
+              0,
+              -18
+            ]
+          ],
+          "BoardAnchor": [
+            85,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -100
+            ],
+            "Front": [
+              0,
+              100
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Front"
+          ]
+        },
+        "P": {
+          "Adj": "пирата",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.5,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              10,
+              4
+            ],
+            [
+              -10,
+              4
+            ]
+          ],
+          "Tails": [
+            [
+              0,
+              -16
+            ]
+          ],
+          "BoardAnchor": [
+            80,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -95
+            ],
+            "Left": [
+              -90,
+              0
+            ],
+            "Right": [
+              90,
+              0
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left"
+          ]
+        },
+        "L": {
+          "Adj": "лайнера",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.7,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              8,
+              4
+            ],
+            [
+              -8,
+              4
+            ]
+          ],
+          "Tails": [
+            [
+              0,
+              -15
+            ]
+          ],
+          "BoardAnchor": [
+            80,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -95
+            ]
+          },
+          "TowOrder": [
+            "Back"
+          ]
+        },
+        "Dom1": {
+          "Adj": "доминатор-разведчик",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.3,
+            0.6
+          ],
+          "WeaponPorts": [
+            [
+              10,
+              5
+            ],
+            [
+              -10,
+              5
+            ]
+          ],
+          "Tails": [
+            [
+              0,
+              -18
+            ]
+          ],
+          "BoardAnchor": [
+            85,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -100
+            ]
+          },
+          "TowOrder": [
+            "Back"
+          ]
+        },
+        "Dom2": {
+          "Adj": "доминатор-перехватчик",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.5,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              11,
+              6
+            ],
+            [
+              -11,
+              6
+            ]
+          ],
+          "Tails": [
+            [
+              0,
+              -20
+            ]
+          ],
+          "BoardAnchor": [
+            90,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -105
+            ]
+          },
+          "TowOrder": [
+            "Back"
+          ]
+        },
+        "Dom3": {
+          "Adj": "доминатор-штурмовик",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.6,
+            1
+          ],
+          "WeaponPorts": [
+            [
+              12,
+              5
+            ],
+            [
+              -12,
+              5
+            ],
+            [
+              0,
+              8
+            ]
+          ],
+          "Tails": [
+            [
+              5,
+              -20
+            ],
+            [
+              -5,
+              -20
+            ]
+          ],
+          "BoardAnchor": [
+            95,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -115
+            ]
+          },
+          "TowOrder": [
+            "Back"
+          ]
+        },
+        "Dom4": {
+          "Adj": "доминатор-крейсер",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.8,
+            1.3
+          ],
+          "WeaponPorts": [
+            [
+              13,
+              6
+            ],
+            [
+              -13,
+              6
+            ],
+            [
+              0,
+              9
+            ]
+          ],
+          "Tails": [
+            [
+              5,
+              -22
+            ],
+            [
+              -5,
+              -22
+            ]
+          ],
+          "BoardAnchor": [
+            100,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -120
+            ],
+            "Right": [
+              110,
+              0
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right"
+          ]
+        },
+        "Dom5": {
+          "Adj": "доминатор-линкор",
+          "CostCoef": 1,
+          "CapacityMult": [
+            1,
+            1.5
+          ],
+          "WeaponPorts": [
+            [
+              14,
+              7
+            ],
+            [
+              -14,
+              7
+            ],
+            [
+              0,
+              10
+            ]
+          ],
+          "Tails": [
+            [
+              6,
+              -24
+            ],
+            [
+              -6,
+              -24
+            ]
+          ],
+          "BoardAnchor": [
+            105,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -125
+            ],
+            "Left": [
+              -115,
+              0
+            ],
+            "Right": [
+              115,
+              0
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left"
+          ]
+        },
+        "Dom6": {
+          "Adj": "доминатор-разрушитель",
+          "CostCoef": 1,
+          "CapacityMult": [
+            1.5,
+            2
+          ],
+          "WeaponPorts": [
+            [
+              15,
+              7
+            ],
+            [
+              -15,
+              7
+            ],
+            [
+              0,
+              11
+            ]
+          ],
+          "Tails": [
+            [
+              7,
+              -26
+            ],
+            [
+              -7,
+              -26
+            ]
+          ],
+          "BoardAnchor": [
+            110,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -130
+            ],
+            "Left": [
+              -120,
+              0
+            ],
+            "Right": [
+              120,
+              0
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left"
+          ]
+        },
+        "Dom7": {
+          "Adj": "доминатор-владыка",
+          "CostCoef": 1,
+          "CapacityMult": [
+            0.2,
+            0.5
+          ],
+          "WeaponPorts": [
+            [
+              16,
+              8
+            ],
+            [
+              -16,
+              8
+            ],
+            [
+              0,
+              12
+            ],
+            [
+              8,
+              4
+            ],
+            [
+              -8,
+              4
+            ]
+          ],
+          "Tails": [
+            [
+              8,
+              -28
+            ],
+            [
+              -8,
+              -28
+            ]
+          ],
+          "BoardAnchor": [
+            115,
+            0
+          ],
+          "TowAnchors": {
+            "Back": [
+              0,
+              -135
+            ],
+            "Left": [
+              -125,
+              0
+            ],
+            "Right": [
+              125,
+              0
+            ],
+            "Front": [
+              0,
+              135
+            ]
+          },
+          "TowOrder": [
+            "Back",
+            "Right",
+            "Left",
+            "Front"
+          ]
+        },
+        "BK": {
+          "Adj": "бизнес-центр",
+          "Code": "BK",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/BK",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "CB": {
+          "Adj": "боевая станция",
+          "Code": "CB",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/CB",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "MC": {
+          "Adj": "медцентр",
+          "Code": "MC",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/MC",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "PB": {
+          "Adj": "перевалочная база",
+          "Code": "PB",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/PB",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "RC": {
+          "Adj": "ремонтный комплекс",
+          "Code": "RC",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/RC",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "RG": {
+          "Adj": "радарный узел",
+          "Code": "RG",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/RG",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "WB": {
+          "Adj": "военная база",
+          "Code": "WB",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/WB",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "SB": {
+          "Adj": "научная база",
+          "Code": "SB",
+          "CostCoef": 3,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/SB",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "Blazer": {
+          "Adj": "станция блэйзеров",
+          "Code": "Blazer",
+          "CostCoef": 4,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Blazer",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "Keller": {
+          "Adj": "станция келлероидов",
+          "Code": "Keller",
+          "CostCoef": 4,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Keller",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        },
+        "Terron": {
+          "Adj": "станция терроноидов",
+          "Code": "Terron",
+          "CostCoef": 4,
+          "IsStation": true,
+          "FixedRotation": true,
+          "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c",
+          "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a",
+          "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Terron",
+          "WeaponPorts": [
+            [
+              0,
+              70
+            ],
+            [
+              60,
+              40
+            ],
+            [
+              -60,
+              40
+            ],
+            [
+              60,
+              -40
+            ],
+            [
+              -60,
+              -40
+            ],
+            [
+              0,
+              -70
+            ]
+          ],
+          "Tails": [],
+          "BoardAnchor": [
+            130,
+            0
+          ],
+          "TowAnchors": {}
+        }
+      },
+      "SideRaces": {
+        "Coalition": [
+          "Race1",
+          "Race2",
+          "Race3",
+          "Race4",
+          "Race5"
+        ],
+        "Dominators": [
+          "RaceDominators1",
+          "RaceDominators2",
+          "RaceDominators3"
+        ]
+      },
+      "SideHullTypes": {
+        "Coalition": [
+          "R",
+          "T",
+          "W",
+          "PC",
+          "BW",
+          "D",
+          "P",
+          "L"
+        ],
+        "Dominators": [
+          "Dom1",
+          "Dom2",
+          "Dom3",
+          "Dom4",
+          "Dom5",
+          "Dom6",
+          "Dom7"
+        ]
+      },
+      "HullSlotsHullType": {
+        "R": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 1,
+          "CargoGrabber": 1,
+          "Weapons": 4,
+          "Artefacts": 4
+        },
+        "T": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 0,
+          "Shield": 0,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 3,
+          "Artefacts": 1
+        },
+        "W": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 4,
+          "Artefacts": 0
+        },
+        "PC": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 0,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 0,
+          "Artefacts": 0
+        },
+        "BW": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 0,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 0,
+          "Artefacts": 0
+        },
+        "D": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 0,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 3,
+          "Artefacts": 2
+        },
+        "P": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 0,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "L": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 0,
+          "CargoGrabber": 0,
+          "Weapons": 2,
+          "Artefacts": 1
+        },
+        "Dom1": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 2,
+          "Artefacts": 1
+        },
+        "Dom2": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 3,
+          "Artefacts": 1
+        },
+        "Dom3": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 0,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 4,
+          "Artefacts": 2
+        },
+        "Dom4": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 1,
+          "Weapons": 4,
+          "Artefacts": 2
+        },
+        "Dom5": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 3
+        },
+        "Dom6": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 3
+        },
+        "Dom7": {
+          "Engine": 1,
+          "FuelTank": 1,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 1,
+          "Weapons": 6,
+          "Artefacts": 4
+        },
+        "BK": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 2,
+          "Weapons": 3,
+          "Artefacts": 2
+        },
+        "CB": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "MC": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "PB": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 2,
+          "Weapons": 3,
+          "Artefacts": 2
+        },
+        "RC": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "RG": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "WB": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "SB": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 2,
+          "Weapons": 3,
+          "Artefacts": 2
+        },
+        "Blazer": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "Keller": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        },
+        "Terron": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 1,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 5,
+          "Artefacts": 4
+        }
+      },
+      "HullSlotsRace": {
+        "Race1": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": -1,
+          "Shield": -1,
+          "Radar": 0,
+          "Scanner": -1,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 2,
+          "Artefacts": -1
+        },
+        "Race2": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 1,
+          "Shield": 0,
+          "Radar": 0,
+          "Scanner": 1,
+          "Droid": 0,
+          "CargoGrabber": 1,
+          "Weapons": 1,
+          "Artefacts": 1
+        },
+        "Race3": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 1,
+          "Shield": 1,
+          "Radar": 0,
+          "Scanner": 0,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 0,
+          "Artefacts": 2
+        },
+        "Race4": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 0,
+          "Radar": 0,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": -1,
+          "Artefacts": 0
+        },
+        "Race5": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": -1,
+          "Shield": -1,
+          "Radar": 0,
+          "Scanner": 0,
+          "Droid": 0,
+          "CargoGrabber": 0,
+          "Weapons": -2,
+          "Artefacts": 4
+        },
+        "RaceDominators1": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 1,
+          "Shield": 0,
+          "Radar": 0,
+          "Scanner": 0,
+          "Droid": 0,
+          "CargoGrabber": 0,
+          "Weapons": 1,
+          "Artefacts": 0
+        },
+        "RaceDominators2": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 0,
+          "Scanner": 1,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 0,
+          "Artefacts": 1
+        },
+        "RaceDominators3": {
+          "Engine": 0,
+          "FuelTank": 0,
+          "Forsage": 0,
+          "Shield": 1,
+          "Radar": 0,
+          "Scanner": 0,
+          "Droid": 1,
+          "CargoGrabber": 0,
+          "Weapons": 2,
+          "Artefacts": 0
+        }
+      }
+    },
+    "Engine": {
+      "DisplayName": "Двигатель",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": true,
+      "WearOnMove": 1,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 40,
+      "BaseDurability": 200,
+      "BasePrice": 500,
+      "IdPrefix": "E_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> двигатель (<LineName>)",
+      "BaseDesc": "Максимальная скорость до <Speed> ед, дальность прыжка до <JumpRange> парсек.",
+      "GraphicTemplate": "Graphics/Items/Equipment/Engine/Engine_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Container_4"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Ракетный",
+          "Speed": 400,
+          "JumpRange": 17,
+          "ExhaustColor": "#FFB060"
+        },
+        "T2": {
+          "Adj": "Ионный",
+          "Speed": 450,
+          "JumpRange": 21,
+          "ExhaustColor": "#88CCFF"
+        },
+        "T3": {
+          "Adj": "Импульсный",
+          "Speed": 500,
+          "JumpRange": 25,
+          "ExhaustColor": "#FFEE80"
+        },
+        "T4": {
+          "Adj": "Резонансный",
+          "Speed": 600,
+          "JumpRange": 30,
+          "ExhaustColor": "#A0FFB0"
+        },
+        "T5": {
+          "Adj": "Антиматериальный",
+          "Speed": 700,
+          "JumpRange": 35,
+          "ExhaustColor": "#FF7070"
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "Speed": 800,
+          "JumpRange": 40,
+          "ExhaustColor": "#9080FF"
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "Speed": 900,
+          "JumpRange": 45,
+          "ExhaustColor": "#80FFEE"
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "Speed": 1000,
+          "JumpRange": 50,
+          "ExhaustColor": "#FF60FF"
+        },
+        "T9": {
+          "Adj": "Адаптивный",
+          "Speed": 1100,
+          "JumpRange": 55,
+          "ExhaustColor": "#FFFFFF"
+        },
+        "T10": {
+          "Adj": "Туннельный",
+          "Speed": 1300,
+          "JumpRange": 60,
+          "ExhaustColor": "#FFD040"
+        }
+      }
+    },
+    "FuelTank": {
+      "DisplayName": "Топливный бак",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": true,
+      "WearOnMove": 1,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 20,
+      "BaseDurability": 200,
+      "BasePrice": 500,
+      "IdPrefix": "FT_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> бак",
+      "BaseDesc": "Хранит до <Capacity> единиц топлива.",
+      "GraphicTemplate": "Graphics/Items/Equipment/FuelTank/FuelTanks_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Graphics/Items/Equipment/FuelTank/FuelTank_c"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Криогенный",
+          "BaseCapacity": 10
+        },
+        "T2": {
+          "Adj": "Сжатый",
+          "BaseCapacity": 12
+        },
+        "T3": {
+          "Adj": "Термальный",
+          "BaseCapacity": 15
+        },
+        "T4": {
+          "Adj": "Стабилизирующий",
+          "BaseCapacity": 17
+        },
+        "T5": {
+          "Adj": "Магнитный",
+          "BaseCapacity": 20
+        },
+        "T6": {
+          "Adj": "Компрессионный",
+          "BaseCapacity": 22
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "BaseCapacity": 25
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "BaseCapacity": 28
+        },
+        "T9": {
+          "Adj": "Адаптивный",
+          "BaseCapacity": 32
+        },
+        "T10": {
+          "Adj": "Квантовый",
+          "BaseCapacity": 38
+        }
+      }
+    },
+    "Forsage": {
+      "DisplayName": "Форсажная камера",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": true,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 50,
+      "BaseDurability": 100,
+      "BasePrice": 500,
+      "IdPrefix": "AB_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> форсаж (<LineName>)",
+      "BaseDesc": "Форсажный модуль, удваивает скорость за счёт ускоренного износа двигателя.",
+      "GraphicTemplate": "Graphics/Items/Equipment/Forsage/Forsage_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": false,
+        "EndGTL": 0,
+        "NoWear": true,
+        "Activatable": true,
+        "ContainerGraphic": "Container_4"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Стартовый",
+          "EngineDurabilityBurnMult": 3
+        },
+        "T2": {
+          "Adj": "Ионный",
+          "EngineDurabilityBurnMult": 2.75
+        },
+        "T3": {
+          "Adj": "Импульсный",
+          "EngineDurabilityBurnMult": 2.5
+        },
+        "T4": {
+          "Adj": "Резонансный",
+          "EngineDurabilityBurnMult": 2.3
+        },
+        "T5": {
+          "Adj": "Антиматериальный",
+          "EngineDurabilityBurnMult": 2.1
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "EngineDurabilityBurnMult": 1.9
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "EngineDurabilityBurnMult": 1.75
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "EngineDurabilityBurnMult": 1.6
+        },
+        "T9": {
+          "Adj": "Адаптивный",
+          "EngineDurabilityBurnMult": 1.5
+        },
+        "T10": {
+          "Adj": "Квантовый",
+          "EngineDurabilityBurnMult": 1.4
+        }
+      }
+    },
+    "Shield": {
+      "DisplayName": "Щит",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": true,
+      "WearOnMove": 0,
+      "WearOnHit": 1,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 60,
+      "BaseDurability": 90,
+      "BasePrice": 500,
+      "IdPrefix": "SH_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> генератор (<LineName>)",
+      "BaseDesc": "Гасит <BlockPercent>% урона.",
+      "GraphicTemplate": "Graphics/Items/Equipment/DefGen/DefGenerator_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Container_3"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Электростатический",
+          "BlockPercent": 5
+        },
+        "T2": {
+          "Adj": "Ионный",
+          "BlockPercent": 10
+        },
+        "T3": {
+          "Adj": "Конденсаторный",
+          "BlockPercent": 15
+        },
+        "T4": {
+          "Adj": "Гасящий",
+          "BlockPercent": 20
+        },
+        "T5": {
+          "Adj": "Античастичный",
+          "BlockPercent": 25
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "BlockPercent": 30
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "BlockPercent": 35
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "BlockPercent": 40
+        },
+        "T9": {
+          "Adj": "Адаптивный",
+          "BlockPercent": 40
+        },
+        "T10": {
+          "Adj": "Дисперсионный",
+          "BlockPercent": 50
+        }
+      }
+    },
+    "Radar": {
+      "DisplayName": "Радар",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": true,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 1,
+      "BaseWeight": 20,
+      "BaseDurability": 70,
+      "BasePrice": 500,
+      "IdPrefix": "R_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> радар (<LineName>)",
+      "BaseDesc": "Дальность обзора до <Range> ед.",
+      "GraphicTemplate": "Graphics/Items/Equipment/Radar/Radar_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Container_2"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Узконаправленный",
+          "Range": 6250
+        },
+        "T2": {
+          "Adj": "Ионный",
+          "Range": 6900
+        },
+        "T3": {
+          "Adj": "Сетевой",
+          "Range": 7700
+        },
+        "T4": {
+          "Adj": "Волновой",
+          "Range": 8600
+        },
+        "T5": {
+          "Adj": "Аннигиляционный",
+          "Range": 9600
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "Range": 10750
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "Range": 12000
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "Range": 13500
+        },
+        "T9": {
+          "Adj": "Распознающий",
+          "Range": 10250
+        },
+        "T10": {
+          "Adj": "Энтанглерный",
+          "Range": 17250
+        }
+      }
+    },
+    "Scanner": {
+      "DisplayName": "Сканер",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": true,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 1,
+      "BaseWeight": 20,
+      "BaseDurability": 70,
+      "BasePrice": 500,
+      "IdPrefix": "SC_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> сканер (<LineName>)",
+      "BaseDesc": "Глубина сканирования <Power>.",
+      "GraphicTemplate": "Graphics/Items/Equipment/Scaner/Scaner_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Container_2"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Плотностный",
+          "Power": 5
+        },
+        "T2": {
+          "Adj": "Спектральный",
+          "Power": 10
+        },
+        "T3": {
+          "Adj": "Рентгеновский",
+          "Power": 15
+        },
+        "T4": {
+          "Adj": "Резонансный",
+          "Power": 20
+        },
+        "T5": {
+          "Adj": "Гамма",
+          "Power": 25
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "Power": 30
+        },
+        "T7": {
+          "Adj": "Просветный",
+          "Power": 35
+        },
+        "T8": {
+          "Adj": "Горизонтный",
+          "Power": 40
+        },
+        "T9": {
+          "Adj": "Предиктивный",
+          "Power": 45
+        },
+        "T10": {
+          "Adj": "Томографический",
+          "Power": 50
+        }
+      }
+    },
+    "Droid": {
+      "DisplayName": "Дроид",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": true,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 40,
+      "BaseDurability": 80,
+      "BasePrice": 500,
+      "IdPrefix": "DR_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> дроид (<LineName>)",
+      "BaseDesc": "Восстанавливает <HealPerTurn> единиц корпуса за ход.",
+      "GraphicTemplate": "Graphics/Items/Equipment/Droid/RepairRobot_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Container_3"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Латочный",
+          "HealPerTurn": 3,
+          "WearThreshold": 30
+        },
+        "T2": {
+          "Adj": "Сварочный",
+          "HealPerTurn": 5,
+          "WearThreshold": 30
+        },
+        "T3": {
+          "Adj": "Каркасный",
+          "HealPerTurn": 8,
+          "WearThreshold": 35
+        },
+        "T4": {
+          "Adj": "Вибрационный",
+          "HealPerTurn": 12,
+          "WearThreshold": 40
+        },
+        "T5": {
+          "Adj": "Молекулярный",
+          "HealPerTurn": 17,
+          "WearThreshold": 45
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "HealPerTurn": 23,
+          "WearThreshold": 50
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "HealPerTurn": 30,
+          "WearThreshold": 55
+        },
+        "T8": {
+          "Adj": "Компрессионный",
+          "HealPerTurn": 40,
+          "WearThreshold": 60
+        },
+        "T9": {
+          "Adj": "Самообучающийся",
+          "HealPerTurn": 52,
+          "WearThreshold": 65
+        },
+        "T10": {
+          "Adj": "Ассемблерный",
+          "HealPerTurn": 67,
+          "WearThreshold": 70
+        }
+      }
+    },
+    "CargoGrabber": {
+      "DisplayName": "Грузовой захват",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": false,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 30,
+      "BaseDurability": 70,
+      "BasePrice": 500,
+      "IdPrefix": "CG_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> захват (<LineName>)",
+      "BaseDesc": "Утаскивает грузы массой до <Power>, дальность <Range>.",
+      "GraphicTemplate": "Graphics/Items/Equipment/CargoHook/CargoHook_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "ContainerGraphic": "Container_4"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Механический",
+          "Power": 50,
+          "Range": 150,
+          "Speed": 30,
+          "WearThreshold": 5000,
+          "BeamColor": "#9AC8FF",
+          "BeamColorSecondary": "#3060B0",
+          "BeamWidth": 0.05
+        },
+        "T2": {
+          "Adj": "Магнитный",
+          "Power": 80,
+          "Range": 220,
+          "Speed": 28,
+          "WearThreshold": 5000,
+          "BeamColor": "#9AC8FF",
+          "BeamColorSecondary": "#3060B0",
+          "BeamWidth": 0.05
+        },
+        "T3": {
+          "Adj": "Турельный",
+          "Power": 130,
+          "Range": 320,
+          "Speed": 27,
+          "WearThreshold": 6000,
+          "BeamColor": "#9AC8FF",
+          "BeamColorSecondary": "#3060B0",
+          "BeamWidth": 0.05
+        },
+        "T4": {
+          "Adj": "Резонансный",
+          "Power": 200,
+          "Range": 440,
+          "Speed": 25,
+          "WearThreshold": 6500,
+          "BeamColor": "#C0A0FF",
+          "BeamColorSecondary": "#5020A0",
+          "BeamWidth": 0.06
+        },
+        "T5": {
+          "Adj": "Дезинтеграционный",
+          "Power": 290,
+          "Range": 580,
+          "Speed": 24,
+          "WearThreshold": 7000,
+          "BeamColor": "#C0A0FF",
+          "BeamColorSecondary": "#5020A0",
+          "BeamWidth": 0.06
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "Power": 400,
+          "Range": 740,
+          "Speed": 22,
+          "WearThreshold": 7500,
+          "BeamColor": "#FFC0A0",
+          "BeamColorSecondary": "#A04000",
+          "BeamWidth": 0.07
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "Power": 540,
+          "Range": 920,
+          "Speed": 21,
+          "WearThreshold": 8000,
+          "BeamColor": "#FFC0A0",
+          "BeamColorSecondary": "#A04000",
+          "BeamWidth": 0.07
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "Power": 720,
+          "Range": 1150,
+          "Speed": 20,
+          "WearThreshold": 8500,
+          "BeamColor": "#FFFFC0",
+          "BeamColorSecondary": "#A0A040",
+          "BeamWidth": 0.08
+        },
+        "T9": {
+          "Adj": "Прогностический",
+          "Power": 940,
+          "Range": 1420,
+          "Speed": 19,
+          "WearThreshold": 9000,
+          "BeamColor": "#FFFFC0",
+          "BeamColorSecondary": "#A0A040",
+          "BeamWidth": 0.08
+        },
+        "T10": {
+          "Adj": "Энтанглерный",
+          "Power": 1220,
+          "Range": 1750,
+          "Speed": 18,
+          "WearThreshold": 9500,
+          "BeamColor": "#A0FFE0",
+          "BeamColorSecondary": "#108070",
+          "BeamWidth": 0.09
+        }
+      }
+    },
+    "BoardingHook": {
+      "DisplayName": "Абордажный крюк",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": false,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 40,
+      "BaseDurability": 80,
+      "BasePrice": 500,
+      "IdPrefix": "BH_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> крюк (<LineName>)",
+      "BaseDesc": "Притягивает корабль-цель в радиусе <PullRadius> для абордажа.",
+      "GraphicTemplate": "Graphics/Items/Equipment/BoardingHook/CargoHook_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "CompatibleSlots": [
+          "CargoGrabber"
+        ],
+        "ContainerGraphic": "Container_4"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Механический",
+          "PullRadius": 150,
+          "BeamColor": "#FF8080",
+          "BeamColorSecondary": "#A02020",
+          "BeamWidth": 0.06
+        },
+        "T2": {
+          "Adj": "Магнитный",
+          "PullRadius": 220,
+          "BeamColor": "#FF8080",
+          "BeamColorSecondary": "#A02020",
+          "BeamWidth": 0.06
+        },
+        "T3": {
+          "Adj": "Турельный",
+          "PullRadius": 320,
+          "BeamColor": "#FF8080",
+          "BeamColorSecondary": "#A02020",
+          "BeamWidth": 0.07
+        },
+        "T4": {
+          "Adj": "Резонансный",
+          "PullRadius": 440,
+          "BeamColor": "#FFA060",
+          "BeamColorSecondary": "#A04020",
+          "BeamWidth": 0.07
+        },
+        "T5": {
+          "Adj": "Дезинтеграционный",
+          "PullRadius": 580,
+          "BeamColor": "#FFA060",
+          "BeamColorSecondary": "#A04020",
+          "BeamWidth": 0.08
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "PullRadius": 740,
+          "BeamColor": "#FFC040",
+          "BeamColorSecondary": "#A06020",
+          "BeamWidth": 0.08
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "PullRadius": 920,
+          "BeamColor": "#FFC040",
+          "BeamColorSecondary": "#A06020",
+          "BeamWidth": 0.09
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "PullRadius": 1150,
+          "BeamColor": "#FFFFFF",
+          "BeamColorSecondary": "#606060",
+          "BeamWidth": 0.09
+        },
+        "T9": {
+          "Adj": "Прогностический",
+          "PullRadius": 1420,
+          "BeamColor": "#FFFFFF",
+          "BeamColorSecondary": "#606060",
+          "BeamWidth": 0.1
+        },
+        "T10": {
+          "Adj": "Энтанглерный",
+          "PullRadius": 1750,
+          "BeamColor": "#A0FFFF",
+          "BeamColorSecondary": "#0080FF",
+          "BeamWidth": 0.1
+        }
+      }
+    },
+    "TowingRig": {
+      "DisplayName": "Буксировочная установка",
+      "MaxSlots": 1,
+      "CanBeDamagedByWeapon": false,
+      "WearOnMove": 0,
+      "WearOnHit": 0,
+      "WearOnShot": 0,
+      "WearOnTurn": 0,
+      "BaseWeight": 50,
+      "BaseDurability": 80,
+      "BasePrice": 500,
+      "IdPrefix": "TR_",
+      "IdSegments": [
+        "Side",
+        "Line"
+      ],
+      "NameTemplate": "<LineAdj> буксир (<LineName>)",
+      "BaseDesc": "Притягивает цель в радиусе <PullRadius>, буксирует до <MaxTowed> объектов.",
+      "GraphicTemplate": "Graphics/Items/Equipment/TowHook/CargoHook_<TechLevel>_a",
+      "Defaults": {
+        "AllowModules": true,
+        "EndGTL": 0,
+        "CompatibleSlots": [
+          "CargoGrabber",
+          "Weapons"
+        ],
+        "ContainerGraphic": "Container_5"
+      },
+      "GTL": {
+        "T1": {
+          "Adj": "Механический",
+          "MaxTowed": 10,
+          "PullRadius": 400,
+          "BeamColor": "#9AA0B0",
+          "BeamColorSecondary": "#4A506A",
+          "BeamWidth": 0.04
+        },
+        "T2": {
+          "Adj": "Магнитный",
+          "MaxTowed": 2,
+          "PullRadius": 520,
+          "BeamColor": "#A0C8FF",
+          "BeamColorSecondary": "#3060B0",
+          "BeamWidth": 0.05
+        },
+        "T3": {
+          "Adj": "Турельный",
+          "MaxTowed": 3,
+          "PullRadius": 580,
+          "BeamColor": "#FFC060",
+          "BeamColorSecondary": "#A04000",
+          "BeamWidth": 0.05
+        },
+        "T4": {
+          "Adj": "Резонансный",
+          "MaxTowed": 3,
+          "PullRadius": 680,
+          "BeamColor": "#C080FF",
+          "BeamColorSecondary": "#502080",
+          "BeamWidth": 0.06
+        },
+        "T5": {
+          "Adj": "Дезинтеграционный",
+          "MaxTowed": 4,
+          "PullRadius": 720,
+          "BeamColor": "#60FF80",
+          "BeamColorSecondary": "#1A8030",
+          "BeamWidth": 0.06
+        },
+        "T6": {
+          "Adj": "Гравитационный",
+          "MaxTowed": 4,
+          "PullRadius": 1200,
+          "CanTowStations": 1,
+          "BeamColor": "#FF80C0",
+          "BeamColorSecondary": "#A02060",
+          "BeamWidth": 0.07
+        },
+        "T7": {
+          "Adj": "Фазовый",
+          "MaxTowed": 5,
+          "PullRadius": 1520,
+          "CanTowStations": 1,
+          "BeamColor": "#80FFE0",
+          "BeamColorSecondary": "#1A7060",
+          "BeamWidth": 0.07
+        },
+        "T8": {
+          "Adj": "Сингулярный",
+          "MaxTowed": 6,
+          "PullRadius": 1880,
+          "CanTowStations": 1,
+          "BeamColor": "#FFFFFF",
+          "BeamColorSecondary": "#404060",
+          "BeamWidth": 0.08
+        },
+        "T9": {
+          "Adj": "Прогностический",
+          "MaxTowed": 7,
+          "PullRadius": 2280,
+          "CanTowStations": 1,
+          "BeamColor": "#FFD040",
+          "BeamColorSecondary": "#604000",
+          "BeamWidth": 0.09
+        },
+        "T10": {
+          "Adj": "Энтанглерный",
+          "MaxTowed": 8,
+          "PullRadius": 2720,
+          "CanTowStations": 1,
+          "BeamColor": "#A0FFFF",
+          "BeamColorSecondary": "#0080FF",
+          "BeamWidth": 0.1
+        }
+      }
+    }
+  },
+  "EmbedTiers": [
+    {
+      "Id": "T3",
+      "DisplayName": "III",
+      "Color": "17,139,255",
+      "PriorityMin": 70,
+      "PriorityMax": 100
+    },
+    {
+      "Id": "T2",
+      "DisplayName": "II",
+      "Color": "255,240,100",
+      "PriorityMin": 31,
+      "PriorityMax": 69
+    },
+    {
+      "Id": "T1",
+      "DisplayName": "I",
+      "Color": "255,0,0",
+      "PriorityMin": 0,
+      "PriorityMax": 30
+    }
+  ],
+  "Improvement": {
+    "Tiers": {
+      "Min": 0.3,
+      "Avg": 0.6,
+      "Max": 1.2
+    },
+    "AdvancedCostMultiplier": 3,
+    "AdvancedBaseTier": "Max",
+    "NodeCostRate": 0.01,
+    "NpcSpawnChance": 0.05,
+    "NpcTierWeights": {
+      "Min": 0.6,
+      "Avg": 0.3,
+      "Max": 0.1
+    },
+    "Categories": {
+      "Weapons": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "MaxDmg": {
+            "DisplayName": "Урон",
+            "Tiers": {
+              "Min": [
+                0.2,
+                0.05,
+                1
+              ],
+              "Avg": [
+                0.3,
+                0.1,
+                2
+              ],
+              "Max": [
+                0.4,
+                0.1,
+                3
+              ]
+            }
+          },
+          "MinDmg": {
+            "DisplayName": "Урон (min)",
+            "Tiers": {
+              "Min": [
+                0.2,
+                0.05,
+                1
+              ],
+              "Avg": [
+                0.3,
+                0.1,
+                2
+              ],
+              "Max": [
+                0.4,
+                0.1,
+                3
+              ]
+            }
+          },
+          "Range": {
+            "DisplayName": "Дальность",
+            "Tiers": {
+              "Min": [
+                0.04,
+                0.02,
+                0
+              ],
+              "Avg": [
+                0.05,
+                0.02,
+                0
+              ],
+              "Max": [
+                0.06,
+                0.02,
+                0
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "Hull": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "Armor": {
+            "DisplayName": "Броня",
+            "Tiers": {
+              "Min": [
+                0,
+                0,
+                1
+              ],
+              "Avg": [
+                0,
+                0,
+                2
+              ],
+              "Max": [
+                0,
+                0,
+                3
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Вместимость",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Стойкость",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "Engine": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "Speed": {
+            "DisplayName": "Скорость",
+            "Tiers": {
+              "Min": [
+                0.01,
+                0.05,
+                10
+              ],
+              "Avg": [
+                0.02,
+                0.06,
+                20
+              ],
+              "Max": [
+                0.03,
+                0.07,
+                30
+              ]
+            }
+          },
+          "JumpRange": {
+            "DisplayName": "Гиперпрыжок",
+            "Tiers": {
+              "Min": [
+                0.02,
+                0.03,
+                1
+              ],
+              "Avg": [
+                0.03,
+                0.04,
+                2
+              ],
+              "Max": [
+                0.04,
+                0.06,
+                3
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "FuelTank": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "Capacity": {
+            "DisplayName": "Ёмкость",
+            "Tiers": {
+              "Min": [
+                0.05,
+                0.1,
+                1
+              ],
+              "Avg": [
+                0.1,
+                0.15,
+                3
+              ],
+              "Max": [
+                0.15,
+                0.2,
+                5
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "Radar": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "Range": {
+            "DisplayName": "Дальность",
+            "Tiers": {
+              "Min": [
+                0.05,
+                0.1,
+                100
+              ],
+              "Avg": [
+                0.05,
+                0.1,
+                300
+              ],
+              "Max": [
+                0.05,
+                0.1,
+                400
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "Scanner": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "Power": {
+            "DisplayName": "Глубина сканирования",
+            "Tiers": {
+              "Min": [
+                0.05,
+                0.1,
+                1
+              ],
+              "Avg": [
+                0.05,
+                0.1,
+                3
+              ],
+              "Max": [
+                0.05,
+                0.1,
+                5
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "Droid": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "HealPerTurn": {
+            "DisplayName": "Ремонт/ход",
+            "Tiers": {
+              "Min": [
+                0.07,
+                0.12,
+                1
+              ],
+              "Avg": [
+                0.07,
+                0.12,
+                3
+              ],
+              "Max": [
+                0.07,
+                0.12,
+                5
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "CargoGrabber": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "Range": {
+            "DisplayName": "Дальность",
+            "Tiers": {
+              "Min": [
+                0.07,
+                0.12,
+                5
+              ],
+              "Avg": [
+                0.07,
+                0.12,
+                10
+              ],
+              "Max": [
+                0.07,
+                0.12,
+                15
+              ]
+            }
+          },
+          "Power": {
+            "DisplayName": "Грузоподъёмность",
+            "Tiers": {
+              "Min": [
+                0.01,
+                0.05,
+                2
+              ],
+              "Avg": [
+                0.01,
+                0.05,
+                3
+              ],
+              "Max": [
+                0.01,
+                0.05,
+                4
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      },
+      "Shield": {
+        "SecondaryGrowthFactor": 0.35,
+        "Attributes": {
+          "BlockPercent": {
+            "DisplayName": "Гашение урона",
+            "Tiers": {
+              "Min": [
+                0,
+                0,
+                1
+              ],
+              "Avg": [
+                0,
+                0,
+                2
+              ],
+              "Max": [
+                0,
+                0,
+                3
+              ]
+            }
+          }
+        },
+        "AdvancedTargets": {
+          "Weight": {
+            "DisplayName": "Масса",
+            "Tiers": {
+              "Advanced": [
+                0.05,
+                0.05,
+                0
+              ]
+            },
+            "Integer": true
+          },
+          "MaxDurability": {
+            "DisplayName": "Прочность",
+            "Tiers": {
+              "Advanced": [
+                0.1,
+                0.1,
+                0
+              ]
+            },
+            "Integer": true
+          }
+        }
+      }
+    }
+  }
+}

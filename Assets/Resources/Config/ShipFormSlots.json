@@ -1,0 +1,61 @@
+{
+  "_comment": "Per-slot underlay textures + layout позиции (B4 рефакторинга, июнь 2026). Координаты — абсолютные в 1920x1080, ShipFormView сам конвертирует в local через AbsToLocal. Любой раздел/поле опциональны — отсутствующие берутся из code-defaults в ShipFormView.cs.",
+
+  "DefaultRegular": {
+    "Usual":        "Graphics/UI/ShipForm/SlotUsual",
+    "MouseEntered": "Graphics/UI/ShipForm/SlotMouseEntered",
+    "Blocked":      "Graphics/UI/ShipForm/SlotBlocked",
+    "Broken":       "Graphics/UI/ShipForm/SlotBroken",
+    "Green":        "Graphics/UI/ShipForm/SlotGreen",
+    "Width":  96,
+    "Height": 96
+  },
+  "DefaultArt": {
+    "Usual":        "Graphics/UI/ShipForm/SlotArtUsual",
+    "MouseEntered": "Graphics/UI/ShipForm/SlotArtMouseEntered",
+    "Blocked":      "Graphics/UI/ShipForm/SlotArtBlocked",
+    "Broken":       "Graphics/UI/ShipForm/SlotArtBroken",
+    "Green":        "Graphics/UI/ShipForm/SlotArtGreen",
+    "Width":  96,
+    "Height": 96
+  },
+
+  "Slots": {
+  },
+
+  "Layout": {
+    "_comment": "Позиции в абсолютных пикселях 1920x1080. ShipFormView применяет AbsToLocal для пересчёта в local-coords канваса.",
+
+    "FixedSlots": [
+      { "Key": "Hull",          "X": 960,  "Y": 540 },
+      { "Key": "Forsage",       "X": 660,  "Y": 450 },
+      { "Key": "Engine",        "X": 760,  "Y": 450 },
+      { "Key": "FuelTank",      "X": 760,  "Y": 600 },
+      { "Key": "Radar",         "X": 1160, "Y": 450 },
+      { "Key": "Scanner",       "X": 1160, "Y": 600 },
+      { "Key": "CargoGrabber_0","X": 960,  "Y": 760 },
+      { "Key": "Shield",        "X": 1100, "Y": 760 },
+      { "Key": "Droid_0",       "X": 820,  "Y": 760 }
+    ],
+
+    "WeaponPositions": [
+      { "X": 960,  "Y": 300 },
+      { "X": 1100, "Y": 300 },
+      { "X": 820,  "Y": 300 },
+      { "X": 1030, "Y": 200 },
+      { "X": 890,  "Y": 200 }
+    ],
+
+    "ArtefactPositions": [
+      { "X": 700,  "Y": 340 },
+      { "X": 700,  "Y": 740 },
+      { "X": 1220, "Y": 340 },
+      { "X": 1220, "Y": 740 }
+    ],
+
+    "ActivationSlotPos": { "X": 1260, "Y": 450 },
+    "CargoFirstCell":    { "X": 1350, "Y": 225 },
+    "ThrowSlotPos":      { "X": 80,   "Y": 620 },
+    "PilotPanelPos":     { "X": 220,  "Y": 540 }
+  }
+}

@@ -1,0 +1,635 @@
+================================================================================
+MISSILE TRAJECTORY — Rangers.exe (SR2 HD)
+================================================================================
+Дата: 2026-06-29
+Источник: декомпиляция через IDA MCP (idb @ D:\disasm2500\Rangers.exe.i64)
+Контекст: продолжение Ship_Trajectory_* — у снарядов своя система,
+          независимая от ship.RouteFilm.
+
+================================================================================
+0. КРАТКОЕ РЕЗЮМЕ
+================================================================================
+Снаряды (TMissile / TCustomMissile) НЕ используют ship.RouteFilm и НЕ строят
+A* план. Каждый кадр TStar_NextDay вызывает TMissile_StepDay (0x5E6D4C),
+который выполняет ОДНО элементарное движение:
+
+  (1) При первом тике (age==0): инициализация ОК-1 раз скорости и стартового
+      "наследства" вращения от Owner.RouteFilm (имитация инерции пушки).
+  (2) Каждый кадр:
+        — старение (age += 200/DayFrames);
+        — если age < 200: летит ПРЯМО, плавно подгоняя угол под Owner.Angle
+          (если есть Owner) — фаза "разгона из дула";
+        — если age >= 200: фаза трекинга. Перечитывается target.Pos
+          (TShip/TItem/TAsteroid/TMissile) и берётся угол к нему.
+          Если |angle_diff| > 3°/кадр — поворот на 3°; иначе — мгновенный
+          захват угла.
+        — разгон/торможение скорости: |speed - max| > 10 → ±10 за кадр;
+        — движение по углу: pos += dir(angle) * (speed/200 * v61).
+  (3) Тест попадания (Capsule-vs-Point, sub_8721B0):
+        — radii: 10.0 для предметов/астероидов/прочих missile;
+                 20.0 для целевого корабля (10.0, если это Owner);
+        — проверяется по 4 спискам в TStar: missiles, ?, ships, asteroids.
+  (4) Эвтаназия:
+        — age > 1000 или (есть target И age*scale*max_speed > target.dist):
+          missile.dead = 1.
+
+Ключевое отличие от ship.RouteFilm-системы:
+  • снаряд решает курс ПОКАДРОВО, без планирования вперёд;
+  • снаряд читает АКТУАЛЬНУЮ позицию цели каждый кадр (true tracking);
+  • цель может теряться и переключаться (sub_5E7E28).
+
+================================================================================
+1. КЛЮЧЕВЫЕ АДРЕСА
+================================================================================
+  0x5E5554  VMT_TMissile               vtable стандартной ракеты
+  0x5E55BC  VMT_TCustomMissile         vtable кастомной (через TCustomWeapon)
+  0x5E5628  TMissile.Create            конструктор (zero-init)
+  0x5E56A8  TMissile.Destroy
+  0x5E5730  TMissile.Init              «выстрел из пушки» (owner-based)
+                                        (sub_5E5730)
+  0x5E5A74  TMissile_InitTrajectory    обёртка TMissile.Init + чтение
+                                        VMT-метода под weapon.SE-id
+  0x5E5AB4  TMissile_RawSpawn_Init     raw-spawn без owner
+                                        (sub_5E5AB4, для SE_SpawnMissile)
+  0x5E5B74  TMissile_SpawnProjectile   обёртка raw-spawn
+  0x5E67E8  TMissile_FirstFrameInit    «впервые в полёте» (sub_5E67E8;
+                                        в IDA-комменте называется
+                                        TStar_ProcessProjectiles — имя
+                                        обманчиво, см. §3.A)
+  0x5E6D4C  TMissile_StepDay           ★ главный per-frame процессор
+  0x5E7E28  TMissile_TryReacquireTarget автоматическая смена цели
+                                        (для класса owner-byte+53==5)
+  0x5E88B4  TMissile_GetImpactData     дескриптор эффекта попадания
+  0x6452EC  SE_MissileStar             script: миссайл.Star getter
+  0x6453F4  SE_CustomMissileType       script: тип кастомной ракеты
+  0x645480  SE_MissileOwner            script: owner
+  0x6455AC  SE_MissileTarget           script: target  (read/write)
+  0x645670  SE_MissileMaxDamage
+  0x645718  SE_MissileMinDamage
+  0x6457C0  SE_MissileLive             age в frames
+  0x645864  SE_MissileSpeed            ★ Get/Set max-speed
+  0x645918  SE_MissileAngle            ★ Get/Set текущий угол
+  0x65098C  SE_LaunchMissile           script: выстрел owner-based
+  0x650B2C  SE_SpawnMissile            script: raw-spawn (без owner)
+  0x6571AC  SE_OnUseCodeMissileDef     script: дефолтное поведение
+  0x7090B0  SE_FireWeapon_ProcessMissile script: ветка fire оружия
+  0x72E77C  TShip_ProcessMissileHit    обработка хита (broadcast)
+
+  Helpers (геометрия / поворот):
+  0x8721B0  CapsuleHit2D               swept-sphere/segment-vs-point hit-test
+  0x871A04  DegToRad
+  0x871B10  NormalizeAngle360
+  0x871AA0  NormalizeAngleDiff (−180..180]
+  0x8719B8  NormalizeAngle360 (вариант, как у sub_871B10)
+  0x871960  AngleGraTo256              угол → 0..255 для GFilm.Rotate
+  0x40354C  sqrtf
+  0x403518  cos                        (FPU-stack)
+  0x403508  sin                        (FPU-stack)
+
+  Глобалы (значения):
+  0x5E7B44  flt_5E7B44 = 200.0         ★ нормировка против star.DayFrames
+
+================================================================================
+2. СТРУКТУРА TMissile  (по чтениям в TMissile_StepDay / TMissile.Init)
+================================================================================
+  Offset   Type        Field                 Описание
+  ─────────────────────────────────────────────────────────────────────
+  +0x00    VMT*        cls                   TMissile vtable
+  +0x04    int32       Id
+  +0x08    int32       NextId                = Galaxy.NextMissileId++
+  +0x0C    int32       WeaponId              индекс в g_ItemDB
+  +0x10    u8          WeaponType            байт типа оружия (a6 в Init)
+  +0x14    int32       MinDamage             TShip_WeaponMinDamage
+  +0x18    int32       MaxDamage             TShip_WeaponMaxDamage
+  +0x1C    int32       WeaponField80         a6+80 (вариант damage/launcher)
+  +0x20    int32       WeaponField84         a6+84
+  +0x24    float       Pos.x
+  +0x28    float       Pos.y
+  +0x2C    float       Angle                 текущий курс, deg
+  +0x30    float       Speed_current         ★ реальная скорость кадра
+  +0x34    float       Speed_max             ★ потолок (см. §2.1)
+  +0x38    TStar*      CurStar
+  +0x3C    TShip*      Owner                 NULL для raw-spawn
+  +0x40    void*       Target                TShip/TItem/TAsteroid/TMissile
+  +0x44    void*       PrevTarget            запоминается если Target обнулён
+  +0x48    int32       ShotIndex             0..N-1 в группе залпа
+  +0x4C    u8          Field_4C              =a6+96 (флаги weapon)
+  +0x50    double      OwnerAnglePrev        для steering correction
+                                              (читается в pre-track фазе)
+  +0x54    int32       Age                   ★ возраст в кадрах
+  +0x58    u8          DeadFlag              =1 после impact/expire
+  +0x5C    int32       GraphEffect           TWeaponSE объект (GFilm)
+  +0x60    int32       _pad
+  +0x64    float       LastTargetX           для детекции «отдаления»
+  +0x68    float       LastTargetY
+  +0x6C    float       LastDistSq            ← TMissile.Create
+                                              инициализирует магическим
+                                              значением 1621981420 (≈1.85e20)
+                                              = «бесконечно далеко»
+  +0x70    int32       MissJitterCnt         > 0 → веер jitter,
+                                              <  0 → подавлен (см. §3.3)
+  +0x74    float       SteerSign             ±1.0 от FirstFrameInit
+
+  ★ Многие из этих полей точно подтверждены чтениями в StepDay/Init;
+    некоторые (Field_4C, WeaponField80/84) — рабочие имена, требуют
+    проверки на side-effects.
+
+──── 2.1  Что такое Speed_max (+0x34) и как считается ────
+В TMissile.Init (sub_5E5730):
+    skill_bonus  = MB_TShip_GetSkillParam(owner, 33)
+    item_bonus   = 0
+    if (WeaponField84 > 0):  v28 = g_ItemDB[+292*WF84 -140]
+    if (WeaponField80 > 0):
+        skill_bonus += g_ItemDB[+292*WF80 -140]
+        item_bonus  += round(v28 * g_ItemDB[+292*WF80 −(156|152)])
+    skill_bonus += item_bonus
+
+    Initial Angle = Owner.Angle
+    if (ShotIndex > 0):  // веер залпа
+        shotCount = TWeapon_ShotCount(weapon)
+        Angle    -= 60.0 / (shotCount + 3)
+                     * ((shotIndex+1)/2)
+                     * (2*(shotIndex & 0x80000001) − 1)   // ±
+        Pos      -= 8.0 * direction(Angle)                // расхождение
+
+    base   = MaxDamageEffect(VMT_method+44) / 10   // = max(...)
+    range  = TShip_WeaponRange(...) → PortionInDiapason(weapon, 1..8, ..)
+    Speed_max = max(base, range + skill_bonus)
+
+Итог: скорость стрельбы зависит от типа оружия, размера снаряда и навыков
+пилота. Для raw-spawn (SE_SpawnMissile) Speed_max = passed_speed
+напрямую без поправок.
+
+================================================================================
+3. ЖИЗНЕННЫЙ ЦИКЛ
+================================================================================
+Все вызовы из TStar_NextDay_1 (0x863998), label 17h (вызов
+TMissile_StepDay для каждого активного снаряда списка
+TStar.MissileList @ TStar+0x38, +8 = TList).
+
+──── 3.A  Первый кадр (Age == 0)  →  TMissile_FirstFrameInit (sub_5E67E8) ────
+
+    if (a4 /* is_visible */):
+        // создание graphical effect:
+        v5 = sub_5E66D8(missile)            // SE-name из weapon
+        missile.GraphEffect = TFilm_CreateGraph(...)
+        TFilm_OrderMove(GraphEffect, day_step, &missile.Pos)
+        TFilm_OrderRotate(GraphEffect, day_step, AngleGraTo256(Angle))
+        TFilm_OrderGraphConnect(...)
+        if (a4 /* play sound */):
+            // ищем "SoundShot" в Palette → играем
+            sub_7D018C(GFilm, day_step, GraphEffect, sound_name)
+
+    if (missile.Age == 0):
+        if (Owner):
+            missile.OwnerAnglePrev = Owner.Angle
+            // Speed_current = max(Owner.Field196, Speed_max):
+            //   Field196 = owner.MaxHullStatRel? — поле читается из owner
+            if (Owner[+196] <= Speed_max):
+                v   = Speed_max
+            else:
+                v   = (float)Owner[+196]
+            missile.Speed_current = v
+            // ★ ВЛИЯНИЕ INERTNESS ВЛАДЕЛЬЦА:
+            v36 = 0
+            if (Owner.RouteFilm.count > 0):
+                v36 = sum(Dist2(scratch, wp.pos)
+                          for wp in Owner.RouteFilm)
+                v35 = day_step / Star.DayFrames
+                v36 = v36 / (1 - v35)               // нормировка по часу
+                // выбор знака рулевой коррекции:
+                v23 = atan2(Owner.RouteFilm.Head.next.pos − Owner.Pos)
+                v23 = NormalizeAngle360(v23)
+                if (NormalizeAngleDiff(v23, Owner.Angle) >= 0):
+                    missile.SteerSign = +1.0
+                else:
+                    missile.SteerSign = -1.0
+            else:
+                missile.SteerSign = +1.0
+            // финальная "стартовая" скорость:
+            missile.Speed_current = v36 + 100.0
+            if (missile.Speed_current < 200.0):
+                missile.Speed_current = 200.0
+        else:
+            // raw-spawn: без инерции, стартуем уже на max
+            missile.Speed_current = missile.Speed_max
+            missile.OwnerAnglePrev = 0
+            missile.SteerSign      = 0
+        ++missile.Age
+        missile.MissJitterCnt = NaN              // sentinel
+
+────────────────────────────────────────────────────────────────────────
+NB. Кажущаяся странной формула `v36 + 100.0` — это:
+    «возьми моментальную проекцию owner-route в кадры и добавь 100».
+    Эффект: только что выпущенный из движущейся пушки снаряд
+    стартует со скоростью ≥ 200, не зависящей от направления.
+    sub_4D8058(film, scratch) суммирует Dist2(scratch, wp.pos) по
+    всем waypoint'ам — формально это «сумма расстояний от стартовой
+    точки до каждого waypoint», но в контексте «inertness boost»
+    работает как пропорция владельца-в-движении.
+────────────────────────────────────────────────────────────────────────
+
+──── 3.B  Каждый кадр (TMissile_StepDay)  ────
+
+    v61 = 200.0 / Star.DayFrames               // обычно = 1.0
+    missile.Age += round(v61)                  // ≈1 кадр игры = 1 ед. age
+
+    // ░░ Сохранение предыдущей позиции для свип-теста ░░
+    v57 = (missile.Pos.x, missile.Pos.y)       // saved as "old"
+
+    v46 = missile.Speed_max
+    have_target = 0
+    target_xy   = (?, ?)
+
+    if (missile.Age < 200):
+        // === ФАЗА «РАЗГОНА» ===  без homing
+        if (!Owner):
+            // raw-spawn: едем прямо по текущему углу, БЕЗ steering
+            missile.Pos.x +=  cos(rad(Angle)) * (Speed/200 * v61)
+            missile.Pos.y +=  sin(rad(Angle)) * (Speed/200 * v61) * (-1)
+            goto FILM_ORDER
+
+        // owner-bound: подгоняем Angle под Owner.Angle (через ±0.5/кадр)
+        delta = Owner.Angle - missile.OwnerAnglePrev
+        missile.OwnerAnglePrev = Owner.Angle
+        delta -= shotIndex * COEFF * v61 *
+                   (negative_if_delta_<0 else positive)         // мелкая
+                                                                // подстройка
+        delta = clamp(delta, -0.5*v61, +0.5*v61)
+        missile.Angle = NormalizeAngle360(missile.Angle + delta)
+        if (is_visible):
+            TFilm_OrderRotate(GraphEffect, day_step,
+                              AngleGraTo256(missile.Angle))
+
+    else:
+        // === ФАЗА «TRACKING» ===  Age >= 200
+        TMissile_TryReacquireTarget(missile)   // sub_5E7E28
+        // → может обнулить или сменить missile.Target
+
+        if (missile.Target != NULL):
+            switch (class(Target)):
+              case TShip:
+                  if (Target.CurStar == missile.CurStar
+                      && TShip_CanAct(Target)):
+                      target_xy = Target.Pos        // TShip+20,24
+                      have_target = 1
+              case TItem:
+                  target_xy = Item.Pos              // TItem+16,20
+                  have_target = 1
+              case TAsteroid:
+                  target_xy = Asteroid.Pos          // TAsteroid+12,16
+                  have_target = 1
+              case TMissile:
+                  target_xy = OtherMissile.Pos      // TMissile+36,40
+                  have_target = 1
+              else:
+                  missile.PrevTarget = missile.Target
+                  missile.Target = NULL
+
+        if (have_target):
+            sign = -1   // нормальный знак: tracking
+            if (missile.Age > 1
+                && missile.LastTargetX == target_xy.x
+                && missile.LastTargetY == target_xy.y):
+                cur_dist2 = Dist²(missile.Pos, target_xy)
+                // ★ ДЕТЕКЦИЯ "ОТДАЛЕНИЯ":
+                if (missile.LastDistSq < cur_dist2
+                    && missile.MissJitterCnt < 0):
+                    // мы стали отдаляться → запустить веер промаха
+                    duration_hi  = round(Speed_max / 10.0)
+                    duration_low = round(Speed_max / 40.0)
+                    missile.MissJitterCnt = Galaxy_RandInt(low,hi,?)
+                missile.LastDistSq = cur_dist2
+                if (missile.MissJitterCnt > 0):
+                    sign = +1                         // ★ инвертируем dy
+                    --missile.MissJitterCnt
+            missile.LastTargetX = target_xy.x
+            missile.LastTargetY = target_xy.y
+
+            // угол от missile к target:
+            dx =  (target_xy.x - missile.Pos.x)
+            dy =  (target_xy.y - missile.Pos.y) * sign  // sign = -1 normal
+            θ  =  atan2(dy, dx)                     // FPU-stack helper
+            θ  =  NormalizeAngle360(θ)
+            target_angle = θ
+
+            diff = NormalizeAngleDiff(target_angle, missile.Angle)
+            // лимит поворота: 3°/кадр (× v61):
+            if (fabs(diff) > 3.0 * v61):
+                if (diff >= 0):
+                    missile.Angle = NormalizeAngle360(missile.Angle
+                                                     + 3.0 * v61)
+                else:
+                    missile.Angle = NormalizeAngle360(missile.Angle
+                                                     - 3.0 * v61)
+            else:
+                missile.Angle = target_angle      // мгновенный захват
+
+            if (is_visible):
+                TFilm_OrderRotate(GraphEffect, day_step,
+                                  AngleGraTo256(missile.Angle))
+
+        // === АКСЕЛЬ/ДЕЦЕЛЛЬ ===
+        if (fabs(Speed_current - Speed_max) > 10.0):
+            if (Speed_current > Speed_max):
+                Speed_current -= 10.0
+            else:
+                Speed_current += 10.0
+        else:
+            Speed_current = Speed_max
+
+    // === ОДИН ШАГ ПО УГЛУ ===
+    step = Speed_current / 200.0 * v61
+    missile.Pos.x +=  cos(rad(Angle)) * step
+    missile.Pos.y += -sin(rad(Angle)) * step                // Y-инверт
+
+FILM_ORDER:
+    if (is_visible):
+        TFilm_OrderMove(GraphEffect, day_step, &missile.Pos)
+
+──── 3.C  Тест попадания (после движения)  ────
+
+После шага движения missile.Pos = "new" и сохранён "old" в v57. Проверка
+капсулы (radius × сегмент old→new) против ВСЕХ потенциальных целей:
+
+  for cls in {missiles, items?, ships, asteroids}:
+      list = Star.lists[cls]
+      for tgt in list reverse:
+          radius = 10.0
+          if  cls == ships and tgt != Owner:    radius = 20.0
+          if  CapsuleHit2D(missile.Pos, v57, tgt.Pos, radius):
+              // попадание
+              break
+
+Особенности по классам:
+  • missiles  : пропускаем себя и не-owner-related; если попали в другой
+               missile, обе помечаются dead и вызывается graph-detach.
+  • items?    : (list @ Star+48) — пропуск если byte+53 != 5 (свой кэш-список?)
+  • ships     : требуется CanAct + не Dead; для своего Owner — отдельная
+                функция sub_5E7BEC (handle self-hit) → если возвращает 1,
+                сразу выход; если Owner=Target, ИЛИ Owner=NULL, ИЛИ relation
+                к Player говорит "враг" → рассматриваем как hit, radius=20.
+                После hit: проверка в Star.lists[+52] что цель там есть
+                (анти-double-hit guard).
+  • asteroids : radius=10 (но в коде также написано «10» для всех,
+                единственное отличие — sub_5E7BEC не вызывается).
+
+В случае хита missile.dead = 1; для some классов цели тоже =1
+(missile-vs-missile = double-kill).
+
+──── 3.D  Эвтаназия снаряда (после попадания тестов, если не убит)  ────
+
+  // sub_8721B0(missile.Pos, ?, ?, scale) с «отрицательной»
+  // dummy-distance — если возвращает true, миссайл умирает:
+  if  (Age > 1000  ИЛИ
+       (Target != NULL && Age * negative_const * Speed_max
+                              < Owner.Pos.dist_to_target)):
+      missile.dead = 1
+      // create explosion effect:
+      TWeaponSE.Create(...)
+      TFilm_OrderGraphConnect(...)
+
+Магические константы декомпилируются как мусорный Extended.
+Реально это «потерял цель из виду / слишком далеко улетел».
+
+================================================================================
+4. АВТОМАТИЧЕСКИЙ ВЫБОР ЦЕЛИ — TMissile_TryReacquireTarget (sub_5E7E28)
+================================================================================
+Срабатывает каждый кадр после Age >= 200. Алгоритм:
+
+  if  (missile.WeaponType_byte_at_+53 == 5         // homing-class only
+       && missile.Owner != NULL
+       && (missile.Target == NULL || missile.Target == missile.Owner))
+  {
+      // ищем ближайшего врага в текущей звезде
+      best_dist2 = 1.0e30
+      best_ptr   = NULL
+      for each Ship in Star.ShipList @ Star+44:
+          if  ! ShipIsDead(Ship)
+              && Ship != missile.PrevTarget
+              && Ship_GetRelationToPlayer(Ship, Owner) == 0   // = hostile
+              && (Owner is not TKling
+                  || (Ship not in Owner.SpawnedMinions
+                      && Owner not in Ship.SpawnedMinions))
+          {
+              d2 = Dist²(missile.Pos, Ship.Pos)
+              if  d2 <= 700.0 && d2 < best_dist2:
+                  best_dist2 = d2; best_ptr = Ship
+          }
+      if  best_ptr:
+          missile.Target = best_ptr
+      else if  Owner_can_act && Owner.CurStar == missile.CurStar:
+          missile.Target = Owner                  // ★ fall-back на Owner!
+      else:
+          missile.Target = NULL
+  }
+
+Замечания:
+  • Условие `WeaponType_byte_at_+53 == 5` означает, что переключение
+    цели работает ТОЛЬКО для одного типа оружия. Точная семантика
+    этого байта (вероятно, weapon-class enum со значением 5 =
+    «homing») должна быть подтверждена через Items.txt.
+  • Игнорирует Klig-minions Owner'а — чтобы Doppelganger не стрелял
+    в свою свиту.
+  • Радиус поиска = sqrt(700) ≈ 26.5 единиц. Маленькое окно, так что
+    «потеря цели» — частый случай.
+  • Если есть Owner, но врагов рядом нет → цель переключается на
+    самого Owner'а; в TMissile_StepDay затем сработает sub_5E7BEC
+    («self-hit») чтобы либо игнорировать, либо взорваться.
+
+================================================================================
+5. RAW-SPAWN ВЕТКА (SE_SpawnMissile)
+================================================================================
+Script-функция `Missile.Spawn(angle, x, y, speed, ...)` создаёт
+TMissile через sub_5E5AB4:
+
+  missile = TMissile.Create(VMT_TMissile)
+  TList_Add(Star.MissileList, missile)
+  missile.CurStar    = day_step (NB! параметр a2 — на самом деле просто
+                                  передан в этом слоте)
+  missile.Owner      = NULL                       // ★ без Owner
+  missile.Target     = a3 (Star)                  // !!! записан как target
+  missile.Pos        = (a11, a12)                 // прямо заданы
+  missile.Angle      = a10                        // явный угол
+  missile.Speed_max  = a7                         // явная скорость
+  missile.MinDamage  = a9
+  missile.MaxDamage  = a8
+  missile.WeaponId   = 0
+  missile.WeaponType = a6
+  missile.Field4_4C  = 1
+  missile.ShotIndex  = 0
+
+В StepDay при Age < 200 «no-owner» ветка ведёт по straight line.
+А при Age >= 200 ветка трекинга срабатывает, если кто-то снаружи
+успеет записать missile.Target. Без owner sub_5E7E28 ничего не делает
+(там require Owner), поэтому raw-spawn полёт = строго прямой.
+
+Если скрипт хочет «homing raw missile», ему нужно вручную записать
+missile.Target ДО кадра 200.
+
+================================================================================
+6. ВЫЗОВ ИЗ AI / FIRE
+================================================================================
+SE_FireWeapon_ProcessMissile (0x7090B0) — основной вход боевого огня
+ракетным оружием (вызывается из TStar_NextDay при ход-по-ходу-CombatRound).
+Алгоритм (сжато):
+  shotCount = TWeapon_ShotCount(weapon)
+  for i in 0..shotCount-1:
+      missile = TMissile.Create(VMT_TMissile or VMT_TCustomMissile)
+      TMissile.Init(missile, owner.CurStar, owner, i, target, weapon)
+      // спред уже учтён внутри Init (см. §2.1)
+      TShip_ProcessMissileHit(owner, 2 /*event*/, missile, 0, target)
+
+SE_LaunchMissile (script-fn 0x65098C) — то же, но из скрипта; один
+залп, один shot_index = arg4 (по умолчанию 0).
+
+================================================================================
+7. ПОТОК ДАННЫХ
+================================================================================
+                  ┌──────────────────────────────────────┐
+                  │  TStar_NextDay_1 (0x863998)          │
+                  └──┬───────────────────────────────────┘
+                     │  label 17h (для каждого miss in Star.MissileList)
+                     ▼
+        ┌─────────────────────────────────────────┐
+        │  TMissile_StepDay (0x5E6D4C)            │
+        │                                          │
+        │  age += 200/DayFrames                    │
+        │  if age==0: FirstFrameInit (0x5E67E8)    │
+        │     - GraphEffect создать                │
+        │     - Speed_current = ...                │
+        │  else if age < 200:                      │
+        │     - подгон Angle к Owner.Angle (±0.5°) │
+        │  else (age >= 200):                      │
+        │     - TryReacquireTarget (0x5E7E28)      │
+        │     - read target.Pos                    │
+        │     - check "moving away" → MissJitter   │
+        │     - turn ≤ 3°/кадр к target            │
+        │     - Speed ±10 → Speed_max              │
+        │  move: Pos += dir(Angle) × step          │
+        │  ─── HIT-TEST (capsule old↔new)         │
+        │     vs missiles/items/ships/asteroids    │
+        │  ─── EXPIRE: age>1000 или out-of-range  │
+        └─────────────────────────────────────────┘
+
+================================================================================
+8. ЧИСЛЕННЫЕ ПАРАМЕТРЫ
+================================================================================
+  Tracking activation threshold  : 200 кадров (= 1 игровой ход)
+  Pre-tracking angle alignment   : ±0.5°/кадр  под Owner.Angle
+  Homing turn rate               : 3.0°/кадр   к target (× v61)
+  Speed ramp                     : ±10/кадр    к Speed_max
+  Frame normalization v61        : 200 / Star.DayFrames (обычно 1.0)
+  Owner-velocity inheritance     : sum(Dist2 over Owner.RouteFilm)
+                                    + 100, clamp >= 200
+  TryReacquireTarget radius²     : 700 (≈26.5 units)
+  Hit capsule radius (ships)     : 20.0 (10.0 для self-Owner)
+  Hit capsule radius (others)    : 10.0
+  Initial LastDistSq sentinel    : 1621981420 (≈1.85e20 float)
+  Max age before forced expire   : 1000 кадров (= 5 ходов)
+  Spread fan total               : 60.0° / (shotCount+3) на каждый
+                                    индекс, чередуя ±
+  Spread spawn offset            : 8.0 единиц вдоль угла
+
+================================================================================
+9. КЛЮЧЕВЫЕ ВЫВОДЫ
+================================================================================
+
+  1. Снаряды НЕ используют ship.RouteFilm и НЕ планируют путь A*.
+     Это отдельная per-frame система с прямым numeric integration.
+
+  2. Снаряд видит АКТУАЛЬНУЮ позицию цели каждый кадр, в отличие от
+     корабля (который снимает target.Pos один раз за ход в CalcRoute).
+     Поэтому снаряд "догоняет" движущуюся цель естественно.
+
+  3. Поворот ограничен 3°/кадр — это и есть «дальность тактического
+     ухода»: если цель крутится быстрее, чем missile может поворачивать
+     за время преодоления расстояния, она уйдёт.
+
+  4. Механизм MissJitterCnt — встроенная вероятность промаха:
+     если миссайл стал отдаляться от цели (т.е. перелетел), он
+     ВКЛЮЧАЕТ jitter на (Speed_max/10..Speed_max/40) кадров. В этой
+     фазе sign = +1, что инвертирует Y-дельту в atan2 → миссайл
+     летит в зеркально-инвертированном направлении. Это работает
+     как «петля промахнувшейся ракеты». По истечении jitter снова
+     включается tracking.
+
+  5. Автозамена цели (sub_5E7E28) — только для оружия класса 5.
+     В остальных случаях missile.Target фиксирован.
+     Когда цель уничтожается или исчезает, missile.Target := NULL,
+     и снаряд продолжает по своему углу до expire.
+
+  6. Скорость определяется типом оружия + skill пилота (через
+     PortionInDiapason). Никакой явной «дистанции выстрела» нет —
+     дальность задаётся произведением Speed_max × (1000 кадров).
+
+  7. Veer/spread залпа: первый снаряд по центру (shotIndex=0),
+     дальнейшие чередуют ±60°/(N+3) с инкрементом ±, плюс смещение
+     starting Pos на 8 единиц вдоль угла. Так получаются веерные
+     залпы Tracker-IBM.
+
+  8. Снаряд считает попадание по СЕГМЕНТУ движения (capsule swept),
+     а не точечной позиции — поэтому быстрые ракеты не «проскакивают»
+     цели между кадрами.
+
+  9. Raw-spawn missile (без Owner) — это для скриптовых событий
+     (метеориты, спец-эффекты). Не трекает цель автоматически;
+     для homing нужно вручную записать missile.Target из скрипта.
+
+  10. Графический эффект (TWeaponSE + GFilm) создаётся лишь при
+      «is_visible» — для невидимых ракет (вне PlayerStar) обработка
+      чисто симуляционная, без расхода GPU.
+
+================================================================================
+10. СВЯЗЬ СО Ship_Trajectory_*  ARTICLES
+================================================================================
+  • Корабли строят план НА ХОД (CalcRoute @ 0x7219B0): target.Pos
+    считывается ОДИН раз, далее A* + RouteFilm.
+  • Снаряды решают курс ПОКАДРОВО (StepDay @ 0x5E6D4C): target.Pos
+    считывается КАЖДЫЙ кадр, угол подстраивается на 3°.
+  • Корабль FOLLOW_SHIP получает «упреждённую» точку через leader.RouteFilm
+    (waypoint в кадре a4-1). Снаряд УПРЕЖДЕНИЯ НЕ ДЕЛАЕТ — он просто
+    бежит за текущей позицией. Это и есть причина того, что быстрая
+    цель крутясь может «вечно» уходить от tracking-снаряда: радиус
+    поворота × дистанция-в-кадрах должен покрыть тангенциальный обгон.
+  • RouteFilm движущегося Owner'а влияет на МОМЕНТ ВЫСТРЕЛА (FirstFrameInit
+    суммирует расстояния по плёнке + базу 100) — это симулирует "инерцию"
+    пушки, чтобы выстрел из быстро летящего ranger'а не отставал.
+  • Hit-test использует CAPSULE-vs-POINT (sub_8721B0) — тот же примитив,
+    что мог бы пригодиться в Ship_PlanPath для check-segment, но
+    реальный ship-планировщик использует другую функцию sub_872390
+    (segment-vs-CIRCLE) — это не одно и то же.
+
+================================================================================
+11. ОТКРЫТЫЕ ВОПРОСЫ
+================================================================================
+  [ ] Точная семантика missile[+0x4C] WeaponType_byte_+53 — где
+      определён enum «5 = homing»? Скорее всего в Items.txt или
+      gItemDB-структуре.
+  [ ] sub_5E7BEC (self-hit handler) — что именно делает,  возвращая
+      bool? Игнорирует Owner, либо вызывает урон самому себе?
+  [ ] Магические Extended-константы в проверке expire (Age*const*
+      Speed_max < dist): какие реальные коэффициенты? Декомпиле
+      показывает -4.95e-136 — скорее всего это 1/(Speed_max × ...).
+  [ ] sub_4D8058 — точная семантика «sum Dist2 over RouteFilm».
+      Похоже на «total path length», но a2 (второй параметр) в
+      контексте StepDay → передаётся уже искажённое scratch-значение.
+      Возможно, в живой игре это всегда (0,0) или Owner.Pos.
+  [ ] missile[+0x70] MissJitterCnt: правда ли это «промах»?
+      Альтернативная гипотеза — это «временный override на ручное
+      управление» из скрипта (например, для cinematic-моментов).
+      Декомпиляция говорит «при отдалении от цели запускается
+      jitter» — это совпадает с поведением промаха.
+  [ ] Owner[+196] — что это? В Init читается как initial-speed-candidate.
+      Возможно, ship's «engine power» или «hull mass».
+
+================================================================================
+12. ССЫЛКИ
+================================================================================
+  • Articles/Ship_Trajectory_Code_Map.txt
+  • Articles/Ship_Trajectory_FollowModes_Recheck.txt
+  • Articles/Ship_Trajectory_Reimplementation.txt
+  • memory/rangers_ship_nextday.md
+  • memory/rangers_ai_combat_model.md      — какие AI-классы стреляют
+                                              ракетами
+================================================================================

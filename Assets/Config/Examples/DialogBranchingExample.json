@@ -1,0 +1,172 @@
+{
+  "//": "Пример ветвящегося диалога с использованием Lua-условий, Script-действий и Push/Pop поддиалогов.",
+  "//": "Чтобы попробовать в игре — вставьте содержимое поля Dialogs в основной DialogsConfig.json → Dialogs.",
+  "//": "Диалог запускается: DialogService.Start(\"example_governor\", DialogScope.Gov, playerShip, planet: p);",
+
+  "Dialogs": {
+
+    "example_governor": {
+      "Title": "Аудиенция у губернатора",
+      "Speaker": "Губернатор {planet_name|планеты}",
+      "StartNode": "intro",
+      "Nodes": {
+
+        "intro": {
+          "//": "OnEnter: инициализируем счётчик визитов в ctx.Data через Lua.",
+          "OnEnter": [
+            { "Script": "ctx.Data['visits'] = tostring((tonumber(ctx.Data['visits'] or '0')) + 1)" }
+          ],
+          "Text": "Приветствую, капитан {player_name}. Ваш баланс — {player_money} кр. Чем обязан визиту? (визит №{visits|1})",
+          "Replies": [
+            {
+              "//": "Простая ветка: переход в узел ремонта.",
+              "Text": "Мне нужен ремонт корпуса.",
+              "NextNode": "repair_offer"
+            },
+            {
+              "//": "Lua-условие: реплика видна только если денег >= 5000.",
+              "Text": "[5000 кр.] Пожертвовать на нужды колонии.",
+              "Condition": "lua: player.Money >= 5000",
+              "Actions": [
+                { "Method": "TakeMoney", "Args": ["5000"] },
+                { "Script": "player.PoliticalScore = (player.PoliticalScore or 0) + 10" }
+              ],
+              "NextNode": "thanks_donation"
+            },
+            {
+              "//": "Поддиалог: PushDialog. Когда чёрный рынок закроется (PopDialog), вернёмся сюда, в intro.",
+              "Text": "Поговорить о... особых заказах.",
+              "Condition": "lua: (player.CrimeRating or 0) >= 20",
+              "Actions": [
+                { "Method": "PushDialog", "Args": ["example_black_market"] }
+              ]
+            },
+            {
+              "//": "Условие через старый парсер (обратная совместимость).",
+              "Text": "Как поживает торговля? (спросить как трейдер)",
+              "Condition": "player_is_pirate == 0",
+              "NextNode": "small_talk"
+            },
+            {
+              "//": "Legacy Method-действие + завершение диалога.",
+              "Text": "Прощайте.",
+              "Actions": [ { "Method": "LeavePlanet" } ]
+            }
+          ]
+        },
+
+        "repair_offer": {
+          "//": "Динамическая цена ремонта на Lua: 10 кр. за 1 HP.",
+          "OnEnter": [
+            { "Script": "ctx.Data['repair_hp'] = tostring(player.MaxHull - player.CurrentHull); ctx.Data['repair_cost'] = tostring((player.MaxHull - player.CurrentHull) * 10)" }
+          ],
+          "Text": "Ваш корпус повреждён на {repair_hp} ед. Полный ремонт обойдётся в {repair_cost} кр.",
+          "Replies": [
+            {
+              "//": "Комбинация условий на Lua: недостающий HP > 0 И денег хватает.",
+              "Text": "Согласен, чините.",
+              "Condition": "lua: player.MaxHull > player.CurrentHull and player.Money >= (player.MaxHull - player.CurrentHull) * 10",
+              "Actions": [
+                { "Script": "local cost = (player.MaxHull - player.CurrentHull) * 10; player.Money = player.Money - cost; player.CurrentHull = player.MaxHull; Log('Корпус восстановлен.')" }
+              ],
+              "NextNode": "repair_done"
+            },
+            {
+              "Text": "У меня нет столько денег.",
+              "Condition": "lua: player.Money < (player.MaxHull - player.CurrentHull) * 10",
+              "NextNode": "intro"
+            },
+            {
+              "Text": "Спасибо, но моему кораблю ремонт не нужен.",
+              "Condition": "lua: player.CurrentHull >= player.MaxHull",
+              "NextNode": "intro"
+            },
+            { "Text": "Пожалуй, откажусь.", "NextNode": "intro" }
+          ]
+        },
+
+        "repair_done": {
+          "Text": "Отлично! Ваш корабль как новый.",
+          "Replies": [ { "Text": "Благодарю.", "NextNode": "intro" } ]
+        },
+
+        "thanks_donation": {
+          "//": "Цикл: если игрок пожертвовал 3+ раза за визит — специальная награда.",
+          "OnEnter": [
+            { "Script": "ctx.Data['donations'] = tostring((tonumber(ctx.Data['donations'] or '0')) + 1)" }
+          ],
+          "Text": "Колония благодарит вас, капитан. (пожертвований в этот визит: {donations})",
+          "Replies": [
+            {
+              "//": "Награда за 3+ пожертвования — открывается только при накоплении.",
+              "Text": "[Награда] Получить редкий артефакт.",
+              "Condition": "lua: tonumber(ctx.Data['donations'] or '0') >= 3",
+              "Actions": [
+                { "Script": "local it = ItemFactory.CreateById('AlienDevice'); if it ~= nil then player.Inventory:AddItem(it); Log('Вы получили Alien Device.') end" }
+              ],
+              "NextNode": "intro"
+            },
+            { "Text": "Хочу пожертвовать ещё.", "Condition": "lua: player.Money >= 5000", "NextNode": "intro" },
+            { "Text": "Вернуться к разговору.", "NextNode": "intro" }
+          ]
+        },
+
+        "small_talk": {
+          "//": "Пул реплик + {lua:...} inline-подстановка.",
+          "Text": "{pool:Governor.SmallTalk|Всё идёт своим чередом.} Кстати, сегодня {lua:os.date('%A')}.",
+          "Replies": [ { "Text": "Понятно. Вернёмся к делам.", "NextNode": "intro" } ]
+        }
+      }
+    },
+
+    "//": "──────────────────────────────────────────────────────────────────",
+    "//": "Поддиалог, открываемый через PushDialog. После PopDialog управление возвращается",
+    "//": "в вызывающий example_governor на его текущий узел (intro).",
+    "//": "──────────────────────────────────────────────────────────────────",
+
+    "example_black_market": {
+      "Title": "Тёмный уголок",
+      "Speaker": "Посредник",
+      "StartNode": "bm_intro",
+      "Nodes": {
+        "bm_intro": {
+          "Text": "Тише... Что вас интересует, капитан?",
+          "Replies": [
+            {
+              "Text": "[10000 кр.] Стереть криминальный рейтинг.",
+              "Condition": "lua: player.Money >= 10000 and (player.CrimeRating or 0) > 0",
+              "Actions": [
+                { "Script": "player.Money = player.Money - 10000; player.CrimeRating = 0; Log('Криминальный рейтинг обнулён.')" }
+              ],
+              "NextNode": "bm_done"
+            },
+            {
+              "Text": "[Нужно 10000 кр.] У меня недостаточно денег.",
+              "Condition": "lua: player.Money < 10000",
+              "NextNode": "bm_intro"
+            },
+            {
+              "//": "Возврат к вызывающему диалогу (governor.intro).",
+              "Text": "Ничего, я передумал.",
+              "Actions": [ { "Method": "PopDialog" } ]
+            },
+            {
+              "//": "Полный обрыв цепочки — сразу выходим и с планеты.",
+              "Text": "[Экстренно] Уносим ноги.",
+              "Actions": [
+                { "Method": "CloseAll" },
+                { "Method": "LeavePlanet" }
+              ]
+            }
+          ]
+        },
+        "bm_done": {
+          "Text": "Готово. Больше здесь не появляйтесь без нужды.",
+          "Replies": [
+            { "Text": "Понял. До связи.", "Actions": [ { "Method": "PopDialog" } ] }
+          ]
+        }
+      }
+    }
+  }
+}

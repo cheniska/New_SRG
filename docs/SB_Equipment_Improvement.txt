@@ -1,0 +1,325 @@
+===============================================================================
+Science Base (SB) — улучшение оборудования: диалог, формула цены, эффекты
+===============================================================================
+
+Задача: разобрать, как в Rangers HD работает "Улучшение оборудования" через
+диалог с научной базой (SB) и станцией сборки (CB). Все адреса — из
+Rangers.exe.i64.
+
+-------------------------------------------------------------------------------
+1. Точки входа диалога SB.Improvement
+-------------------------------------------------------------------------------
+
+Диалоговые строки (rmRuins.SB.Improvement.*) и функции:
+
+  0x57E60C  SB_Improvement_OnAskBtn        — нажатие "Улучшить оборудование"
+  0x57E748  SB_Improvement_ShowItemList    — список подходящих предметов
+  0x57EE48  SB_Improvement_OnNothing       — выход "Нет, ничего не надо"
+  0x57EF0C  SB_Improvement_AskCost         — 3 варианта цены (Min/Avg/Max)
+  0x57F834  SB_Improvement_DetailDialog    — выбор конкретной характеристики
+  0x57FBC0  SB_Improvement_RepeatDialog    — предложение улучшить ещё
+  0x580024  SB_Improvement_OnRepeatNo      — отказ от повтора
+
+CB-станция (Construct Base — «Строительство»/сборочная):
+
+  0x59425C  CB_Improvement_ShowDialog      — список
+  0x594958  CB_Improvement_OnNothing
+  0x594A20  CB_Improvement_AskCost         — единственный тир (Max)
+  0x594FD0  CB_Improvement_AskRepeat
+  0x595340  CB_Improvement_OnRepeatDecline
+
+Скриптовое API (RScript):
+  0x6518A4  SE_ShipImproveItems            — раздать AI-улучшения кораблю
+  0x6519F0  SE_ItemImprovement             — точечное улучшение из скрипта
+
+-------------------------------------------------------------------------------
+2. Отбор предметов, годных к улучшению
+-------------------------------------------------------------------------------
+
+SB_Improvement_ShowItemList обходит Player.EquipmentItems и Player.ArtefactItems
+и для каждого проверяет:
+
+  (1) TItem.ItemType в [42..68]                  — стандартное снаряжение
+      либо элемент TArtefactTranclucator (у него берётся его встроенный корпус)
+
+  (2) TItem_CanBeImproved (0x7370DC):
+        VMT+60(item) == true                     — per-class валидатор
+      AND ( item.field_84 == 0
+            OR MB_ItemsTable[item.field_84].byte_at_-290 == 0 )
+
+      Для TWeapon валидатор VMT+60 = TWeapon_CanBeImproved (0x743300):
+        возвращает true только если микромодули (+80/+84) НЕ дают бонусов —
+        т. е. если в оружии нет установленных микрочипов.
+        Условие: CalcMaxDamageWithChips(item) == item.MaxDamage
+             AND CalcRadiusWithChips(item)    == item.Radius
+
+  (3) TShip_KnowsHowToUseItem(Player, item)      — техуровень достаточен
+  (4) Ruins_CanRepairEquipment(Player, item)     — станция обслуживает предмет
+
+Если ни один предмет не прошёл — показывается PlayerNothing/SBAnswerNothing.
+
+-------------------------------------------------------------------------------
+3. Формула денежной стоимости
+-------------------------------------------------------------------------------
+
+Ядро — виртуальный метод TItem.GetImprovementCost (VMT+0x38), реализация в
+TEquipment (0x735D34). Он одинаков для THull, TEngine, TWeapon, TRadar, TScaner,
+TRepairRobot, TCargoHook, TFuelTanks, TDefGenerator и прочих потомков TItem.
+
+  function TEquipment.GetImprovementCost(tier: 0..2): Integer;
+  begin
+    case tier of
+      0 (Min):  Result := RoundToTens(Size * 0.3);   // tbyte @ 0x735DC4
+      1 (Avg):  Result := RoundToTens(Size * 0.6);   // tbyte @ 0x735DD0
+      2 (Max):  Result := RoundToTens(Size * 1.2);   // tbyte @ 0x735DDC
+      else raise Exception;
+    end;
+  end;
+
+  Size — это TItem.Size (dword @ +0x20). Round выполняет функция RoundToTens
+  (@0x8717D0), округляющая до ближайшего десятка.
+
+Примеры (для типичного размера Size = 500):
+  Min  = 150
+  Avg  = 300
+  Max  = 600
+
+Стоимость в Нодах (только для предметов с item.byte_at_+0x1C == 5,
+то есть категория "MicroModule"-подобная):
+
+  nodes_needed := ROUND( money_cost * 0.01 );        // tbyte @ 0x57F5C0
+
+То есть 1 нода на каждые ~100 монет цены. Ноды берутся из Player'а через
+Player_CalcTotalProgramCost (0x798E34) и сверяются с nodes_needed. Для
+некатегорийных 5 предметов ноды не требуются вовсе.
+
+Проверка возможности покупки (в SB_Improvement_AskCost, @0x57EF0C):
+  if item.byte_1C == 5 then
+    показать вариант только если ProgramCost >= nodes AND Player.Money >= money
+  else
+    показать вариант только если Player.Money >= money
+
+Кнопки трёх тиров: PlayerOkMax / PlayerOkAverage / PlayerOkMin — по нажатию
+переходят в SB_Improvement_DetailDialog(GovDialog, tier, item).
+
+-------------------------------------------------------------------------------
+4. CB-станция (Construct Base) — свои правила ценообразования
+-------------------------------------------------------------------------------
+
+CB предлагает ТОЛЬКО тир Max (в CB_Improvement_AskCost, @0x594A20, `mov dl, 2`
+жёстко перед каждым вызовом GetImprovementCost).
+
+Ключевые константы:
+  tbyte @ 0x594E14 = 0.01                          — коэффициент нод
+  flt   @ 0x594E20 = 1.5                           — нод-надбавка CB
+  flt   @ 0x594E38 = 100.0                         — делитель процентов
+
+Формула CB:
+
+  base := GetImprovementCost(Max);
+  N    := Player_CalcNoduleCount(Player);   // 0..100, @0x793F4C:
+                                            // Round(Player[+0x514] / 1.3) + 1
+  money_cost := ROUND( base * (100 - N) / 100 );        // скидка N%
+  if item.byte_1C == 5 then
+    nodes_needed := ROUND( base * 0.01 * 1.5 );         // в 1.5× больше SB
+
+Т. е. чем выше "нодуляция" игрока (0..100), тем дешевле улучшение по деньгам
+на CB, но нод требуется в 1.5 раза больше, чем на SB.
+
+Единственная кнопка — PlayerOk (переход к CB_Improvement_AskRepeat), Min/Avg
+вариантов нет, Detail-режима тоже нет.
+
+-------------------------------------------------------------------------------
+5. Detail-режим SB (улучшение одной характеристики)
+-------------------------------------------------------------------------------
+
+В SB_Improvement_DetailDialog (@0x57F834) идёт цикл по индексам атрибутов
+v23 := 1..100 и для каждого вызывается:
+
+  sub_731FDC(item, v23) — возвращает строку-имя атрибута:
+    item.ItemType in [50..68] (оружие)          -> "Weapon" (индекс = сегмент)
+    item.ItemType in [10..41]                   -> "Artefact"
+    иначе                                       -> MB_bonus_items_table[ItemType]
+
+Затем через MB_CT("<attribute>.Detail.<name>") ищется локализованный текст.
+Если такой текст найден и:
+  IsClass(item, TEngine) OR IsClass(item, TWeapon) OR IsClass(item, TCargoHook)
+и (для оружия при v23 == 2 доп. фильтр по DamageType не 5..7) — атрибут
+добавляется в диалог как отдельная кнопка.
+
+Итог:
+  Если атрибутов найдено 0 или 1 — сразу переход в RepeatDialog.
+  Если больше 1 — игрок сам выбирает, какой атрибут прокачать.
+
+При подтверждении конкретного атрибута в улучшателе временно подменяется
+item.f8 (строка-имя), передаваемая через SE_ItemImprovement:
+
+  v13 := item[+8];              // сохранить оригинальное имя
+  item[+8]   := attr_name;      // подставить имя атрибута
+  item.byte_93 := tier;         // 0/1/2
+  (VMT+0x34)(item);             // вызвать ApplyImprovement
+  item[+8] := v13;              // восстановить
+
+Функция VMT+0x34 (ApplyImprovement) внутри читает item.byte_93 (тир) и
+item[+8] (атрибут) и модифицирует соответствующие поля.
+
+-------------------------------------------------------------------------------
+6. Что именно улучшается — реализации ApplyImprovement (VMT+0x34)
+-------------------------------------------------------------------------------
+
+Все ApplyImprovement:
+  * читают тир из item.byte_93 (0=Min, 1=Avg, 2=Max, 3=random)
+  * если тир=3, выбирают 0..2 через Rnd(0, 2, item.Seed * Galaxy.Day)
+  * в конце: item.Cost (+0x20) += GetImprovementCost(tier) / 2
+
+Т. е. цена самой вещи после апгрейда растёт на половину заплаченной суммы.
+
+--- THull.ApplyImprovement (0x7381E8) ---------------------------------
+
+  case tier of
+    0 (Min): Armor(+0x65 byte) += Rnd(1..2);
+    1 (Avg): Armor(+0x65 byte) += Rnd(2..3);
+    2 (Max): Armor(+0x65 byte) += Rnd(3..4);
+
+  if item.byte_+0x66 == 7 then  // особая раса/подкласс корпуса
+    HP_field(+0x18) += ROUND( max(500, field_18) * Rnd(3..7 / 8..12 / 13..17) );
+    field_+0x60     += то же самое;
+
+Итого: +Armor каждый цикл, для "элитных" (byte_+0x66 == 7) ещё бонус к HP.
+
+--- TWeapon.ApplyImprovement (0x742B8C) ----------------------------------
+
+По тиру item.byte_93:
+
+  case 0 (Min):
+    field_+0x6C (Damage) += ROUND(RndFloat(0.077 .. 0.15))   + 1
+    field_+0x64 (Radius) += RoundToTens(RndFloat(0.02..0.04) * WeaponInfo.field_+0x1C
+                                       + field_+0x64 * RndFloat(0.04..0.06));
+
+  case 1 (Avg):
+    field_+0x6C (Damage) += ROUND(RndFloat(0.15..0.4))       + 2
+    field_+0x64 (Radius) += аналогично, чуть больше
+
+  case 2 (Max):
+    field_+0x6C (Damage) += ROUND(RndFloat(0.4..0.6))        + 3
+    field_+0x64 (Radius) += ещё сильнее
+
+  Специальный подслучай case 3 (random-tier применяется отдельно):
+    Radius += RoundToTens( field_+0x64 * RndFloat(0.18..0.25)
+                          + sqrt(WeaponInfo.field_+0x1C² + 90000) - WeaponInfo.field_+0x1C );
+
+  Если оружие имеет DamageType в [6..7] и назначен базовый апгрейд, стандартный
+  прирост уменьшается на бонус, «заранее выданный» микромодулем — но при этом
+  сама проверка TWeapon_CanBeImproved требует, чтобы микрочипы отсутствовали,
+  так что данная ветка касается автоматических NPC-модификаций.
+
+Модифицируемые поля TWeapon:
+  +0x64 (100)  = Radius (int)      — интегрируется в CalcRadiusWithChips
+  +0x6C (108)  = MaxDamage (int)   — интегрируется в CalcMaxDamageWithChips
+
+Обе видимы через TWeapon.CalcMaxDamageWithChips (0x7429D8) и
+TWeapon.CalcRadiusWithChips (0x742A68), которые прибавляют бонусы установленных
+микромодулей. Валидатор TWeapon_CanBeImproved (0x743300) отказывает в улучшении,
+если в +0x50/+0x54 стоят чипы с бонусами.
+
+--- Прочие TItem-наследники (TEngine, TCargoHook, TRadar, TScaner,
+    TRepairRobot, TFuelTanks, TDefGenerator, TArtefact*, ...) --------------
+
+Каждый имеет собственный VMT+0x34, но:
+  * шаблон одинаков: switch(tier) -> изменить 1-2 поля +
+    item.Cost += GetImprovementCost/2;
+  * GetImprovementCost (VMT+0x38) не переопределяют — все используют базовую
+    формулу TEquipment.GetImprovementCost.
+  * Для TCargoHook/TEngine поддерживается Detail-режим (атрибут вложен в
+    item[+8]-строку).
+
+-------------------------------------------------------------------------------
+7. Сводная таблица
+-------------------------------------------------------------------------------
+
+Стоимость денег и нод:
+
+  SB Min:   money = RoundToTens(Size * 0.3),   nodes = ROUND(money * 0.01) (кат.5)
+  SB Avg:   money = RoundToTens(Size * 0.6),   nodes = ROUND(money * 0.01) (кат.5)
+  SB Max:   money = RoundToTens(Size * 1.2),   nodes = ROUND(money * 0.01) (кат.5)
+  CB Max:   money = ROUND(Size * 1.2 * (100-N)/100)
+            nodes = ROUND(Size * 1.2 * 0.015)                              (кат.5)
+
+  N = Player_CalcNoduleCount = ROUND(Player.field_+0x514 / 1.3) + 1, clamp 0..100.
+  Категория 5 (item.byte_+0x1C == 5) — предметы MicroModule-типа.
+
+Эффекты по классу:
+
+  THull:    Armor +1..2 / +2..3 / +3..4; для byte_+0x66 == 7 доп. HP-бонус.
+  TWeapon:  Damage +2..4, Radius +5..15% (число зависит от тира и Info.Size).
+  прочее:   1-2 профильных поля инкрементируется на округлённое случайное
+            значение из тир-зависимого диапазона.
+
+Всегда: item.Cost += money_cost / 2.
+
+-------------------------------------------------------------------------------
+8. Переименованные функции (уверенные)
+-------------------------------------------------------------------------------
+
+  0x735D34  TItem_GetImprovementCost           (VMT+0x38, общая формула цены)
+  0x742B8C  TWeapon_ApplyImprovement           (VMT+0x34 для TWeapon)
+  0x7381E8  THull_ApplyImprovement             (VMT+0x34 для THull)
+  0x7370DC  TItem_CanBeImproved                (общий фильтр eligible)
+  0x743300  TWeapon_CanBeImproved              (VMT+0x3C для TWeapon)
+  0x7429D8  TWeapon_CalcMaxDamageWithChips     (Base + чипы)
+  0x742A68  TWeapon_CalcRadiusWithChips        (Base + чипы)
+
+-------------------------------------------------------------------------------
+9. Разрешённые открытые вопросы (обновлено)
+-------------------------------------------------------------------------------
+
+  * item.byte_+0x1C == 5 → **item.Race == 5 = Kling/Dominator**.
+    Подтверждено тремя источниками:
+      - TKling_InitEquipment (0x5CC578): `mov [eax+1Ch], 5` при экипировке
+        миньона доминатора.
+      - TShip_TakeWeaponDamage_FullCycle (0x705B69): `mov [eax+1Ch], 5 ;
+        TMicroModule.?f1C:byte` — выпадающий из выбитого микромодуль.
+      - sub_6AABF8 (0x6AAC4A): `mov [eax+1Ch], 5 ; TArtefact.?f1C:byte`
+        — доминаторский артефакт.
+    Стандартный enum Race: 0=Малок, 1=Пеленг, 2=Человек, 3=Фей, 4=Гаал,
+    5=Kling (доминаторы). Оборудование расы 5 требует Ноды при апгрейде.
+
+  * hull.field_+0x66 == 7 → **легаси-класс корпуса, только в старых сейвах**.
+    THull.LoadFromStream (sub_7374D0) нормализует raw hull_type >=24:
+      raw 24 → 7, raw 25 → 8, raw 26 → 9.
+    Ни в одной современной точке спавна корпуса значение 7 не выдаётся:
+      - TPlanet_GenEquipShop_Hull: RandRange 0..5
+      - TPlanet_BuyBigWarrior (flagship): 10
+      - PB/WB/SB_SpecialShip_Show (0x590064): 9 + TItem_ApplySpecialFromDB
+    Значит ветка THull.ApplyImprovement с extra-HP отрабатывает **только
+    для корпусов, импортированных из сейва версии < 88** (где raw=24 —
+    какой-то уникальный сюжетный корпус, предположительно "терронский" или
+    "трофейный элитный"). Ветка сохранена ради обратной совместимости.
+
+  * VMT+0x34 для остальных TItem-классов — **разобрано полностью**, см.
+    отдельную статью `SB_Improvement_Formulas.txt`. Все 9 наследников
+    (Hull, Weapon, FuelTanks, Engine, Radar, Scaner, RepairRobot, CargoHook,
+    DefGenerator) имеют собственный VMT+0x34; GetImprovementCost — общий
+    (TEquipment @0x735D34). TDefGenerator — единственный, где стат
+    УМЕНЬШАЕТСЯ (Consumption -= …).
+
+  * Detail-фильтр v23 == 2 для оружия — **атрибут "Radius"**.
+    Пропускается для оружий с DamageType в [5..7] (single-target hit-scan:
+    Рельсовое, ЭМИ и т. п.), где Radius не имеет смысла. Проверка:
+    `weapon.WeaponInfo.field_+0x35 - 5 < 3u`.
+
+-------------------------------------------------------------------------------
+10. Дополнительные переименования (июль 2026)
+-------------------------------------------------------------------------------
+
+  0x73A6FC  TFuelTanks_ApplyImprovement
+  0x73B520  TEngine_ApplyImprovement
+  0x73CB6C  TRadar_ApplyImprovement
+  0x73D970  TScaner_ApplyImprovement
+  0x73E7FC  TRepairRobot_ApplyImprovement
+  0x73F9C0  TCargoHook_ApplyImprovement
+  0x741168  TDefGenerator_ApplyImprovement
+  0x74B808  TItem_ApplySpecialFromDB   (был sub_74B808; ставит SuperHullPB
+                                        и подобные из ItemDB на предмет)
+
+===============================================================================

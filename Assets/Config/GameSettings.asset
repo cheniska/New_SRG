@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 078a253618afbf5409ad38663b1cfdce, type: 3}
+  m_Name: GameSettings
+  m_EditorClassIdentifier: Assembly-CSharp::GameSettingsConfig
+  HorizontalAxis: Horizontal
+  VerticalAxis: Vertical
+  ZoomAxis: Mouse ScrollWheel
+  ResetCameraKey: 278
+  PausePlayKey: 32
+  DragMouseButton: 1
+  MoveSpeed: 20
+  DragSpeed: 1
+  EdgeThickness: 10
+  EnableEdgeScrolling: 1
+  MinZoom: 5
+  MaxZoom: 20
+  ZoomSpeed: 10
+  MapLimit: {x: 1024, y: 1024}
+  EnableCentering: 1
+  CenterCameraKey: 99
+  MultiWaypointKey: 304
+  TurnDuration: 2
+  MovieInterruptOnActionDone: 1
+  PlayerShipTypeId: Ranger
+  PlayerOwnerId: Race3_Main
+  PlayerRaceId: Race3
+  PlayerSpawnPosition: {x: 1.5, y: 0}
+  DefaultGalaxyKey: MilkyWay
+  ConstellationRadius: 5
+  FallbackStarColor: White
+  FallbackSatelliteSize: Mid
+  FallbackEmblemPath: Empty
+  FallbackPlanetTexture: Graphics/SpaceObjects/Planets/Textures/Unic/Solar_Earth
+  FallbackSatelliteTexture: Graphics/SpaceObjects/Planets/Textures/Unic/Solar_Moon
+  SatelliteTexturesPath: Graphics/SpaceObjects/Planets/Textures/Satellites
+  CommonPlanetTexturesPath: Graphics/SpaceObjects/Planets/Textures/Common
+  OrbitalObjectsPath: Graphics/SpaceObjects/Planets/Orbital
+  PlanetMaskPath: Graphics/SpaceObjects/Planets/Mask/160
+  CloudTexturesPath: Graphics/SpaceObjects/Planets/Textures/Clouds
+  CloudTexturesCount: 3
+  MinOrbitRadius: 500
+  SystemPadding: 400
+  OrbitGapMin: 500
+  OrbitGapMax: 700
+  FirstOrbitRadiusMin: 600
+  FirstOrbitRadiusMax: 1000
+  PlanetOrbitSpeedMin: 50
+  PlanetOrbitSpeedMax: 300
+  PlanetDaySpeedMin: 20
+  PlanetDaySpeedMax: 60
+  CloudSpeedFactorMin: 0.6
+  CloudSpeedFactorMax: 0.8
+  OrbitalObjectChance: 0.3
+  NoneOrbitMaxFraction: 0.4
+  FallbackMaxPlanetsPerStar: 12
+  FallbackPlanetPixelRadius: 120
+  SatelliteOrbitBaseOffset: 35
+  SatelliteOrbitSpacing: 25
+  SatelliteOrbitSpeedMin: 40
+  SatelliteOrbitSpeedMax: 120
+  SatelliteDaySpeedMin: 10
+  SatelliteDaySpeedMax: 39
+  SatelliteCloudSpeedFactor: 0.7
+  BgStarCountFar: 250
+  BgStarCountMid: 150
+  BgStarCountNear: 80
+  BgTexSizeFar: 1024
+  BgTexSizeNear: 512
+  BgParallaxFar: 0.02
+  BgParallaxMid: 0.05
+  BgParallaxNear: 0.12
+  BgLayerTileSize: 500
+  BgVoidScaleFactor: 2.5
+  LogFallbackStarColor: silver
+  LogNeutralOwnerLabel: Neutral

@@ -1,0 +1,70 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+
+    <Style src="MenuStyles.uss" />
+
+    <!-- Корневой контейнер на весь экран -->
+    <ui:VisualElement name="root" class="root">
+
+        <!-- Звёздное поле (рисуется через C# ImmediateModeElement) -->
+        <ui:VisualElement name="starfield" class="starfield" picking-mode="Ignore" />
+
+        <!-- Скан-линии поверх всего -->
+        <ui:VisualElement name="scanlines" class="scanlines" picking-mode="Ignore" />
+
+        <!-- Планета-силуэт справа -->
+        <ui:VisualElement name="planet" class="planet" picking-mode="Ignore">
+            <ui:VisualElement name="planet-glow" class="planet-glow" picking-mode="Ignore" />
+        </ui:VisualElement>
+
+        <!-- HUD: верхний левый угол -->
+        <ui:VisualElement name="hud-corner" class="hud-corner" picking-mode="Ignore">
+            <ui:VisualElement class="hud-line hud-line--l" />
+            <ui:VisualElement class="hud-line hud-line--m" />
+            <ui:VisualElement class="hud-line hud-line--s" />
+            <ui:Label name="hud-label" class="hud-label" text="NAVIGATION SYSTEM" />
+        </ui:VisualElement>
+
+        <!-- HUD: нижний правый угол -->
+        <ui:VisualElement name="hud-bottom" class="hud-bottom" picking-mode="Ignore">
+            <ui:Label name="hud-coords" class="hud-coords" text="SYS : MAIN_MENU · STATUS : STANDBY" />
+        </ui:VisualElement>
+
+        <!-- Основная панель слева -->
+        <ui:VisualElement name="panel" class="panel">
+
+            <!-- Логотип -->
+            <ui:VisualElement name="logo" class="logo">
+                <ui:VisualElement class="logo-title-row">
+                    <ui:Label class="logo-title" text="VOID" />
+                    <ui:Label class="logo-title logo-title--accent" text=" SECTOR" />
+                </ui:VisualElement>
+                <ui:Label class="logo-sub" text="GALACTIC COMMAND — BUILD 0.1.0" />
+            </ui:VisualElement>
+
+            <!-- Кнопки -->
+            <ui:VisualElement class="menu-list">
+                <ui:Button name="btn-new-game" class="menu-btn">
+                    <ui:VisualElement name="btn-bar" class="btn-bar" />
+                    <ui:Label class="btn-icon" text="▶" />
+                    <ui:Label class="btn-label" text="NEW GAME" />
+                </ui:Button>
+
+                <ui:Button name="btn-settings" class="menu-btn">
+                    <ui:VisualElement name="btn-bar" class="btn-bar" />
+                    <ui:Label class="btn-icon" text="⚙" />
+                    <ui:Label class="btn-label" text="SETTINGS" />
+                </ui:Button>
+
+                <ui:Button name="btn-quit" class="menu-btn menu-btn--danger">
+                    <ui:VisualElement name="btn-bar" class="btn-bar" />
+                    <ui:Label class="btn-icon" text="⏻" />
+                    <ui:Label class="btn-label" text="QUIT" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <ui:Label class="version-label" text="SECTOR v0.1 · BUILD 2025" />
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

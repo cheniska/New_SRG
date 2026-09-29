@@ -1,0 +1,635 @@
+================================================================================
+ОТЧЁТ ПО AI КОРАБЛЕЙ И СТАНЦИЙ В SPACE RANGERS HD (Rangers.exe)
+================================================================================
+Дата:  2026-06-02 (с коррекциями после многократной перепроверки)
+Файл:  D:\disasm2500\Rangers.exe.i64
+Базовый адрес:  0x400000
+
+
+================================================================================
+1. КЛАССОВАЯ ИЕРАРХИЯ (TShip и наследники)
+================================================================================
+
+  TShip (abstract, size 1232)
+    +-- TNormalShip (abstract, size 1296)
+    |     +-- TRanger    (VMT 0x74FE5C, size 1376)
+    |     +-- TPirate    (VMT 0x5AB398, size 1308)
+    |     +-- TWarrior   (VMT 0x5B5EA8) - включая флагман BigWarrior
+    |     +-- TTransport (VMT 0x5BF71C) - Cargo/Liner/Diplomat
+    +-- TKling           (VMT 0x5C5E20, size 1244) - доминаторы
+    +-- TTranclucator    (VMT 0x5CD9E0)            - AI-компаньон Player'а
+    +-- TRuins           (VMT 0x6CA3B8)            - ВСЕ станции (RC/PB/WB/SB/BK/MC/CB/UB)
+
+
+================================================================================
+2. АРХИТЕКТУРА VMT (Hex-Rays vs IDA адресация)
+================================================================================
+
+Delphi 7 VMT layout: runtime ClassRef pointer указывает на +0x4C (76 байт = 19
+служебных DWORDs) от IDA-маркированного адреса.
+
+    HR slot N = IDA offset (0x4C + N * 4)
+
+Главные слоты:
+
+  HR slot +7    Main AI dispatch (AI_DailyDecision)
+  HR slot +8    AI continuation (у TWarrior = WeaponTargeting)
+  HR slot +18   Trade dialog hook
+  HR slot +24   Stock-up hook
+  HR slot +25   Restock equip / CanLandOnPlanet
+  HR slot +27   PickEngageTarget (CombatTarget picker via ChanceToWin)
+  HR slot +28   PostEngageOrder
+  HR slot +30   AdjustRelation
+  HR slot +32   engage sub-process
+  HR slot +33   ShouldFlee_ChanceBased (у TPirate)
+  HR slot +39   Land/Move dispatch
+  HR slot +40   Pre-decision tick
+  HR slot +44   TryAcceptMoneyRansom
+  HR slot +120  Apply reputation delta (OnCombatHit / TWarrior post-accept)
+  HR slot +156  Task swap / panic mode toggle
+  HR slot +196  TakeOff order
+
+
+================================================================================
+3. ОБЩАЯ NextDay-ЦЕПОЧКА
+================================================================================
+
+TStar.NextDay (0x863998, ~38 KB, 38807 байт)
+   |
+   +-- для каждого ship в star:
+       TShip.StepDay_Inherited (0x6FE39C) - housekeeping (ремонт, износ, инвентарь)
+       VMT+7 = AI_DailyDecision:
+          TRanger    -> TRanger_AI_DailyDecision     (0x751B00)
+          TPirate    -> TPirate_AI_DailyDecision     (0x5AC1CC)
+          TWarrior   -> TWarrior_AI_DailyDecision    (0x5B6ED0)
+          TTransport -> TTransport_AI_DailyDecision  (0x5C0550)
+          TTranclucator -> TTranclucator_AI_DailyDecision (0x5CE6FC)
+          TKling     -> TKling_NextDay (0x5C7F0C):
+                        g_Terron -> TKling_Terron_NextDay (0x5C8DF8)
+                        g_Keller -> TKling_Keller_NextDay (0x5C9220)
+                        g_Blazer -> TKling_Blazer_NextDay (0x5C96A8)
+                        KlingType==6 (Bertor) -> TKling_Bertor_NextDay (0x5C8888)
+                        else -> TKling_Minion_NextDay (0x5C81C4)
+          TRuins     -> TRuins_NextDay (0x6CC6C0)
+
+
+================================================================================
+4. AI ПО КЛАССАМ
+================================================================================
+
+----- TRanger (0x751B00) -----
+3 ветки: planet/station/space. На планете - trade+mission+jump. На станции -
+specific dialogs (RC=6, WB=8). В системе - PickBestTradePlanet (торговый scoring),
+PickTargetStar_AvoidBlazer (выбор звезды).
+
+Engage: TRanger_AI_PickEngageTarget (0x759EAC, VMT+27) - ChanceToWin > 0.5,
+не атакует rangers/police.
+
+----- TPirate (0x5AC1CC) -----
+v39 = (ClassStatus[1] > 0) && (Owner == 7): настоящий пират
+v39 = false: пирато-воин (через TPlanet_BuyWarrior на пиратской планете)
+
+Кланская координация: 3+ пиратов без миссии -> сбор на CB.
+Уникально: TPirate_AI_AmbushTick (засада на планете).
+
+Пираты "хотящие ограбить" реализуют грабёж через:
+  1. Атака (PickEngageTarget)
+  2. Если жертва выкидывает товары (TryDropGoodsAsRansom) - пират подбирает
+     их физически через CargoHook AI и прекращает преследование
+  3. Альтернатива: пират при низком HP сам пытается откупиться (TryMoneyRansom)
+
+Engage: TPirate_AI_PickEngageTarget (0x5B0550, VMT+27) - 2 режима (InAggro/обычный)
+
+----- TWarrior (0x5B6ED0) -----
+3 AI-функции:
+  1. TWarrior_AI_DailyDecision (главный диспетчер VMT+7)
+  2. TWarrior_WeaponTargeting (VMT+8) - 7-уровневая weapon assignment
+  3. TWarrior_AI_FullCycle (0x5BBFF4) - ТОЛЬКО для BigWarrior (Rating==1)
+
+BigWarrior получает money = clamp(Galaxy._064/15, 1000..5000) каждый день.
+
+----- TTransport (0x5C0550) -----
+SubType: 0=Cargo, 1=Liner, 2=Diplomat, 3=Ranger
+Liner (Rating=1): +money за visit
+Diplomat (Rating=2): +money * (SkillCharm+1)/2 за visit
+
+Engage: TTransport_AI_PickEngageTarget (0x5C2D40, VMT+27).
+КРИТИЧНО: TTransport атакует ТОЛЬКО Klings (CurStanding=0 или 9).
+
+----- TTranclucator (0x5CE6FC) -----
+AI-компаньон Player'а через ReturnAsArtefact serialization.
+Управляется диалогами Talk_Tranclucator_*.
+
+----- TKling -----
+См. раздел 6.
+
+----- TRuins (0x6CC6C0) -----
+8 типов станций. CB (type=12) - мобильная пиратская база с migration AI.
+
+
+================================================================================
+5. БОЕВАЯ МОДЕЛЬ (ЕДИНАЯ для всех NPC)
+================================================================================
+
+----- TShip.ChanceToWin (0x70B380) - ЯДРО -----
+
+  myDmg = sum(WeaponMaxDamage(w) * target.Protectability - target.HullDef
+              for w in self.weapons if w.speed>0; only positive)
+  targetDmg = аналогично для target.weapons
+  if myDmg == 0: return 0.0     # не могу пробить
+  if targetDmg == 0: return 100.0  # target не может ответить
+  return (self.hp * myDmg / target.hull.size) / (target.hp * targetDmg / self.hull.size)
+
+Интерпретация: >1 побеждаю / <1 проигрываю / 0 бесполезно / 100 instant win.
+
+----- TShip.GetAttitude (0x72F360) -----
+Возвращает 0..100. Default = 0 (низкий).
+
+----- TShip.GetRelationToPlayer (0x70BE0C) - 5 уровней -----
+  0-9: hostile / 10-29: unfriendly / 30-59: neutral / 60-79: friendly / 80-99: ally
+
+----- TShip_OnCombatHit_ApplyRelationPenalty (0x6CFF7C) -----
+При попадании оружия:
+  victim.CombatTarget := attacker
+  attacker.VMT+120(-10)        # reputation
+  star planets relation -= 10 (decentralized call-for-help)
+
+--------------------------------------------------------------------------------
+ВЫКУП: ДВА МЕХАНИЗМА
+--------------------------------------------------------------------------------
+
+Концепция:
+  - Пират хочет ОГРАБИТЬ. Если жертва выкидывает товары - пират подбирает.
+  - От пирата можно откупиться (товарами или деньгами).
+  - От воина откупиться можно ТОЛЬКО ДЕНЬГАМИ (большой суммой).
+  - От Klings откупиться НЕЛЬЗЯ ни товарами, ни деньгами.
+
+A) ТОВАРНЫЙ ВЫКУП: TryDropGoodsAsRansom (0x717CF8)
+   Сброс goods в космос. Атакующий пират подбирает через свой CargoHook AI.
+   Guard: _1176 RansomGiven flag.
+   3 итерации × до 2 типов. Корабль без товаров не откупится.
+
+B) ДЕНЕЖНЫЙ ВЫКУП: VMT+44 = TryAcceptMoneyRansom
+
+   Триггер: TPirate_AI_TryMoneyRansom (0x5AF2E4) - пират решает дать взятку
+   при low HP / chase / dist<3 / Money>100.
+
+   Сумма offer: чем ниже HP - тем больше денег.
+
+   target.VMT+44(self, amount) у разных классов:
+     TRanger/TPirate/TTransport: принимают по ChanceToWin/ShouldFlee/HP%/amount
+     TWarrior: только большая сумма (PathTotal-based, без fear-логики)
+     TKling: всегда return 0
+     TTranclucator: Talk_NotSupporting_3
+     TRuins: sub_6D03E4
+
+--------------------------------------------------------------------------------
+ЭФФЕКТЫ ПРИНЯТИЯ ВЫКУПА (post-accept hooks)
+--------------------------------------------------------------------------------
+
+Общий хук sub_70C1E0 (все accept):
+  - CombatTarget обоих := 0
+  - payer._3F8 := target (temporary escort)
+  - weapon.target clear
+  - Если payer=Ranger: target.VMT+30(+10) (relation)
+  - Если target=Ranger: payer.VMT+30(+30)
+  - Recursive cleanup для всех ships с _1020 == payer/target
+
+Класс-специфические:
+  TWarrior (sub_5BCE84):
+    Money transfer. ДЛЯ ВСЕХ Warriors с HomePlanet == self.HomePlanet:
+      Очищает CombatTarget == payer, weapon.target
+      Warrior.VMT+120(+30, payer)  ## +30 К РОДНОЙ ПЛАНЕТЕ ВОИНА
+    ВЗЯТКА ВОИНУ = ВЗЯТКА ВСЕЙ РОДНОЙ ПЛАНЕТЕ.
+
+  TPirate (sub_5B20F4):
+    Money transfer. Если payer=Ranger:
+      Planet_PirateClan.relation_to_ranger += 10
+    Если pirate-pirate в pirate system: вся пиратская команда clear CombatTarget.
+
+  TRanger (sub_75B6B8): money transfer + special star.Owner==7 handling.
+  TTransport (sub_5C3D8C): простой money transfer + sub_70C1E0.
+
+----- Системный flee: TNormalShip.AI.FleeIfOutgunned (0x5B3904) -----
+Через TStar_CalcPowerByStanding (cached per-day):
+  threshold = |coalition - 2.5*dominator| * v33
+  if threshold >= pirate_power OR AllWeaponsDisabled: flee
+
+----- Per-target flee: TNormalShip.AI.ShouldFlee_ChanceBased (0x5AEE90) -----
+VMT+33 у TPirate. 3 вызова ChanceToWin (per-target).
+
+----- TStar.CalcPowerByStanding (0x861954) - источник истины о силах -----
+
+
+================================================================================
+6. БОССЫ ДОМИНАТОРОВ (TKling, KlingType==0)
+================================================================================
+
+ИГРОВАЯ ПРИРОДА:
+  Blazer - Корабль в обычном космосе, летает по подконтрольным системам.
+           ЕДИНСТВЕННЫЙ может СЕСТЬ НА ПЛАНЕТУ.
+  Keller - Корабль выходящий из ЧЁРНОЙ ДЫРЫ. HP<1300 -> уход в дыру.
+           3 концовки: аркадный бой / клисаны / пиратская система.
+  Terron - БОСС-ПЛАНЕТА. В обычной игре не меняет курс. Финал: летит к звезде.
+
+----- TKling.Blazer.NextDay (0x5C96A8) -----
+1. Скрытная регенерация до 25% HP (Player не в звезде)
+2. CanAct + TerronToStar<=0:
+   - TKling_Boss_CoordinateCapture(self, mode=2)
+   - OrderMove_Internal(0,0), VMT+8, engage
+3. else (Terron-финал активирован): escape position
+
+----- TKling.Keller.NextDay (0x5C9220) -----
+1. Скрытная регенерация до 50% HP (СИЛЬНЕЕ Blazer)
+2. PickAttackTarget + TriggerAttackIfIdle
+3. CanAct:
+   - CoordinateCapture(self, mode=1)
+   - Hyperjump (ЧЁРНАЯ ДЫРА) при условиях:
+       KellerNewResearch != my.star OR period OR hp<1300 OR Player viewing
+   - TShip_OrderArriveFromHiperspace (state=4)
+
+Поля Galaxy:
+  KellerNewResearch (id целевой звезды)
+  KellerAttackStar (current target)
+  KellerLeave (концовка)
+  _0C0 (активная охота)
+
+----- TKling.Terron.NextDay (0x5C8DF8) -----
+1. Star переполнена (star._152 == Ships.Count): full heal
+2. Иначе Player не в звезде: 25% HP regen
+3. CanAct:
+   - CoordinateCapture(self, mode=0)
+   - if no Order: OrbitMoveToFirstShip (orbital pattern)
+   - RetargetIfLowHP: HP<33% -> PickNewTarget (FINALLE: летит к звезде)
+
+----- TKling_Boss_CoordinateCapture (0x5CBB78) -----
+Общая координация всеми 3 боссами. mode по боссу:
+  Blazer -> 2, Keller -> 1, Terron -> 0
+Threshold = DominatorLevel + KlingsDeltaWin
+Cheat: Day>=666 && CheatKlingStrength -> 400/600/800
+
+----- TKling.Bertor.NextDay (0x5C8888) - лейтенант (KlingType==6) -----
+On Blazer: Destroy=1. In space: VMT+27/+28 + Keller-tracking + SpawnFollowers.
+
+
+================================================================================
+7. ПАРТНЁРСТВО И НАЁМ КОМАНДЫ
+================================================================================
+
+Игровая концепция:
+  - Рейнджеры могут нанимать ДРУГИХ РЕЙНДЖЕРОВ в партнёры. AI-рейнджер может
+    нанять Player'а, Player может нанять AI-рейнджера.
+  - Игрок-ГЛАВА ПИРАТСКОГО КЛАНА (Player.PirateClan==7) может нанимать
+    ПИРАТОВ через Construct Base (CB) пиратских систем.
+  - Партнёры подчиняются командам владельца, получают деньги, могут отдавать
+    cargo, выполнять Order'ы.
+
+--------------------------------------------------------------------------------
+Поля партнёрства (TShip)
+--------------------------------------------------------------------------------
+
+  +0x3FC (1020)  FShipPartner: TShip*
+                 Указатель на того, ЧЬИМ ПАРТНЁРОМ я являюсь.
+                 nil если я свободен.
+
+  +0x400 (1024)  FShipPartnerDay: int
+                 День игры, когда партнёрство истекает.
+
+TPlayer (extends TRanger):
+  Player.FPirates: TList
+                   Список пиратов в команде Player'а (только глава клана).
+                   Автоматически синхронизируется со SF_ShipSetPartner для TPirate.
+
+ВАЖНО (исправление): ранее я ошибочно идентифицировал +0x3FC как "Leader".
+Это неверно — это FShipPartner. Поле +0x3F8 (escort) — другое:
+  +0x3F8 (1016)  _3F8 - временный escort/leader, sets в sub_70C1E0 при accept ransom
+
+--------------------------------------------------------------------------------
+Скриптовые функции (SE_*)
+--------------------------------------------------------------------------------
+
+  SE_ShipSetPartner   (0x62FFB0): ship.FShipPartner := ship2, day := av[3]
+                                  Для TPirate автосинхронизирует Player.FPirates:
+                                    - Если ранее ship.FShipPartner == Player:
+                                        Player.FPirates.Remove(ship)
+                                    - Если новый partner == Player:
+                                        Player.FPirates.Add(ship)
+
+  SE_ShipPartners     (0x64CD3C): возвращает num-го ranger-партнёра ship'а
+                                  (перебор Galaxy.Rangers, фильтр по FShipPartner == ship)
+
+  SE_PlayerPirates    (0x64CE58): возвращает count или конкретного пирата
+                                  из Player.FPirates
+
+  SE_ShipIsPartner    (0x64CF08): возвращает FShipPartner или FShipPartnerDay
+
+--------------------------------------------------------------------------------
+Найм рейнджера: Talk_Partner_AskJoin (0x61067C)
+--------------------------------------------------------------------------------
+
+Когда Player разговаривает с рейнджером и предлагает партнёрство:
+
+ПРОВЕРКИ (по порядку):
+  1. GetAttitude(target, Player) >= 45 (0x2D)
+     Иначе: 'Talk.Partner.Suspect' ("я вам не доверяю")
+  2. target.FShipPartner == nil
+     Иначе: 'AlreadyHavePartner' ("я уже в команде")
+  3. target.Skill_Leadership <= 0 (через sub_753514)
+     Иначе: 'ILeader' ("я сам командую, не подчиняюсь")
+  4. Player.Skill_Leadership > target.Leadership
+     Иначе: 'NeedLeadership' ("у вас недостаточно лидерства")
+  5. target.Rank <= Player.Rank
+     Иначе: 'YouNeedInMoreRank' ("у вас низкий ранг")
+
+РАСЧЁТ ЦЕНЫ:
+  initial_offer := dword_889C40 (глобал)
+  target.VMT+188(Player, offer) - предварительная проверка приемлемости
+
+ВАРИАНТЫ ИГРОКА:
+  - 'PlayerOk' - согласиться -> sub_610E40 -> SE_ShipSetPartner(ranger, Player, day)
+  - 'PlayerLess' (если offer/2 > 0) - предложить меньше -> Talk_Partner_AskJoin_Callback
+  - 'PlayerMore' (если Money > offer) - предложить больше -> sub_610EE0
+  - 'Cancel'
+
+--------------------------------------------------------------------------------
+Найм пирата: CB_ConstructPirate_HireConfirm (0x593C20)
+--------------------------------------------------------------------------------
+
+Только в Construct Base (CB, type=12) пиратской системы.
+Игрок-глава пиратского клана конструирует нового пирата.
+
+ЭТАПЫ:
+  1. Подсчёт стоимости (sub_59140C - суммирует выбранные item costs)
+  2. Списание денег (Player_SetMoney)
+  3. Создание TPirate.Create
+  4. Копирование equipment из выбора игрока:
+     - dword_8899E4[2*42..49] (8 слотов основных weapons/equipment)
+     - dword_889B6C[2*1..5]   (5 слотов artefacts/special)
+     Items могут быть из inventory Player'а (deleted из EquipmentItems)
+     или создаваться через sub_593B24/sub_593BAC (генератор)
+  5. TPirate_InitShip(newPirate, star_id, initial_money, 0)
+  6. newPirate.CurRuins := Player.CurRuins
+  7. newPirate.VMT+120(+100, Player) - макс reputation
+  8. Если Player.FPirates.Count < limit (sub_7992C0 - Bridge capacity?):
+       newPirate.FShipPartner (+0x3FC) := Player
+       newPirate.FShipPartnerDay (+0x400) := 30 * payment_factor
+       Player.FPirates.Add(newPirate)
+     Иначе: сообщение об ограничении (off_594048)
+  9. TfRuinsTalk_Update
+
+--------------------------------------------------------------------------------
+Команды партнёру: Talk_Partner_* диалоги
+--------------------------------------------------------------------------------
+
+  Talk_Partner_OrderFlyToMe       (0x610F30):
+    TShip_OrderFollowShip(partner, Player, 0)
+    Если у Player'а несколько партнёров (Bridge > 1):
+      - 'OrderForAll' - всем партнёрам "следуй за мной"
+      - 'OrderForYou' - только этому
+
+  Talk_Partner_OrderLandOnObject  (0x6111E4): приказать сесть на объект
+  Talk_Partner_OrderFlyToStar     (0x611590): приказать лететь к звезде
+  Talk_Partner_DropCargo          (0x6118C8): приказать сбросить cargo
+
+  Talk_Partner_FinancesReport     (0x611B04): отчёт о деньгах партнёра
+    Если Player.Money > 0: предлагает 'FinancesOfferGift'
+
+  Talk_Partner_FinancesGift       (0x611D60): передача подарка партнёру
+    Варианты: SendGift -> FinancesGotGift, PlayerLess, PlayerMore, Cancel
+    dword_889C44 - базовая цена gift
+
+  Talk_Partner_FinancesGotGift    (0x612088): партнёр получает gift
+    Player_SetMoney(payer, payer.Money - amount)
+    Player_SetMoney(partner, partner.Money + amount)
+
+--------------------------------------------------------------------------------
+Поведение партнёра в AI
+--------------------------------------------------------------------------------
+
+Когда ranger.FShipPartner != nil:
+  - Это влияет на TRanger_AI_DailyDecision (проверка _3FC)
+  - Партнёр стремится следовать за owner (через OrderFollowShip команды)
+  - При уроне может вызывать helper-логику owner'а
+  - При истечении FShipPartnerDay - партнёрство автоматически прекращается?
+    (требует подтверждения)
+
+В TPirate AI_DailyDecision проверка _3FC аналогична. Также Player.FPirates
+используется в спец-логиках:
+  - При взятии пирата под управление Player'а
+  - При покидании Player'ом пиратского клана
+
+
+================================================================================
+8. КООРДИНАЦИЯ / CALL-FOR-HELP
+================================================================================
+
+----- TGalaxy.SpawnWarriorLiberatorGroup_Build (0x85C2E8) -----
+Сбор группы warrior-liberator:
+1. Сбор existing ships с CurStanding в {coalition, neutral} - сила v26
+2. Сбор Warriors с HomePlanet.Star == target и Order<2 - v27
+3. Когда >=5 ships и ally_power >= enemy_power: PostNews
+
+Warriors уже существуют в галактике. Это re-organization, не spawn.
+
+
+================================================================================
+9. КЛЮЧЕВЫЕ ПОЛЯ ОБЪЕКТОВ
+================================================================================
+
+TShip (size 1232):
+  +0x10   Type (eShipType)
+  +0x11   Owner (TOwner: race + PirateClan)
+  +0x14   Pos.x, +0x18 Pos.y
+  +0x1C   CurPlanet
+  +0x20   CurRuins (станция-носитель)
+  +0x24   CurStar
+  +0x2C   HomePlanet
+  +0x110  Race
+  +0x278  _632 race attack counter
+  +0x3B0  _944 counter
+  +0x3B4  _3B4 mission flag
+  +0x3B5  Forsage
+  +0x3B8  _948 PanicFlag
+  +0x3F4  CombatTarget / Goal
+  +0x3F8  _3F8 temporary escort (sets в sub_70C1E0)
+  +0x3FC  FShipPartner (постоянный партнёр, NEW!)
+  +0x400  FShipPartnerDay
+  +0x428  State
+  +0x440  Destroy flag
+  +0x498  _1176 RansomGiven
+  +0x4B0  CurStanding
+
+TNormalShip (extends TShip, size 1296):
+  +0x500  Rank
+  +0x508  PirateRank
+  +0x510  SubType / _1296:
+    TPirate:    PirateType, +1300 InAggroMode, +1304 Frustration
+    TWarrior:   _1296=1 berserker mode
+    TTransport: SubType (0=Cargo, 1=Liner, 2=Diplomat, 3=Ranger)
+
+TKling (extends TShip, size 1244):
+  +0x4D0  KlingType
+  +0x4D1  Series
+
+TPlayer (extends TRanger):
+  Player.FPirates - TList пиратов в команде главы клана
+  (offset не верифицирован напрямую, доступ через Player.BridgeCurShip+1098)
+
+TGalaxy:
+  +0xC0   _0C0 (Keller активная охота)
+  +0x114  TerronWeaponLockTurn
+  +0x120  TerronToStar
+  +0x124  KellerLeave
+  +0x128  KellerNewResearch
+  +0x12C  BlazerLanding
+  +0x148  CoalitionDefeatedTurn
+
+TStar:
+  +0x49   Series
+  +0x4C   power[Coalition] cache
+  +0x50   power[Dominator] cache
+  +0x54   power[Pirate] cache
+  +0x58   power_cache_day
+  +0x98   _152 (full-heal Terron - не разобрано)
+
+
+================================================================================
+10. ENUM-Ы
+================================================================================
+
+eShipType:    0..13 (Kling/Ranger/Transport/Pirate/Warrior/Tranclucator/
+                    RC/PB/WB/SB/BK/MC/CB/UB)
+eShipStanding: 0..9 (Kling/None/CoalMil/CoalAct/CoalPass/Neutral/
+                    PirPass/PirAct/PirMil/Custom)
+eShipSubType: 0..3 (Transport/Liner/Diplomat/Ranger)
+eKlingType:   0..7 (Boss/Equentor/Urgant/Smersh/Menok/Shtip/Bertor/Klig)
+eDominatorSeries: 0..2 (Blazeroid/Kelleroid/Terronoid)
+eRangerClass: 0..2 (Trader/Pirate/Warrior)
+
+
+================================================================================
+11. ОТКРЫТЫЕ ВОПРОСЫ
+================================================================================
+
+1. Galaxy.BlazerLanding в Terron_NextDay - рудимент или активный?
+2. star._152 (TStar+0x98) - что это для full-heal Terron?
+3. CoordinateCapture mode <-> star.Series mapping (странное соответствие).
+4. 3 концовки Keller'а - функции триггеров.
+5. К какой звезде летит Terron в финале?
+6. TStar_NextDay_1 (0x863998, 38807 байт ≈ 38 KB) - НЕ ДЕКОМПИЛИРОВАН.
+7. TShip_TakeWeaponDamage_FullCycle (0x704490) - где CombatTarget устанавливается?
+8. AutoBattle режим Player'а - MB_TShip_ProcessAutoBattle.
+9. TTranclucator.VMT+44 = Talk_NotSupporting_3 - reject?
+   TRuins.VMT+44 = sub_6D03E4 - не разобрано.
+10. sub_70083C параметризованный getter (1/3/4/5).
+11. off_882CC0 skip-mask для money ransom - почему Pirate в маске?
+12. VMT+30 (AdjustRelation) у разных классов - точная семантика persistence.
+13. Поведение партнёра при истечении FShipPartnerDay - автоматический разрыв?
+14. sub_7992C0 - Player.Bridge limit / size? Используется в CB_ConstructPirate
+    для проверки FPirates.Count.
+15. Player.FPirates точный offset в TPlayer.
+
+
+================================================================================
+12. ТОЧКИ ВОЗДЕЙСТВИЯ ДЛЯ МОДИФИКАЦИИ
+================================================================================
+
+Goods выкуп:
+  - Чаще откупаются: rand < 0.3 в AI_DailyDecision
+  - Дороже: GalaxyMoney_Tiny/2 -> x2
+
+Money выкуп:
+  - TKling принимают: заменить return 0 в TKling.TryAcceptMoneyRansom
+  - Воин принимает дешевле: PathTotal-coefficient в TWarrior.TryAcceptMoneyRansom
+  - Изменить порог: TShip_GetRansomThreshold_ByChance формула
+
+Relation gains:
+  - Воин принимает -> +30 к HomePlanet: sub_5BCE84
+  - Пират принимает -> +10 к Planet_PirateClan: sub_5B20F4
+  - Универсальный: +10/+30 через VMT+30 в sub_70C1E0
+
+Партнёрство:
+  - Цена найма рейнджера: dword_889C40
+  - Цена gift партнёру: dword_889C44
+  - Условия найма (Leadership/Rank): в Talk_Partner_AskJoin
+  - Bridge limit для пиратов: sub_7992C0
+  - Цена пирата на CB: sub_59140C (в CB_ConstructPirate_HireConfirm)
+
+Системный flee:
+  - 2.5*dominator coefficient в FleeIfOutgunned
+  - VMT[120](-10) -> -20 в OnCombatHit
+
+Координация:
+  - SpawnWarriorLiberator: thresholds в SpawnWarriorLiberatorGroup_Build
+  - BigWarrior доход: Galaxy._064/15 в TWarrior_NextDay_Body
+
+Боссы:
+  - Регенерация: Hull.Size/4 (Blazer/Terron), Hull.Size/2 (Keller)
+  - Cheat: Day>=666 && CheatKlingStrength (1/2/3) -> 400/600/800
+  - CoordinateCapture thresholds
+  - SpawnFollowers target_count
+
+CB станция:
+  - Агрессия CB: balance/threat в TRuins_NextDay (Type==12)
+  - Pirate attack cascade: 5 пиратов, 135 дней
+
+TTransport:
+  - Агрессия (атака Klings): g_RaceMultiplierTable[Race+6]
+
+
+================================================================================
+13. ОБЩАЯ КАРТА AI В ОДНОЙ ДИАГРАММЕ
+================================================================================
+
+TStar_NextDay (38807 байт ≈ 38 KB)
+   |
+   +-- для каждого ship:
+       |
+       +-- TShip_StepDay_Inherited (housekeeping)
+       +-- VMT+7 = AI_DailyDecision
+              |
+              +-- 3 ветки: planet / station / space
+              +-- Проверка FShipPartner (+0x3FC):
+                  если != nil - я партнёр (поведение зависит от owner'а)
+              +-- VMT+27 = PickEngageTarget --> ChanceToWin scoring
+              +-- VMT+33 = ShouldFlee_ChanceBased --> ChanceToWin
+              +-- VMT+44 = TryAcceptMoneyRansom (когда меня атакуют)
+                     +-- При accept: sub_70C1E0 + класс-специфика:
+                          TWarrior: +30 ВСЕМ воинам с HomePlanet
+                          TPirate:  +10 Planet_PirateClan -> Ranger
+
+   Получение урона:
+   TShip_TakeWeaponDamage
+      +-- OnCombatHit_ApplyRelationPenalty
+              +-- victim.CombatTarget := attacker
+              +-- attacker.reputation -= 10/5
+              +-- planet.relation -= 10/5 (decentralized call-for-help)
+
+   Money Ransom попытка (от пирата):
+   TPirate_AI_TryMoneyRansom
+      +-- compute amount (HP%-зависимый)
+      +-- target.VMT+44(self, amount) -> accept|reject
+
+   Goods Ransom:
+   AI_DailyDecision (при условиях)
+      +-- TryDropGoodsAsRansom
+            +-- DropGoodsByType -> TGoods в космосе
+            +-- Атакующий пират ФИЗИЧЕСКИ подбирает через CargoHook AI
+
+   Системный Flee:
+   TNormalShip_AI_FleeIfOutgunned
+      +-- TStar_CalcPowerByStanding (3 bucket'а)
+      +-- OrderLandToTarget(CB) | OrderApproachTarget(nearest)
+
+   Партнёрство:
+   Talk_Partner_AskJoin (диалог) или CB_ConstructPirate_HireConfirm
+      +-- 5 проверок (attitude/no_partner/Leadership/Rank)
+      +-- SE_ShipSetPartner: ranger.FShipPartner := Player, day := X
+      +-- Для TPirate: Player.FPirates.Add(ranger)
+      +-- Команды через Talk_Partner_Order* (FollowShip, Land, Star, DropCargo)
+      +-- Деньги через Talk_Partner_FinancesGift -> FinancesGotGift
+
+
+================================================================================
+КОНЕЦ ОТЧЁТА
+================================================================================

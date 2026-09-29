@@ -1,0 +1,1136 @@
+CHAMELEON — реакция NPC на замаскированного Player'а
+=======================================================
+Дополнение к Chameleon_System.txt. Разбор всех 9 точек Delphi-ядра,
+где НЕ-Player-корабль вызывает `TShip_OnChameleonConfusion` или
+`TKling_TryDetectChameleon`, и что при этом происходит.
+
+═════════════════════════════════════════════════════════════════
+I. Ядро — TShip_OnChameleonConfusion @ 0x701698
+═════════════════════════════════════════════════════════════════
+
+Это НЕ проверка «одурачен ли NPC», а СКРИПТОВОЕ СОБЫТИЕ, которое
+запускается только когда Player._461=1 и target != Player.
+
+```
+if (!Player._461 || Player == target) return 0;
+
+v5 := 1  (по-умолчанию «triggerим effect»)
+Если target.Type == 3 (Ranger) ИЛИ target.HomePlanet == Player:
+    v5 := 0
+Иначе если у target'а есть скрипт с именем "Script.PC_fem_rangers"
+      и подгруппа "GroupFem":
+    v5 := 0
+
+ProcessMissileHit(Player, 17, target, v5)      // отправить событие Player'у
+return ProcessMissileHit(target, 17, 0, v5!=0) // отправить target'у, вернуть
+```
+
+MessageHit type=17 => имя события "OnChameleonConfusion" (строка @ 0x7D9C70).
+RScript-хендлер на target-корабле решает:
+  * return 1 — «я вижу тебя как ВРАГА-доминатора, реагирую враждебно»
+  * return 0 — «одурачен, действую нормально»
+
+По-умолчанию (без специального RScript-хендлера) v5=1 остаётся 1 →
+target ведёт себя ВРАЖДЕБНО к player-в-камуфляже. Это ЗАЩИТА:
+без явного «прощения» скриптом NPC атакует.
+
+Исключения из v5=1:
+  * Player маскируется, но ATarget сам рейнджер (Type=3) — не «покупается»
+    (у рейнджера свой AI, не обманывается визуалом)
+  * ATarget — это НПС, зарегистрированный на HomePlanet=Player
+    (наёмник player'а, свой)
+  * ATarget — female-ranger-группа со скриптом PC_fem_rangers
+
+═════════════════════════════════════════════════════════════════
+II. КТО и КАК использует OnChameleonConfusion — таблица
+═════════════════════════════════════════════════════════════════
+
+Обозначения:
+  «прямой» = `test al,al; jz skip`  → выполняем действие ЕСЛИ result=1
+  «инверт» = `xor al,1; if 0 → skip` → выполняем действие ЕСЛИ result=0
+
+╔════════════════════════════════════╦═════════╦════════════════════════════════╗
+║ Caller                             ║ Логика  ║ Действие при триггере          ║
+╠════════════════════════════════════╬═════════╬════════════════════════════════╣
+║ TWarrior_WeaponTargeting  0x5B9C4D ║ прямой  ║ Cо­брать оружия, огонь по Player║
+║ TWarrior_EngageTarget…    0x5BA759 ║ прямой  ║ Engage-ветка на Player'а       ║
+║ TTransport_WeaponTargeting 0x5C2C5C║ прямой  ║ Оборонительный огонь Transport'а║
+║ TRanger_WeaponTargeting   0x759DDA ║ прямой  ║ NPC-рейнджер стреляет в Player ║
+║ TShip_TryOpenTalkDialog   0x727158 ║ прямой* ║ ОТКАЗ открыть Talk dialog      ║
+║ TfTalk_MenuHandler        0x609721 ║ инверт  ║ var_6=!result; ветвит меню     ║
+║ TfTalk_DominatorHostileDialog       ║ инверт  ║ Гейт «враждебной» реплики Kling║
+║                           0x60FE81 ║         ║                                ║
+║ TfTalk_ChooseShipGreeting 0x729ED9 ║ прямой  ║ Ключ приветствия +"Chameleon"  ║
+║ sub_7270D4 (тот же TryOpen)…       ║ прямой  ║ (см. выше)                     ║
+╚════════════════════════════════════╩═════════╩════════════════════════════════╝
+
+* «прямой» в TryOpenTalkDialog означает: если result=1 (враждебен) → отказ
+  открыть диалог. Player НЕ МОЖЕТ поговорить с NPC, который его «раскусил».
+
+═════════════════════════════════════════════════════════════════
+III. Коалиционные корабли (Warrior / Transport / Ranger) —
+     СТРЕЛЯЮТ в Player-cham
+═════════════════════════════════════════════════════════════════
+
+Все три класса разделяют один и тот же паттерн в конце своей
+per-day weapon-targeting функции. Пример (TWarrior @ 0x5B9C10):
+
+```
+[ebp+var_30] := 7             // targeting-mode 7 (chameleon-specific bucket)
+if (!Player) skip;
+if (Player.CurStar != self.CurStar) skip;   // разные звёзды — не стрелять
+if (!TShip_CanAct(Player)) skip;             // Player инактивен (варп/док)
+if (!TShip_OnChameleonConfusion(self)) skip; // ← ХУК, script может прервать
+if (self.weapon_cnt <= 0) skip;              // без оружия — нельзя стрелять
+
+// Иначе: ЦИКЛ ПО ОРУЖИЯМ self.weapons[1..weapon_cnt]:
+for i in 1..weapon_cnt:
+    w := self.weapons[i-1]
+    weapon_class := w.VMT+0x50().[35h]
+    if (weapon_class - 2 < 3):        // ExplosiveType/BeamType etc.
+        continue
+    if (w.state != 0) continue        // оружие занято
+    // ... вычислить попадёт ли, dmg, dispatch fire
+    fire_weapon(w, Player)
+```
+
+Ключевое: Player-в-cham РАССМАТРИВАЕТСЯ как враг **несмотря на то, что
+Player имеет тип TPlayer (=Ranger, тип 3)**. Хук OnChameleonConfusion
+обходит обычную attitude-логику именно для того, чтобы визуальный
+камуфляж действительно превращал Player'а в мишень.
+
+Симметрично работает `TWarrior_EngageTarget_NoDefense` — engage-петля.
+
+TTransport и TRanger используют идентичный паттерн: значит и мирный
+транспорт, и NPC-рейнджеры (все 3 расы: Малоки/Пеленги/Люди/Феяне/Гаальцы)
+будут стрелять в player-cham при встрече.
+
+**ВАЖНО**: скрипт `OnChameleonConfusion` на конкретном NPC может
+вернуть 0, и тогда цикл оружий пропускается. Так реализуются:
+- скидка для «дружественных» NPC (наёмники, партнёры, союзные фракции)
+- случайная «слепота» (random confusion)
+- «свои» — те, кто уже раскрыл Player'а (можно спокойно с ним
+  разговаривать после первой встречи).
+
+═════════════════════════════════════════════════════════════════
+IV. Диалоги — TShip_TryOpenTalkDialog @ 0x7270D4
+═════════════════════════════════════════════════════════════════
+
+Player кликает по NPC → игра пытается открыть диалог.
+
+```
+if !TShip_CanAct(Player)                     — Player инактивен
+   || Player.CurStar != target.CurStar       — target в другой звезде
+   || gvar_00882130 ∈ {0, 2, 4, 6}           — какое-то состояние UI
+   || *off_882BF4 != 16                      — не в GForm 16 (карта)
+   || (*Galaxy)[1].VMT byte0                 — какой-то global-gate
+    return 0                                  — не открываем
+
+// Основной chameleon-гейт:
+if (v7 & Player._461) != 0                   — v7 = «Player-inited», И cham on
+   && TShip_OnChameleonConfusion(target)     — target «видит» Player-врага
+   && (!target.script || !MB_IsMissionValid(target))
+                                              — нет активного мисс­ионного скрипта
+    return 0                                  — ОТКАЗ
+
+// Иначе — открыть диалог как обычно
+GTalk_FShip := target
+kernel32_SetEvent(...)
+WaitForMultipleObjects(...)  // передаём управление UI-потоку
+```
+
+Т.е.: если Player в камуфляже И target — «враг» → диалог не открывается,
+если только на target'е нет активного mission-script (тогда квестовый
+диалог открывается несмотря на camo).
+
+Исключение через MB_TShip_IsMissionValid позволяет квестам поверх camo.
+
+═════════════════════════════════════════════════════════════════
+V. Приветствия — TfTalk_ChooseShipGreeting @ 0x729C5C
+═════════════════════════════════════════════════════════════════
+
+Логика (упрощённо):
+
+**Партнёр-компаньон** (Tranclucator) → фикс. приветствие.
+
+**Наёмник Player'а** (Player == target.AssignedTask):
+  if _461: `ShipGreetings.Standart.FemalePartnerChameleon`
+  else:    `ShipGreetings.Standart.FemalePartner`
+
+**Активная миссия player'а к этому кораблю** (MB_TRanger_CheckMissionComplete):
+  if _461:
+    if Relation ≥ 2:
+      `ShipGreetings.Standart.FemaleChameleon`
+    else:
+      `ShipGreetings.Standart.FemaleChameleonWar`     ← «война» flavour
+  else: FemaleWar/Bad/Normal/Good/Best по Relation.
+
+**Обычный (не-Kling) NormalShip**:
+  if _461 && target.Type == 3 (Ranger):
+    if Relation < 2: суффикс "ChameleonWar" к greeting
+  if _461 && (target.Type == 3 || OnChameleonConfusion(target)):
+    суффикс "Chameleon"                          ← Player раскрыт
+  Иначе — по обычной branch (нормальный greeting).
+
+**Kling (доминатор)**:
+  if Player.SkillCharm ≥ 5 && sub_70F7E8(Player):
+    if Kling.Prog == 0:
+      base = "ShipGreetings.Dominator." + pbstr[Kling.Series]
+             (pbstr[0]=Blazer, [1]=Keller, [2]=Terron)
+      if _461 && Player._462 == Kling.Series && !_468[Series]:
+        base += "Chameleon"      ← «привет, свой!»
+    else:
+      "ShipGreetings.Dominator.ProgrammRun"
+  else:
+    "ShipGreetings.Dominator.Rnd"
+
+Итог: для КАЖДОЙ комбинации (тип корабля × маска × Relation) есть
+уникальный ключ приветствия. Локализация подставляет фразу.
+
+═════════════════════════════════════════════════════════════════
+VI. Диалоговые ветки — TfTalk_MenuHandler / DominatorHostileDialog
+═════════════════════════════════════════════════════════════════
+
+`TfTalk_MenuHandler` @ 0x609700 (общий диспетчер меню-опций):
+```
+result = TShip_OnChameleonConfusion(GTalk_FShip)
+var_6 := !result                          // 1 если NPC НЕ враждебен
+switch (gvar_00882768) case 0..6:
+    ...    // varианты ветвлений
+```
+`var_6` управляет, показывается ли обычный набор кнопок диалога.
+Если NPC вражд­ебен из-за camo → var_6=0 → сокращённое/боевое меню.
+
+`TfTalk_DominatorHostileDialog` @ 0x60F91C:
+```
+result = TShip_OnChameleonConfusion(GTalk_FShip)
+var_17 := !result
+if var_17 == 0: skip                       // если враждебен, скрыть эту ветку
+if self.Type ∉ {1,2,3}: skip               // только Kling/Pirate/Warrior/Ranger
+    // Показать «переговорную» опцию (сдаться/выкуп/бросить)
+```
+Т.е. это ветка мирной сдачи/торговли; её показывают только если
+камуфляж «работает» (NPC не видит нас как врага-доминатора) —
+инвертированный смысл.
+
+═════════════════════════════════════════════════════════════════
+VII. Доминаторы — TKling_TryDetectChameleon @ 0x5CCEAC
+═════════════════════════════════════════════════════════════════
+
+**Хирургический** механизм: определённый Kling может «раскрыть»
+Player'а, тем самым НАВСЕГДА пометив свою серию.
+
+Пред­условия:
+  Player == actor                    // Player-инициированное действие
+  Player.CurStar == Kling.CurStar    // one system
+  !Player._468[Kling.Series]         // серия ещё не в списке раскрывших
+  Player._98C[Kling.Series] < 2      // logic-level низкий (можно раскрыть)
+  !sub_72E5C4(Kling)                 // per-Kling gate (карантин)
+
+Действие:
+  Player._468[Kling.Series] := 1
+  Если Player._461 && Player._462 == Kling.Series:
+     GalaxyMessage("ipInfo.AddInfo.Chameleon.Detect")
+
+Триггеры (ГДЕ вызывается):
+  1. Talk_Dominator_ProgramDialog @ 0x616C05, 0x616D9B
+     — При отклонении/принятии «программы» от Kling'а
+  2. SE_OnUseCodeTranclucator @ 0x6565BC
+     — При активации кода Транклюкатора рядом с Kling'ом
+  3. TShip_TakeWeaponDamage_ApplyHit @ 0x704AC6
+     — При ЛЮБОМ попадании оружия по Kling'у (self=Kling, actor=Player)
+  4. TShip_TakeWeaponDamage_ApplyHit @ 0x70A37B (sub_709F30)
+     — Дополнительный путь: при подтверждённом уроне
+     — Проверяется `!self.Type` (Type==0=Kling)
+
+Пункт 3-4 означают: **любая попытка атаковать Kling мгновенно
+раскрывает Player'а этой серией**. Даже если попадёшь один раз —
+_468[Series] взводится, и уже никакой камуфляж не поможет: этому
+Kling'у Player запомнится как chameleon-предатель.
+
+**НО**: это только для КОНКРЕТНОЙ Series. Если Player хочет
+атаковать Blazer'ов — маскируется под Kellers (Series 1), тогда
+_468[0]=1 (Blazer-Series запомнил), но _468[1]=0 (Keller-Series
+не в курсе, всё ещё «свой»).
+
+═════════════════════════════════════════════════════════════════
+VIII. TShip_TakeWeaponDamage_ApplyHit — интеграция с боем
+═════════════════════════════════════════════════════════════════
+
+`sub_709F30 / TShip_TakeWeaponDamage_ApplyHit` @ 0x709F30 — общая
+процедура «применения попадания» после расчёта dmg.
+
+Фрагмент про camo:
+```
+if !target.Type && attacker:              // target — Type=0 = Kling
+    kling := AsClass(target, TKling)
+    TKling_TryDetectChameleon(kling, attacker)
+```
+`target.Type == 0` = минион-доминатор. Если ему нанесли урон — вызов
+TryDetectChameleon. Так реализуется п.4 выше.
+
+Важно, что это работает ТОЛЬКО если удар зарегистрирован как урон.
+Игрок в маске может лететь через Kling-облако без выстрела — все Klings
+не будут его раскрывать. Как только первый выстрел — та Series поймёт.
+
+═════════════════════════════════════════════════════════════════
+IX. Полная схема: реакция NPC на Player-в-камуфляже
+═════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Player._461 = 1, Player._462 = X (тип 0..2)                │
+  └─────────────────────────────────────────────────────────────┘
+     │
+     ├──── Визуал: Kling-миньон, серия PickKlingSeriesBySize
+     │
+     ▼
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Для КАЖДОГО NPC в системе:                                 │
+  │                                                              │
+  │  ├─ Коалиционный Warrior/Transport/Ranger:                  │
+  │  │    • Weapon-targeting смотрит на Player'а                │
+  │  │    • ХУК OnChameleonConfusion:                           │
+  │  │        default → return 1 → СТРЕЛЯТЬ                     │
+  │  │        script может вернуть 0 → пропустить               │
+  │  │    • Если стрельба началась — TryDetect потом сработает  │
+  │  │                                                          │
+  │  ├─ Dominator Kling (одна серия):                           │
+  │  │    • Kling НЕ атакует Player'а «просто так» (у Kling'а   │
+  │  │      своя attitude-логика через VMT+28/29)               │
+  │  │    • Player может подлететь и заговорить (SkillCharm≥5)  │
+  │  │      → greeting с суффиксом "Chameleon"                  │
+  │  │    • Если Player атакует этого Kling'а:                  │
+  │  │        TakeWeaponDamage → TryDetect →                    │
+  │  │        _468[Series]=1 + плашка «раскрыт»                 │
+  │  │    • После _468[Series]=1 — все Kling'и этой серии       │
+  │  │      знают про player-cham; greeting-«Chameleon»         │
+  │  │      больше не даётся                                    │
+  │  │                                                          │
+  │  ├─ Dominator ДРУГОЙ серии (Blazer↔Keller):                 │
+  │  │    • OnChameleonConfusion default → 1 → ATTACK           │
+  │  │    • (RScript может проверять faction и решать)          │
+  │  │                                                          │
+  │  ├─ Наёмник Player'а (HomePlanet==Player):                  │
+  │  │    • v5=0 в OnChameleonConfusion → скрипт-хендлер        │
+  │  │      получает v5=0 → return 0 (default) → HОРМАЛЬНО      │
+  │  │                                                          │
+  │  ├─ Ranger-NPC (Type=3):                                    │
+  │  │    • v5=0 в OnChameleonConfusion → return 0 →            │
+  │  │      Rangers НЕ обманываются на camo                     │
+  │  │    • Reaction: обычный по Relation matrix                │
+  │  │                                                          │
+  │  └─ Партнёр/компаньон / Tranclucator:                       │
+  │       • Отдельные greeting keys (Chameleon-partner)         │
+  │       • Не атакуют                                          │
+  └─────────────────────────────────────────────────────────────┘
+
+═════════════════════════════════════════════════════════════════
+X. Тактические следствия для геймплея
+═════════════════════════════════════════════════════════════════
+
+  1. **Камуфляж НЕ делает Player'а невидимым для Рейнджеров-NPC**
+     — они всё равно видят через маску (Type==3 short-circuit).
+
+  2. **Камуфляж превращает Player в мишень для Коалиции**
+     — Warrior/Transport/Ranger-NPC начинают стрелять, потому
+     что «видят доминатора». Это ЗАМЫСЛЕННОЕ поведение, не баг.
+
+  3. **Player может ходить среди Klings своей серии**
+     — если серия ещё не раскрыла (_468[Series]==0), Kling'и
+     будут вести себя как со «своим» (диалог, приветствие).
+
+  4. **Первый выстрел = моментальный раскрыв**
+     — любой удар по Kling'у ставит _468[Series]=1 навсегда.
+     Атаковать одну серию можно только раз.
+
+  5. **Атака в маске другой серии — безнаказанна**
+     — Player-Keller может стрелять по Blazer'ам, ни один
+     Keller его не раскроет (Series мисс­матч). Далее Player
+     переключается на Blazer-charge и продолжает.
+
+  6. **Диалог невозможен с враждебным NPC**
+     — если Warrior уже видит вас как доминатора, попытка
+     клика вернёт «отказ». Помогает только квестовый скрипт.
+
+  7. **Приветствия — множество вариантов**
+     — ShipGreetings.Standart.Female[Partner]Chameleon[War] и
+     ShipGreetings.Dominator.<X>.Chameleon дают уникальные
+     реплики для camo-встреч.
+
+═════════════════════════════════════════════════════════════════
+XI. Крючки для модерации
+═════════════════════════════════════════════════════════════════
+
+  * **Отключить огонь коалиционных NPC** в camo — прописать
+    OnChameleonConfusion handler возвращающий 0 в общем скрипте
+    (Script.Warrior / Transport / Ranger).
+
+  * **Сделать камуфляж заметнее** — снизить _98C[Series] gate
+    (в TKling_TryDetectChameleon требуется `<2`) через SE_PlayerLogicChameleon.
+
+  * **Добавить фракцию, обманутую camo** — расширить
+    conditions v5:=0 в TShip_OnChameleonConfusion (модификация
+    Delphi нужна, скриптом не заменить) или установить fake
+    HomePlanet у NPC.
+
+  * **Разрешить диалог с враждебным NPC** — добавить
+    MB_TShip_IsMissionValid для этого NPC (создать
+    invisible-mission на нём).
+
+  * **Заменить приветствия** — переопределить ключи
+    ShipGreetings.*.Chameleon* в конфиг-локализации.
+
+  * **Убрать раскрыв при атаке** — модифицировать
+    TShip_TakeWeaponDamage_ApplyHit @ 0x704AC6 (Delphi hack) или
+    расширить sub_72E5C4 gate.
+
+═════════════════════════════════════════════════════════════════
+XII. АБСТРАКТНАЯ СПЕЦИФИКАЦИЯ МЕХАНИКИ
+     (описание для воссоздания с нуля, без привязки к движку)
+═════════════════════════════════════════════════════════════════
+
+Ниже — техзадание на реализацию системы «маскировки под врага»
+в произвольной игре-песочнице с фракциями. Использует нейтральные
+термины (Player / NPC / Faction / Disguise), не ссылается на
+конкретные классы и поля. По этой главе система собирается с нуля
+на любом движке.
+
+────────────────────────────────────────────────────────────────
+0. Сеттинг и допущения
+────────────────────────────────────────────────────────────────
+
+Мир состоит из:
+  * ONE Player (управляемый пользователем корабль/юнит).
+  * MANY NPC — автономные юниты, принадлежащие ФРАКЦИЯМ.
+  * FACTIONS — заранее известный набор сторон конфликта.
+  * ENEMY_FACTIONS ⊂ FACTIONS — заранее известный класс «враги»
+    (те, кого игрок обычно уничтожает). Пример: инопланетное
+    вторжение из K непохожих подфракций.
+  * ALLY_FACTIONS ⊂ FACTIONS — «свои», нейтральные (все остальные).
+    Разбиваются на подтипы для реакции на маску (см. §5).
+
+У КАЖДОГО NPC определены:
+  * FactionId, SubFactionId (например, «Инопланетяне», «Синие»).
+  * VisualModel — что отображается на экране/карте.
+  * AI-функции: PickAttackTarget(), PickGreeting(),
+    TryOpenDialog(), OnTakeDamage() и т. п.
+
+────────────────────────────────────────────────────────────────
+1. Данные, которые нужно хранить на Player
+────────────────────────────────────────────────────────────────
+
+  DisguiseCharges[N_DISGUISE_TYPES] : int
+      — количество оставшихся активаций каждого «типа» маскировки.
+        Тип обычно соответствует подфракции врагов (по одному типу
+        на каждую вражескую подфракцию, доступную для маскировки).
+
+  DisguiseActive : bool
+      — сейчас маскировка на Player'е ВКЛЮЧЕНА.
+
+  DisguiseType : int (0..N_DISGUISE_TYPES-1)
+      — если Active, какой именно тип надет.
+
+  DisguiseMappedVariant : int
+      — производный параметр (например, размер «фейкового» юнита
+        под размер настоящего корабля Player'а). Пересчитывается
+        при активации.
+
+  DetectedBy[N_ENEMY_SUBFACTIONS] : bool
+      — по одному биту на каждую вражескую подфракцию: «эта под-
+        фракция ЗНАЕТ, что перед ней замаскированный Player».
+        Однажды взведённый бит НЕ снимается автоматически.
+
+  LogicMask[N_ENEMY_SUBFACTIONS] : int (0..2)
+      — независимая от Active «глубина» маскировки; используется
+        отдельным событием (см. §6, п. G). Скриптовая надстройка.
+
+  VisualOverride : bool
+      — визуал (спрайт/модель) Player'а сейчас заменён на кастомный
+        (используется для отдельного «cinematic-visual» режима,
+        технически независим от DisguiseActive).
+
+────────────────────────────────────────────────────────────────
+2. Жизненный цикл (state-machine)
+────────────────────────────────────────────────────────────────
+
+  ┌──────────────┐    Buy(type)     ┌──────────────┐
+  │   NoCharges  │ ───────────────▶ │  HasCharges  │
+  └──────────────┘                  └──────────────┘
+                                           │
+                                Activate(type) │  — расход 1 charge
+                                           ▼
+                                    ┌──────────────┐
+                                    │   Disguised  │
+                                    └──────────────┘
+                                     │           │
+                       Deactivate    │           │  TakeDamage
+                       (без расхода) │           │  or Dialog
+                                     ▼           ▼
+                                 HasCharges   DetectedBy[type]:=1
+                                              (остаёмся Disguised)
+
+Ключевые переходы:
+  * `Buy(type)`   — +1 к DisguiseCharges[type] (обычно у станции).
+  * `Activate(type)`:
+      DisguiseCharges[type] -= 1
+      DisguiseType = type
+      DisguiseActive = true
+      DisguiseMappedVariant = pickVariantByPlayerSize()
+      recomputeVisualForAllNPC()          — cм. §3
+  * `Deactivate()`:
+      DisguiseActive = false
+      recomputeVisualForAllNPC()
+
+────────────────────────────────────────────────────────────────
+3. Визуальный слой
+────────────────────────────────────────────────────────────────
+
+Функция ApplyVisualOverride(target_npc):
+  effect = (target_npc != Player  AND  world.FactionWideEffectActive)
+        OR  target_npc.LocalDisguiseActive
+
+  if target_npc.HasCustomVisual:
+      target_npc.OverrideFlag = effect
+  else if target_npc.CurrentModel не соответствует effect:
+      if effect:
+          target_npc.CurrentModel = pickEnemyModel(
+              subFaction = target_npc.DisguiseType (для Player)
+                        OR random for FactionWideEffect,
+              size = target_npc.DisguiseMappedVariant OR random)
+          target_npc.OverrideFlag = true
+      else:
+          target_npc.CurrentModel = defaultModel(target_npc)
+
+pickVariantByPlayerSize():
+  Берёт таблицу «средних размеров каждого вражеского варианта»
+  и возвращает индекс варианта с минимальной разницей от
+  Player.RealSize. Цель — визуал не должен выглядеть неуместно
+  крупным/мелким относительно реального корпуса.
+
+Отдельная процедура ForAllShipsInWorld() перезапускает
+ApplyVisualOverride для КАЖДОГО NPC при глобальных изменениях
+(активация Player-disguise, глобальный эффект и т. п.).
+
+────────────────────────────────────────────────────────────────
+4. Основное событие: OnDisguiseReaction(target, actor=Player)
+────────────────────────────────────────────────────────────────
+
+Функция, которая ЕДИНСТВЕННАЯ отвечает за вопрос:
+«видит ли target-NPC замаскированного Player'а как ВРАГА?»
+
+Псевдо-код:
+
+  int OnDisguiseReaction(target, actor=Player):
+
+      // Пункт (a): маска выключена — ничего не делаем.
+      if not Player.DisguiseActive:  return 0
+      if Player == target:            return 0
+
+      // Пункт (b): вычислить дефолтную «враждебность».
+      // По умолчанию — враждебен (см. пункт (c)).
+      default = 1
+
+      // Пункт (c): жёсткие исключения — эти NPC не обманываются,
+      //             но по-дружески (default = 0).
+      if target.Class == PlayerRace:
+          default = 0                   // рейнджеры/подобные Player'у
+      elif target.Owner == Player:
+          default = 0                   // наёмник / принадлежит игроку
+      elif target.hasSpecialScript("hero_group"):
+          default = 0                   // сюжетные героини/агенты
+
+      // Пункт (d): передать «default» в скрипт NPC.
+      // Скрипт может ПРОЧИТАТЬ и ПЕРЕПИСАТЬ значение.
+      result = dispatchScriptEvent(
+                   event   = "OnDisguiseReaction",
+                   subject = target,               // «для тебя вызвано»
+                   other   = Player,               // «второй участник»
+                   data    = default)              // ←— read/write
+
+      // Пункт (e): продублировать для Player-стороны
+      // (сюжетные скрипты могут захотеть тоже отреагировать).
+      dispatchScriptEvent(
+          event   = "OnDisguiseReaction",
+          subject = Player,
+          other   = target,
+          data    = result)                        // тот же итог
+
+      return result   // 0 = дружественно, !=0 = враждебно
+
+Возвращаемое значение — булев эквивалент «фракция врагов, атакуй!».
+
+────────────────────────────────────────────────────────────────
+5. Где ВЫЗЫВАТЬ OnDisguiseReaction
+────────────────────────────────────────────────────────────────
+
+Ниже — 9 точек интеграции. Каждая — GATE, изменяющий обычное
+поведение AI/UI на альтернативное при возврате != 0.
+
+┌────┬─────────────────────────────────────┬─────────────────────┐
+│ №  │ Место (AI/UI-функция)               │ Что делать          │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ A  │ AlliedWarrior.PickAttackTarget()    │ result != 0 →       │
+│    │                                     │ добавить Player в   │
+│    │                                     │ список целей и      │
+│    │                                     │ открыть огонь       │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ B  │ AlliedWarrior.EngageTarget()        │ то же самое для     │
+│    │ (упрощённая версия без брони)       │ «дешёвого» AI       │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ C  │ AlliedTransport.PickAttackTarget()  │ мирный транспорт    │
+│    │                                     │ обороняется         │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ D  │ AlliedPlayerRace.PickAttackTarget() │ ДРУГИЕ игроки-NPC   │
+│    │                                     │ атакуют Player      │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ E  │ TryOpenDialog(Player, target)       │ result != 0 →       │
+│    │                                     │ ОТКАЗАТЬ Player'у   │
+│    │                                     │ (кроме случая когда │
+│    │                                     │ есть активный квест)│
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ F  │ DialogMenu.BuildOptions()           │ var = !result;      │
+│    │                                     │ var управляет тем,  │
+│    │                                     │ показывается ли     │
+│    │                                     │ нормальный набор    │
+│    │                                     │ кнопок              │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ G  │ DialogMenu.BuildHostileBranch()     │ инверсия: показать  │
+│    │                                     │ ветку «сдаться /    │
+│    │                                     │ выкуп» только если  │
+│    │                                     │ маска РАБОТАЕТ      │
+│    │                                     │ (result == 0)       │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ H  │ GreetingSelector.ChooseGreetKey()   │ добавить суффикс    │
+│    │                                     │ "Disguise" к ключу  │
+│    │                                     │ приветствия         │
+├────┼─────────────────────────────────────┼─────────────────────┤
+│ I  │ RansomProcessor.OnPlayerOffer()     │ ветвление логики    │
+│    │                                     │ выкупа              │
+└────┴─────────────────────────────────────┴─────────────────────┘
+
+**Универсальный шаблон использования (для GATE):**
+```
+result = OnDisguiseReaction(target)
+if result != 0:
+    // «target видит Player'а как ВРАГА» — действовать по alt-логике
+    doHostileAction()
+else:
+    // маска работает — либо пропустить, либо нормальная логика
+    doNormalAction()
+```
+
+**Инверсный шаблон (для GATE «показать миролюбивую опцию»):**
+```
+if !OnDisguiseReaction(target):
+    showPeacefulOption()
+```
+
+────────────────────────────────────────────────────────────────
+6. Отдельная механика: DETECT (раскрытие маски конкретной под-
+   фракцией врагов)
+────────────────────────────────────────────────────────────────
+
+Функция TryDetect(enemy_target, actor=Player):
+
+  Пред­условия (все AND):
+      Player == actor
+      Player.Location == enemy_target.Location            // в одной зоне
+      Player.DetectedBy[enemy_target.SubFaction] == false // ещё не раскрыт
+      Player.LogicMask[enemy_target.SubFaction] < 2       // не заблокирован
+      passesPerEntityGate(enemy_target)                   // per-target guard
+
+  Действие:
+      Player.DetectedBy[enemy_target.SubFaction] := true
+      if Player.DisguiseActive
+         and Player.DisguiseType == enemy_target.SubFaction:
+          postGalaxyMessage("Disguise revealed!")
+
+Точки вызова TryDetect:
+  1. При открытии диалога Player↔EnemyNPC (см. §5.E)
+  2. При ЛЮБОМ попадании оружия Player'а по EnemyNPC (см. §5.C-D)
+  3. При использовании специальных «предметов-подозрений»
+     (в игре с их наличием)
+
+Ключевые свойства:
+  * Раскрытие ПОДФРАКЦИЯМИ, не индивидуальными NPC. Один раскрыл —
+    все той же подфракции знают.
+  * Player, замаскированный под подфракцию X, может атаковать
+    подфракцию Y — X по-прежнему считает его своим.
+  * После DetectedBy[X]=true никакая повторная маскировка типа X
+    не действует; нужно переключаться на Y.
+
+────────────────────────────────────────────────────────────────
+7. Отдельная механика: логическая маскировка (уровень 0/1/2)
+────────────────────────────────────────────────────────────────
+
+LogicMask[N] служит для скриптовой надстройки поверх основного
+механизма. Три уровня:
+  0 — нет специальной защиты (default).
+  1 — сюжет активировал «logic disguise», TryDetect всё ещё работает.
+  2 — TryDetect для этой подфракции ЗАБЛОКИРОВАН навсегда
+      (per условия сюжетного мода: инфильтрация, story-плащ).
+
+Только скрипты меняют LogicMask; ядро игры лишь читает поле в
+условии TryDetect. Уровень 2 — «неубиваемая» защита; используется
+модами для story-моментов (глубоко внедрённый агент, история под
+прикрытием).
+
+────────────────────────────────────────────────────────────────
+8. UI-панель «состояние маски»
+────────────────────────────────────────────────────────────────
+
+Раздел «Add.Info» в информационной панели корабля Player'а:
+
+  IF DisguiseActive OR HasAnyCharge:
+      show block "Disguise"
+      IF DisguiseActive:
+          "Currently disguised as: <SubFactionName>"
+          (иконка и цвет по DisguiseType)
+      IF HasAnyCharge:
+          heading "Available charges:"
+          FOR i in 0..N_DISGUISE_TYPES-1:
+              IF DisguiseCharges[i] > 0:
+                  "<colored bullet> <TypeName> — <count>"
+
+Цвета в UI строго 1:1 соответствуют DisguiseType (например,
+type 0 = красный, type 1 = синий, type 2 = зелёный). Это же
+цветовое соответствие используется в подсказках, чтобы игрок
+однозначно связывал масть-подсветку в UI с типом.
+
+────────────────────────────────────────────────────────────────
+9. Хоткей активации (типовой пользовательский flow)
+────────────────────────────────────────────────────────────────
+
+Обработчик горячей клавиши Player.OnDisguiseHotkey():
+
+  IF cannot_act (мертвы, в диалоге, в варпе, интерфейс занят):
+      exit
+  IF not HasAnyCharge AND not DisguiseActive:
+      exit
+
+  DisguiseMappedVariant = pickVariantByPlayerSize()
+      // рассчитать заранее, чтобы меню знало итог
+
+  choice = showRadialMenu([
+      "Отменить маскировку",
+      "Тип 0 (charges: N0)",
+      "Тип 1 (charges: N1)",
+      "Тип 2 (charges: N2)",
+  ])
+
+  IF choice == 0:
+      Deactivate()
+  ELSE:
+      type = choice - 1
+      Activate(type)
+
+  playConfirmSound()
+
+────────────────────────────────────────────────────────────────
+10. Инвариант «отсутствие обмана»
+────────────────────────────────────────────────────────────────
+
+Ряд классов NPC НИКОГДА не обманывается визуалом Player-disguise,
+даже без скриптового кода:
+
+  * NPC, принадлежащие тому же виду что и Player («свои по расе»):
+    default = 0 в OnDisguiseReaction (см. §4, пункт c).
+
+  * Наёмники и партнёры (Owner == Player).
+
+  * Сюжетные «спецагенты» с помеченным скриптом.
+
+Причина: тематически, «свои» знают Player лично, ни визуал, ни
+маска на них не действуют. С точки зрения баланса — предотвращает
+эксплойт «наняли партнёра → включили camo → партнёр стреляет в
+своего»/«получил квест-помощника → он не понимает кто вы».
+
+────────────────────────────────────────────────────────────────
+11. Скриптовый API (минимально необходимый)
+────────────────────────────────────────────────────────────────
+
+Для внешних сценариев/модов достаточно 5 функций:
+
+  int  GetDisguiseCharges(type)              // R
+  void SetDisguiseCharges(type, N)           // W
+
+  int  GetActiveDisguiseType()               // R: -1 если off
+  void SetActiveDisguiseType(type)           // W: -1 = off
+
+  bool GetDetected(subFaction)               // R
+  void SetDetected(subFaction, flag)         // W
+
+  int  GetLogicMask(subFaction)              // R
+  void SetLogicMask(subFaction, level)       // W
+
+  bool IsShipDisguised(ship)                 // проверка чужого корабля
+
+  void SetVisualOverride(ship, modelSpec)    // custom-visual (не тратит charge)
+
+Плюс подписка на СОБЫТИЕ:
+  Event  OnDisguiseReaction (subject, other, param)
+         param — R/W «враждебен ли subject к disguised Player'у»
+
+────────────────────────────────────────────────────────────────
+12. Реализационные грабли, замеченные в оригинале
+────────────────────────────────────────────────────────────────
+
+  1. Событие OnDisguiseReaction нужно рассылать ОБОИМ участникам
+     (target и Player), с одинаковым итоговым param. Это позволяет
+     единому скрипту, живущему на Player'е, обрабатывать реакции
+     всех NPC без инжекции в каждый вражеский класс.
+
+  2. Для «раскрытия при первом попадании» проверять `attacker`
+     И `target.SubFaction`, а не только `Player.IsAttacking` —
+     иначе миссии со скриптовыми выстрелами будут срывать маску.
+
+  3. Хранить DisguiseCharges как массив жёсткой длины (например, 3)
+     и цветовую таблицу той же длины — это упрощает UI и AI.
+
+  4. VisualOverride и DisguiseActive — ДВА РАЗНЫХ флага. Скрипт
+     может дать любой корабль (fake asteroid) без «игровой маски»;
+     наоборот, игровая маска не должна ломать custom-visual моды.
+     Проверять оба в ApplyVisualOverride.
+
+  5. `TryOpenDialog` должен пропускать блокировку disguise если у
+     target активная квестовая цепочка — иначе квесты, требующие
+     разговора с врагом, ломаются.
+
+  6. GreetingKey формируется КОНКАТЕНАЦИЕЙ («…FemaleGood»,
+     «…FemaleGoodChameleon»), а не отдельным полем — это позволяет
+     локализации не менять существующую кампанию, а лишь добавить
+     новые ключи для camo-случая.
+
+  7. DetectedBy — ПОСТОЯННОЕ поле, не сбрасывается ни при
+     деактивации, ни при повторной активации. Игрок должен ощутить
+     стоимость раскрытия. Если хочется сбрасывать (сюжет) — только
+     явно через SetDetected().
+
+  8. Дефолтное поведение OnDisguiseReaction = «враг!». Это
+     ЗАЩИТА от забытых обработчиков: если модер не подписался, NPC
+     ведёт себя честно (стреляет). Обратное («по-умолчанию дурак»)
+     привело бы к молчаливой поломке баланса.
+
+────────────────────────────────────────────────────────────────
+13. Резюме: минимальная реализация в 200 строк кода
+────────────────────────────────────────────────────────────────
+
+  * struct PlayerDisguise { charges[3], active, type, mapped,
+                            detected[K], logic[K], visualOverride }
+  * void ActivateDisguise(type)
+  * void DeactivateDisguise()
+  * int  OnDisguiseReaction(target)          // §4
+  * void TryDetect(enemyTarget)              // §6
+  * bool ShouldNpcAttackDisguisedPlayer(npc) // wrapper над §4
+  * void ApplyVisualOverride(npc)            // §3
+  * hotkey handler                           // §9
+  * UI panel                                 // §8
+  * 5 accessor'ов для скриптов               // §11
+
+Такая реализация полностью повторяет наблюдаемое поведение
+оригинальной системы. Расширения (rank-based recognition,
+faction-cross-recognition, etc.) реализуются целиком в скриптах
+через подписку на OnDisguiseReaction и модификацию param в
+handler'е.
+
+═════════════════════════════════════════════════════════════════
+XIII. RScript event `t_OnChameleonConfusion` (ID = 17) — API
+═════════════════════════════════════════════════════════════════
+
+MessageHit type 17, отправляемый TShip_OnChameleonConfusion, доходит
+до RScript-обработчика под именем `t_OnChameleonConfusion`. Это
+официально документированное событие (из community-мода NewDomiks,
+файл `Script functions list.txt` — де-факто справочник по RScript).
+
+**Официальное описание (перевод):**
+> Вызывается при выборе кораблём NPC целей для своих пушек, а также
+> при диалоге с игроком в космосе (но только если на игроке висит
+> доминаторский камуфляж), и определяет, будет ли корабль считать
+> игрока под камуфляжем врагом либо другом. Событие вызывается для
+> кораблей NPC, а также для игрока.
+
+**API внутри хендлера:**
+  `ScriptItemActShip()`    — корабль, для которого сработал акткод
+                              (либо сам NPC-decider, либо сам Player)
+  `ScriptItemActObject1()` — если событие сработало для Player,
+                              возвращает корабль NPC-decider
+  `ScriptItemActParam()`   — RECOGNIZE-flag (read/write):
+      0    — «распознаёт под камуфляжем и ведёт себя дружественно»
+             (default ТОЛЬКО для партнёров игрока и спецагенток)
+      != 0 — «не распознаёт, считает врагом»
+             (default почти для всех NPC)
+
+Соответствие с Delphi (см. §I):
+  * v5=0 ↔ `ScriptItemActParam()==0` — default для Ranger(Type=3),
+    HomePlanet==Player (наёмник), fem-ranger group
+  * v5=1 ↔ `ScriptItemActParam()!=0` — все остальные
+
+**Regex-паттерн подписки на событие:**
+  В `OnActCode` состояния скрипта: `[t_OnChameleonConfusion|]\r\n...`
+  Внутри — вызов функции, которая либо `ScriptItemActParam(0)` для
+  «одурачить», либо exit без изменений (сохранить враждебность).
+
+═════════════════════════════════════════════════════════════════
+XIV. ВАЖНО: vanilla НЕ обрабатывает OnChameleonConfusion
+═════════════════════════════════════════════════════════════════
+
+Аудит всех vanilla-скриптов (декомпилировано модерским сообществом,
+папка `я_OriginalScripts + Changed for mods ones/dumps/`):
+
+  MS_Begin.txt    ─ 1× Chameleon() для fake-asteroid (визуал)
+  MS_Blazer.txt   ─ 0 hits
+  MS_Terron.txt   ─ 0 hits
+  MS_PB.txt       ─ 0 hits (диалог PB — в config, не в scr!)
+  MS_SB1/2.txt    ─ 0 hits
+  PC_final.txt    ─ 0 hits
+  PC_part3/4/7    ─ 0 hits
+  PC_part5.txt    ─ 2× Chameleon() для quest-кораблей (визуал)
+
+**НИКАКИХ `t_OnChameleonConfusion` handlers в vanilla НЕТ.**
+
+Практический вывод для vanilla:
+  * ВСЕ non-Ranger NPC (Warrior/Transport/Kling-другой-серии/…)
+    получают default v5=1 → **стреляют в Player-cham всегда**.
+  * Единственная защита — партнёры (HomePlanet==Player) и
+    fem-rangers-группа — их Delphi-гейт форсит v5=0.
+  * Kling своей серии — не стреляет, но у него своя аттитюд-логика
+    (см. Relations_System.txt), не связанная с OnChameleonConfusion.
+
+Chameleon в vanilla — это **чит для избегания SPECIFIC-класса
+NPC (Klings своей серии)**, а не универсальный маскхалат.
+
+═════════════════════════════════════════════════════════════════
+XV. Мод-примеры реальных handlers
+═════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────
+▍ Mod_EvoComfyCamo — «военный signature» распознаёт своих
+────────────────────────────────────────────────────────────────
+Путь: `Mods/Evolution/EvoComfyCamo/DATA/Script/Mod_EvoComfyCamo.rson`
+
+```
+function PlayerActCode() //t_OnChameleonConfusion
+{
+    if(!ScriptItemActParam()) exit;                    // уже recognize'd — ничего не делать
+    if(ShipRank(Player()) < rank_to_get_sign) exit;    // rank_to_get_sign=4 ("Истребитель")
+
+    dword cur_ship = ScriptItemActObject1();
+    if(ShipTypeN(cur_ship) == t_Warrior || ShipType(cur_ship) == 'Coalition_mod_tryfixbalance')
+    {
+        ScriptItemActParam(0);                          // ← recognize as friend
+        recognizedShip = cur_ship;
+        exit;
+    }
+    if(~ShipFindCustomShipInfoByType(cur_ship, 'IgnoreCamoInfo'))
+    {
+        ScriptItemActParam(0);                          // ← flag через CustomShipInfo
+        recognizedShip = cur_ship;
+        exit;
+    }
+    confusedShip = cur_ship;
+}
+```
+
+Идея: **если Player дослужился до Истребителя (Rank≥4), у него
+"электронная подпись"**. Военные Warriors коалиции считывают её
+и не стреляют по маскированному другу.
+
+Подписка (в PlayerState):
+  `OnActCode": "[t_OnChameleonConfusion|]\r\nPlayerActCode();"`
+
+При открытии диалога с recognizedShip мод внедряет реплику
+`OnConfusedDialog` с текстом «мы вас узнали».
+
+────────────────────────────────────────────────────────────────
+▍ Mod_ShuWarriors — «свои-операты» распознают
+────────────────────────────────────────────────────────────────
+```
+function PlayerActCode() //t_OnStep11, t_OnChameleonConfusion
+{
+    if(ScriptItemActionType(t_OnStep)) { ... }
+    else //if(ScriptItemActionType(t_OnChameleonConfusion))
+    {
+        if(!ScriptItemActParam()) exit;
+        if(ArrayDim(GlobalWBOperationsArray) <= 1) exit;
+        if(GetShipScriptName(ScriptItemActObject1(), 3) != 'Mod_ShuWarriors.OperativeWarriors') exit;
+        ScriptItemActParam(0);                          // ← operat recognize'd
+    }
+}
+```
+
+**Только оперативные корабли ShuWarriors** (со скриптовым именем
+`Mod_ShuWarriors.OperativeWarriors`) считают Player-cham дружественным.
+Обычные Warrior продолжают стрелять.
+
+Тот же мод демонстрирует **сохранение/восстановление camo-статуса**
+на входе-выходе флагмана (шаблон, полезный для любых story-моментов):
+
+```
+// Сохранить и снять camo:
+PlayerUsedCamo = PlayerChameleonCurType();
+if(~PlayerUsedCamo)                                     // если был active
+{
+    PlayerChameleonCurType(-1);                          // деактивировать
+}
+
+// Позже восстановить:
+if(~PlayerUsedCamo)
+{
+    PlayerChameleonCurType(PlayerUsedCamo);
+    PlayerChameleonDetected(PlayerUsedCamo, 1);          // + пометить как раскрыт
+    PlayerUsedCamo = -1;
+}
+```
+
+────────────────────────────────────────────────────────────────
+▍ Mod_OperationChameleon — доминаторы юзают camo ПРОТИВ Player'а
+────────────────────────────────────────────────────────────────
+Путь: `Mods/Huk'sShit/Mod_OperationChameleon/…`
+
+Мод не подписывается на t_OnChameleonConfusion, но интересен другой
+стороной: **создаёт fake-Warriors ("домики-хамелеоны"), которые
+внешне выглядят как коалиционные, но на самом деле — доминаторы**.
+При приближении сбрасывают маску и атакуют.
+
+Ключевые вызовы:
+  `Chameleon(ship, Chameleon(dwd0,'GraphName'), 1)` — копирует Skin
+   с настоящего доминатора на fake-warrior (обратная маскировка!).
+   3-й аргумент `1` = закрыть GForm (интерактивное подтверждение).
+
+  `PlayerChameleonCharges(domSer, N)` — награда игроку в виде
+   дополнительных зарядов camo за победу над «операцией».
+
+Также ставит `CustomShipInfo` метки `Mod_OperationChameleon0..9`
+для tracking корабля через операцию.
+
+────────────────────────────────────────────────────────────────
+▍ Mod_RefSpaceDominators — включить логическую маскировку
+────────────────────────────────────────────────────────────────
+```
+//Ставим логику хамелеончика
+PlayerLogicChameleon(PlayerRace, 2);
+NoTalkToShip(1);
+```
+
+**Устанавливает Player+0xDEC[PlayerRace]=2** — блокирует
+TKling_TryDetectChameleon для этой «серии» (по-факту здесь
+Race, но интерфейс тот же byte-массив). Совмещено с NoTalkToShip
+для полной изоляции.
+
+Значение `2` максимально — «навсегда защищён от детекции для этой
+серии/расы».
+
+────────────────────────────────────────────────────────────────
+▍ Yamato (Cat_Yamato) — camo как часть story
+────────────────────────────────────────────────────────────────
+Условия диалогов используют camo-состояние:
+  `ShipCustomShipInfoData(Player(),'YamatoSturmer_Info',1) >= 10
+   && !SturmersAlive && PlayerChameleonCurType() == -1`
+  — доступен только когда Player НЕ в camo (защита от эксплойта).
+
+  `PlayerChameleonCurType()` (без аргумента) — как условие
+   «сейчас в camo» (не -1).
+
+Также ставит визуальный camo на Player'а для скрытной вставки в
+акринский флот: `Chameleon('Ship.Akrin.YamatoSturmer')`.
+
+═════════════════════════════════════════════════════════════════
+XVI. Что ещё стоит понимать (следствия из RScript-анализа)
+═════════════════════════════════════════════════════════════════
+
+  1. **События приходят ДВАЖДЫ** — Delphi шлёт ProcessMissileHit
+     обоим: Player и target-у. Мод может подписаться на СВОЁМ
+     скрипте (обычно живущем на Player-объекте) и получать событие
+     от лица Player'а — тогда `ScriptItemActShip()==Player`,
+     `ScriptItemActObject1()==NPC`. Это удобнее чем инжектить в
+     каждый Warrior-класс.
+
+  2. **`ScriptItemActParam(v)` — RW-семантика**: чтобы «одурачить»
+     NPC, нужно ВЫЗВАТЬ setter `ScriptItemActParam(0)`, а не просто
+     вернуть 0 из функции. Значение прокидывается обратно в Delphi
+     через тот же MissileHit-контекст.
+
+  3. **Идиома `if(!ScriptItemActParam()) exit;`** — раннее
+     завершение когда NPC уже decoded как friend (default=0 для
+     партнёров/агенток). Экономит CPU и уважает предустановленные
+     исключения.
+
+  4. **Регистрация в OnActCode**:
+     ```
+     "[t_OnChameleonConfusion|]\r\nPlayerActCode();"
+     ```
+     Формат `[<events>|]` — подписка на набор событий; далее код,
+     который выполнится при ЛЮБОМ из них. Внутри рекомендуется
+     проверять `ScriptItemActionType(t_OnChameleonConfusion)` если
+     подписан на несколько событий (см. ShuWarriors).
+
+  5. **Использование `CustomShipInfo` как whitelist**:
+     Паттерн EvoComfyCamo:
+       ```
+       if(~ShipFindCustomShipInfoByType(cur_ship, 'IgnoreCamoInfo'))
+       {
+           ScriptItemActParam(0);
+       }
+       ```
+     Позволяет ЛЮБОМУ моду пометить своих NPC меткой `IgnoreCamoInfo`
+     — и EvoComfyCamo автоматически их подхватит. Хорошая
+     mod-совместимость.
+
+  6. **PlayerChameleonCharges (i, N)** — setter даёт заряды. Именно
+     эту функцию вызывает MS_PB.dialog при покупке (диалог в
+     config-file, не в .scr — поэтому в скриптах не видно).
+     Моды используют её для наград и торговых новинок.
+
+  7. **`PlayerChameleonCurType(-1)` — эквивалент «выключить»** без
+     потери зарядов. Позволяет модам временно снимать camo для
+     cutscene / story-моментов.
+
+  8. **`Chameleon(ship, ...)` — визуал, не игровая маска**. Скрипты
+     активно используют это для fake-asteroid, quest-ships, story-
+     кораблей. `Chameleon(ship, 'GraphName')` без 3-го аргумента
+     ВОЗВРАЩАЕТ текущий Skin (как getter).
+
+  9. **`Chameleon(a, Chameleon(b,'GraphName'), 1)`** — паттерн
+     копирования визуала с одного корабля на другой (см.
+     OperationChameleon). 3-й аргумент `1` закрывает GForm.
+
+  10. **Приоритет проверок в NPC-decision**:
+     ```
+     if(!ScriptItemActParam()) exit;            // уже recognize'd
+     if(<условие для recognize>) ScriptItemActParam(0);
+     ```
+     Правильный порядок гарантирует, что мод не превратит уже-
+     recognize'd (партнёра/агентку) обратно во врага.
+
+═════════════════════════════════════════════════════════════════
+XVII. Что можно ДОБАВИТЬ модерам поверх системы
+═════════════════════════════════════════════════════════════════
+
+  * **Rank-based recognition** (EvoComfyCamo pattern) — своих
+    определённого звания camo не обманывает.
+
+  * **Faction-based recognition** — камо-серия X обманывает только
+    сервер-факцию Y (пример: KlingSeries 0=Blazer → обманывает
+    Terron-серию, но не Keller).
+
+  * **HP-based random detection** — при низком HP шанс раскрытия
+    выше (использовать RndOut01 в handler'е).
+
+  * **Recognition memory** — CustomShipInfo `KnowsPlayerCamo` на
+    NPC; если стоит — всегда `ScriptItemActParam(1)`.
+
+  * **Time-based expiration** — маска «изнашивается» через N ходов,
+    после чего force `PlayerChameleonCurType(-1)`.
+
+  * **Cover story** — до раскрытия Player может подходить к
+    magazines/repair и получать сервис у доминаторов той серии
+    (использует NoTalkToShip=0 + скриптовый menu inject).
+
+  * **Faction-specific ships** — маска Blazer позволяет Player'у
+    сесть на планету с dominator-station этой серии (проверить
+    `PlayerChameleonCurType()==0` в PlanetLand event).
+
+  * **Broadcast** — при первом _468[series]=1 через
+    GalaxyMessage предупредить все Klings своей серии за пределами
+    системы (эмулирует «предупредительное сообщение»).
+

@@ -1,0 +1,42 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+
+    <Style src="MenuStyles.uss" />
+
+    <ui:VisualElement name="root" class="root">
+
+        <!-- Фон со скан-линиями -->
+        <ui:VisualElement name="scanlines" class="scanlines" picking-mode="Ignore" />
+
+        <!-- Центральная панель настроек -->
+        <ui:VisualElement name="settings-panel" class="settings-panel">
+
+            <!-- Заголовок -->
+            <ui:VisualElement class="s-header">
+                <ui:VisualElement class="s-header-title-row">
+                    <ui:Label class="s-title" text="SETTINGS" />
+                    <ui:Label class="s-title-sep" text="//" />
+                </ui:VisualElement>
+                <ui:Label class="s-subtitle" text="SYSTEM CONFIGURATION" />
+                <ui:VisualElement class="s-header-line" />
+            </ui:VisualElement>
+
+            <!-- Скролл-контейнер с настройками -->
+            <ui:ScrollView name="settings-scroll" class="settings-scroll"
+                           vertical-scroller-visibility="Auto"
+                           horizontal-scroller-visibility="Hidden">
+                <!-- Строки настроек добавляются из C# через MenuController -->
+            </ui:ScrollView>
+
+            <!-- Футер с кнопками -->
+            <ui:VisualElement class="s-footer">
+                <ui:VisualElement class="s-footer-line" />
+                <ui:VisualElement class="s-footer-buttons">
+                    <ui:Button name="btn-back" class="footer-btn footer-btn--back" text="← BACK" />
+                    <ui:Button name="btn-apply" class="footer-btn footer-btn--ok" text="APPLY" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

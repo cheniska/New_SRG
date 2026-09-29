@@ -1,0 +1,43 @@
+<SideName>Defeated: No, Yes - реплика активируется только если укзаанная фракция уничтожена
+CurPlanetEconomy:  - берет типы экономик сущестующие в игре, реплика активна только на планетахз с указанной экономикой (доступно перечисление и отрицание - !Agro или Agro,Industrial)
+CurPlanetGoodsBuy: Mini, Small, Zero, Average, Big, Huge - текущая цена покупки товара на планете, пороговые значения в отдельном конфиге, всегда идет в связке с Goods
+CurPlanetGoodsCnt: Average, Big, Huge, Mini, Small, Zero - текущая количество товара на планете, пороговые значения в отдельном конфиге, всегда идет в связке с Goods
+CurPlanetGoodsPermit: No, Yes - контрабандный ли твоар на планете, всегда идет в связке с Goods
+CurPlanetGoodsSale: ini, Small, Zero, Average, Big, Huge - текущая цена продажи товара на планете, пороговые значения в отдельном конфиге, всегда идет в связке с Goods
+CurPlanetGoverment: Anarchy, Democracy, Dictatorship, Monarchy, Republic - текущий режим на планете, берет список режимов из конфига
+CurPlanetOccupiedBy<SideName>: - реплика доступна только на планетах, частично оккупированных указанной фракцией
+CurPlanetRace: - репликад оступна если планету населяет указанная или указанные расы, рас может быть несколько, доступно отрицание (!Race1 или Race1,Race2), расы берет из конфига
+CurPlanetRaceIsPlayerRace: - раса планеты совпадает с расой игрока
+CurPlanetRelations: Bad, Best, Good, Normal, Enemy - текущее отношение планеты к игроку
+CurStarInBattle: Any,  -
+CurStarInBattle<SideName>: Any, No, Yes идет ли бой c стороной <SideName> в системе где находится планета, <SideName> может быть пустым - для общих реплик
+Goods: - берет товары из списка товаров, вспомогательное условие
+<SideName>InToStar: 2, 3, 4, 5, 6, 7, 8, 9, Many - подсчет кораблей стороны в системе
+<ShipType>InToStar: 3, 4, 5, 6, 7, 8, 9, Many - подсчет кораблей определенного типа в системе
+PlayerRank<RangType>: - берет ранг в цифрах, будущая механика
+PlayerRace: Fei, Gaal, Maloc, Peleng, People - реплика доступна если игрок определенной расы
+PlayerRating<RatingType>: Average, Big, Huge, Mini, Small
+PlayerStatus: Pirate, Trader, Warrior - будущая механика проверки статуса игрока - того как он известен в галактике, в зависимости от его действий
+Priority: 1, 10, 11, 13, 2, 20, 3, 30, 5, 50, 60, 7, 9 - приоритет реплики при прочих равных
+ToPlanet - планета той же фракции, не совпадающая с текущей
+ToPlanetEconomy:
+ToPlanetGoodsBuy:
+ToPlanetGoodsCnt:
+ToPlanetGoodsPermit:
+ToPlanetGoodsSale:
+ToPlanetGoverment:
+ToPlanetInCurStar: No, Yes - находится ли ToPlanet в той же системе
+ToPlanetRace:
+ToPlanetRaceIsCurPlanetRace:
+ToPlanetRaceIsPlayerRace:
+ToPlanetRelations: - отношение ToPlanet к игроку
+ToStar - звезда в текущем или одном из соседних секторов
+ToStarControledBy<SideName>: - оккупирована ли ToStar
+ToStarInBattle: Yes, No
+QuestGiver: No, Yes — является ли текущая планета источником активного задания
+PlayerMoney: Mini, Small, Average, Big, Huge - количество денег игрока
+CurStarHasWormHole: No, Yes
+CurPlanetVisited: No, Yes — посещал ли игрок эту планету раньше
+CurPlanetPopulation: Mini, Small, Average, Big, Huge — по аналогии с товарами
+CurPlanetTechLevel: int-значение
+CurPlanetIsHomeworld: No, Yes

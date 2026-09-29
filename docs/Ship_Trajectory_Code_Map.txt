@@ -1,0 +1,462 @@
+================================================================================
+SHIP TRAJECTORY CODE MAP — Rangers.exe (SR2 HD)
+================================================================================
+Дата: 2026-06-09
+Источники: декомпиляция через IDA MCP (ida_mcp/zeromcp на 127.0.0.1:13337)
+           + структуры из Rangers.exe.h
+           + Delphi-обёртки из aScriptFun.pas
+           + Main.txt (data-конфиг)
+           + memory/rangers_*.md
+
+================================================================================
+0. КРАТКОЕ РЕЗЮМЕ
+================================================================================
+Расчёт траектории корабля в SR2 разнесён на три уровня. Один игровой ход
+для одного корабля проходит по цепочке:
+
+  (1) ЗАДАНИЕ ПРИКАЗА — UI или AI пишет в поля корабля:
+        ship.Order      @ +0x428  uint8  (тип приказа: NONE/MOVE/.../JUMP/FOLLOW)
+        ship.OrderData  @ +0x42C  uint32 (доп. параметры)
+        ship.DestObj    @ +0x430  TObject* (цель: TShip/TPlanet/THole/...)
+        ship.DestPos    @ +0x434  _pair_float (X,Y) — конкретная точка
+      Для игрока дополнительно:
+        Player.dest_star @ +0x5CC TStar* — звезда межзвёздной цели
+
+  (2) РАСЧЁТ МАРШРУТА НА ОДИН ДЕНЬ —
+        TShip_CalcRoute     @ 0x7219B0
+      Switch по ship.Order, для каждой ветки решает целевую точку (с учётом
+      радиуса посадки на планету, точки прыжка через дыру, точки догоняющего
+      движения и т.д.), затем вызывает sub_722A10/sub_723A6C — реальный
+      A*-планировщик с обходом препятствий.
+
+  (3) АНИМАЦИЯ ПО КАДРАМ МЕЖДУ ХОДАМИ —
+        TShip_StepDay_MoveProcessor @ 0x720090 → TShip_MoveAlongRoute @ 0x71FE10
+      Корабль хранит "плёнку" waypoints в ship[+0x440]. Каждый кадр
+      MoveAlongRoute берёт следующий waypoint, переставляет ship.Pos и
+      ship.Angle, вызывает TFilm_OrderMove чтобы переместить
+      видимый графический объект.
+
+  Для игрока шаги (1)→(2)→(3) такие же, но шаг (1) запускает **клик мышью
+  на космической карте**:
+        MB_TMainForm_OnSpaceClick @ 0x7AF0E8
+      switch по типу цели (TShip / THole / TRuins / TPlanet / TItem /
+      TAsteroid / TMissile) — выставляет Order и сразу вызывает CalcRoute,
+      чтобы построить путь и показать его игроку до конца хода.
+
+  Отрисовка "линии курса игрока" — это сама плёнка waypoints: видимая
+  стрелка/трасс — это последовательность позиций ship.f440, отрендеренная
+  через GFilm. Отдельной "DrawCoursePath" функции нет; плёнка строится
+  ВНУТРИ CalcRoute->sub_723A6C, а отрисовывается TFilm-системой.
+
+================================================================================
+1. ПОДТВЕРЖДЁННЫЕ ПОЛЯ TShip
+================================================================================
+Из Rangers.exe.h + декомпиляция:
+
+  Offset    Поле                  Тип               Назначение
+  ─────────────────────────────────────────────────────────────────────────────
+  +0x000    VMT                   void*             Delphi vtable
+  +0x004    Id                    int               уникальный id
+  +0x008    Name                  wchar_t*
+  +0x00C    CustomTypeName        wchar_t*
+  +0x010    Type                  eShipType (u8)    T_KLING..T_UB
+  +0x011    Owner                 u8
+  +0x014    Pos                   _pair_float       (x,y) ТЕКУЩАЯ позиция
+  +0x01C    CurPlanet             TPlanet*          планета (если приземлён)
+  +0x020    CurRuins              TRuins*           носитель (для tranclucator)
+  +0x024    CurStar               TStar*            текущая звезда системы
+  +0x028    PrevStar              TStar*            откуда последний прыжок
+  +0x02C    HomePlanet            TPlanet*
+  +0x0C4    seedlike              int               участвует в randomization
+                                                    формулах CalcRoute
+  +0x0E0    seed_factor           int               (используется как rnd seed
+                                                    для Galaxy_RandInt)
+  +0x410    Speed                 double            СКОРОСТЬ корабля (юнит/ход);
+                                                    для игрока кламп >= 0.5
+  +0x420    Angle                 double            текущий угол ориентации
+  +0x428    Order                 u8                ТЕКУЩИЙ ПРИКАЗ (см. §3)
+  +0x42C    OrderData             u32               параметры (для разных
+                                                    приказов)
+  +0x430    DestObj               TObject*          цель: TShip/TPlanet/THole...
+  +0x434    DestPos               _pair_float       (x,y) точка цели внутри
+                                                    звезды
+  +0x43C    flag_landing          u8                (может быть "is approaching"
+                                                    flag)
+  +0x440    RouteFilm             struct*           ★ плёнка waypoints
+                                                    (см. §4)
+  +0x444    route_stuck_flag      u8                ставится =1 если корабль
+                                                    "застрял на гипер-выходе"
+                                                    (см. TShip_CalcRoute
+                                                    LABEL_28)
+  +0x44C    ScriptOrderAbsolute   u8                FScriptOrderAbsolute
+  +0x450    GraphShip             void*             первичный графический
+                                                    объект в GFilm
+  +0x454    Skin                  wchar_t*
+
+  Для TPlayer (TPlayer : TRanger : TNormalShip : TShip), TShip-наследование:
+  +0x5CC    dest_star             TStar*            ★ ЗВЕЗДА-цель для
+                                                    межзвёздного полёта.
+                                                    Читает/пишет SE_ShipDestination.
+
+================================================================================
+2. ВЕРХНИЙ УРОВЕНЬ: КТО СТАВИТ ПРИКАЗ
+================================================================================
+Order/DestPos/DestObj/dest_star пишутся из трёх источников:
+
+  (a) UI (клик игрока) — MB_TMainForm_OnSpaceClick @ 0x7AF0E8
+        Параметры: (form*, x, y, clicked_target).
+        Switch по типу clicked_target: TShip / THole / TRuins / TPlanet
+        / TItem / TAsteroid / TMissile.
+        Особо: если идёт квест-блок Террона и не активен hyperscan-режим,
+        Террон трактуется как TRuins (запрещено атаковать).
+        Флаги режима кликов: form[+0x120] Scan, +0x121 Hyperscan,
+        +0x122..0x126 Weapons[1..5], +0x127 Bridge, +0x128 AutoBattle.
+        После определения цели — пишет Player.Order/DestObj/DestPos
+        и тут же зовёт TShip_CalcRoute (8 раз — для разных веток).
+
+  (b) Скриптовые SE_Order* (вызываются из VM игровых скриптов):
+        SE_OrderMove          @ 0x640924
+        SE_OrderForsage       @ 0x6406B8
+        SE_OrderNone          @ 0x64081C
+        SE_OrderLock          @ 0x64060C
+        SE_OrderTeleport      @ 0x640B4C
+        SE_OrderTakeOff       @ 0x640CF4
+        SE_OrderFollowShip    @ 0x640D9C
+        SE_OrderJumpHole      @ 0x640F04
+        + Talk-меню:
+        Talk_Partner_OrderFlyToStar      @ 0x611590
+        Talk_Partner_OrderFlyToMe        @ 0x610F30
+        Talk_Partner_OrderLandOnObject   @ 0x6111E4
+        Talk_Pirate_FlyToStar            @ 0x615738
+        Talk_Pirate_OrderFlyToMe         @ 0x61500C
+        Talk_Tranclucator_FlyToMe        @ 0x6394D0
+        Talk_Tranclucator_OrderForAll    @ 0x613F48
+        SE_ShipConnect    @ 0x650138 — стыковка (тоже зовёт CalcRoute)
+
+  (c) AI наследников — внутри TStar_NextDay_1 (0x863998, 38KB) и
+        StepDay_Inherited. Каждый AI имеет свой алгоритм выбора цели
+        (см. memory/rangers_*_ai.md), но в итоге пишет в те же Order/
+        DestObj/DestPos.
+
+================================================================================
+3. ПОВЕДЕНИЕ ПО Order — ВЕТКИ ВНУТРИ TShip_CalcRoute (0x7219B0)
+================================================================================
+Switch по ship.Order (+0x428):
+
+  Order == 0         (NONE)
+    — ничего не делает, ship не двигается.
+
+  Order == 1, 3, 5   (MOVE / некий "force" / TAKE_OFF и т.п.)
+    — LABEL_84: вызывается sub_722A10(ship, &ship.DestPos, day_step) —
+      простое движение к точке DestPos через A*-планировщик.
+
+  Order == 2         (FOLLOW_OBJ — лететь к TShip или TPlanet)
+    Если DestObj — TShip:
+      • Если расстояние ≤ ~5e38 (фактически всегда): обновить DestPos
+        точкой DestObj.Pos и вызвать CalcRoute(ship, DestPos, day).
+        Если плёнка пустая после первой попытки — рандомный сдвиг ±5
+        (через Galaxy_RandInt) и повторить.
+      • Если очень далеко — отдалить DestPos в направлении объекта.
+    Если DestObj — TPlanet:
+      v76 := planet.size + 150  (граница обнаружения)
+      v75 := planet.size + 50   (зона посадки)
+      Если это ИГРОК — особая логика: бинарный поиск точки на
+        планетной орбите такой, чтобы расстояние от текущей Pos было
+        минимальным (правильный заход на посадку).
+      Иначе для NPC — простая случайная точка в радиусе orbital ring.
+
+  Order == 4         (JUMP_HOLE — прыжок через дыру)
+    DestObj — THole. По OrderData выбирается какой "конец" дыры
+    использовать (THole имеет 2 позиции: Pos1 @ +12, Pos2 @ +24).
+    Если расстояние слишком велико — слегка отойти от цели рандомно
+    (±20°), иначе двигаться к дыре через CalcRoute.
+
+  Order == 6         (FOLLOW_SHIP — следовать за чужой плёнкой)
+    DestObj — TShip с собственной плёнкой ship2.RouteFilm @ +0x440.
+    Если у DestObj есть следующий waypoint:
+      • CalcRoute берёт его как цель;
+      • после CalcRoute копирует в ship.DestPos позицию
+        последнего своего waypoint'а (если есть) или текущую Pos,
+        чтобы UI отобразил "пунктир к концу строки".
+    Использует TShip_UpdateEngine для расчёта скорости.
+
+  Order == 3         (отдельная ветка после switch — гипер-арка)
+    Используется когда корабль уже летит на выход из системы:
+    TStar_CreateArrivalAnimation создаёт анимацию исчезновения,
+    sub_722A10 пишет в плёнку точку "в бесконечность" по углу к
+    исходной звезде; если корабль уже за пределами PlayerStar -
+    TShip_ProcessHyperspaceArc создаёт дугу гипера, TStar_ProcessCombatResults
+    регистрирует выход. По окончании ставится ship[+0x444] = 1.
+
+  Особая ветка для Terron_p (босс): если ship.Order == 1 и Galaxy.TerronToStar
+  не выставлен — вызывается TStar_ProcessCombatRound_0 (Терон управляется
+  отдельно).
+
+================================================================================
+4. A*-ПЛАНИРОВЩИК И ПЛЁНКА ПУТИ
+================================================================================
+  ship[+0x440] — указатель на структуру "RouteFilm":
+        +0    head             — первый узел (uint*)
+        +4    next             — следующий waypoint (от которого считаем)
+        +8    last_node        — последний созданный waypoint
+        +20   waypoint_count   — счётчик (для guard'а длины плёнки)
+  Каждый waypoint:
+        +0    next             — следующий
+        +8    pos.x            — float
+        +12   pos.y            — float
+        +16   angle            — float (угол курса в этой точке)
+
+  sub_722A10 @ 0x722A10  (TShip_PushDestination)
+    Обёртка над sub_723A6C(ship, &target_xy, day_step). Дополнительно:
+    если ship.CurStar == PlayerStar AND плёнка короче 200 кадров AND
+    игрок не на планете (или Player.Order == 5 — взлёт) — расширяет
+    плёнку до 200 точек через sub_4D813C (interpolate fill). Это
+    гарантирует плавную анимацию ВСЕХ кораблей видимой игроку звезды.
+    После записи последнего узла — если новая точка очень близко
+    (< Speed*200*star_factor) — перезаписывает последний waypoint
+    новой целью (smoothing).
+
+  sub_723A6C @ 0x723A6C  (TShip_PlanPath)
+    Настоящий планировщик. Использует:
+      sub_871CD8  — двигает точку отступа (offset margin)
+      sub_872390  — проверка пересечения сегмента с препятствием
+      sub_872734  — построение касательных вокруг препятствия
+                    (даёт ДВЕ обходные точки, выбирается ближняя)
+      CalcDistanceSquared (0x8728AC) — Dist2 inline
+    Радиус препятствия = ship.CurStar[+92] (avoidance radius звезды —
+    обычно радиус самой большой планеты в системе плюс margin).
+    Если total distance > 2*radius * 2*radius — добавляет waypoint
+    через sub_722964 (прямое append), иначе считает обход.
+    На большие дистанции (вне расчётного circle) вызывает
+    TShip_ProcessHyperspaceArc — это уже подготовка дуги гипер-вылета.
+    После добавления waypoint'а делает рекурсивный вызов через
+    sub_723DF4 для следующего сегмента.
+
+  ИТОГ:  ship.RouteFilm в любой момент содержит цепочку waypoint'ов,
+         которые UI рисует через GFilm. Это и есть "линия курса" игрока
+         (для NPC — то же самое, но игрок их не видит, пока не наведёт
+         внимание).
+
+================================================================================
+5. АНИМАЦИЯ ПО КАДРАМ — TShip_MoveAlongRoute
+================================================================================
+  TShip_StepDay_MoveProcessor @ 0x720090 (3.6 KB) — главный процессор
+    движения корабля для UI-режима "play turn". 9 вызовов
+    TShip_MoveAlongRoute (для разных состояний корабля и фаз кадра).
+
+  TShip_MoveAlongRoute @ 0x71FE10 — один шаг по плёнке:
+    if (ship.RouteFilm.head && ship.RouteFilm.head.next) {
+        ship.RouteFilm.next = ship.RouteFilm.head.next;
+        if (ship.is_visible) {                   // HIBYTE@ +0x423
+            uint8 new_angle256 = AngleGraTo256(ship.RouteFilm.next.angle);
+            if (AngleGraTo256(ship.Angle) != new_angle256)
+                sub_7CFA28(GFilm, ship.Id, ship.GraphShip, new_angle256);
+        }
+        ship.Pos.x  = ship.RouteFilm.next.pos.x;
+        ship.Pos.y  = ship.RouteFilm.next.pos.y;
+        ship.Angle  = ship.RouteFilm.next.angle;
+        sub_4D7C9C(ship.RouteFilm.head, ship.RouteFilm.head.next); // удалить пройденный узел
+    }
+    if (ship.is_visible) {
+        TFilm_OrderMove(ship.GraphShip,        ship.Id, &ship.Pos);
+        if (ship.SecondaryGraph)               // +0x4AC
+            TFilm_OrderMove(ship.SecondaryGraph, ship.Id, &ship.Pos);
+        if (Player() == ship)
+            sub_7CFF54(GFilm, ship.Id, &ship.Pos);  // ★ доп. логика для камеры
+                                                    // (центрирование вида)
+        // fade для гипер-прыжка:
+        if (ship.AlphaDelta != 0) {              // +0x48C
+            ship.Alpha += ship.AlphaDelta;       // +0x488
+            sub_7CF9C0(GFilm, ship.Id, ship.GraphShip, clamp(ship.Alpha,0,255));
+        }
+    }
+
+  → TFilm_OrderMove (0x7CF8F4) — это и есть "плёнщик". Он добавляет
+    в очередь GFilm приказ "переместить графический объект GraphShip
+    в позицию Pos на кадре step". GFilm затем интерполирует и рисует
+    кадры между ходами, что игрок и видит как полёт корабля.
+  → sub_7CFF54 для Player'а — вероятно "центрировать вид камеры на
+    Player.Pos" (нужно проверить).
+
+================================================================================
+6. ОТРИСОВКА ТРАЕКТОРИИ ИГРОКА
+================================================================================
+  Главное наблюдение: ОТДЕЛЬНОЙ функции "Draw player course line" в
+  индексе нет. Видимая на главной карте трасса = последовательность
+  waypoints из ship.RouteFilm, отрендеренная как:
+    1) кадр-за-кадром позиция самого корабля (GraphShip);
+    2) GFilm рисует трассы движения для всех объектов на которые
+       была команда OrderMove — игроку показывается пунктир/стрелка
+       автоматически.
+
+  Это объясняет, почему OnSpaceClick (0x7AF0E8) вызывает TShip_CalcRoute
+  8 раз сразу же — после клика плёнка перестраивается и игрок ВИДИТ
+  новый путь до конца хода без ожидания "End Turn". То есть UI не
+  "рисует курс" руками — он строит плёнку, а её рисует GFilm.
+
+  То что в TfAB_* (форма аркадной мини-игры в пещере доминатора)
+  есть Draw*Path* функции — это другая система: пещерная мини-игра
+  имеет собственный рендер пути, не использующий GFilm:
+        TfAB_AddPathNode       @ 0x69BF98
+        TfAB_UpdateShipPath    @ 0x69C268
+        TfAB_RenderShipPath    @ 0x69C56C
+        TfAB_DrawShipPathEnd   @ 0x69C6B4
+        AB_Zone_DrawPath       @ 0x68CC60
+  К звёздной/галактической траектории отношения не имеют.
+
+  Глобалы UI (подтверждены через декомпиляцию):
+        Player()           @ 0x78C078 — указатель текущего игрока
+        AutoBattleShip     @ 0x8824AC — подменяет Player в авто-бою
+        gvar_00882B38[0]                — PlayerStar (текущая звезда игрока)
+        Galaxy             @ 0x88263C
+        GFilm              — доступ через gvar_00882D74 (видно из MoveAlongRoute)
+
+================================================================================
+7. КАРТА ФУНКЦИЙ (С АДРЕСАМИ)
+================================================================================
+  GAME LOGIC (расчёт куда лететь сегодня)
+  ─────────────────────────────────────────────────────────────────────────────
+  0x7219B0  TShip_CalcRoute              switch по Order, выбирает целевую
+                                          точку, заполняет плёнку waypoints
+  0x722A10  TShip_PushDestination        обёртка: расширяет плёнку до 200
+                                          точек для видимых игроку кораблей
+  0x723A6C  TShip_PlanPath               A*-планировщик с обходом препятствий
+  0x722CC0  TShip_ProcessHyperspaceArc   дуга гипер-вылета/входа
+  0x723868  TStar_ProcessCombatResults   фиксация результата выхода в гипер
+  0x71D054  TShip_StepDayStart_Main      главный per-day обработчик корабля
+                                          (внутри читает Order, вызывает CalcRoute)
+  0x720090  TShip_StepDay_MoveProcessor  per-frame процессор движения (9 вызовов
+                                          MoveAlongRoute для разных фаз)
+  0x71FE10  TShip_MoveAlongRoute         один шаг по плёнке + TFilm_OrderMove
+  0x7240C0  TShip_OnArriveAtStar         пост-обработка прибытия в новую звезду
+  0x710854  TShip_UpdateEngine           расчёт текущей скорости (для FOLLOW)
+  0x70E5FC  TShip_GetNavData             навигационные данные
+  0x70FCC0  TShip_CargoHookRadius        радиус подбора предметов
+
+  UI (управление от игрока)
+  ─────────────────────────────────────────────────────────────────────────────
+  0x7AF0E8  MB_TMainForm_OnSpaceClick    клик мышью на космической карте
+                                          → ставит Order/DestObj/DestPos и
+                                          сразу вызывает CalcRoute
+  0x7AA930  sub_7AA930                   ещё один UI-обработчик, использует
+                                          CalcRoute (вероятно "сбросить курс")
+  0x7AE3EC  sub_7AE3EC                   аналогично
+  0x7B16CC  sub_7B16CC                   ещё одна ветка (3 вызова CalcRoute)
+  0x7B1FA4  sub_7B1FA4                   1 вызов
+  0x7B2CF0  sub_7B2CF0                   2 вызова
+  Все эти sub_7B***  скорее всего — обработчики кнопок Bridge/Attack/Forsage/...
+  в TfMainForm.
+
+  GFilm (плёночная система анимации)
+  ─────────────────────────────────────────────────────────────────────────────
+  0x7CF8F4  TFilm_OrderMove              приказ "переместить объект X в Pos"
+                                          (главный плёночный примитив)
+  0x7CFA28  sub_7CFA28                   приказ "повернуть объект на angle"
+  0x7CF9C0  sub_7CF9C0                   приказ "установить alpha"
+  0x7CFF54  sub_7CFF54                   спец-обработка для Player'а (камера?)
+
+  СКРИПТ-ОБЁРТКИ (вызываются из VM Delphi-скриптов)
+  ─────────────────────────────────────────────────────────────────────────────
+  0x640924  SE_OrderMove                 ставит Order=MOVE и DestPos
+  0x6406B8  SE_OrderForsage              + вызывает CalcRoute
+  0x650138  SE_ShipConnect               стыковка
+  0x64081C  SE_OrderNone
+  0x64060C  SE_OrderLock
+  0x640B4C  SE_OrderTeleport
+  0x640CF4  SE_OrderTakeOff
+  0x640D9C  SE_OrderFollowShip
+  0x640F04  SE_OrderJumpHole
+  0x64469C  SE_ShipOrder                 Get/Set ship.Order или DestPos.X/Y
+                                          (по строковому ключу)
+  0x644928  SE_ShipOrderData1            младшие 16 бит OrderData
+  0x6449F8  SE_ShipOrderData2            старшие 16 бит OrderData
+  0x644AC8  SE_ShipOrderObj              Get/Set DestObj
+  0x644BC4  SE_ShipDestination           Get/Set Player.dest_star
+                                          (для TPlayer; для TRuins —
+                                          Programs[10]/[11]=date)
+  0x644608  SE_ShipTurnBeforeEndOrder    кол-во ходов до конца текущего Order
+
+  GLOBALS
+  ─────────────────────────────────────────────────────────────────────────────
+  0x78C078  Player()                     возвращает указатель TPlayer
+  0x8824AC  AutoBattleShip               замена Player'а в авто-бою
+  0x882B38  gvar_00882B38[0] == PlayerStar (TStar*)
+  0x882D74  gvar_00882D74 = GFilm (или указатель на него)
+  0x88263C  Galaxy                       TGalaxy*
+
+================================================================================
+8. ПОТОК ДАННЫХ (ЕДИНАЯ КАРТИНА)
+================================================================================
+
+  Игрок кликает на планете
+       │
+       ▼
+  MB_TMainForm_OnSpaceClick (0x7AF0E8)
+       │  ставит Player.Order = MOVE, Player.DestObj = planet,
+       │  Player.DestPos = ... ,
+       ▼
+  TShip_CalcRoute (0x7219B0)
+       │  switch(Order) → ветка case 2 (FOLLOW_OBJ к TPlanet):
+       │  бинарным поиском подбирает точку посадки рядом с планетой,
+       │  затем →
+       ▼
+  TShip_PushDestination (sub_722A10)
+       │  расширяет плёнку до 200 кадров, →
+       ▼
+  TShip_PlanPath (sub_723A6C)
+       │  A* обход препятствий, добавляет waypoint'ы в ship.RouteFilm[+0x440]
+       │
+       ▼     [ИГРОК ВИДИТ ПУТЬ ПУНКТИРОМ]
+       │
+       ▼   (нажат End Turn)
+  TStar_NextDay_1 (0x863998)
+       │  для каждого корабля звезды → TShip_StepDayStart_Main (0x71D054)
+       │  и фоновый TShip_StepDay_MoveProcessor (0x720090)
+       ▼
+  TShip_MoveAlongRoute (0x71FE10) × N раз
+       │  по одному waypoint'у за вызов:
+       │   ship.Pos := next.pos; ship.Angle := next.angle;
+       │   удаляет пройденный узел;
+       │   TFilm_OrderMove(ship.GraphShip, step, &ship.Pos)
+       ▼
+  GFilm рисует фрагменты движения = трасса корабля игроку видна.
+  Если игрок == ship → дополнительно sub_7CFF54 (камера).
+       ▼
+  TShip_OnArriveAtStar (0x7240C0) — когда плёнка кончилась
+       │  если новый CurStar — обновить prevStar/curStar, сбросить Order
+       ▼
+  AI / UI начинает следующий цикл.
+
+================================================================================
+9. ЧТО ОСТАЛОСЬ ПРОВЕРИТЬ
+================================================================================
+  [ ] sub_7CFF54 (@ 0x7CFF54) — действительно ли это центрирование
+      камеры на Player.Pos. Декомпилировать.
+  [ ] Полные значения enum TOrderType (NONE=0, MOVE=1, ...=2, ...=3,
+      JUMP_HOLE=4, ...=5, FOLLOW_SHIP=6). Найти константы в .pas/IDC.
+  [ ] sub_7CFA28 / sub_7CF9C0 — это явно команды GFilm для
+      "rotate" и "set alpha". Подтвердить декомпиляцией.
+  [ ] sub_872390 / sub_872734 — геометрия avoidance. Подтвердить
+      что это касание окружности из точки + проверка пересечения
+      сегмента с окружностью.
+  [ ] Где в EXE определена константа "200" (минимальный размер
+      плёнки видимых кораблей). По sub_722A10 это явно
+      "видимый игроку диапазон кадров".
+  [ ] Что хранит ship[+0x430] (DestObj) для разных Order — TStar*
+      или TObject* (для FOLLOW_SHIP это TShip, для JUMP_HOLE это
+      THole, для FOLLOW_OBJ — TShip или TPlanet).
+  [ ] sub_7AA930 / sub_7AE3EC / sub_7B16CC / ... — переименовать
+      по факту (кнопки Bridge / Forsage / Attack / Scan).
+
+================================================================================
+10. ССЫЛКИ
+================================================================================
+  * memory/rangers_ship_nextday.md       — обзор TShip.StepDayStart
+  * memory/rangers_ship_ai.md            — иерархия AI и Order-примитивов
+  * memory/rangers_ai_vmt_map.md         — карта VMT-слотов
+  * aScriptFun.pas                       — SF_Ship*/SF_Order* Delphi-исходники
+  * Rangers.exe.h                        — структуры TShip / TPlayer
+  * Main.txt  "Data ^ ABMap ^"           — подтверждает что TfAB_* это
+                                            аркада пещер, а не главная карта
+  * .mcp.json (D:\disasm2500\)           — конфиг IDA MCP для Claude Code
+================================================================================

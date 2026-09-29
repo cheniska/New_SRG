@@ -1,0 +1,477 @@
+================================================================================
+FOLLOW MODES — RE-CHECK & CORRECTIONS — Rangers.exe (SR2 HD)
+================================================================================
+Дата: 2026-06-10
+Уточняющий отчёт к Ship_Trajectory_Reimplementation.txt.
+Источник: декомпиляция через IDA MCP (зерво-проверка по ассемблеру).
+
+В предыдущем отчёте описание FOLLOW_OBJ (Order==2) и FOLLOW_SHIP (Order==6)
+содержало неточности. Этот документ — полная перепроверка с явным
+указанием того, что было НЕ ТАК и КАК на самом деле.
+
+================================================================================
+§0. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ, ПРОВЕРЕННЫЕ ДОПОЛНИТЕЛЬНО
+================================================================================
+sub_45EDAC(a, b, out)
+    out.x := a.x + b.x
+    out.y := a.y + b.y
+    Это **векторное СЛОЖЕНИЕ**.
+
+sub_872818 (Dist2_0)(source, raw_seed, out, distance, base_angle_deg)
+    jitter := (signed_seed % 180) - 90     // ±90° от base_angle reverse
+    final_angle := base_angle + 180 + jitter
+    final_angle := normalize_360(final_angle)
+    out.x := source.x + cos(final_angle) * distance
+    out.y := source.y - sin(final_angle) * distance
+    То есть «точка ПОЗАДИ source (180° от base_angle) с шансовым отклонением ±90°,
+    на дистанции `distance` от source».
+
+sub_4D7F98(N, list_head)
+    node := list_head.next     // первый next
+    while N > 0:
+        N := N - 1
+        node := node.next
+        if node == NULL: return NULL
+    return node
+    Линейный обход двусвязного списка от head. Реально возвращает узел номер
+    N+1 от head (или N от первого active).
+
+sub_7774F4(planet, days, out)  — PlanetFutureOrbitPos
+    Реализация:
+        v4 := star.TimeFactor[+0x108] * planet.OrbitalSpeed[+0x40] * days
+              + planet.CurrentOrbitAngle[+0x20]
+        out := PolarToCartesian(v4, planet.OrbitRadius_double[+0x28])
+    Возвращает координаты планеты ЧЕРЕЗ `days` кадров от текущей.
+
+sub_779D1C(planet, out)        — PlanetCurrentOrbitPos
+    out := PolarToCartesian(planet.OrbitAngle[+0x20], planet.OrbitRadius[+0x28])
+
+sub_8718C8(angle_deg_ptr, out_xy) — PolarToCartesian
+    rad := angle_deg * (π/180)
+    out.y := -cos(rad) * radius     ← (radius = angle_ptr[1] = orbit_radius)
+    out.x :=  sin(rad) * radius
+    0° = "север" (-Y), 90° = "восток" (+X). Y инвертирована (game coords).
+
+sub_871A50(P0, P1) — Atan2_PointToPoint
+    dx :=  P1.x - P0.x
+    dy := -(P1.y - P0.y)
+    angle := atan2(dy, dx) (deg)
+    return normalize_360(angle)
+    Возвращает угол направления от P0 к P1 в [0..360).
+
+sub_710854  — **TShip.CalcFollowRadius()**
+    (старое предположение «TShip_UpdateEngine» оказалось НЕВЕРНЫМ —
+    Exception.Create-string в коде прямо говорит «TShip.CalcFollowRadius()»)
+
+    Если ship.Order != 6 → исключение.
+
+    mode := ship.OrderData[low byte]   // ship[+0x42C] & 0xFF
+    leader := AsClass(DestObj, TShip)
+
+    case mode of
+        1 (close-combat):
+            r := +∞
+            for each weapon w of leader (slot 1..weapon_cnt):
+                if w работоспособно и w.effective_range < r:
+                    r := w.effective_range
+        2 (long-range):
+            r := 0
+            for each weapon w of leader:
+                if w работоспособно и w.effective_range > r:
+                    r := w.effective_range
+        0 (free/auto):
+            r := 999999
+
+    if r ≤ 0 or r ≥ 999999:
+        return TRUNC( leader[+0x45C as float]   /* какой-то reserve */
+                    + leader.weapons[279 = ?]   /* первая weapon item */
+                    ) + 15
+    else:
+        return ROUND(r * <Extended-constant>)
+        // Extended-константа в декомпиляции показывается как -4.23e123 —
+        // это IDA-trash от 80-bit Delphi Extended; реальное значение
+        // скорее всего около 0.7..1.0 (поправочный коэффициент).
+
+    ИТОГО: возвращает «дистанция, на которой партнёр будет держаться от leader’а».
+
+================================================================================
+§1. ИСПРАВЛЕНИЕ — Order == 2 (FOLLOW_OBJ): TShip-цель
+================================================================================
+Этот блок выполняется ДО switch — особый префикс:
+   if ship.Order == 2 && IsClass(DestObj, TShip) { ... return; }
+
+Алгоритм (точно):
+
+  target := AsClass(ship.DestObj, TShip)
+  start_pt.xy := target.Pos      // считываются target[+20]/[+24]
+  d² := Dist²(start_pt, ship.Pos)
+
+  if d² < HUGE   (Float-Extended max, ≈ всегда true):
+      // ★ ИСПРАВЛЕНО: DestPos здесь это OFFSET относительно target.Pos
+      point.xy := target.Pos + ship.DestPos   // sub_45EDAC = ADD
+      PushDestination(ship, point, day_step)
+
+      // Если плёнка получилась пустой (например, DestPos == (0,0) и
+      // точка совпала со ship.Pos после snapping) — переустанавливаем
+      // DestPos на случайный микро-offset, чтобы не залипнуть:
+      if !ship.RouteFilm.head.next:
+          ship.DestPos.x := Galaxy_RandInt(-5, +5, ?)
+          ship.DestPos.y := Galaxy_RandInt(-5, +5, ?)
+          point.xy := target.Pos + ship.DestPos
+          PushDestination(ship, point, day_step)
+      return
+  else:
+      // Цель за пределами разумного (≈ никогда):
+      angle := Rnd(0, 360, ship.SeedFactor + target.Id)
+      // отступ на 200 единиц в случайном направлении ОТ позиции цели:
+      point.x := target.Pos.x + cos(angle) * 200
+      point.y := target.Pos.y - sin(angle) * 200
+      PushDestination(ship, point, day_step)
+      return
+
+ЧТО БЫЛО НЕ ТАК (прошлый отчёт):
+  • Я писал что для FOLLOW к TShip берётся DestObj.Pos напрямую как цель.
+  • На самом деле DestPos — это смещение, ВСЕГДА суммируется с target.Pos.
+  • UI (OnSpaceClick) для команды «лети к этому кораблю» должен:
+        ship.Order   := 2
+        ship.DestObj := clicked_ship
+        ship.DestPos := (0, 0)             ← важно: offset, не координата клика
+    Если нужно «стой рядом с этим кораблём на 100 ед. справа» —
+        ship.DestPos := (100, 0)
+
+================================================================================
+§2. ИСПРАВЛЕНИЕ — Order == 2 (FOLLOW_OBJ): TPlanet-цель
+================================================================================
+Эта ветка — внутри switch (case 2), после фильтра «не TShip».
+
+Параметры:
+  planet := AsClass(ship.DestObj, TPlanet)
+  R_app  := planet.OrbitRadius + 150     // approach zone (planet[80] dword = OrbitRadius)
+  R_land := planet.OrbitRadius + 50      // landing zone
+  star_day_frames := ship.CurStar[+260]  // см. ниже
+
+  ВАЖНО: ship.CurStar[+260] — это **число кадров в одном ходе для текущей
+  звезды** (= a4 ≈ 200; внутри функции используется как «дней в будущее»
+  для расчёта будущей орбиты планеты).
+
+────────────────────────────────────────────────────────────────────────────────
+2.1  ПЛЕЕР (ship == Player)
+────────────────────────────────────────────────────────────────────────────────
+Алгоритм:
+
+  future_pp := PlanetFutureOrbitPos(planet, star_day_frames)
+                 // позиция планеты на её орбите через ход
+  target    := future_pp + ship.DestPos          // ★ DestPos — offset от планеты
+                 // (sub_45EDAC = ADD)
+
+  cur_pp    := PlanetCurrentOrbitPos(planet)
+  d²_now    := Dist²(ship.Pos, cur_pp)
+
+  if d²_now > R_app²:                            // ship ВНЕ approach zone
+      d²_target := Dist²(target, future_pp)
+      if d²_target ≤ R_land²:                    // ★ target БЛИЗКО к будущей планете
+          // Нужно «не въехать» в посадочную зону, найти ближайшую точку
+          // на луче (ship.Pos → target), которая ОСТАЁТСЯ снаружи R_land.
+
+          dist_full   := Dist(target, ship.Pos)
+          dir_angle   := Atan2_PointToPoint(ship.Pos, target)
+                                 // sub_871A50 = направление от ship к target
+          unit_angle  := normalize_360(dir_angle)
+          sin_a, cos_a — стандартные тригонометрии этого угла
+
+          // === ШАГ 1: GREEDY HALVING ===
+          step := dist_full
+          loop:
+              step := step * 0.5
+              candidate := ship.Pos + dir * step  // дистанция от ship по dir
+              future_pp := PlanetFutureOrbitPos(planet, star_day_frames)
+              d²_candidate := Dist²(candidate, future_pp)
+              if d²_candidate < R_land²  AND  step > 30:
+                  continue
+              else:
+                  break
+
+          // === ШАГ 2: БИНАРНЫЙ ПОИСК (точность 10) ===
+          hi := step * 2.0   // последняя «inside R_land» точка
+          lo := step          // последняя «outside R_land» точка
+          while hi - lo > 10:
+              mid := (hi + lo) * 0.5
+              candidate := ship.Pos + dir * mid
+              future_pp := PlanetFutureOrbitPos(planet, star_day_frames)
+              if Dist²(candidate, future_pp) ≤ R_land²:
+                  hi := mid
+              else:
+                  lo := mid
+
+          step  := lo                            // КЛЮЧЕВОЕ: берём LO (вне зоны!)
+          target := ship.Pos + dir * step        // финальная цель
+
+          // Если шаги 1+2 не сработали, target остаётся = future_pp + DestPos
+      // else: target = future_pp + DestPos, без корректировки
+
+  else: // ship внутри approach zone — target тоже = future_pp + DestPos
+
+  if ship.Pos != target:
+      PushDestination(ship, target, day_step)
+  return
+
+Намерение: при подходе к планете игрок целится в точку (future_planet + offset).
+Если эта точка оказалась внутри посадочной зоны будущей планеты
+(а планета успеет туда переместиться), бинарный поиск находит точку
+ближе к ship — но всё ещё вне R_land. Тем самым корабль «зависает»
+снаружи посадочной зоны, не пытается влетать в планету.
+
+ЧТО БЫЛО НЕ ТАК (прошлый отчёт):
+  • Я писал про «бинарный поиск точки посадки», подразумевая что
+    игрок ищет идеальную точку посадки на орбите.
+  • На самом деле обратная задача — найти точку, которая ОСТАЁТСЯ ВНЕ
+    landing-зоны (чтобы не врезаться).
+  • Это работает только для случая «approach» (далеко от планеты).
+    Когда игрок уже у планеты — никакой корректировки нет, target = future + offset.
+
+────────────────────────────────────────────────────────────────────────────────
+2.2  NPC (ship != Player)
+────────────────────────────────────────────────────────────────────────────────
+Алгоритм проще:
+
+  future_pp := PlanetFutureOrbitPos(planet, star_day_frames)
+  jitter    := Rnd(-20, +20, ship.SeedFactor + planet.Id*2)
+  cur_pp    := PlanetCurrentOrbitPos(planet)
+
+  // угол «от планеты к ship» + jitter
+  approach_angle := Atan2_PointToPoint(cur_pp, ship.Pos) + jitter
+  approach_angle := normalize_360(approach_angle)
+  cur_pp := PlanetCurrentOrbitPos(planet)  // повторное считывание
+  d²_now := Dist²(cur_pp, ship.Pos)
+
+  // Дистанция захода:
+  if d²_now ≤ R_app²:
+      // ship уже близко — псевдо-случайная дистанция:
+      seed_dist := (star.UpperWord + ship.SeedFactor + planet.Id*2)
+      step := |signed(seed_dist)| % planet.OrbitRadius * <small_const>
+      // <small_const> в IDA показан как trash-extended, реально ~1.0
+  else:
+      step := R_land   // = OrbitRadius + 50, заход в landing zone
+
+  target.x := future_pp.x + cos(approach_angle) * step
+  target.y := future_pp.y - sin(approach_angle) * step
+
+  PushDestination(ship, target, day_step)
+
+Намерение: NPC облетает планету по дуге с jitter, заходит сбоку, а не
+лоб-в-лоб. Псевдо-случайная дистанция при близкой ship — чтобы корабли
+не собирались в одной точке.
+
+ЧТО БЫЛО НЕ ТАК (прошлый отчёт):
+  • Я писал что NPC просто берёт «случайную точку в радиусе approach_zone».
+  • На самом деле он берёт **точку относительно БУДУЩЕЙ позиции планеты**
+    с углом, рассчитанным от ТЕКУЩЕЙ позиции к ship.
+  • Дистанция = R_land (по умолчанию), либо мод по planet.OrbitRadius
+    (если уже рядом).
+
+================================================================================
+§3. ИСПРАВЛЕНИЕ — Order == 6 (FOLLOW_SHIP)
+================================================================================
+Это полностью внутри switch (case 6).
+
+Алгоритм:
+
+  leader := AsClass(ship.DestObj, TShip)
+  follow_radius := TShip.CalcFollowRadius(ship)   // см. §0
+                  // ★ зависит от ship.OrderData[low byte]: 0=auto, 1=close, 2=far
+                  // Возвращает дистанцию, на которой следовать.
+
+  if leader.RouteFilm.head:                       // у leader есть waypoints
+      if leader.RouteFilm.count > day_step:       // плёнка длиннее одного хода
+          // Взять (day_step-1)-й waypoint = «куда leader будет в конце хода»
+          ref_node := GetNodeAtIndex(day_step - 1, leader.RouteFilm.head)
+          jitter_seed := signed(ship.SeedFactor + leader.SeedFactor)
+          target := Dist2_0(
+                       ref_node.pos,           // источник
+                       jitter_seed,            // raw seed для ±90° jitter
+                       &out,                   // буфер
+                       follow_radius,          // дистанция позади
+                       ref_node.angle)         // base_angle = курс leader’а
+                       // → out = ref_node.pos + (180° + jitter) * follow_radius
+      else:                                       // плёнка короче (или равна) ходу
+          // Берём ПОСЛЕДНИЙ waypoint (Tail) leader’а
+          jitter_seed := signed(ship.SeedFactor + leader.SeedFactor)
+          target := Dist2_0(
+                       leader.RouteFilm.tail.pos,
+                       jitter_seed,
+                       &out,
+                       follow_radius,
+                       leader.RouteFilm.tail.angle)
+  else:                                           // у leader нет waypoints
+      // Используем ТЕКУЩУЮ позицию и угол leader’а
+      jitter_seed := signed(ship.SeedFactor + leader.SeedFactor)
+      target := Dist2_0(
+                   leader.Pos,
+                   jitter_seed,
+                   &out,
+                   follow_radius,
+                   leader.Angle)
+                   // leader.Angle = leader[+0x420] = double @ index 132
+
+  PushDestination(ship, target, day_step)
+
+  // ★ ВАЖНО: после планирования обновить ship.DestPos
+  //   = последний waypoint собственной плёнки (или ship.Pos если плёнка пустая)
+  if ship.RouteFilm.tail:
+      ship.DestPos.x := ship.RouteFilm.tail.pos.x
+      ship.DestPos.y := ship.RouteFilm.tail.pos.y
+  else:
+      ship.DestPos := ship.Pos
+
+  return
+
+ЧТО БЫЛО НЕ ТАК (прошлый отчёт):
+  • Я писал что «target = leader.RouteFilm.Tail.pos с фокусом» или
+    «target = leader.Pos + смещение по угло+seed».
+  • Точная формула: всегда **Dist2_0** = «точка позади ref-точки на
+    follow_radius, под углом 180° от ref-angle с jitter ±90°».
+  • **OrderData_low_byte** управляет стилем следования через
+    CalcFollowRadius() — это **тактический режим**, не просто параметр:
+        0 = «свободно» (~999999, фактически летим прямо на leader’а)
+        1 = «close-combat» (на минимальной weapon-дистанции leader’а)
+        2 = «long-range»   (на максимальной weapon-дистанции leader’а)
+  • После всего PushDestination в этом case ОБЯЗАТЕЛЬНО обновляется
+    ship.DestPos = последний waypoint собственной плёнки. Это нужно для
+    UI отрисовки «куда корабль фактически идёт» и для последующих ходов.
+
+================================================================================
+§4. СВЕДЁННЫЕ ОФФСЕТЫ ПОЛЕЙ ЦЕЛИ
+================================================================================
+TPlanet — структуры для расчёта орбиты:
+  +0x18 (24)  TStar*   parent_star
+  +0x20 (32)  double   CurrentOrbitAngle (степени)
+  +0x28 (40)  double   OrbitRadius
+  +0x40 (64)  double   OrbitalSpeed (степень/кадр)
+  +0x50 (80)  int      "size" / "OrbitRadius_int" (используется как
+                       planet[80] для approach_zone = +150, landing = +50)
+                       ★ ВНИМАНИЕ: в формуле бинпоиска NPC используется
+                       planet[80] (int), а в orbit-расчёте planet[+0x28] (double).
+                       Это разные представления одного и того же радиуса.
+
+TStar — что важно для траекторий:
+  +0x05C       float    PlanetAvoidRadius (используется в PlanPath)
+  +0x104 (260) int      DayFrames           ★ = 200 кадров в одном ходе
+  +0x108 (264) double   TimeFactor          ★ поправка для скорости
+
+TShip — что используется в FOLLOW:
+  +0x424 (1060) — байт-флаги внутри double Angle
+                  (HIBYTE @ +0x423 = IsVisibleOnFilm — см. предыдущий отчёт)
+  +0x42C (1068) uint32  OrderData
+        - low byte (mask 0xFF): для FOLLOW_SHIP — режим CalcFollowRadius
+                                для JUMP_HOLE  — флаг «через какую сторону дыры»
+                                                  (HIWORD выбирает Pos1/Pos2)
+        - == 0xFFFF0000:        для JUMP_HOLE «не использовать дыру»
+                                для GenerateSpline — флаг половинной скорости
+
+================================================================================
+§5. ОБНОВЛЁННАЯ КАРТА АДРЕСОВ
+================================================================================
+  0x710854   TShip.CalcFollowRadius         (★ переименовать из
+                                                 TShip_UpdateEngine)
+  0x45EDAC   Vec2_Add                       (sub_45EDAC)
+  0x872818   ProjectPointBackwardWithJitter (Dist2_0; в Delphi-исходнике
+                                              скорее всего ShipFollowOffsetPoint)
+  0x4D7F98   FilmList_GetNodeAtIndex        (sub_4D7F98)
+  0x7774F4   PlanetFutureOrbitPos           (sub_7774F4)
+  0x779D1C   PlanetCurrentOrbitPos          (sub_779D1C)
+  0x8718C8   PolarToCartesian               (sub_8718C8)
+  0x871A50   Atan2_PointToPoint             (sub_871A50)
+  0x8820B4   DEG_TO_RAD constant            (flt_8820B4 = 0.01745...)
+  0x712A24   TShip.WeaponEffectiveRange
+  0x70E934   TShip.WeaponGetSpeed
+
+================================================================================
+§6. КЛЮЧЕВЫЕ ВЫВОДЫ ПО ПЕРЕПРОВЕРКЕ
+================================================================================
+  1. DestPos для FOLLOW_OBJ (Order==2) — это **смещение** от target.Pos.
+     Это критично для UI: клик на объект → DestPos := (0,0).
+     Команда «лети рядом» с другого UI должна записать сюда конкретный
+     offset, не абсолютную координату.
+
+  2. Для игрока подход к планете включает **avoidance**, а не «landing
+     poin search». Алгоритм гарантирует что выбранная цель НЕ внутри
+     посадочной зоны будущей позиции планеты — корабль остановится
+     снаружи.
+
+  3. NPC заходят на планету «по дуге» с jitter относительно линии
+     «планета → корабль», и используют **будущую** позицию планеты как
+     центр расчёта. Это даёт реалистичный «упреждающий» полёт.
+
+  4. FOLLOW_SHIP имеет три **тактических режима** через OrderData_low_byte
+     (0/1/2), которые меняют дистанцию следования. Это, скорее всего,
+     UI-настройка партнёра/wingman’а через диалог Talk_Partner_*.
+
+  5. **TShip_UpdateEngine оказалось переименован**: реальное имя
+     CalcFollowRadius, и используется ТОЛЬКО для FOLLOW_SHIP. Если
+     где-то Order != 6 — функция кидает исключение.
+
+  6. У всех Follow-веток есть общий паттерн: после PushDestination
+     обязательно обновляется ship.DestPos = последний waypoint
+     собственной плёнки. Это нужно для (а) корректной отрисовки
+     UI «куда летит», (б) подсчёта оставшихся ходов в SE_ShipTurnBeforeEndOrder.
+
+================================================================================
+§7. ОТКРЫТЫЕ ВОПРОСЫ ПО FOLLOW-ВЕТКАМ
+================================================================================
+  [ ] CalcFollowRadius: константа -4.23e123 — посчитать реальное
+      значение через get_bytes по адресу .8 байт ниже sub_710854 retn.
+  [ ] flt_8820B4 — DEG_TO_RAD = ? (вероятно π/180 ≈ 0.0174533).
+      Проверить через get_int / get_global_value.
+  [ ] planet[+0x28 double OrbitRadius] vs planet[+0x50 int size]: одно
+      и то же значение или разные? Скорее всего одно округлено до int.
+  [ ] leader[+0x115C float] (TShip+0x115C) — что это? Используется в
+      fallback CalcFollowRadius как «дальность + 15».
+  [ ] Точное соответствие OrderData_low_byte режимов в UI:
+      кто пишет 0/1/2? Скорее всего Talk_Partner_*_Order* функции.
+================================================================================
+
+================================================================================
+§8. ПОПРАВКИ rev 3 (2026-06-29)
+================================================================================
+
+8.1  CalcFollowRadius СКАНИРУЕТ СВОИ ОРУЖИЯ, А НЕ ОРУЖИЯ LEADER'а
+─────────────────────────────────────────────────────────────────────────────
+В §0 (rev 2) и §3 я писал, что CalcFollowRadius перебирает оружие
+LEADER'а (ship.DestObj). По дополнительной проверке декомпиляции
+sub_710854 — это НЕВЕРНО.
+
+Реальный код (a1 = ship, который следует):
+    *(_BYTE *)(a1 + 300)              ← weapon_cnt    ★ SHIP'a
+    *(_BYTE **)(a1 + 4*i + 276)       ← weapons[i]    ★ SHIP'a
+    TShip_GetSpeed(a1, w)             ← active?       ★ SHIP'a
+    TShip_WeaponEffectiveRange(a1,...)←               ★ SHIP'a
+
+То есть **режим 1/2 учитывает оружие самого ship'а-ведомого**, а не leader'а.
+Семантически это логично:
+   • mode=1 (close-combat) — «держись на минимальной дальности
+     МОЕГО оружия» → ведомый подходит так близко, чтобы стрелять
+     даже короткоствольным.
+   • mode=2 (long-range)   — «держись на МАКСИМАЛЬНОЙ дальности
+     МОЕГО оружия» → ведомый отстаёт, чтобы успеть отойти.
+В обоих случаях leader используется только как точка отсчёта.
+
+8.2  FALLBACK В CalcFollowRadius
+─────────────────────────────────────────────────────────────────────────────
+В §0 (rev 2) формула фолбэка была записана как
+    TRUNC(leader[+0x45C] + leader.weapons[279]) + 15
+
+Реальная формула (a1=ship, leader=v13):
+    TRUNC(ship[+0x45C]/*float*/ + leader[+0x45C]/*float*/) + 15
+
+Поле +0x45C — это hull/collision_size (или similar). То есть фолбэк
+устанавливает дистанцию следования = сумма «размеров» обоих кораблей +
+15 единиц зазора. Это «collision-avoidance default» когда ни одно
+оружие не активно.
+
+8.3  ОБНОВЛЁННАЯ ТАБЛИЦА КОММЕНТАРИЕВ В IDA
+─────────────────────────────────────────────────────────────────────────────
+IDA-комментарий на TShip_CalcFollowRadius уже исправлен (см.
+"CORRECTION to earlier comment: scans ship's OWN weapons …").
+В этом документе должно использоваться обновлённое описание.
+
+================================================================================

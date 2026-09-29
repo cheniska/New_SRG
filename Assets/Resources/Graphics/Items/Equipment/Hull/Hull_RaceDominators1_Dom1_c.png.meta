@@ -1,0 +1,2277 @@
+fileFormatVersion: 2
+guid: 6d1d9ded2a1467b4697db9c889c780be
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af37a6ec5a557b248901e1dd3a5589f2
+      internalID: 2112851432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_1
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45f0c35b0e670c54a89cf539390ae189
+      internalID: -1613201756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_2
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2081fa90f1824b447a7ced0642c8216e
+      internalID: 842134945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_3
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca0dd4351c2dbaa4cbc89c7d6943b0c1
+      internalID: -926829375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_4
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12df404f0c125b641bf4a1b808edfa94
+      internalID: -428790544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_5
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c44a0bd7e598e0b41916719be9ae358f
+      internalID: 1971104118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_6
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 426b1273ebfb0d54b854b49647a37391
+      internalID: 1861632139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_7
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08e4d399749ad884c9cea073900d9a1b
+      internalID: 2104279308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_8
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79a50c1765d8c4844bea86fe51b584f0
+      internalID: -675167382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_9
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1024
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0333a250d24c9a04ab4499d45feb9a3d
+      internalID: 796752295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee60f733792543d4b8f93d7a25afce22
+      internalID: -1989765287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_11
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c302adbc778e204d8ab91dd2f059ddc
+      internalID: 1470538652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_12
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e86f7c18af36234ea275c8f556b50d1
+      internalID: -1513356267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_13
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07c8aa0667102104395525c66b0bbec4
+      internalID: -1141146702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_14
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 020a50a000bfca943952578210ad2a36
+      internalID: -1322494786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_15
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6303930be85b2b47b96658e501b0fcf
+      internalID: -2116490216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_16
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48779b9a30c459b4996a0088a7201b03
+      internalID: -1658025851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_17
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 060e80a85b2f01240a0d0b8e7c62c5fc
+      internalID: -1156868487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_18
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35f08a0eb330f5d40aad91bcc7402c5f
+      internalID: 1742093488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_19
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 896
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78ca6c336a6b2d04289841db22bd8769
+      internalID: 1673147438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d77341cf5416554eb65d8a46b1249e1
+      internalID: 1328257129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_21
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f4092f9f75c8f943b05fd2196a535f2
+      internalID: 868091403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_22
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2e6b2f16d4ed264bab994b7679de652
+      internalID: -990854508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_23
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83f9e44578c29a449b0677c8f3a06f8e
+      internalID: -983962162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_24
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67e574fd35a82bf41aa61063905a77b6
+      internalID: 136685604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_25
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d631429e2748dcc489a720fe81633ce9
+      internalID: -1423243920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_26
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e1d479372de3fb489824d974856a807
+      internalID: 1370814595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_27
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9fa9d41689c1bb409310bf34e5c8a11
+      internalID: 1586061266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_28
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8274500eed3a033459bfee6ca5ae691d
+      internalID: -764049265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_29
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 768
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b9d8817ff4245c4cb9d320ed8695eed
+      internalID: 69301688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89af6859d78dbc44fac624d66aa12739
+      internalID: -910286673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_31
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 659f5927792d59848acec63198014cfe
+      internalID: -406257952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_32
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce4ae0c4e3deb9649b1c9b1eca9460d7
+      internalID: 1242785703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_33
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47f092d1b5c174a428768495ecba652c
+      internalID: 1955057653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_34
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1040ce71adbd6fe45b75009a8e2df334
+      internalID: -941595421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_35
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b60307ffb7fe6645ba589f47f979bbc
+      internalID: -550145585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_36
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d198b2ed61bd8f4fb06b854fd37fa46
+      internalID: 810525110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_37
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9412e5e9d627f0f4fbb6f83302f899b0
+      internalID: 1265800710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_38
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a6564119d74dd24bb3705275643bd33
+      internalID: -239961498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_39
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 640
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46f2b2cddcf616a49bd48747701ebf7b
+      internalID: 1674700267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dac34b6142259e64e82dd8424068a40e
+      internalID: 1175396671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_41
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f1629f886afc8d4a826dc6489874ca6
+      internalID: -13382116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_42
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 553cbf2149e98f94784b9b99b1bc6c07
+      internalID: -1119311315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_43
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e64b0e6c8eea7ae4aba2daf55a60b632
+      internalID: 1125653606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_44
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0178cc422effab41b1bfaf2cfc8a0da
+      internalID: 2040263958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_45
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a7eebfb71ae17c42a741ce6af6dafa0
+      internalID: -936804197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_46
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55858fcac4590264585d71655d0662f6
+      internalID: -857636668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_47
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc274b2e33573e846bdd7d6c8cfbbc81
+      internalID: 633377674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_48
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c5bbdba65970f148b0c12a8755645a2
+      internalID: -1611535973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_49
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 512
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3badf0426de0fa4aab13e40ceeabef6
+      internalID: 1364913548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_50
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42d7e21efadce3b43b951a79e6f11dcd
+      internalID: -2071668996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_51
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a6f41323c3aa9746b0f92536d3f97be
+      internalID: 1161787654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_52
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d421c8dc7955054ea03345d1cea513b
+      internalID: 1047900428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_53
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ca3a9d8a1be272499a5b9eac8cd1e92
+      internalID: 740774284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_54
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 601c164367b679a409ea6c17a18b9aa9
+      internalID: -2097339963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_55
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b253261412124043b9329ca6e73183a
+      internalID: 1170516591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_56
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcafec77a38f1c54a9606c22a9b91428
+      internalID: -793770199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_57
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7fed2aac60974248a488b0bf8702cce
+      internalID: -2005112104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_58
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 494cc31912d93224cbdd0a70e68a56c6
+      internalID: 31262838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_59
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 384
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d53e07ccbf613f4083e9e14c185c261
+      internalID: -538090531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_60
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2aca8c2a8e301949be3b8f5a40eff84
+      internalID: -1952301212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_61
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5841b9fae6bcecd4982745c4feeed670
+      internalID: -462276220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_62
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a66f76a958096b4c9de24345fcadf33
+      internalID: 880006880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_63
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d69e4a1ce5b3bfe4888ffcf4c6fcaf62
+      internalID: 1030791708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_64
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ee370331fa5d8a45a69cc70555a8de7
+      internalID: 1725020794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_65
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85e5054b807ee4d49be56ac7de3e3554
+      internalID: -1270729955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_66
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb4cdaa5f84c52f47a499a36a8911cec
+      internalID: 1989158648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_67
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14b94700d1e5cc7448ea1663cd09a458
+      internalID: 1382773618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_68
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f2033a83f0ff6c4e822f59f024b7d7e
+      internalID: 420043553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_69
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba8dea07b1d050a498e735e002a0697f
+      internalID: 625445399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_70
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b33271654bbc26438066021bddcb1b8
+      internalID: -16500520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_71
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d92b7e404ed902449c8221d49c1c10b
+      internalID: -469030657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_72
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82a650b1623d31942853d531a57eb454
+      internalID: -936793430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_73
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9630cd9f9f31956499f1c4fb75430c14
+      internalID: -215265247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_74
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1556436a3ff191e428bb47ef06cb722c
+      internalID: 142368039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_75
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a77dcd5dc6a0bb4418825683ec2a9db8
+      internalID: 606721010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_76
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7dcea3272e3ed3c449ec08b205c25141
+      internalID: 317111137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_77
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 401b3c0e99b9dd5429269332a08d9117
+      internalID: 1372118020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_78
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 066517efb9edd9249a9a9f5d8b454d59
+      internalID: -2028572076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_79
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 128
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea0260b529069df46a5b008e5f018ded
+      internalID: -1456571393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_80
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 167b5ad670ceb52418ff5b7ab36a1b41
+      internalID: 206369925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_81
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f9e69bdb1bdd7941bc658f014f673c6
+      internalID: -1145476557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_82
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60be6cacc7255e7429f440c6e155ccbe
+      internalID: 920179880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_83
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a3f6bbf9765afc478cdb782d4973d49
+      internalID: -904187347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_84
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ca1b3ebc86104d4e8811dce14d57b5d
+      internalID: 861422095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_85
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aca5a4b2710cf3846a03ce98a31cc041
+      internalID: -2046005745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_86
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3da90a8717aab00478ac9222a3c13656
+      internalID: 438088493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_87
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 860270a2c11e61e46a2f03244aa4a0cd
+      internalID: 1180393751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_88
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 571977e28a652f140b1a208fc4f9ed8e
+      internalID: -1331452102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hull_RaceDominators1_Dom1_c_89
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f264eed0bfc5d364f91c426461a6463b
+      internalID: 702776418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 686da9ce9a7810c44a076d652c04d956
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Hull_Blazer_Dominator1_c_0: 1867002284551242094
+      Hull_Blazer_Dominator1_c_1: -8693090474112672804
+      Hull_Blazer_Dominator1_c_10: -1656356876810272139
+      Hull_Blazer_Dominator1_c_11: -2860822480214953195
+      Hull_Blazer_Dominator1_c_12: -3732597370431318669
+      Hull_Blazer_Dominator1_c_13: -381453781826132453
+      Hull_Blazer_Dominator1_c_14: -923740509990351200
+      Hull_Blazer_Dominator1_c_15: 1987984286521844870
+      Hull_Blazer_Dominator1_c_16: -2905199492623643379
+      Hull_Blazer_Dominator1_c_17: 4097919868769299225
+      Hull_Blazer_Dominator1_c_18: -987832647087548891
+      Hull_Blazer_Dominator1_c_19: -5561697602296710212
+      Hull_Blazer_Dominator1_c_2: -4864172457009459946
+      Hull_Blazer_Dominator1_c_20: 7048776445864186505
+      Hull_Blazer_Dominator1_c_21: 8674115597510485725
+      Hull_Blazer_Dominator1_c_22: 8105318226152596048
+      Hull_Blazer_Dominator1_c_23: -5464275061723076417
+      Hull_Blazer_Dominator1_c_24: 686075639025832437
+      Hull_Blazer_Dominator1_c_25: 3805380241203738711
+      Hull_Blazer_Dominator1_c_26: 8333308038268716698
+      Hull_Blazer_Dominator1_c_27: 1168405798640683297
+      Hull_Blazer_Dominator1_c_28: -1214236833837675834
+      Hull_Blazer_Dominator1_c_29: -5501459361358097125
+      Hull_Blazer_Dominator1_c_3: 3870733830953950587
+      Hull_Blazer_Dominator1_c_30: -8779622713262149120
+      Hull_Blazer_Dominator1_c_31: 7428308445471314872
+      Hull_Blazer_Dominator1_c_32: -2279450115304981295
+      Hull_Blazer_Dominator1_c_33: -1853759380764346114
+      Hull_Blazer_Dominator1_c_34: -8527142663503600721
+      Hull_Blazer_Dominator1_c_35: -9137032648442925874
+      Hull_Blazer_Dominator1_c_36: -5915535614466159450
+      Hull_Blazer_Dominator1_c_37: -5678622837912878746
+      Hull_Blazer_Dominator1_c_38: -5509466118027267519
+      Hull_Blazer_Dominator1_c_39: 506439690797048896
+      Hull_Blazer_Dominator1_c_4: -276166260918155381
+      Hull_Blazer_Dominator1_c_40: 2316704757982541787
+      Hull_Blazer_Dominator1_c_41: -2522963432369401540
+      Hull_Blazer_Dominator1_c_42: 6433211323421755685
+      Hull_Blazer_Dominator1_c_43: 5433155667042429934
+      Hull_Blazer_Dominator1_c_44: 8108204613522120676
+      Hull_Blazer_Dominator1_c_45: -6390712385564902833
+      Hull_Blazer_Dominator1_c_46: 2538478052682068615
+      Hull_Blazer_Dominator1_c_47: -2461934276976239709
+      Hull_Blazer_Dominator1_c_48: -6289526224362048351
+      Hull_Blazer_Dominator1_c_49: 5490163056517712673
+      Hull_Blazer_Dominator1_c_5: -2484250825054673011
+      Hull_Blazer_Dominator1_c_50: -1842694500272786252
+      Hull_Blazer_Dominator1_c_51: -4443315682915383827
+      Hull_Blazer_Dominator1_c_52: -3109268095231952416
+      Hull_Blazer_Dominator1_c_53: -5895151362946877188
+      Hull_Blazer_Dominator1_c_54: 7662603820579755058
+      Hull_Blazer_Dominator1_c_55: 949572566742588252
+      Hull_Blazer_Dominator1_c_56: 3046522043177172782
+      Hull_Blazer_Dominator1_c_57: -6935816128210940358
+      Hull_Blazer_Dominator1_c_58: 5541798319947913813
+      Hull_Blazer_Dominator1_c_59: -5982214095630178965
+      Hull_Blazer_Dominator1_c_6: 1624321795814451234
+      Hull_Blazer_Dominator1_c_60: -6378187271010869468
+      Hull_Blazer_Dominator1_c_61: 6943765227650764080
+      Hull_Blazer_Dominator1_c_62: -7591325436755837071
+      Hull_Blazer_Dominator1_c_63: 5419765616387733103
+      Hull_Blazer_Dominator1_c_64: -7814138215438094146
+      Hull_Blazer_Dominator1_c_65: -6047734513298791490
+      Hull_Blazer_Dominator1_c_66: -7895712215508071067
+      Hull_Blazer_Dominator1_c_67: -5953888383832627801
+      Hull_Blazer_Dominator1_c_68: -3395221851490720014
+      Hull_Blazer_Dominator1_c_69: 739707073425233323
+      Hull_Blazer_Dominator1_c_7: 6603433014422590027
+      Hull_Blazer_Dominator1_c_70: 4405188348001847577
+      Hull_Blazer_Dominator1_c_71: 8491791348188841986
+      Hull_Blazer_Dominator1_c_72: -5943106829112811923
+      Hull_Blazer_Dominator1_c_73: -5626278329109598010
+      Hull_Blazer_Dominator1_c_74: -4363364295815602111
+      Hull_Blazer_Dominator1_c_75: 6591785359197910518
+      Hull_Blazer_Dominator1_c_76: 447415119823445751
+      Hull_Blazer_Dominator1_c_77: 6828132311594787429
+      Hull_Blazer_Dominator1_c_78: 8831315338191094328
+      Hull_Blazer_Dominator1_c_79: 6591159937774660590
+      Hull_Blazer_Dominator1_c_8: 5697025673736255216
+      Hull_Blazer_Dominator1_c_80: -1987832447310453509
+      Hull_Blazer_Dominator1_c_81: -4847756880190493819
+      Hull_Blazer_Dominator1_c_82: -7338965049923889028
+      Hull_Blazer_Dominator1_c_83: 1371658074311965130
+      Hull_Blazer_Dominator1_c_84: -4875714017242803947
+      Hull_Blazer_Dominator1_c_85: 8247303699365257396
+      Hull_Blazer_Dominator1_c_86: -1632139829429725616
+      Hull_Blazer_Dominator1_c_87: 6645762029827173018
+      Hull_Blazer_Dominator1_c_88: -1412929067870117763
+      Hull_Blazer_Dominator1_c_89: -6153598041474238948
+      Hull_Blazer_Dominator1_c_9: 2474093653588153688
+      Hull_RaceDominators1_Dom1_c_0: 2112851432
+      Hull_RaceDominators1_Dom1_c_1: -1613201756
+      Hull_RaceDominators1_Dom1_c_10: -1989765287
+      Hull_RaceDominators1_Dom1_c_11: 1470538652
+      Hull_RaceDominators1_Dom1_c_12: -1513356267
+      Hull_RaceDominators1_Dom1_c_13: -1141146702
+      Hull_RaceDominators1_Dom1_c_14: -1322494786
+      Hull_RaceDominators1_Dom1_c_15: -2116490216
+      Hull_RaceDominators1_Dom1_c_16: -1658025851
+      Hull_RaceDominators1_Dom1_c_17: -1156868487
+      Hull_RaceDominators1_Dom1_c_18: 1742093488
+      Hull_RaceDominators1_Dom1_c_19: 1673147438
+      Hull_RaceDominators1_Dom1_c_2: 842134945
+      Hull_RaceDominators1_Dom1_c_20: 1328257129
+      Hull_RaceDominators1_Dom1_c_21: 868091403
+      Hull_RaceDominators1_Dom1_c_22: -990854508
+      Hull_RaceDominators1_Dom1_c_23: -983962162
+      Hull_RaceDominators1_Dom1_c_24: 136685604
+      Hull_RaceDominators1_Dom1_c_25: -1423243920
+      Hull_RaceDominators1_Dom1_c_26: 1370814595
+      Hull_RaceDominators1_Dom1_c_27: 1586061266
+      Hull_RaceDominators1_Dom1_c_28: -764049265
+      Hull_RaceDominators1_Dom1_c_29: 69301688
+      Hull_RaceDominators1_Dom1_c_3: -926829375
+      Hull_RaceDominators1_Dom1_c_30: -910286673
+      Hull_RaceDominators1_Dom1_c_31: -406257952
+      Hull_RaceDominators1_Dom1_c_32: 1242785703
+      Hull_RaceDominators1_Dom1_c_33: 1955057653
+      Hull_RaceDominators1_Dom1_c_34: -941595421
+      Hull_RaceDominators1_Dom1_c_35: -550145585
+      Hull_RaceDominators1_Dom1_c_36: 810525110
+      Hull_RaceDominators1_Dom1_c_37: 1265800710
+      Hull_RaceDominators1_Dom1_c_38: -239961498
+      Hull_RaceDominators1_Dom1_c_39: 1674700267
+      Hull_RaceDominators1_Dom1_c_4: -428790544
+      Hull_RaceDominators1_Dom1_c_40: 1175396671
+      Hull_RaceDominators1_Dom1_c_41: -13382116
+      Hull_RaceDominators1_Dom1_c_42: -1119311315
+      Hull_RaceDominators1_Dom1_c_43: 1125653606
+      Hull_RaceDominators1_Dom1_c_44: 2040263958
+      Hull_RaceDominators1_Dom1_c_45: -936804197
+      Hull_RaceDominators1_Dom1_c_46: -857636668
+      Hull_RaceDominators1_Dom1_c_47: 633377674
+      Hull_RaceDominators1_Dom1_c_48: -1611535973
+      Hull_RaceDominators1_Dom1_c_49: 1364913548
+      Hull_RaceDominators1_Dom1_c_5: 1971104118
+      Hull_RaceDominators1_Dom1_c_50: -2071668996
+      Hull_RaceDominators1_Dom1_c_51: 1161787654
+      Hull_RaceDominators1_Dom1_c_52: 1047900428
+      Hull_RaceDominators1_Dom1_c_53: 740774284
+      Hull_RaceDominators1_Dom1_c_54: -2097339963
+      Hull_RaceDominators1_Dom1_c_55: 1170516591
+      Hull_RaceDominators1_Dom1_c_56: -793770199
+      Hull_RaceDominators1_Dom1_c_57: -2005112104
+      Hull_RaceDominators1_Dom1_c_58: 31262838
+      Hull_RaceDominators1_Dom1_c_59: -538090531
+      Hull_RaceDominators1_Dom1_c_6: 1861632139
+      Hull_RaceDominators1_Dom1_c_60: -1952301212
+      Hull_RaceDominators1_Dom1_c_61: -462276220
+      Hull_RaceDominators1_Dom1_c_62: 880006880
+      Hull_RaceDominators1_Dom1_c_63: 1030791708
+      Hull_RaceDominators1_Dom1_c_64: 1725020794
+      Hull_RaceDominators1_Dom1_c_65: -1270729955
+      Hull_RaceDominators1_Dom1_c_66: 1989158648
+      Hull_RaceDominators1_Dom1_c_67: 1382773618
+      Hull_RaceDominators1_Dom1_c_68: 420043553
+      Hull_RaceDominators1_Dom1_c_69: 625445399
+      Hull_RaceDominators1_Dom1_c_7: 2104279308
+      Hull_RaceDominators1_Dom1_c_70: -16500520
+      Hull_RaceDominators1_Dom1_c_71: -469030657
+      Hull_RaceDominators1_Dom1_c_72: -936793430
+      Hull_RaceDominators1_Dom1_c_73: -215265247
+      Hull_RaceDominators1_Dom1_c_74: 142368039
+      Hull_RaceDominators1_Dom1_c_75: 606721010
+      Hull_RaceDominators1_Dom1_c_76: 317111137
+      Hull_RaceDominators1_Dom1_c_77: 1372118020
+      Hull_RaceDominators1_Dom1_c_78: -2028572076
+      Hull_RaceDominators1_Dom1_c_79: -1456571393
+      Hull_RaceDominators1_Dom1_c_8: -675167382
+      Hull_RaceDominators1_Dom1_c_80: 206369925
+      Hull_RaceDominators1_Dom1_c_81: -1145476557
+      Hull_RaceDominators1_Dom1_c_82: 920179880
+      Hull_RaceDominators1_Dom1_c_83: -904187347
+      Hull_RaceDominators1_Dom1_c_84: 861422095
+      Hull_RaceDominators1_Dom1_c_85: -2046005745
+      Hull_RaceDominators1_Dom1_c_86: 438088493
+      Hull_RaceDominators1_Dom1_c_87: 1180393751
+      Hull_RaceDominators1_Dom1_c_88: -1331452102
+      Hull_RaceDominators1_Dom1_c_89: 702776418
+      Hull_RaceDominators1_Dom1_c_9: 796752295
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

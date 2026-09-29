@@ -1,0 +1,351 @@
+===============================================================================
+Улучшение оборудования на SB/CB — сводка формул
+===============================================================================
+
+Компактный справочник по формулам. Полный разбор диалога, отбор предметов,
+семантика полей — см. `SB_Equipment_Improvement.txt`.
+
+Все переменные: item.Size = TItem.Size (dword @+0x20); item.Race @+0x1C;
+Rnd(a,b,seed) — целое равномерно в [a,b]; RndFloat(seed,base,delta) — float
+равномерно в [base, base+delta]; RoundToTens — округление к десяткам;
+ROUND — округление к ближайшему целому.
+
+Seed берётся из item.Id (dword @+0x8) домноженного на множитель и на Galaxy.Day.
+Тир из item.byte_93: 0=Min, 1=Avg, 2=Max, 3=random 0..2.
+
+-------------------------------------------------------------------------------
+0. Диспетчер (общее для всех)
+-------------------------------------------------------------------------------
+
+Все ApplyImprovement завершаются одинаково:
+
+    item.Cost (dword @+0x20) += GetImprovementCost(tier) / 2
+    item.byte_93 := 0                                              // сбросить тир
+
+Стоимость улучшения — общая для всех наследников TItem:
+
+    TItem.GetImprovementCost(tier) @0x735D34:
+        tier=0 (Min):  RoundToTens(item.Size * 0.3)
+        tier=1 (Avg):  RoundToTens(item.Size * 0.6)
+        tier=2 (Max):  RoundToTens(item.Size * 1.2)
+        tier>=3:       raise "Invalid parameter"
+
+Стоимость в **Нодах Доминаторов** (только если item.Race == 5):
+
+    nodes_SB := ROUND(money_cost * 0.01)          // 1 нода на 100 монет
+    nodes_CB := ROUND(money_cost * 0.01 * 1.5)    // CB в 1.5× дороже нодами
+
+CB также применяет скидку на **деньги** от игрока-«нодулянта»:
+
+    N := Player_CalcNoduleCount(Player)             // 0..100
+       = ROUND(Player.field_+0x514 / 1.3) + 1        clamp 0..100
+    money_CB := ROUND(GetImprovementCost(Max) * (100 - N) / 100)
+
+CB предлагает **только тир Max**; выбор Min/Avg/Max есть только на SB.
+
+-------------------------------------------------------------------------------
+1. THull.ApplyImprovement (0x7381E8)
+-------------------------------------------------------------------------------
+
+Корпус — прибавка брони (+1 slot @+0x65):
+
+    seed_a := 254571 * item.Id
+
+    case Min: hull.hit_protect += Rnd(1, 2, seed_a)
+    case Avg: hull.hit_protect += Rnd(2, 3, seed_a)
+    case Max: hull.hit_protect += Rnd(3, 4, seed_a)
+
+Дополнительный HP-бонус, **только если hull.hull_type == 7**
+(легаси-корпуса из старых сейвов, TShull.LoadFromStream маппит
+raw_hull_type 24→7 при ver<88; в актуальной генерации значение 7 не выдаётся):
+
+    base := max(500, hull.Size)         // не меньше 500 в качестве базы
+    case Min: mul := Rnd(3,  7, 214571 * item.Id)
+    case Avg: mul := Rnd(8, 12, 214571 * item.Id)
+    case Max: mul := Rnd(13,17, 214571 * item.Id)
+    delta := ROUND(base * mul)          // единицы «HP»
+    hull.Size (+0x18)          += delta
+    hull.Size_mirror (+0x60)   += delta
+
+    // Комментарий: hull_type==7 — единственный код на такой ветке.
+    // Для современных сейвов ветка мёртвая; сохранена ради совместимости.
+
+-------------------------------------------------------------------------------
+2. TWeapon.ApplyImprovement (0x742B8C)
+-------------------------------------------------------------------------------
+
+Оружие — прирост Radius (dword @+0x64) и MaxDamage (dword @+0x6C).
+Внутри Rnd используются seed'ы seed_dmg=276247, seed_var=354571, seed_ext=976247.
+
+Общая форма (условия для tier=0/1/2):
+
+    // прибавка к MaxDamage
+    weapon.MaxDamage += ROUND(RndFloat(seed_ext*Id, base_d, delta_d)) + K_d
+
+    // прибавка к Radius (+0x64)
+    weapon.Radius   += RoundToTens(
+        weapon.Radius * RndFloat(seed_ext*Id, base_r_pct, delta_r_pct)
+      + WeaponInfo.Size (@+0x1C) * RndFloat(seed_var*Id, base_r_abs, delta_r_abs)
+    )
+
+Табличные коэффициенты (verified):
+
+    tier | base_d | delta_d | K_d | base_r_pct | delta_r_pct | base_r_abs | delta_r_abs
+    -----|--------|---------|-----|------------|-------------|------------|------------
+    Min  | 0.20   | 0.05    | +1  | 0.04       | 0.02        | 0.02       | 0.02
+    Avg  | 0.30   | 0.10    | +2  | 0.05       | 0.02        | 0.03       | 0.02
+    Max  | 0.40   | 0.10    | +3  | 0.06       | 0.02        | 0.04       | 0.02
+
+    (числа декодированы из констант в стеке случайного вызова — уровень
+     точности ±0.01 из-за представления double)
+
+Специальная ветка для оружия расы 5..7 (Dominator):
+    Если weapon.field_80 > 0 И raceKind в [6,7], перед основным приростом
+    из уже накопленных бонусов вычитается 1-per-shot × chip_bonus, чтобы
+    не завышать damage относительно других видов ущерба.
+
+Псевдо-код случая tier=3 (random-tier, используется скриптом SF_ItemImprovement
+через флаг «случайный»):
+    Radius += RoundToTens( Radius * RndFloat(0.18..0.25)
+                         + sqrt(WeaponInfo.Size² + 90000) - WeaponInfo.Size )
+
+-------------------------------------------------------------------------------
+3. TEngine.ApplyImprovement (0x73B520) — двойной подтир
+-------------------------------------------------------------------------------
+
+Двигатель имеет две подветки апгрейда: «Скорость» (subtier=1) и «Экономичность»
+(subtier=2). Подтир выбирается либо через item[+8]=name (Detail-mode), либо
+рандомно RndFloat_0_1 >= 0.5.
+
+Модифицируемые поля:
+    engine.MaxSpeed (dword @+0x64)     — «скорость» (int)
+    engine.field_104 (byte @+0x68)     — «расход/бонус»
+
+Подтир 1 (Скорость):
+    tier | rnd_speed_abs | rnd_speed_pct  | rnd_bonus
+    -----|---------------|----------------|-----------
+    Min  | Rnd(10..30)   | 0.01..0.06     | Rnd(1..2)
+    Avg  | Rnd(30..60)   | 0.02..0.08     | Rnd(2..4)
+    Max  | Rnd(50..80)   | 0.03..0.10     | Rnd(3..7)
+    MaxSpeed += RoundToTens(MaxSpeed * rnd_speed_pct + rnd_speed_abs)
+    field_104 += rnd_bonus
+
+Подтир 2 (Экономичность):
+    tier | rnd_bonus     | rnd_speed_pct  | rnd_speed_abs
+    -----|---------------|----------------|-----------
+    Min  | Rnd(2..5)     | 0.01..0.04     | Rnd(10..20)
+    Avg  | Rnd(5..7)     | 0.01..0.05     | Rnd(20..40)
+    Max  | Rnd(7..12)    | 0.01..0.06     | Rnd(30..50)
+    field_104 += rnd_bonus
+    MaxSpeed += RoundToTens(MaxSpeed * rnd_speed_pct + rnd_speed_abs)
+
+-------------------------------------------------------------------------------
+4. TFuelTanks.ApplyImprovement (0x73A6FC)
+-------------------------------------------------------------------------------
+
+Топливные баки — байт @+0x68 (Capacity):
+
+    tier | rnd_pct       | K
+    -----|---------------|-----
+    Min  | 0.05..0.15    | +1
+    Avg  | 0.10..0.25    | +3
+    Max  | 0.15..0.35    | +5
+
+    tank.Capacity (byte @+0x68) += ROUND(rnd_pct * 1.0) + K
+    (rnd_pct напрямую округляется — эффективно Rnd(1..2)-ish в целых единицах)
+
+-------------------------------------------------------------------------------
+5. TRadar.ApplyImprovement (0x73CB6C)
+-------------------------------------------------------------------------------
+
+Радар — int @+0x64 (Range):
+
+    tier | rnd_abs         | rnd_pct
+    -----|-----------------|--------
+    Min  | Rnd(100..200)   | 0.05..0.15
+    Avg  | Rnd(300..400)   | 0.05..0.15   (одинаковый %, растёт абс.)
+    Max  | Rnd(400..500)   | 0.05..0.15
+
+    radar.Range += RoundToTens(Range * rnd_pct + rnd_abs)
+
+-------------------------------------------------------------------------------
+6. TScaner.ApplyImprovement (0x73D970)
+-------------------------------------------------------------------------------
+
+Сканер — byte @+0x61 (Precision):
+
+    tier | rnd_frac     | K
+    -----|--------------|-----------
+    Min  | 0.05..0.15   | Rnd(1..3)
+    Avg  | 0.05..0.15   | Rnd(3..5)
+    Max  | 0.05..0.15   | Rnd(5..7)
+
+    scaner.Precision += ROUND(rnd_frac) + K
+
+-------------------------------------------------------------------------------
+7. TRepairRobot.ApplyImprovement (0x73E7FC)
+-------------------------------------------------------------------------------
+
+Ремонтный робот — byte @+0x61 (RepairPerDay):
+
+    tier | rnd_frac        | K
+    -----|-----------------|-----------
+    Min  | 0.07..0.19      | Rnd(1..4)
+    Avg  | 0.07..0.19      | Rnd(4..7)
+    Max  | 0.07..0.19      | Rnd(7..10)
+
+    robot.RepairPerDay += ROUND(rnd_frac) + K
+
+-------------------------------------------------------------------------------
+8. TCargoHook.ApplyImprovement (0x73F9C0) — двойной подтир
+-------------------------------------------------------------------------------
+
+Захват — двухподтирный, аналогично TEngine.
+
+Модифицируемые поля:
+    hook.Range (int @+0x64)
+    hook.Load  (int @+0x68)
+
+Подтир 1 (Радиус):
+    tier | rnd_r_pct     | rnd_r_abs      | rnd_load
+    -----|---------------|----------------|-----------
+    Min  | 0.07..0.19    | Rnd(5..10)     | Rnd(2..4)
+    Avg  | 0.07..0.19    | Rnd(10..15)    | Rnd(5..7)
+    Max  | 0.07..0.19    | Rnd(15..20)    | Rnd(8..10)
+    Range += ROUND(rnd_r_pct) + rnd_r_abs
+    Load  += rnd_load
+
+Подтир 2 (Грузоподъёмность):
+    tier | rnd_load       | rnd_r_pct    | rnd_r_abs
+    -----|----------------|--------------|------------
+    Min  | Rnd(10..15)    | 0.01..0.06   | Rnd(2..3)
+    Avg  | Rnd(15..20)    | 0.01..0.06   | Rnd(3..4)
+    Max  | Rnd(20..25)    | 0.01..0.06   | Rnd(4..5)
+    Load  += rnd_load
+    Range += ROUND(rnd_r_pct) + rnd_r_abs
+
+-------------------------------------------------------------------------------
+9. TDefGenerator.ApplyImprovement (0x741168) — противоположный знак!
+-------------------------------------------------------------------------------
+
+Генератор защ. поля — float @+0x64 (Consumption / Расход).
+**Улучшение уменьшает** значение (меньше расход = лучше):
+
+    tier | rnd_frac
+    -----|---------------
+    Min  | 0.01..0.04
+    Avg  | 0.02..0.06
+    Max  | 0.03..0.08
+
+    defgen.Consumption -= RndFloat(seed, base, delta)
+
+Единственный класс, где стат УМЕНЬШАЕТСЯ при улучшении.
+
+-------------------------------------------------------------------------------
+10. Detail-режим — какие атрибуты доступны
+-------------------------------------------------------------------------------
+
+SB_Improvement_DetailDialog (0x57F834) пробегает v23 = 1..100, для каждого:
+  * sub_731FDC(item) даёт имя типа: "Weapon" / "Artefact" / MB_bonus_items_table[type]
+  * ключ: "<TypeName>.Detail.<v23>"
+  * если у MB такой строки — атрибут показывается кнопкой в диалоге.
+
+Ограничения:
+  * Только классы TWeapon / TEngine / TCargoHook имеют Detail-варианты
+  * TWeapon: v23 == 2 (атрибут «Radius») ПРОПУСКАЕТСЯ, если у оружия
+    DamageType в [5..7] (single-target hit-scan weapons — Рельсовое,
+    ЭМИ и т. п. — где Radius не применим).
+
+При подтверждении конкретного атрибута:
+    saved_ref := item.field_+0x08              // строка-имя (dword)
+    item.field_+0x08 := attr_name_ptr
+    item.byte_93     := tier
+    (VMT+0x34)(item)                            // ApplyImprovement
+    item.field_+0x08 := saved_ref
+
+TEngine/TCargoHook внутри ApplyImprovement считывают item.field_+0x08:
+  * если это ссылка на строку конкретного подтира — используют его
+  * если пусто (Full-item mode) — выбирают подтир random-ом (RndFloat_0_1)
+
+-------------------------------------------------------------------------------
+11. Категория "нужны ноды" (item.Race == 5)
+-------------------------------------------------------------------------------
+
+Byte @+0x1C = TItem.Race. Значение 5 = **Оборудование расы Kling (Доминаторы)**.
+Устанавливается в:
+  * TKling_InitEquipment (0x5CC578)              — при экипировке миньона
+  * TShip_TakeWeaponDamage_FullCycle (0x705B69)  — при выбивании МикроМодуля
+  * sub_6AABF8 (0x6AAC4A)                        — при создании доминаторского
+                                                    артефакта
+
+Логика игры: чтобы прокачивать доминаторское оборудование, нужны Ноды
+(добываемые из тех же доминаторов). Кроме улучшения, флаг Race==5 также
+влияет на:
+  * SB_Research (продажа/анализ доминаторских трофеев)
+  * CB_Improvement (нодная скидка)
+  * Talk_MilitarySupport_SellRemains (продажа RC-военным)
+  * TWarrior/TTransport_WeaponTargeting (приоритет цели по доминаторским
+    признакам)
+
+Раса 0..4 = Малок / Пеленг / Человек / Фей / Гаал (стандартный enum).
+Раса 5 = Kling (доминаторы). Раса 6+ = технические/арт-фракции.
+
+-------------------------------------------------------------------------------
+12. Стандартный chain: как игрок доходит от Ask до Apply
+-------------------------------------------------------------------------------
+
+  Player выбирает "Улучшить оборудование" на SB/CB
+     → SB_Improvement_OnAskBtn (0x57E60C)
+     → SB_Improvement_ShowItemList (0x57E748)  — фильтр eligible items
+     → игрок выбирает предмет
+     → SB_Improvement_AskCost (0x57EF0C)       — показ 3 тиров (Min/Avg/Max)
+                                                   с ценами money/nodes
+     → игрок выбирает тир
+     → SB_Improvement_DetailDialog (0x57F834)  — либо конкретный атрибут,
+                                                   либо весь item
+     → игрок подтверждает
+     → SE_ItemImprovement (0x6519F0)           — вызов через скрипт-механику
+        сохраняет item[+8]=attr_name, item[93]=tier
+        вызывает VMT+0x34 (ApplyImprovement) — мутирует поля
+     → item.Cost += GetImprovementCost/2
+     → SB_Improvement_RepeatDialog (0x57FBC0)  — «Хотите ещё?»
+
+-------------------------------------------------------------------------------
+13. Итоговая таблица классов
+-------------------------------------------------------------------------------
+
+  Класс           | Мод. поле(я)   | Знак | Есть Detail | Двухподтир
+  ----------------|----------------|------|-------------|-----------
+  THull           | +Armor,+HP*    | +    | нет         | нет
+  TWeapon         | +Dmg,+Radius   | +    | ДА          | нет
+  TEngine         | +Speed,+eff    | +    | ДА          | ДА (Sp/Eco)
+  TFuelTanks      | +Capacity      | +    | нет         | нет
+  TRadar          | +Range         | +    | нет         | нет
+  TScaner         | +Precision     | +    | нет         | нет
+  TRepairRobot    | +RepairRate    | +    | нет         | нет
+  TCargoHook      | +Range,+Load   | +    | ДА          | ДА (R/L)
+  TDefGenerator   | −Consumption   | −    | нет         | нет
+
+  * доп. HP только при hull_type==7 (легаси-ветка)
+
+-------------------------------------------------------------------------------
+14. Переименованные функции (все — с уверенностью)
+-------------------------------------------------------------------------------
+
+  0x735D34  TItem_GetImprovementCost
+  0x7381E8  THull_ApplyImprovement
+  0x742B8C  TWeapon_ApplyImprovement
+  0x73A6FC  TFuelTanks_ApplyImprovement
+  0x73B520  TEngine_ApplyImprovement
+  0x73CB6C  TRadar_ApplyImprovement
+  0x73D970  TScaner_ApplyImprovement
+  0x73E7FC  TRepairRobot_ApplyImprovement
+  0x73F9C0  TCargoHook_ApplyImprovement
+  0x741168  TDefGenerator_ApplyImprovement
+  0x7370DC  TItem_CanBeImproved            (общий фильтр eligible)
+  0x743300  TWeapon_CanBeImproved          (VMT+0x3C, отказ если чипы стоят)
+  0x7429D8  TWeapon_CalcMaxDamageWithChips
+  0x742A68  TWeapon_CalcRadiusWithChips
+  0x74B808  TItem_ApplySpecialFromDB       (применение "SuperHullPB" и т.п.)
+
+===============================================================================
