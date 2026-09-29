@@ -22,7 +22,7 @@ namespace SRG.Equipment
         /// для чистки перед пересчётом (см. <see cref="BonusService.RemoveRuntimeByPrefix"/>).</summary>
         public const string CrossSlotPrefix = "__ship_cross:";
 
-        /// <summary>Префикс id для бонусов от удалённо-работающих артефактов (через хаб Артефактор):
+        /// <summary>Префикс id для бонусов от удалённо-работающих артефактов (через Резонансный хаб):
         /// SlotCode совместимого артефакта из трюма отражается как рантайм-бонусы с этим префиксом.</summary>
         public const string RemoteArtefactPrefix = "__ship_remote:";
 
@@ -103,7 +103,7 @@ namespace SRG.Equipment
                 }
             }
 
-            // 5. Артефактор: если у установленного артефакта конфиг содержит
+            // 5. Резонансный хаб: если у установленного артефакта конфиг содержит
             // ScriptParams.RemoteArtefactor { MaxCount, Scale }, то первые MaxCount совместимых
             // предметов из трюма (Params["RemoteCompatible"]=1 или ScriptParams.RemoteCompatible=true)
             // отдают свой SlotCode в бонусы кораблю, все числовые значения масштабируются на Scale.

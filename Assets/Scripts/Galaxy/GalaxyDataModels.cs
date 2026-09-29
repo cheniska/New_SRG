@@ -175,7 +175,7 @@ namespace SRG.Galaxy
         /// Задаётся при создании стека из <see cref="ItemConfig.IsGoods"/>. Стек без флага —
         /// «useless» (стакабельные находки, минералы, квестовые предметы).</summary>
         public bool IsGoods { get; set; }
-        /// <summary>Стек создан «естественным» источником (астероид → минерал/ноды), а не выброшен
+        /// <summary>Стек создан «естественным» источником (астероид → минерал/нейроядра), а не выброшен
         /// из трюма. Влияет только на графику дропа в космосе: если у ступени задан
         /// <see cref="StackGraphicStep.NaturalSprite"/>, он используется вместо обычного Sprite.</summary>
         public bool NaturalOrigin { get; set; }
@@ -1122,9 +1122,9 @@ namespace SRG.Galaxy
 
         public int Money { get; set; }
 
-        /// <summary>Нод-счёт корабля. Используется <see cref="SRG.Equipment.ImprovementService"/> при
+        /// <summary>Нейроядер-счёт корабля. Используется <see cref="SRG.Equipment.ImprovementService"/> при
         /// улучшении оборудования с флагом <see cref="ItemInstance.RequiresNodesToImprove"/>: сначала
-        /// списываем физические стеки Node из трюма, если не хватает — дораскладываем с нод-счёта.
+        /// списываем физические стеки Node из трюма, если не хватает — дораскладываем с нейроядер-счёта.
         /// Механика пополнения счёта появится позже (диздок docs/modules/equipment_improvement.md).</summary>
         public int NodeAccount { get; set; }
 
@@ -1646,8 +1646,8 @@ namespace SRG.Galaxy
         /// Сбрасывается в false навсегда, как только предмет был улучшен ЛИБО в него встроили
         /// микромодуль (см. <see cref="SRG.Equipment.EmbedService"/>). Один предмет — один апгрейд.</summary>
         public bool IsImprovable { get; set; }
-        /// <summary>Требует расходования Нод при улучшении. Флаг из шаблона (обычно ставится
-        /// доминаторскому/трофейному оборудованию). Формула нод — см. <see cref="SRG.Equipment.ImprovementService"/>.</summary>
+        /// <summary>Требует расходования Нейроядер при улучшении. Флаг из шаблона (обычно ставится
+        /// синтетскому/трофейному оборудованию). Формула нейроядер — см. <see cref="SRG.Equipment.ImprovementService"/>.</summary>
         public bool RequiresNodesToImprove { get; set; }
         /// <summary>Список ключей <see cref="Params"/>, значения которых были подняты апгрейдом.
         /// Используется UI: значения окрашиваются в зелёный (см. <see cref="SRG.UI.Common.UIColorPalette"/>).

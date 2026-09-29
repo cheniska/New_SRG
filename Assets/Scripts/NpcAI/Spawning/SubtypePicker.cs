@@ -7,7 +7,7 @@ namespace SRG.NpcAI.Spawning
 {
     /// <summary>
     /// Выбор подтипа корабля по таблице SubtypeTables, используя ступень доминации расы.
-    /// Применяется только для рас с <see cref="RaceConfig.UseShipTypeTable"/>=true (доминаторы).
+    /// Применяется только для рас с <see cref="RaceConfig.UseShipTypeTable"/>=true (синтеты).
     /// </summary>
     public static class SubtypePicker
     {

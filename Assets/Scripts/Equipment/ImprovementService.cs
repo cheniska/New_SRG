@@ -48,7 +48,7 @@ namespace SRG.Equipment
         public struct Quote
         {
             public int Money;
-            public int Nodes;         // 0 если ноды не требуются
+            public int Nodes;         // 0 если нейроядра не требуются
             public bool NeedsNodes;
             public string Reason;     // не null, если апгрейд невозможен
             public bool Ok => string.IsNullOrEmpty(Reason);
@@ -140,7 +140,7 @@ namespace SRG.Equipment
             return merged;
         }
 
-        /// <summary>Применить улучшение. Списывает деньги/ноды, мутирует предмет, вызывает recompute.
+        /// <summary>Применить улучшение. Списывает деньги/нейроядра, мутирует предмет, вызывает recompute.
         /// selectedAttribute:
         ///   • Mode.Standard: null — все атрибуты категории по полному, иначе выбранный по полному
         ///     + остальные ×SecondaryGrowthFactor;
@@ -161,7 +161,7 @@ namespace SRG.Equipment
             if (!quote.Ok) return Fail(quote.Reason);
             if (payer.Money < quote.Money) return Fail("Недостаточно средств.");
             if (quote.NeedsNodes && !CanPayNodes(payer, quote.Nodes))
-                return Fail($"Недостаточно нод (требуется {quote.Nodes}).");
+                return Fail($"Недостаточно нейроядер (требуется {quote.Nodes}).");
             if (mode == Mode.Advanced && string.IsNullOrEmpty(selectedAttribute))
                 return Fail("Продвинутый апгрейд требует выбора конкретной характеристики.");
 
@@ -229,7 +229,7 @@ namespace SRG.Equipment
             return new ApplyResult { Ok = true, Changes = changes, Message = BuildMessage(item, mode, changes) };
         }
 
-        /// <summary>Применить NPC-апгрейд (без денег, без нод, без выбора атрибута — всё сразу).
+        /// <summary>Применить NPC-апгрейд (без денег, без нейроядер, без выбора атрибута — всё сразу).
         /// Возвращает true, если что-то улучшили.</summary>
         public static bool TryApplyNpcImprovement(ItemInstance item, ShipData owner, ImprovementConfig cfg, System.Random rng)
         {

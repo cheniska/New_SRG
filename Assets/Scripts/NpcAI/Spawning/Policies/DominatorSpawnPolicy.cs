@@ -7,12 +7,12 @@ using SRG.Galaxy;
 namespace SRG.NpcAI.Spawning.Policies
 {
     /// <summary>
-    /// Top-up per-star политика для доминаторов.
-    /// Цель — поддерживать в каждой клинг-звезде target подтипов (Dom1..Dom6) расы доминаторов.
+    /// Top-up per-star политика для синтетов.
+    /// Цель — поддерживать в каждой клинг-звезде target подтипов (Dom1..Dom6) расы синтетов.
     ///
     /// Алгоритм:
     ///   1. Только звёзды с Owner=Dominators.
-    ///   2. Раса доминатора берётся из Star.Race (например "RaceDominators1").
+    ///   2. Раса синтета берётся из Star.Race (например "RaceDominators1").
     ///   3. target = TargetByRace[star.Race].
     ///   4. count = сумма живых подтипов этой расы в этой звезде (по AvailableShipTypes минус boss).
     ///   5. Если shortage>0 и ролл прошёл — выбираем подтип через SubtypePicker и спавним.
@@ -51,7 +51,7 @@ namespace SRG.NpcAI.Spawning.Policies
             if (star == null) return;
             if (string.IsNullOrEmpty(star.Race)) return;
 
-            // Эффективный контроллёр системы: либо родные доминаторы, либо оккупант в состоянии
+            // Эффективный контроллёр системы: либо родные синтеты, либо оккупант в состоянии
             // «полностью контролируют систему» (RecomputeSystemControl выставляет только при uniform).
             string controller = !string.IsNullOrEmpty(star.CurrentSystemController)
                 ? star.CurrentSystemController
@@ -61,7 +61,7 @@ namespace SRG.NpcAI.Spawning.Policies
             if (policy.AllowedOwners != null && policy.AllowedOwners.Count > 0
                 && !policy.AllowedOwners.Contains(controller)) return;
 
-            // Target по расе доминатора
+            // Target по расе синтета
             int target = ResolveTarget(star.Race, policy);
             if (target <= 0) return;
 
@@ -93,7 +93,7 @@ namespace SRG.NpcAI.Spawning.Policies
 
         /// <summary>
         /// Спавн в звезде: у первой подходящей планеты (если есть Owner=Dominators), иначе в случайной
-        /// точке у любой планеты. Доминаторы NonPlanetary, поэтому HomePlanet — формальность.
+        /// точке у любой планеты. Синтеты NonPlanetary, поэтому HomePlanet — формальность.
         /// </summary>
         private static void SpawnAtStar(string subtypeId, StarData star, RaceConfig raceCfg, SpawnTickContext ctx, int target, int count)
         {

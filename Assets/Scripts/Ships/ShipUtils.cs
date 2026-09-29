@@ -28,7 +28,7 @@ namespace SRG.Ships
             s != null && (s.ShipTypeId == "Transport" || s.ShipTypeId == "Liner" || s.ShipTypeId == "Diplomat");
 
         // ── Иммунитет к «жёстким» криминальным взаимодействиям ────────
-        // Военные / рейнджеры / пираты / доминаторы не сдаются на вымогательство и не отдают груз.
+        // Военные / вольные пилоты / пираты / синтеты не сдаются на вымогательство и не отдают груз.
 
         public static bool IsHardTargetForCriminalAct(ShipData target)
         {

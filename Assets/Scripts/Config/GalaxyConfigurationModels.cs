@@ -52,7 +52,7 @@ namespace SRG.Config
     }
 
     // ──────────────────────────────────────────────
-    // Рейтинги кораблей (рейнджерский, пиратский, торговый, …)
+    // Рейтинги кораблей (пилотский, пиратский, торговый, …)
     // ──────────────────────────────────────────────
 
     /// <summary>
@@ -550,7 +550,7 @@ namespace SRG.Config
 
         /// <summary>Флаг «этот тип не садится ради заправки/ремонта/апгрейда».
         /// true — корабль игнорирует триггеры LandResupply (fuel/hull/money) и остаётся в бою.
-        /// Проектно для доминаторов, которые «не заходят на планеты».
+        /// Проектно для синтетов, которые «не заходят на планеты».
         /// Смертельно опасные ситуации (пустой бак → застревание) конфигуратор должен закладывать сам.</summary>
         [JsonProperty("SkipsResupplyLandings")] public bool SkipsResupplyLandings { get; set; }
 
@@ -594,12 +594,12 @@ namespace SRG.Config
         [JsonProperty("AvailableShipTypes")] public List<string> AvailableShipTypes { get; set; } = new();
 
         /// <summary>Модификатор размера военного флота расы (-1..+1). Прибавляется к target воинов на планетах
-        /// этой расы. Применяется ТОЛЬКО к Warrior — гражданские/линкоры/доминаторы используют свои таблицы.</summary>
+        /// этой расы. Применяется ТОЛЬКО к Warrior — гражданские/линкоры/синтеты используют свои таблицы.</summary>
         [JsonProperty("FleetSizeModifier")] public int FleetSizeModifier { get; set; } = 0;
 
         /// <summary>Признак, что раса использует таблицу подтипов (SubtypeTables) для выбора конкретного
-        /// типа корабля при спавне. true для рас доминаторов (RaceDominators1..3) — у них одна точка спавна
-        /// «доминатор», конкретный Dom1..Dom6 выбирается из таблицы по ступени доминации.
+        /// типа корабля при спавне. true для рас синтетов (RaceDominators1..3) — у них одна точка спавна
+        /// «синтет», конкретный Dom1..Dom6 выбирается из таблицы по ступени доминации.
         /// false (по умолчанию) — спавнится тип, указанный в политике напрямую (нет выбора подтипа).</summary>
         [JsonProperty("UseShipTypeTable")] public bool UseShipTypeTable { get; set; } = false;
 
@@ -773,7 +773,7 @@ namespace SRG.Config
     ///   <list type="bullet">
     ///     <item><see cref="MicroModules"/> — встраиваемые (embed).</item>
     ///     <item><see cref="Goods"/> — торговые товары (стекаются, участвуют в TraderAI).</item>
-    ///     <item><see cref="Useless"/> — прочие предметы без спец-семантики (Ноды, квестовые находки).
+    ///     <item><see cref="Useless"/> — прочие предметы без спец-семантики (Нейроядра, квестовые находки).
     ///           Стакабельность задаётся флагом <see cref="ItemConfig.Stackable"/>.</item>
     ///   </list>
     /// </summary>
@@ -794,7 +794,7 @@ namespace SRG.Config
         public const string TowingRig    = "TowingRig";
         public const string MicroModules = "MicroModules";
         public const string Goods        = "Goods";
-        /// <summary>Прочие предметы: Ноды, квестовые находки, статуэтки. Не оборудование,
+        /// <summary>Прочие предметы: Нейроядра, квестовые находки, статуэтки. Не оборудование,
         /// не встраиваются, не участвуют в торговом рейсе. Стакабельность — через
         /// <see cref="ItemConfig.Stackable"/>.</summary>
         public const string Useless      = "Useless";
@@ -1239,8 +1239,8 @@ namespace SRG.Config
         /// (задаётся в <c>Defaults["IsImprovable"]</c> шаблона категории). Сбрасывается в false после
         /// первого апгрейда или встраивания микромодуля. См. docs/modules/equipment_improvement.md.</summary>
         [JsonProperty("IsImprovable")] public bool IsImprovable { get; set; } = true;
-        /// <summary>При улучшении требуется расходовать Ноды (стеки Node в трюме или нод-счёт корабля).
-        /// Обычно ставится для доминаторского/трофейного оборудования.</summary>
+        /// <summary>При улучшении требуется расходовать Нейроядра (стеки Node в трюме или нейроядер-счёт корабля).
+        /// Обычно ставится для синтетского/трофейного оборудования.</summary>
         [JsonProperty("RequiresNodesToImprove")] public bool RequiresNodesToImprove { get; set; } = false;
         [JsonProperty("Manufacturer")] public ManufacturerConfig Manufacturer { get; set; } = new();
         [JsonProperty("WeaponPorts")] public List<float[]> WeaponPorts { get; set; }
@@ -1259,18 +1259,18 @@ namespace SRG.Config
         /// <summary>Товар нелегальный (Kind=Goods).</summary>
         [JsonProperty("Illegal")] public bool Illegal { get; set; }
         /// <summary>Предмет объединяется в стек. Задаётся явно в JSON: обычно true для Goods
-        /// и стакабельных Useless (Ноды); false для оборудования, микромодулей и квестовых уникумов.</summary>
+        /// и стакабельных Useless (Нейроядра); false для оборудования, микромодулей и квестовых уникумов.</summary>
         [JsonProperty("Stackable")] public bool Stackable { get; set; } = false;
-        /// <summary>Минимальное число единиц в дропе (Ноды/астероидные находки). 1 если не задан.</summary>
+        /// <summary>Минимальное число единиц в дропе (Нейроядра/астероидные находки). 1 если не задан.</summary>
         [JsonProperty("DropWeightMin")] public int DropWeightMin { get; set; } = 1;
-        /// <summary>Максимальное число единиц в дропе (Ноды/астероидные находки). 50 если не задан.</summary>
+        /// <summary>Максимальное число единиц в дропе (Нейроядра/астероидные находки). 50 если не задан.</summary>
         [JsonProperty("DropWeightMax")] public int DropWeightMax { get; set; } = 50;
         /// <summary>Базовый путь к спрайтшитам стакабельной находки в космосе (легаси Tier_N). Для
         /// современных стеков используется <see cref="GraphicSteps"/>.</summary>
         [JsonProperty("SpritePath")] public string SpritePath { get; set; }
         /// <summary>Ступени графики стакабельных предметов по количеству — приоритет над Icon/SpritePath.</summary>
         [JsonProperty("GraphicSteps")] public List<StackGraphicStep> GraphicSteps { get; set; }
-        /// <summary>Правила появления встраиваемого предмета в мире (дроп, магазины, центр рейнджеров).</summary>
+        /// <summary>Правила появления встраиваемого предмета в мире (дроп, магазины, центр вольных пилотов).</summary>
         [JsonProperty("Sources")] public ItemSources Sources { get; set; }
         /// <summary>Графика контейнера-выброса (переопределяет <see cref="CategoryCommonConfig.ContainerGraphic"/>).</summary>
         [JsonProperty("ContainerGraphic")] public string ContainerGraphic { get; set; }

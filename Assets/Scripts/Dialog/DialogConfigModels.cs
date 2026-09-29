@@ -167,7 +167,7 @@ namespace SRG.Dialog
         /// <summary>Маппинг «раса → короткое имя расового класса» для подстановки
         /// <c>&lt;DominatorClass&gt;</c> в ключах StringPools (напр., <c>{pool:Dominator.Hi&lt;DominatorClass&gt;}</c>).
         /// Если пусто — используется fallback SR2 (RaceDominators1..3 → Blazer/Keller/Terron).
-        /// Добавь сюда 4-ю расу доминаторов и её класс — новые пулы
+        /// Добавь сюда 4-ю расу синтетов и её класс — новые пулы
         /// <c>Dominator.Hi&lt;NewClass&gt;</c> подхватятся автоматически.</summary>
         [JsonProperty("DominatorClassMap")] public Dictionary<string, string> DominatorClassMap { get; set; }
     }

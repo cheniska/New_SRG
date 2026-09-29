@@ -11,9 +11,9 @@ using SRG.UI.Common;
 namespace SRG.UI.Screens
 {
     /// <summary>
-    /// Плавающий оверлей «Рейтинг рейнджеров» — открывается кнопкой «Рейтинг» на HUD.
-    /// Показывает минимальную статистику рейнджеров галактики (место, имя, сбитые
-    /// доминаторы/пираты, очки), отсортированную через <see cref="ShipRatingService"/>
+    /// Плавающий оверлей «Рейтинг вольных пилотов» — открывается кнопкой «Рейтинг» на HUD.
+    /// Показывает минимальную статистику вольных пилотов галактики (место, имя, сбитые
+    /// синтеты/пираты, очки), отсортированную через <see cref="ShipRatingService"/>
     /// по конфигу рейтинга "Rangers" (GalaxyConfig.json → "Ratings").
     /// </summary>
     public class RangerRatingOverlayController : MonoBehaviour
@@ -149,7 +149,7 @@ namespace SRG.UI.Screens
             tRt.anchorMin = new Vector2(0f, 0f); tRt.anchorMax = new Vector2(1f, 1f);
             tRt.offsetMin = new Vector2(12f, 0f); tRt.offsetMax = new Vector2(-40f, 0f);
             _title = titleTxtGo.AddComponent<Text>();
-            _title.font = _font; _title.text = "Рейтинг рейнджеров";
+            _title.font = _font; _title.text = "Рейтинг вольных пилотов";
             _title.fontSize = 14; _title.color = UIColorPalette.Accent;
             _title.alignment = TextAnchor.MiddleLeft; _title.fontStyle = FontStyle.Bold;
 
@@ -197,13 +197,13 @@ namespace SRG.UI.Screens
             List<(ShipData Ship, float Score)> list = ShipRatingService.Build(galaxy, cfg);
             if (list.Count == 0)
             {
-                _body.text = "Пока никто из рейнджеров не отличился.";
+                _body.text = "Пока никто из вольных пилотов не отличился.";
                 return;
             }
 
             var sb = new StringBuilder(1024);
-            sb.AppendLine($"<b>Рейнджеров в списке: {list.Count}</b>");
-            sb.AppendLine("<color=#8899AA>#   Имя — сбито доминаторов / пиратов — очки</color>");
+            sb.AppendLine($"<b>Вольных пилотов в списке: {list.Count}</b>");
+            sb.AppendLine("<color=#8899AA>#   Имя — сбито синтетов / пиратов — очки</color>");
             sb.AppendLine();
 
             for (int i = 0; i < list.Count; i++)

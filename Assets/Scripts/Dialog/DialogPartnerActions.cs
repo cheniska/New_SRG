@@ -286,7 +286,7 @@ namespace SRG.Dialog
             if (!string.IsNullOrEmpty(order))
             {
                 string brand = BrandOf(target);
-                // Реплик отказа нет ни у рейнджера, ни у робота — у них это «мне не до тебя».
+                // Реплик отказа нет ни у вольного пилота, ни у робота — у них это «мне не до тебя».
                 ctx.Data[ACK_KEY] = obey
                     ? $"{brand}.ComputerAgree{order}"
                     : (brand == "Pirate" ? $"Pirate.ComputerDisagree{order}" : $"{brand}.ComputerInFear");
@@ -342,7 +342,7 @@ namespace SRG.Dialog
                 DialogService.PickFromPool("Tranclucator.Options.Land")
                 ?? DialogTexts.Phrase("drone_land_target_any"), isVolatile: true);
 
-            // Имя рейнджера, который уже нанял цель («меня уже нанял рейнджер …» — <Partner>
+            // Имя вольного пилота, который уже нанял цель («меня уже нанял вольный пилот …» — <Partner>
             // в строках пула Partner.AlreadyHavePartner).
             //
             // Порядок поиска — по возрастанию цены: игрок → текущая звезда (партнёр обычно

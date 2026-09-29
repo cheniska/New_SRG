@@ -206,7 +206,7 @@ namespace SRG.UI.Screens
             Reg("ships",      "Log ship counts across all stars",   LogShips);
             Reg("spawnstation",
                 "spawnstation [code] — заспавнить станцию в текущей просматриваемой системе. " +
-                "code: BK|CB|MC|PB|RC|RG|WB|SB (коалиция) или Blazer|Keller|Terron (доминаторы). " +
+                "code: BK|CB|MC|PB|RC|RG|WB|SB (содружество) или Blazer|Keller|Terron (синтеты). " +
                 "Без code — случайный по расе системы.",
                 SpawnStationCmd);
 

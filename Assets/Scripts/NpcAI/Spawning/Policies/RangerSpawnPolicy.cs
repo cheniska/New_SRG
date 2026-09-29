@@ -8,11 +8,11 @@ using SRG.Galaxy.Politics;
 namespace SRG.NpcAI.Spawning.Policies
 {
     /// <summary>
-    /// Top-up per-galaxy политика для рейнджеров.
+    /// Top-up per-galaxy политика для вольных пилотов.
     /// Один ролл в день на всю галактику.
     ///   target = min(NormalSystemsCount × TargetFromNormalsMultiplier, TargetGlobalCap)
     /// При срабатывании спавн у случайной обитаемой коалиц. планеты с населением > 0.
-    /// Игрок-рейнджер не учитывается (счётчик не считает IsPlayer).
+    /// Игрок-вольный пилот не учитывается (счётчик не считает IsPlayer).
     /// </summary>
     public class RangerSpawnPolicy : ISpawnPolicy
     {
@@ -53,7 +53,7 @@ namespace SRG.NpcAI.Spawning.Policies
                     foreach (var planet in star.Planets)
                     {
                         if (planet == null) continue;
-                        // Оккупированные планеты выпадают: рейнджеры Коалиции не спавнятся под чужим флагом.
+                        // Оккупированные планеты выпадают: вольные пилоты Содружества не спавнятся под чужим флагом.
                         if (OccupationService.GetControllingOwner(planet) != "Coalition") continue;
                         if (planet.Settlement.Population <= 0) continue;
                         if (string.IsNullOrEmpty(planet.Race)

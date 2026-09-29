@@ -6,16 +6,16 @@ using SRG.Galaxy.Politics;
 namespace SRG.Galaxy.Simulation
 {
     /// <summary>
-    /// Периодический анализ «плотности сущностей» в звёздных системах: пираты, транспорты, рейнджеры.
+    /// Периодический анализ «плотности сущностей» в звёздных системах: пираты, транспорты, вольные пилоты.
     /// Раз в StarPresenceStrideTurns ходов пробегает по каждой звезде, где есть игрок ИЛИ где живут
     /// населённые планеты (чтобы шум не забивал буфер новостей), и публикует:
     ///
     ///   - Star.Pirates.None/Some/Many — по числу пиратов;
-    ///   - Star.Rangers.ManyWarrior/Trader/Pirate — по числу рейнджеров профиля Warrior/Trader/Pirate;
+    ///   - Star.Rangers.ManyWarrior/Trader/Pirate — по числу вольных пилотов профиля Warrior/Trader/Pirate;
     ///   - Star.Transport.Many — при перегруженности транспортниками.
     ///
     /// Пороги — компромиссные константы; при необходимости выносить в GameSettingsConfig.
-    /// «Профиль рейнджера» определяется по метрикам: Kills*/TradeProfit/CrimeRating.
+    /// «Профиль вольного пилота» определяется по метрикам: Kills*/TradeProfit/CrimeRating.
     /// </summary>
     public static class StarPresenceService
     {
@@ -70,7 +70,7 @@ namespace SRG.Galaxy.Simulation
         {
             int pirates = 0, transports = 0;
             int rangersWar = 0, rangersTrader = 0, rangersPirate = 0;
-            // Топ-N имён рейнджеров каждого профиля — для использования в шаблоне <Names>.
+            // Топ-N имён вольных пилотов каждого профиля — для использования в шаблоне <Names>.
             var warriorNames = new List<string>();
             var traderNames  = new List<string>();
             var pirateRangerNames = new List<string>();
@@ -105,18 +105,18 @@ namespace SRG.Galaxy.Simulation
                     $"Таможенные службы системы {star.Name} не справляются с потоком транспортов " +
                     $"({transports} судов). Возможны заторы и рост криминальной активности.");
 
-            // Рейнджеры
+            // Вольные пилоты
             if (rangersWar >= RangersMany)
                 PostIfChanged(star, "rangers_war", "many",
-                    $"В системе {star.Name} собралась группа рейнджеров-воинов: {Join(warriorNames)}. " +
-                    $"Возможно, готовится удар по врагам Коалиции.");
+                    $"В системе {star.Name} собралась группа вольных пилотов-воинов: {Join(warriorNames)}. " +
+                    $"Возможно, готовится удар по врагам Содружества.");
             if (rangersTrader >= RangersMany)
                 PostIfChanged(star, "rangers_trader", "many",
                     $"Аналитики отмечают выгодные условия торговли в системе {star.Name}: " +
-                    $"туда слетелись рейнджеры-торговцы — {Join(traderNames)}.");
+                    $"туда слетелись вольные пилоты-торговцы — {Join(traderNames)}.");
             if (rangersPirate >= RangersMany)
                 PostIfChanged(star, "rangers_pirate", "many",
-                    $"В системе {star.Name} промышляют рейнджеры с подмоченной репутацией: {Join(pirateRangerNames)}. " +
+                    $"В системе {star.Name} промышляют вольные пилоты с подмоченной репутацией: {Join(pirateRangerNames)}. " +
                     $"Мирным судам рекомендуется облетать её стороной.");
         }
 

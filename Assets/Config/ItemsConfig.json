@@ -106,7 +106,7 @@
       }
     },
     "HullSeries_Ranger": {
-      "Name": "Рейнджерская серия",
+      "Name": "Пилотская серия",
       "Description": "Сбалансированный корпус для исследования и боя.",
       "WeaponVulnerability": {
         "Kinetic": 1,
@@ -1332,8 +1332,8 @@
       },
       "ArtAnalyzer": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Analyzer_i",
-        "Name": "Вероятностный анализатор",
-        "Description": "Обрабатывает статистику галактики. Раз в несколько ходов вбрасывает в ленту прогнозы атак и трендов ГТУ.",
+        "Name": "Оракул-процессор",
+        "Description": "Считает статистику Галактики и время от времени публикует в ленте прогнозы нападений и изменений ГТУ.",
         "Weight": 12,
         "Price": 5000,
         "Durability": 100,
@@ -1358,8 +1358,8 @@
       },
       "ArtAntigrav": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Antigrav_i",
-        "Name": "Антигравитатор",
-        "Description": "Создаёт вокруг корабля пузырь отрицательной кинетики. Эффективная масса корпуса снижается на 25%.",
+        "Name": "Гравидемпфер",
+        "Description": "Гасит инерцию корпуса: эффективная масса корабля меньше на 25%.",
         "Weight": 18,
         "Price": 4000,
         "Durability": 100,
@@ -1382,8 +1382,8 @@
       },
       "ArtArtefactor": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Artefactor_i",
-        "Name": "Артефактор",
-        "Description": "Кристаллический разветвитель. Позволяет трём совместимым артефактам из трюма работать с половинной силой, не занимая слот.",
+        "Name": "Резонансный хаб",
+        "Description": "Подключает до трёх совместимых артефактов из трюма; они работают вполсилы, не занимая слотов.",
         "Weight": 20,
         "Price": 8000,
         "Durability": 120,
@@ -1406,8 +1406,8 @@
       },
       "ArtBio": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
-        "Name": "Биомир",
-        "Description": "Биокибернетический модуль. Повышает устойчивость пилота к болезням и восприимчивость к стимуляторам.",
+        "Name": "Иммуносимбионт",
+        "Description": "Живой имплант пилота: хуже цепляются болезни, сильнее действуют стимуляторы.",
         "Weight": 8,
         "Price": 3500,
         "Durability": 100,
@@ -1427,8 +1427,8 @@
       },
       "ArtBlackHole": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_BlackHole_i",
-        "Name": "Субпортал",
-        "Description": "Одноразовый множитель антиматерии. При активации порождает червоточину рядом с кораблём и самопоглощается.",
+        "Name": "Складка пространства",
+        "Description": "Одноразовый. При активации открывает рядом с кораблём червоточину и разрушается.",
         "Weight": 25,
         "Price": 12000,
         "Durability": 1,
@@ -1450,8 +1450,8 @@
       },
       "ArtBomb": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Bomb_i",
-        "Name": "Кварковая бомба",
-        "Description": "Крайне разрушительный заряд. Выкиньте в космос и подорвите выстрелом — взрыв нанесёт мощный урон всем поблизости.",
+        "Name": "Аннигиляционный заряд",
+        "Description": "Сбросьте в космос и подорвите выстрелом: взрыв бьёт по всем, кто рядом.",
         "Weight": 30,
         "Price": 15000,
         "Durability": 100,
@@ -1474,8 +1474,8 @@
       },
       "ArtDecelerate": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Decelerate_i",
-        "Name": "Вжик",
-        "Description": "Киборг-минизавод, откладывающий термические заряды в осколочные снаряды. Замедляет двигатели врага.",
+        "Name": "Термолипучка",
+        "Description": "Добавляет в осколочные снаряды вязкие термозаряды, которые тормозят двигатели цели.",
         "Weight": 14,
         "Price": 3800,
         "Durability": 100,
@@ -1512,8 +1512,8 @@
       },
       "ArtDef": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Def_i",
-        "Name": "Поляризатор",
-        "Description": "Источник высокоактивных электронов. Усиливает защитное поле на 5% и с небольшой вероятностью отражает урон.",
+        "Name": "Фазовый рассеиватель",
+        "Description": "Усиливает защитное поле на 5% и иногда отражает попадание обратно.",
         "Weight": 12,
         "Price": 2500,
         "Durability": 100,
@@ -1537,8 +1537,8 @@
       },
       "ArtDefToArms1": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_DefToArms1_i",
-        "Name": "Протон",
-        "Description": "Встраивается в энергоблок защитного поля. Забирает 10% его мощности и активирует дополнительную орудийную турель.",
+        "Name": "Щитовой отвод",
+        "Description": "Забирает 10% мощности защитного поля и питает дополнительную орудийную турель.",
         "Weight": 20,
         "Price": 6000,
         "Durability": 100,
@@ -1564,8 +1564,8 @@
       },
       "ArtDefToArms2": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_DefToArms2_i",
-        "Name": "Армс",
-        "Description": "Стационарный комплект переоснастки: снимает слот генератора защитного поля и разворачивает вместо него две орудийные турели.",
+        "Name": "Боевой перекрой",
+        "Description": "Убирает генератор защитного поля и ставит на его место две орудийные турели.",
         "Weight": 24,
         "Price": 9000,
         "Durability": 100,
@@ -1588,8 +1588,8 @@
       },
       "ArtDefToEnergy": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_DefToEnergy_i",
-        "Name": "Пропорционар",
-        "Description": "Маршрутизатор энергосистемы. Урезает подпитку защитного поля вдвое, за счёт этого усиливает энергетическое оружие на 60%.",
+        "Name": "Энергошунт",
+        "Description": "Вдвое урезает питание защитного поля, зато энергетическое оружие бьёт на 60% сильнее.",
         "Weight": 22,
         "Price": 7500,
         "Durability": 100,
@@ -1613,8 +1613,8 @@
       },
       "ArtDroid": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Droid_i",
-        "Name": "Дроид младший",
-        "Description": "Облегчённый ремонтник. Подчиняется общему дроиду, восстанавливая до 10 единиц корпуса за ход и снижая износ основного дроида вдвое.",
+        "Name": "Ремботик",
+        "Description": "Помощник основного дроида: чинит до 10 ед. корпуса за ход и вдвое снижает износ дроида.",
         "Weight": 10,
         "Price": 2200,
         "Durability": 100,
@@ -1638,8 +1638,8 @@
       },
       "ArtEnergyDef": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_EnergyDef_i",
-        "Name": "Проглот",
-        "Description": "Раздвижной энергоабсорбент. В 30% случаев поглощает тепловую составляющую попадания энергооружия, обнуляя урон.",
+        "Name": "Тепловая губка",
+        "Description": "В 30% случаев полностью поглощает попадание энергетического оружия.",
         "Weight": 18,
         "Price": 5500,
         "Durability": 100,
@@ -1672,8 +1672,8 @@
       },
       "ArtEnergyPulse": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_EnergyPulse_i",
-        "Name": "Пятерик",
-        "Description": "Энергонакопитель. Каждый третий энерговыстрел усиливается на 30% за счёт накопленного заряда.",
+        "Name": "Импульсный конденсатор",
+        "Description": "Копит заряд: каждый третий выстрел энергооружия сильнее на 30%.",
         "Weight": 16,
         "Price": 4200,
         "Durability": 100,
@@ -1707,8 +1707,8 @@
       },
       "ArtFastRacks": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_FastRacks_i",
-        "Name": "Ралс",
-        "Description": "Оптимизатор ракетных стеллажей. Даёт 15% шанс запустить двойной ракетный залп.",
+        "Name": "Скоростная подача",
+        "Description": "15% шанс, что ракетная установка даст двойной залп.",
         "Weight": 14,
         "Price": 3600,
         "Durability": 100,
@@ -1739,8 +1739,8 @@
       },
       "ArtForsage": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Forsage_i",
-        "Name": "Обливионный коннектор",
-        "Description": "Наномодули келлероидов на сопле. В режиме форсажа износ двигателя сокращается вдвое.",
+        "Name": "Форсажный стабилизатор",
+        "Description": "На форсаже двигатель изнашивается вдвое медленнее.",
         "Weight": 12,
         "Price": 4800,
         "Durability": 100,
@@ -1796,8 +1796,8 @@
       },
       "ArtGiperJump": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_GiperJump_i",
-        "Name": "Гипергенератор",
-        "Description": "Уникальное дополнение к двигателю. Сокращает продолжительность каждого гиперперехода на один ход.",
+        "Name": "Прыжковый катализатор",
+        "Description": "Каждый гиперпрыжок короче на один ход.",
         "Weight": 18,
         "Price": 7000,
         "Durability": 100,
@@ -1819,8 +1819,8 @@
       },
       "ArtHook": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Hook_i",
-        "Name": "Эриметр",
-        "Description": "Фокусатор луча захвата. Увеличивает грузоподъёмность и радиус действия захвата.",
+        "Name": "Линза захвата",
+        "Description": "Увеличивает грузоподъёмность и дальность захвата.",
         "Weight": 14,
         "Price": 3200,
         "Durability": 100,
@@ -1844,8 +1844,8 @@
       },
       "ArtHull": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Hull_i",
-        "Name": "Железные жупи",
-        "Description": "Колония металлических симбионтов на обшивке. Увеличивает броню корпуса на 5 единиц.",
+        "Name": "Металломох",
+        "Description": "Колония металлоядных организмов на обшивке: +5 к броне корпуса.",
         "Weight": 15,
         "Price": 2800,
         "Durability": 100,
@@ -1868,8 +1868,8 @@
       },
       "ArtMiniExpl": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_MiniExpl_i",
-        "Name": "Локализатор взрывной волны",
-        "Description": "Отводит энергию попадания на внешнюю поверхность врага — при уничтожении цели сохраняется больше её оборудования как трофей.",
+        "Name": "Гаситель детонации",
+        "Description": "Смягчает разрушение цели: с уничтоженного врага падает больше целого оборудования.",
         "Weight": 12,
         "Price": 3400,
         "Durability": 100,
@@ -1899,8 +1899,8 @@
       },
       "ArtMissileDef": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_MissileDef_i",
-        "Name": "Ракетанг",
-        "Description": "Наномеханическая плёнка. Блокирует до 25% урона от ракетных попаданий.",
+        "Name": "Антиракетная плёнка",
+        "Description": "Поглощает до 25% урона от ракет.",
         "Weight": 16,
         "Price": 4200,
         "Durability": 100,
@@ -1923,8 +1923,8 @@
       },
       "ArtNano": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Nano_i",
-        "Name": "Нанитоиды",
-        "Description": "Интеллектуальные нанороботы. Раз в ход чинят 10% случайно выбранного повреждённого предмета (прочность ниже 60%).",
+        "Name": "Ремонтный рой",
+        "Description": "Раз в ход восстанавливает 10% прочности случайного предмета, изношенного ниже 60%.",
         "Weight": 10,
         "Price": 3800,
         "Durability": 100,
@@ -1941,13 +1941,13 @@
           "HealPercent": 0.1,
           "RepairThreshold": 0.6
         },
-        "TurnScript": "local threshold = Api.GetParam(item, 'RepairThreshold', 0.60)\nlocal healPct   = Api.GetParam(item, 'HealPercent', 0.10)\nif healPct <= 0 then return end\nlocal list = Api.DamagedItems(ship, threshold, item)\nif list.Count == 0 then return end\nlocal target = Api.PickRandom(list)\nlocal healed = Api.RepairItemPercent(target, healPct)\nif healed > 0 and ship.IsPlayer then\n  Api.PostPlayerNews(string.format('Нанитоиды подлатали <b>%s</b> (+%d).', target.Name, healed))\nend",
+        "TurnScript": "local threshold = Api.GetParam(item, 'RepairThreshold', 0.60)\nlocal healPct   = Api.GetParam(item, 'HealPercent', 0.10)\nif healPct <= 0 then return end\nlocal list = Api.DamagedItems(ship, threshold, item)\nif list.Count == 0 then return end\nlocal target = Api.PickRandom(list)\nlocal healed = Api.RepairItemPercent(target, healPct)\nif healed > 0 and ship.IsPlayer then\n  Api.PostPlayerNews(string.format('Ремонтный рой подлатал <b>%s</b> (+%d).', target.Name, healed))\nend",
         "Stackable": false
       },
       "ArtPDTurret": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_PDTurret_i",
-        "Name": "а'Эгис",
-        "Description": "Автоматическая ПРО-турель. Сбивает до 5 вражеских ракет в радиусе 150 единиц каждый ход.",
+        "Name": "Турель «Заслон»",
+        "Description": "Автоматическая ПРО: сбивает до 5 вражеских ракет в радиусе 150 ед. за ход.",
         "Weight": 18,
         "Price": 5500,
         "Durability": 100,
@@ -1970,8 +1970,8 @@
       },
       "ArtPower": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Power_i",
-        "Name": "Отморозки",
-        "Description": "Колония сверххолодных бактерий. Быстрее восстанавливают скорость после замедления и защищают корпус от теплового поражения звезды.",
+        "Name": "Криоколония",
+        "Description": "Холодолюбивые бактерии: корабль быстрее оправляется от замедления и не боится жара звезды.",
         "Weight": 14,
         "Price": 3000,
         "Durability": 100,
@@ -1995,8 +1995,8 @@
       },
       "ArtRadar": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Radar_i",
-        "Name": "Пролонгер",
-        "Description": "Усилитель радара. Увеличивает радиус действия на 600 единиц и показывает сводку кораблей в удалённых системах на галакарте.",
+        "Name": "Дальняя антенна",
+        "Description": "+600 ед. к дальности радара; на галактической карте видна сводка кораблей в других системах.",
         "Weight": 10,
         "Price": 3500,
         "Durability": 100,
@@ -2023,8 +2023,8 @@
       },
       "ArtScaner": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Scaner_i",
-        "Name": "Сканерный кэш",
-        "Description": "Программный усилитель сканера. Увеличивает мощность сканирования на 10 единиц.",
+        "Name": "Сканерный ускоритель",
+        "Description": "+10 к мощности сканера.",
         "Weight": 8,
         "Price": 3200,
         "Durability": 100,
@@ -2050,8 +2050,8 @@
       },
       "ArtSpeed": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Speed_i",
-        "Name": "Пси-ускоритель материи",
-        "Description": "Пси-симбионт двигателя. Прибавляет к скорости 150 единиц независимо от массы корабля.",
+        "Name": "Пси-тяга",
+        "Description": "+150 ед. скорости независимо от массы корабля.",
         "Weight": 12,
         "Price": 5200,
         "Durability": 100,
@@ -2074,8 +2074,8 @@
       },
       "ArtSplinter": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Splinter_i",
-        "Name": "Навинт",
-        "Description": "Минизавод боеголовок-расщепителей. Осколочное оружие наносит на 20% больше урона.",
+        "Name": "Дробитель",
+        "Description": "Осколочное оружие наносит на 20% больше урона.",
         "Weight": 14,
         "Price": 3600,
         "Durability": 100,
@@ -2108,8 +2108,8 @@
       },
       "ArtTransmitter": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Transmitter_i",
-        "Name": "Трансфакторный маяк",
-        "Description": "Одноразовое устройство дальнего вызова. Активация направляет флот выбранной стороны в текущую систему.",
+        "Name": "Маяк призыва",
+        "Description": "Одноразовый. Вызывает в текущую систему флот выбранной стороны.",
         "Weight": 20,
         "Price": 9500,
         "Durability": 1,
@@ -2135,8 +2135,8 @@
       },
       "ArtWeaponToSpeed": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Speed_i",
-        "Name": "Сопланатор",
-        "Description": "Комплект дополнительных сопел, разворачиваемый на месте одной орудийной турели. Прибавляет 100 единиц скорости.",
+        "Name": "Сопловая батарея",
+        "Description": "Ставится вместо одной орудийной турели и даёт +100 ед. скорости.",
         "Weight": 20,
         "Price": 4400,
         "Durability": 100,
@@ -2162,8 +2162,8 @@
       },
       "ArtDisguiseDom1": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
-        "Name": "Камуфляж-Доминаторы I",
-        "Description": "Активируемое устройство: маскирует корабль под доминатора I расы. Работает до раскрытия. Активация только в фазе планирования.",
+        "Name": "Маскировка «Пирон»",
+        "Description": "Маскирует корабль под синтета серии «Пирон» до разоблачения. Включается в фазе планирования.",
         "Weight": 15,
         "Price": 12000,
         "Durability": 40,
@@ -2182,15 +2182,15 @@
           "TargetRace": "RaceDominators1",
           "TargetOwner": "Dominators",
           "VisualPath": "Graphics/Items/Equipment/Hull/Hull_RaceDominators1_Dom3_c",
-          "DisplayName": "Доминатор I расы",
+          "DisplayName": "Синтет I расы",
           "WearOnActivate": 2
         },
         "Stackable": false
       },
       "ArtDisguiseDom2": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
-        "Name": "Камуфляж-Доминаторы II",
-        "Description": "Активируемое устройство: маскирует корабль под доминатора II расы. Работает до раскрытия. Активация только в фазе планирования.",
+        "Name": "Маскировка «Логос»",
+        "Description": "Маскирует корабль под синтета серии «Логос» до разоблачения. Включается в фазе планирования.",
         "Weight": 15,
         "Price": 12000,
         "Durability": 40,
@@ -2209,15 +2209,15 @@
           "TargetRace": "RaceDominators2",
           "TargetOwner": "Dominators",
           "VisualPath": "Graphics/Items/Equipment/Hull/Hull_RaceDominators2_Dom3_c",
-          "DisplayName": "Доминатор II расы",
+          "DisplayName": "Синтет II расы",
           "WearOnActivate": 2
         },
         "Stackable": false
       },
       "ArtDisguiseDom3": {
         "GraphicPath": "Graphics/Items/Artifacts/AF_Bio_i",
-        "Name": "Камуфляж-Доминаторы III",
-        "Description": "Активируемое устройство: маскирует корабль под доминатора III расы. Работает до раскрытия. Активация только в фазе планирования.",
+        "Name": "Маскировка «Демиург»",
+        "Description": "Маскирует корабль под синтета серии «Демиург» до разоблачения. Включается в фазе планирования.",
         "Weight": 15,
         "Price": 12000,
         "Durability": 40,
@@ -2236,7 +2236,7 @@
           "TargetRace": "RaceDominators3",
           "TargetOwner": "Dominators",
           "VisualPath": "Graphics/Items/Equipment/Hull/Hull_RaceDominators3_Dom3_c",
-          "DisplayName": "Доминатор III расы",
+          "DisplayName": "Синтет III расы",
           "WearOnActivate": 2
         },
         "Stackable": false
@@ -2244,7 +2244,7 @@
     },
     "Useless": {
       "Nod": {
-        "Name": "Ноды",
+        "Name": "Нейроядра",
         "BasePrice": 20,
         "Stackable": true,
         "DropWeightMin": 10,
@@ -2895,7 +2895,7 @@
   "EquipmentTemplates": {
     "Clusters": {
       "Coalition": {
-        "Name": "Коалиция",
+        "Name": "Содружество",
         "Lines": {
           "T1": "Спутник",
           "T2": "Ион",
@@ -2910,7 +2910,7 @@
         }
       },
       "Dominators": {
-        "Name": "Доминаторы",
+        "Name": "Синтеты",
         "Lines": {
           "T1": "Киберугроза",
           "T2": "Киберугроза",
@@ -3010,7 +3010,7 @@
       },
       "HullType": {
         "R": {
-          "Adj": "рейнджера",
+          "Adj": "вольного пилота",
           "CostCoef": 1,
           "CapacityMult": [
             0.7,
@@ -3408,7 +3408,7 @@
           ]
         },
         "Dom1": {
-          "Adj": "доминатор-разведчик",
+          "Adj": "синтет-разведчик",
           "CostCoef": 1,
           "CapacityMult": [
             0.3,
@@ -3445,7 +3445,7 @@
           ]
         },
         "Dom2": {
-          "Adj": "доминатор-перехватчик",
+          "Adj": "синтет-перехватчик",
           "CostCoef": 1,
           "CapacityMult": [
             0.5,
@@ -3482,7 +3482,7 @@
           ]
         },
         "Dom3": {
-          "Adj": "доминатор-штурмовик",
+          "Adj": "синтет-штурмовик",
           "CostCoef": 1,
           "CapacityMult": [
             0.6,
@@ -3527,7 +3527,7 @@
           ]
         },
         "Dom4": {
-          "Adj": "доминатор-крейсер",
+          "Adj": "синтет-крейсер",
           "CostCoef": 1,
           "CapacityMult": [
             0.8,
@@ -3577,7 +3577,7 @@
           ]
         },
         "Dom5": {
-          "Adj": "доминатор-линкор",
+          "Adj": "синтет-линкор",
           "CostCoef": 1,
           "CapacityMult": [
             1,
@@ -3632,7 +3632,7 @@
           ]
         },
         "Dom6": {
-          "Adj": "доминатор-разрушитель",
+          "Adj": "синтет-разрушитель",
           "CostCoef": 1,
           "CapacityMult": [
             1.5,
@@ -3687,7 +3687,7 @@
           ]
         },
         "Dom7": {
-          "Adj": "доминатор-владыка",
+          "Adj": "синтет-владыка",
           "CostCoef": 1,
           "CapacityMult": [
             0.2,
@@ -4133,7 +4133,7 @@
           "TowAnchors": {}
         },
         "Keller": {
-          "Adj": "станция келлероидов",
+          "Adj": "станция логосов",
           "Code": "Keller",
           "CostCoef": 4,
           "IsStation": true,
@@ -4175,7 +4175,7 @@
           "TowAnchors": {}
         },
         "Terron": {
-          "Adj": "станция терроноидов",
+          "Adj": "станция демиургов",
           "Code": "Terron",
           "CostCoef": 4,
           "IsStation": true,

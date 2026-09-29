@@ -481,7 +481,7 @@ namespace SRG.UI.Screens
                 sb.AppendLine("<color=#7B7B7B>нет планет</color>");
             }
 
-            // Пролонгер: если у игрока есть артефакт с Artefacts.GalaxyMapScope > 0,
+            // Дальняя антенна: если у игрока есть артефакт с Artefacts.GalaxyMapScope > 0,
             // и звезда в пределах его радиуса — показать сводку кораблей по типу и стороне.
             int shipLines = AppendProlongerShipsInfo(sb, star);
 
@@ -517,7 +517,7 @@ namespace SRG.UI.Screens
         }
 
         /// <summary>Показывает сводку кораблей в системе <paramref name="star"/>, если игрок
-        /// находится в пределах Пролонгера (<c>Artefacts.GalaxyMapScope</c>) от неё. Возвращает
+        /// находится в пределах Дальней антенны (<c>Artefacts.GalaxyMapScope</c>) от неё. Возвращает
         /// число дописанных строк (для расчёта высоты тултипа).</summary>
         private int AppendProlongerShipsInfo(System.Text.StringBuilder sb, StarData star)
         {
@@ -545,7 +545,7 @@ namespace SRG.UI.Screens
             }
             if (groups.Count == 0) return 0;
 
-            sb.AppendLine("<color=#8FD1FF>◈ обнаружено (Пролонгер):</color>");
+            sb.AppendLine("<color=#8FD1FF>◈ обнаружено (Дальняя антенна):</color>");
             int lines = 1;
             foreach (var kv in groups)
             {
@@ -1358,7 +1358,7 @@ namespace SRG.UI.Screens
         {
             if (star == null) return new Color(0.2f, 0.22f, 0.28f);
 
-            // 1. Owner с заданным Color (Пираты, Доминаторы)
+            // 1. Owner с заданным Color (Пираты, Синтеты)
             if (!string.IsNullOrEmpty(star.ResolvedOwnerId)
                 && ctx?.Config?.Ships?.Owners?.TryGetValue(star.ResolvedOwnerId, out var owner) == true
                 && !string.IsNullOrEmpty(owner.Color))
@@ -1547,7 +1547,7 @@ namespace SRG.UI.Screens
         {
             if (ctx == null) return new Color(0.82f, 0.82f, 0.82f);
 
-            // Owner с цветом (Пираты, Доминаторы)
+            // Owner с цветом (Пираты, Синтеты)
             if (!string.IsNullOrEmpty(star.Owner)
                 && star.Owner != GalaxyConstants.OWNER_NONE_KEY
                 && ctx.Config.Ships?.Owners?.TryGetValue(star.Owner, out var ownerCfg) == true

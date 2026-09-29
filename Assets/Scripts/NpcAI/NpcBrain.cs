@@ -133,7 +133,7 @@ namespace SRG.NpcAI
             // Партнёр в критической ситуации (fear/крит.HP) — обычная EvaluateSituation имеет
             // приоритет над partner-attend. Дизайн: NPC-follower не должен послушно лететь за
             // игроком, пока его расстреливают — сначала спасение, потом уже сопровождение.
-            // Исключение: Military-класс (партнёры-военные, доминаторы) — они не паникуют
+            // Исключение: Military-класс (партнёры-военные, синтеты) — они не паникуют
             // и не отступают, их partner-логика неизменна.
             bool followerCritical = !string.IsNullOrEmpty(ship.PartnerLeaderUid)
                                     && InFear
@@ -168,7 +168,7 @@ namespace SRG.NpcAI
             if (ship == null || star == null) return;
             if (ship.HyperjumpPhase != HyperjumpPhase.None) return;
 
-            // Доминаторы никогда не паникуют и не отступают — по дизайну (100% дисциплина,
+            // Синтеты никогда не паникуют и не отступают — по дизайну (100% дисциплина,
             // 0 Caution). Hard-skip до всех остальных проверок.
             if (ship.Owner == "Dominators") return;
 
@@ -359,7 +359,7 @@ namespace SRG.NpcAI
 
             // Низкоприоритетный триггер восстановления боеспособности. Активируется только
             // когда классовая логика не нашла себе занятия (нет цели, нет вражды рядом).
-            // Доминаторы игнорируют посадки через флаг ShipTypeConfig.SkipsResupplyLandings.
+            // Синтеты игнорируют посадки через флаг ShipTypeConfig.SkipsResupplyLandings.
             if (ShouldResupply(ship)) return new Interrupt(InterruptKind.Resupply);
 
             return null;
@@ -367,7 +367,7 @@ namespace SRG.NpcAI
 
         /// <summary>Composite «нужда» — сравнивается с <see cref="NpcBalance.Resupply_PressureThreshold"/>.
         /// Учитывает hull, топливо, деньги, наличие «сдаваемого». Игнорируется для типов кораблей,
-        /// у которых установлен флаг <see cref="ShipTypeConfig.SkipsResupplyLandings"/> (Доминаторы).</summary>
+        /// у которых установлен флаг <see cref="ShipTypeConfig.SkipsResupplyLandings"/> (Синтеты).</summary>
         private static bool ShouldResupply(ShipData ship)
         {
             if (ship == null) return false;
@@ -468,7 +468,7 @@ namespace SRG.NpcAI
 
         private Interrupt? MilitaryLogic(ShipData ship, StarData star)
         {
-            // Военные (регулярные армии Коалиции + все доминаторы) не ждут, пока враг подойдёт
+            // Военные (регулярные армии Содружества + все синтеты) не ждут, пока враг подойдёт
             // на MaxEngageRange. При обнаружении hostile в звезде — лететь атаковать через
             // всю систему. ActionPursueAndAttack создаётся без limitEngageRange (см. SetActivity ниже).
             string enemy = FindAnyHostileForMilitary(ship, star);
@@ -625,9 +625,9 @@ namespace SRG.NpcAI
 
         private string FindNearestEnemyUid(ShipData ship, StarData star) => FindNearestEnemy(ship, star)?.Uid;
 
-        /// <summary>Легитимная цель для грабежа рейнджером: пиратский корабль в дистанции
+        /// <summary>Легитимная цель для грабежа вольным пилотом: пиратский корабль в дистанции
         /// либо высококриминальный (CrimeRating ≥ 20) любого класса кроме Military/Ranger.
-        /// EngageRange соблюдается: рейнджер не гоняется за криминалом через полсистемы.</summary>
+        /// EngageRange соблюдается: вольный пилот не гоняется за криминалом через полсистемы.</summary>
         private string FindCriminalVictimUid(ShipData ship, StarData star)
         {
             const float crimeThreshold = 20f;
@@ -744,7 +744,7 @@ namespace SRG.NpcAI
 
             if (baseDecision == TargetDecision.Attack)
             {
-                // Доминаторы никогда не оценивают шансы — атакуют всегда, кого бы ни встретили.
+                // Синтеты никогда не оценивают шансы — атакуют всегда, кого бы ни встретили.
                 bool alwaysEngage = self.Owner == "Dominators";
                 if (!alwaysEngage)
                 {
@@ -878,7 +878,7 @@ namespace SRG.NpcAI
             _lastInterrupt = interrupt;
             _threatPresent = interrupt.Kind == InterruptKind.PursueAndAttack;
 
-            // Military-класс (регулярные армии + доминаторы) ведёт погоню без range-лимита —
+            // Military-класс (регулярные армии + синтеты) ведёт погоню без range-лимита —
             // задача: истребить врага, где бы он ни был в системе. Пираты/наёмники/гражданские —
             // с лимитом (не увязают в бесконечной погоне через всю систему).
             bool unlimitedPursuit = CombatClass == CombatClass.Military;

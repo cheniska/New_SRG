@@ -66,7 +66,7 @@ namespace SRG.NpcAI.Spawning
         /// <summary>Общее число обитаемых (Owner ≠ None) систем в галактике. Знаменатель доминации сторон.</summary>
         public int InhabitedSystemsCount;
 
-        /// <summary>Число систем коалиции (Owner=Coalition). Знаменатель для target пиратов/наёмников.</summary>
+        /// <summary>Число систем содружества (Owner=Coalition). Знаменатель для target пиратов/наёмников.</summary>
         public int NormalSystemsCount;
 
         /// <summary>ownerId → число систем этого владельца.</summary>
@@ -75,7 +75,7 @@ namespace SRG.NpcAI.Spawning
         /// <summary>(ownerId, raceKey) → число систем (Owner=side AND Race=race). Для per-race доминации.</summary>
         public readonly Dictionary<(string ownerId, string raceKey), int> SystemsBySideAndRace = new();
 
-        /// <summary>raceKey → число систем расы (через любого Owner). Используется доминатор-политикой.</summary>
+        /// <summary>raceKey → число систем расы (через любого Owner). Используется синтет-политикой.</summary>
         public readonly Dictionary<string, int> SystemsByRace = new();
 
         // ──────────────────────────────────────────

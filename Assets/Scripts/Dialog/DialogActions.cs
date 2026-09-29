@@ -337,7 +337,7 @@ namespace SRG.Dialog
             ("<Cnt>",        "{trade_buy_limit}"),    // сколько ед. NPC ещё может купить
             ("<List>",       "{drone_allow_list}"),   // что дрону разрешено собирать/где садиться
             ("<Land>",       "{drone_land_target}"),
-            ("<Name>",       "{dom_program_name}"),   // имя программы доминатора
+            ("<Name>",       "{dom_program_name}"),   // имя программы синтета
         };
 
         /// <summary>Случайная строка из пула с раскрытыми <c>&lt;…&gt;</c>-плейсхолдерами.

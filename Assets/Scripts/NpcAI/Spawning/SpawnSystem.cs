@@ -226,7 +226,7 @@ namespace SRG.NpcAI.Spawning
         }
 
         /// <summary>Создаёт станцию (неподвижный ShipData с IsStation) в заданной звезде: выбирает корпус
-        /// (доминаторские — только в доминаторских системах), размещает вне орбит планет, экипирует
+        /// (синтетские — только в синтетских системах), размещает вне орбит планет, экипирует
         /// (вес ×2) и инициализирует Settlement. Возвращает null при неудаче.</summary>
         public static ShipData SpawnStationInStar(StarData star, GalaxyGenerationContext ctx, string codeOverride = null)
         {

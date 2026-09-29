@@ -9,7 +9,7 @@ namespace SRG.Equipment
     ///
     /// Цена: <c>money = round10(item.Price × CostShare[tier])</c>; продвинутое улучшение —
     /// то же от <see cref="AdvancedBaseTier"/> × <see cref="AdvancedCostMultiplier"/>.
-    /// Ноды (если <c>ItemInstance.RequiresNodesToImprove</c>): <c>nodes = ceil(money / CreditsPerNode)</c>.
+    /// Нейроядра (если <c>ItemInstance.RequiresNodesToImprove</c>): <c>nodes = ceil(money / CreditsPerNode)</c>.
     /// После улучшения стоимость предмета растёт на <c>money × ValueGainShare</c>.
     ///
     /// Прирост параметра из <see cref="ImprovementAttributeDef"/>:
@@ -34,7 +34,7 @@ namespace SRG.Equipment
         /// <summary>Тир, от цены которого считается стоимость продвинутого апгрейда.</summary>
         [JsonProperty("AdvancedBaseTier")] public string AdvancedBaseTier { get; set; } = "Max";
 
-        /// <summary>Сколько кредитов стоимости улучшения соответствует одной ноде.</summary>
+        /// <summary>Сколько кредитов стоимости улучшения соответствует одной нейроядру.</summary>
         [JsonProperty("CreditsPerNode")] public int CreditsPerNode { get; set; } = 120;
 
         /// <summary>Какая доля потраченного на улучшение переходит в стоимость предмета.</summary>

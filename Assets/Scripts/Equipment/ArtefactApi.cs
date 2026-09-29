@@ -182,7 +182,7 @@ namespace SRG.Equipment
         }
 
         /// <summary>Обёртка: найти враждебные ракеты в радиусе и сбить до <paramref name="maxShots"/>
-        /// штук. Возвращает число сбитых. Удобно для а'Эгиса-подобных ПРО.</summary>
+        /// штук. Возвращает число сбитых. Удобно для «Заслон»-подобных ПРО.</summary>
         public static int KillMissilesInRadius(ShipData ship, float worldRange, int maxShots, bool ignoreReturning = true)
         {
             var star = ship?.CurrentStar;
@@ -312,7 +312,7 @@ namespace SRG.Equipment
             GalaxyNewsService.Post(category ?? News.SYSTEM, text);
         }
 
-        /// <summary>Короткая обёртка: новость категории "Рейнджер" (события игрока).</summary>
+        /// <summary>Короткая обёртка: новость категории "Вольный пилот" (события игрока).</summary>
         public static void PostPlayerNews(string text) => PostNews(News.PLAYER, text);
 
         /// <summary>Спавн червоточины в радиусе <paramref name="worldRadius"/> от корабля.

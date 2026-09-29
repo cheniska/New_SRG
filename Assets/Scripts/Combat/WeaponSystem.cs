@@ -170,7 +170,7 @@ namespace SRG.Combat
         {
             if (ship?.ActiveEffects == null || ship.ActiveEffects.Count == 0) return;
 
-            // Отморозки: ускоренное убывание Slow-эффекта (быстро восстанавливаем скорость).
+            // Криоколония: ускоренное убывание Slow-эффекта (быстро восстанавливаем скорость).
             // Значение Artefacts.SpeedRecoveryMult — целое число доп. ходов, которые снимаются
             // со Slow за один тик (1 = каждый ход Slow снимается «двойной» скорости).
             int slowExtraDecay = Mathf.Max(0, Mathf.RoundToInt(
@@ -224,7 +224,7 @@ namespace SRG.Combat
                     afterVuln *= Mathf.Max(0f, 1f + missileMod);
             }
 
-            // 1b. Триггеры Hit: Проглот («30% шанс обнулить энергоурон»), Поляризатор (ReflectChance)
+            // 1b. Триггеры Hit: Тепловая губка («30% шанс обнулить энергоурон»), Фазовый рассеиватель (ReflectChance)
             // и подобные. TriggerBus обходит все SlotCode.Triggers артефактов цели.
             var hitCtx = new TriggerContext
             {
@@ -288,7 +288,7 @@ namespace SRG.Combat
             string patternStr = weapon.GetParamString("ShotPattern", weapon.GetParamString("HitPattern", "Point"));
             p.HitPattern = ParseHitPattern(patternStr);
 
-            // Пропорционар и подобные: усиление урона по типу оружия. Bonus
+            // Энергошунт и подобные: усиление урона по типу оружия. Bonus
             // "Weapons.EnergyDamageMult" — дельта от 1.0 (+0.6 → +60%). Cross-slot артефакта
             // уже вложил дельту в weapon.Params, здесь достаём и умножаем.
             if (p.DamageType == DamageType.Energy)
@@ -308,8 +308,8 @@ namespace SRG.Combat
             AppendArtifactEffects(attacker, p);
             EmbedService.AppendWeaponEffects(weapon, p.Effects);
 
-            // Триггеры выстрела (Пятерик — «каждый 3-й энерго-выстрел ×1.3»,
-            // Навинт — «Explosive ×1.2», Вжик — «AddWeaponEffect: HeatDamage»).
+            // Триггеры выстрела (Импульсный конденсатор — «каждый 3-й энерго-выстрел ×1.3»,
+            // Дробитель — «Explosive ×1.2», Термолипучка — «AddWeaponEffect: HeatDamage»).
             var trigCtx = new TriggerContext
             {
                 Event      = TriggerEvent.Fire,

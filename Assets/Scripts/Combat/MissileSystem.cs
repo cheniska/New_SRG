@@ -59,7 +59,7 @@ namespace SRG.Combat
             var mc = weaponItemCfg?.Missile;
             int salvo = Mathf.Clamp(mc?.SalvoCount ?? 1, 1, MaxSalvo);
 
-            // Триггеры залпа (Ралс — «15% шанс двойного залпа»). ExtraSalvos прибавляется
+            // Триггеры залпа (Скоростная подача — «15% шанс двойного залпа»). ExtraSalvos прибавляется
             // к базовому размеру залпа; MaxSalvo продолжает капить.
             var trigCtx = new SRG.Equipment.TriggerContext
             {

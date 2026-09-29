@@ -51,7 +51,7 @@ namespace SRG.Ships.Services
             if (target == null || player == null) return TruceResult.Refuse(TruceRefusalReason.NoNeedForTruce);
             var tuning = GetTuning();
 
-            // Военные и доминаторы не идут на подкуп.
+            // Военные и синтеты не идут на подкуп.
             if (IsUnbribable(target)) return TruceResult.Refuse(TruceRefusalReason.ShipTypeRefuses);
 
             // Если корабль и так не враждебен — перемирие не требуется.
@@ -112,7 +112,7 @@ namespace SRG.Ships.Services
         private static bool IsUnbribable(ShipData target)
         {
             if (string.IsNullOrEmpty(target?.ShipTypeId)) return false;
-            // Warrior / Dominator — по типу, доминаторы дополнительно по расе.
+            // Warrior / Dominator — по типу, синтеты дополнительно по расе.
             if (target.ShipTypeId == "Warrior") return true;
             if (!string.IsNullOrEmpty(target.Race) && target.Race == "Dominators") return true;
             return false;

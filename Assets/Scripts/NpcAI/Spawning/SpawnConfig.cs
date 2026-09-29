@@ -60,9 +60,9 @@ namespace SRG.NpcAI.Spawning
     {
         /// <summary>Тип политики (определяет, какой класс будет её исполнять):
         /// "TopUpPerPlanet" — гражданские/воины (per-planet roll);
-        /// "TopUpPerGalaxy" — рейнджеры/пираты (один глобальный roll);
+        /// "TopUpPerGalaxy" — вольные пилоты/пираты (один глобальный roll);
         /// "TopUpPerSector" — линкор (per-sector roll);
-        /// "TopUpPerStar"   — доминаторы (per-star roll на клинг-звёздах).</summary>
+        /// "TopUpPerStar"   — синтеты (per-star roll на клинг-звёздах).</summary>
         [JsonProperty("Model")] public string Model { get; set; } = "TopUpPerPlanet";
 
         /// <summary>Базовый шанс ролла в день (0..1). Умножается на (1 + shortage).</summary>
@@ -76,7 +76,7 @@ namespace SRG.NpcAI.Spawning
         [JsonProperty("TargetByRace")] public Dictionary<string, int> TargetByRace { get; set; }
 
         /// <summary>Множитель target × (NormalSystemsCount × Multiplier).
-        /// Используется в TopUpPerGalaxy для рейнджеров (×1.5) и пиратов (×0.3).</summary>
+        /// Используется в TopUpPerGalaxy для вольных пилотов (×1.5) и пиратов (×0.3).</summary>
         [JsonProperty("TargetFromNormalsMultiplier")] public float TargetFromNormalsMultiplier { get; set; } = 0f;
 
         /// <summary>Глобальный потолок target (для TopUpPerGalaxy). 0 = без ограничения.</summary>
@@ -116,7 +116,7 @@ namespace SRG.NpcAI.Spawning
         /// <summary>Стартовый капитал корабля. Применяется как
         ///   ship.Money = round(StartingMoney × GalaxyData.InflationFactor)
         /// при старте — масштабируется вместе с ценами в TradeSystem. 0 = без денег
-        /// (актуально для доминаторов).</summary>
+        /// (актуально для синтетов).</summary>
         [JsonProperty("StartingMoney")] public int StartingMoney { get; set; } = 0;
     }
 

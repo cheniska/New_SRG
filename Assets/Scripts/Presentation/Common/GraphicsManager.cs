@@ -273,7 +273,7 @@ namespace SRG.Presentation.Common
                     int col = i % meta.Cols;
                     int row = (meta.Rows - 1) - i / meta.Cols;
                     // meshType=FullRect критично: дефолт Tight полигонизирует каждый кадр по пикселям
-                    // (~500ms на 100-кадровый лист доминатора). FullRect — простой квад, доли ms.
+                    // (~500ms на 100-кадровый лист синтета). FullRect — простой квад, доли ms.
                     frames[i] = Sprite.Create(sheet, new Rect(col * w, row * h, w, h),
                         new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
                 }

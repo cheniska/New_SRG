@@ -19,8 +19,8 @@ namespace SRG.Ships
     public enum CombatClass
     {
         Civilian,   // Транспорты, Лайнеры, Дипломаты, Дроны
-        Mercenary,  // Рейнджеры, Наёмники
-        Military,   // Военные, Крейсеры, Доминаторы
+        Mercenary,  // Вольные пилоты, Наёмники
+        Military,   // Военные, Крейсеры, Синтеты
         Pirate,     // Пираты, Мародёры
     }
 }

@@ -318,7 +318,7 @@ namespace SRG.Galaxy.Politics
             shooter.Money += reward;
 
             string planetName = string.IsNullOrEmpty(planet.Name) ? "неизвестная планета" : planet.Name;
-            string shooterName = string.IsNullOrEmpty(shooter.Name) ? "рейнджер" : shooter.Name;
+            string shooterName = string.IsNullOrEmpty(shooter.Name) ? "вольный пилот" : shooter.Name;
             string raceKey = (planet.Race ?? "").ToLowerInvariant();
             string tplKey = raceKey switch
             {

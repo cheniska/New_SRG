@@ -520,7 +520,7 @@ namespace SRG.Core
             // 3) Корпуса кораблей: все BodyGraphicPath × все расы галактики. ShipGraphicsResolver
             //    сам дедуплицирует запросы, HashSet тоже, поэтому двойной цикл дёшев
             //    (реально загрузим ~30–50 уникальных hull-листов). Убирает хитч 30–200 мс
-            //    на первом появлении каждого доминатор-подтипа.
+            //    на первом появлении каждого синтет-подтипа.
             if (equip != null && _context != null)
             {
                 var races = _context.AvailableRaces;
@@ -893,7 +893,7 @@ namespace SRG.Core
             SRG.Equipment.EmbedConfigValidator.Validate(itemsCfg, cfg);
 
             // Регистрируем встроенные скрипты артефактов (BigExplosion → Кварковая бомба,
-            // SpawnBlackHole → Субпортал) и подписываем шину смерти контейнеров. Идемпотентно.
+            // SpawnBlackHole → Складка пространства) и подписываем шину смерти контейнеров. Идемпотентно.
             SRG.Equipment.ContainerHitScripts.RegisterBuiltins();
             SRG.Equipment.CargoHitRegistry.EnsureHooked();
 

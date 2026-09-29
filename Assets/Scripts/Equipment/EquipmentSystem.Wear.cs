@@ -57,7 +57,7 @@ namespace SRG.Equipment
                 if (forsageOnEngine)
                     wear *= forsageMult;
 
-                // Триггеры Wear (Обливионный коннектор — «износ двигателя при форсаже ×0.5»).
+                // Триггеры Wear (Форсажный стабилизатор — «износ двигателя при форсаже ×0.5»).
                 // Причина Forsage выставляется только для износа двигателя при активном форсаже.
                 var trigCtx = new TriggerContext
                 {
