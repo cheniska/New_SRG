@@ -42,7 +42,7 @@ namespace SRG.Dialog.PlanetGreetings
         [JsonProperty("PlanetGoodsSale")]        public string[] PlanetGoodsSale { get; set; }
         [JsonProperty("PlanetGoodsBuy")]         public string[] PlanetGoodsBuy { get; set; }
 
-        // Полные имена (SR2-совместимые). Мержатся с короткими в OnDeserialized.
+        // Полные имена. Мержатся с короткими в OnDeserialized.
         [JsonProperty("CurPlanetRelations")]        public string[] CurPlanetRelationsAlias        { set => PlanetRelation           = value; }
         [JsonProperty("CurPlanetRelation")]         public string[] CurPlanetRelationAlias         { set => PlanetRelation           = value; }
         [JsonProperty("CurPlanetRace")]             public string[] CurPlanetRaceAlias             { set => PlanetRace               = value; }
@@ -175,7 +175,7 @@ namespace SRG.Dialog.PlanetGreetings
         // ─── Тексты ──────────────────────────────────────────────────
         [JsonProperty("Texts")] public List<string> Texts { get; set; } = new();
 
-        // ─── SR2-совместимые плоские ключи (динамические) ────────────
+        // ─── Плоские ключи (динамические) ─────────────────────────────
         // Ключи, не покрытые явными полями, попадают сюда и разбираются селектором:
         //   • <SideName>Defeated              — уничтожена ли фракция (Yes/No)
         //   • <SideName>InCurStar             — счётчик кораблей стороны в текущей системе
