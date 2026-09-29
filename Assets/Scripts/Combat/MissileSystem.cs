@@ -17,28 +17,31 @@ namespace SRG.Combat
     /// Ракеты — это персистентные сущности в StarData.ActiveMissiles, которые
     /// преследуют цель между сабтёрнами и сохраняются между днями.
     ///
-    /// Модель воспроизводит снаряды SR2HD (docs/Missile_Trajectory.txt):
-    ///   • двухфазная — launch (день запуска: прямая по LaunchDirection) + homing
-    ///     (дуговая, ограниченная TurnRadPerTurn);
-    ///   • SR2-spread: 60°/(N+3) с чередованием знака + offset 8 (в наших — ~0.08) от ствола;
-    ///   • Owner-inertia на старте: к Speed добавляется доля скорости стрелка;
-    ///   • Speed ramp: разгон от стартовой к SpeedMax со скоростью SpeedRampPerTurn;
-    ///   • MissJitter: при отдалении от цели включается «петля промаха» (зеркальное Y в atan2);
-    ///   • Force-expire: если для долёта нужно &gt; MaxRangeFactor × оставшегося срока — смерть;
-    ///   • AutoReacquire: ракеты класса homing/5 ищут ближайшего hostile при потере цели.
+    /// Модель полёта (см. docs/modules/missiles.md):
+    ///   • залп сходит с «направляющих», разнесённых поперёк корпуса, веером
+    ///     фиксированной ширины SpreadDeg;
+    ///   • в ход запуска ракета идёт по прямой (разгонный участок), затем —
+    ///     упреждающее наведение на точку встречи с ограничением угловой скорости;
+    ///   • если цель оказалась позади и ближе радиуса разворота, ракета «выносит»
+    ///     петлю: летит прямо, пока не наберёт дистанцию для разворота;
+    ///   • если цель уходит несколько ходов подряд — захват теряется, ракета
+    ///     самоликвидируется;
+    ///   • головка самонаведения (AutoReacquire) ищет новую цель в конусе перед носом.
     /// </summary>
     public static class MissileSystem
     {
         const float HitRadius = 0.15f;        // запас сверх радиуса коллизии корабля
         const float DefaultShipRadius = 0.35f; // фолбэк, если нет данных о корпусе
-        const int   MaxSalvo  = 72; // 72 * угол = полный круг при компактных стволах
+        const int   MaxSalvo  = 72;
+        /// <summary>Во сколько радиусов разворота нужно отойти от цели, прежде чем начинать петлю.</summary>
+        const float ExtendRadiusFactor = 2f;
+        /// <summary>Потолок времени упреждения, в ходах: дальше прогноз позиции цели бессмыслен.</summary>
+        const float MaxLeadTurns = 1.5f;
 
         /// <summary>
-        /// Запускает залп ракет. Углы и точки спавна — по SR2-формуле (Missile §2.1):
-        /// первый снаряд (i=0) идёт по курсу корабля; пары i=1,2 — отклонение ±60°/(N+3);
-        /// i=3,4 — ±2·60°/(N+3) и т.д. Точка спавна каждой ракеты смещается на SpawnOffset
-        /// вдоль её угла, чтобы они физически не пересекались внутри одной точки.
-        /// Боезапас и износ оружия списываются один раз за залп.
+        /// Запускает залп ракет. Ракеты сходят с направляющих, равномерно разнесённых
+        /// поперёк курса стрелка, и расходятся веером шириной SpreadDeg (крайние — по краям веера,
+        /// одиночная ракета — строго по курсу). Боезапас и износ оружия списываются один раз за залп.
         /// </summary>
         public static void LaunchSalvo(
             ShipData attacker,
@@ -67,30 +70,26 @@ namespace SRG.Combat
             if (trigCtx.ExtraSalvos > 0)
                 salvo = Mathf.Clamp(salvo + trigCtx.ExtraSalvos * Mathf.Max(1, mc?.SalvoCount ?? 1), 1, MaxSalvo);
 
-            // Ракеты вылетают по курсу корабля (forward); фактический хоминг включится со
-            // следующего хода (LaunchPhase=false). Это даёт визуальное «вылетание из ствола».
-            Vector2 baseDir;
-            float baseAngleDeg;
-            if (!float.IsNaN(attacker.CurrentHeading))
-            {
-                baseDir = new Vector2(Mathf.Cos(attacker.CurrentHeading), Mathf.Sin(attacker.CurrentHeading));
-                baseAngleDeg = attacker.CurrentHeading * Mathf.Rad2Deg;
-            }
-            else
-            {
-                baseDir = target.Position - attacker.Position;
-                baseDir = baseDir.sqrMagnitude > 0.0001f ? baseDir.normalized : Vector2.up;
-                baseAngleDeg = Mathf.Atan2(baseDir.y, baseDir.x) * Mathf.Rad2Deg;
-            }
+            // Ракеты вылетают по курсу корабля; при неизвестном курсе — в сторону цели.
+            float baseAngle = !float.IsNaN(attacker.CurrentHeading)
+                ? attacker.CurrentHeading
+                : Angles.Toward(attacker.Position, target.Position, fallback: Mathf.PI * 0.5f);
+            Vector2 forward = Angles.Dir(baseAngle);
+            Vector2 lateral = new Vector2(-forward.y, forward.x);
+
+            float spreadRad   = (mc?.SpreadDeg ?? 24f) * Mathf.Deg2Rad;
+            float railSpacing = mc?.RailSpacing ?? 0.06f;
+            float noseOffset  = mc?.NoseOffset  ?? 0.05f;
 
             for (int i = 0; i < salvo; i++)
             {
-                float deviationDeg = SalvoAngleDeg(i, salvo);
-                float spawnOffset = mc?.SpawnOffset ?? 0.08f;
-                float finalAngleRad = (baseAngleDeg + deviationDeg) * Mathf.Deg2Rad;
-                Vector2 dir = new Vector2(Mathf.Cos(finalAngleRad), Mathf.Sin(finalAngleRad));
-                Vector2 spawnPos = attacker.Position + dir * spawnOffset;
-                CreateMissile(attacker, target, slotKey, weapon, mc, dir, spawnPos, subTurn, star, equipConfig, anim);
+                // u ∈ [-1..1]: позиция ракеты в залпе от левого края к правому.
+                float u = salvo == 1 ? 0f : (2f * i / (salvo - 1)) - 1f;
+                float angle = baseAngle + u * spreadRad * 0.5f;
+                Vector2 spawnPos = attacker.Position
+                                 + forward * noseOffset
+                                 + lateral * (u * railSpacing * (salvo - 1) * 0.5f);
+                CreateMissile(attacker, target, slotKey, weapon, mc, Angles.Dir(angle), spawnPos, subTurn, star, equipConfig, anim);
             }
 
             // Боезапас и износ — один раз на залп.
@@ -98,19 +97,6 @@ namespace SRG.Combat
             if (ammo > 0f) weapon.Params["Ammo"] = ammo - 1f;
             if (equipConfig != null)
                 EquipmentSystem.ApplyWeaponShotWear(attacker, slotKey, equipConfig);
-        }
-
-        /// <summary>
-        /// SR2-формула спреда (Missile §2.1): i=0 → 0°; пары симметрично нарастают
-        /// с шагом 60°/(N+3). Чем больше залп — тем плотнее веер.
-        /// </summary>
-        static float SalvoAngleDeg(int i, int salvoCount)
-        {
-            if (i == 0) return 0f;
-            int step = (i + 1) / 2;                          // 1,1,2,2,3,3,...
-            int sign = (i & 1) == 1 ? 1 : -1;                // нечётный — +; чётный — −
-            float spreadStep = 60f / (salvoCount + 3);
-            return step * spreadStep * sign;
         }
 
         static void CreateMissile(
@@ -140,12 +126,9 @@ namespace SRG.Combat
             float speedRamp     = mc?.SpeedRampPerTurn ?? 0f;
             float launchMul     = mc?.LaunchSpeedMultiplier ?? 2.5f;
 
-            // Owner inertia (SR2 §3.A): стартовая скорость зависит от скорости стрелка.
-            // Если SpeedRampPerTurn > 0, ракета начинает с base ≤ SpeedMax и разгоняется;
-            // если 0 — сразу на потолке, инерция лишь добавляет «выплеск».
-            float attackerSpeed = attacker != null
-                ? Mathf.Max(0f, SRUnits.ToWorld(attacker.ActualSpeed))
-                : 0f;
+            // Ракета наследует часть скорости носителя. С разгонным двигателем (SpeedRampPerTurn > 0)
+            // стартует с половины крейсерской и дальше разгоняется; без него — сразу крейсерская.
+            float attackerSpeed = Mathf.Max(0f, SRUnits.ToWorld(attacker.ActualSpeed));
             float startSpeed = (speedRamp > 0f ? speedMax * 0.5f : speedMax) + attackerSpeed * inertiaFactor;
             // Launch-фаза: ракета должна сразу же оторваться от стрелка, иначе визуально она
             // «висит под кораблём» (особенно медленные торпеды, у которых базовый Speed
@@ -176,13 +159,14 @@ namespace SRG.Combat
                 LaunchDirection = launchDir,
                 LaunchSubTurn   = subTurn,
                 LaunchPhase     = true,
-                CurrentHeading  = Mathf.Atan2(launchDir.y, launchDir.x),
+                CurrentHeading  = Angles.Of(launchDir),
                 TurnRadPerTurn  = turnDeg * Mathf.Deg2Rad,
                 ReturnsOnTargetDeath = returnsOnDeath,
-                MaxRangeFactor       = mc?.MaxRangeFactor   ?? 2f,
-                MissJitterEnabled    = mc?.MissJitter       ?? true,
+                MaxRecedingTurns     = mc?.MaxRecedingTurns ?? 2,
+                OvershootExtend      = mc?.OvershootExtend  ?? true,
                 AutoReacquire        = mc?.AutoReacquire    ?? false,
                 ReacquireRadius      = mc?.ReacquireRadius  ?? 5f,
+                SeekerConeRad        = (mc?.SeekerConeDeg   ?? 120f) * Mathf.Deg2Rad,
                 MinDmg        = shot.MinDmg,
                 MaxDmg        = shot.MaxDmg,
                 ArmorPenetration  = shot.ArmorPenetration,
@@ -197,7 +181,8 @@ namespace SRG.Combat
             // План на оставшуюся часть текущего дня. Сабтёрны < LaunchSubTurn
             // остаются на launchPos (ракета невидима до залпа); далее — прямая
             // по LaunchDirection, потому что LaunchPhase=true.
-            PlanFrames(missile, target.Position, missile.LaunchSubTurn - 1, frames);
+            ObserveTarget(missile, target.Position);
+            PlanFrames(missile, target.Position, Vector2.zero, missile.LaunchSubTurn - 1, frames);
             star.ActiveMissiles.Add(missile);
         }
 
@@ -206,7 +191,7 @@ namespace SRG.Combat
         /// Сама траектория уже посчитана заранее в PlanFrames (на старте дня в
         /// InitMissileFrames либо в момент создания/смены цели) — здесь только
         /// читаем кадр, обновляем heading, считаем swept-попадание и
-        /// при необходимости запускаем TryReacquireTarget / force-expire.
+        /// при необходимости перенацеливаем головку.
         /// </summary>
         public static void TickMissiles(
             StarData star,
@@ -227,8 +212,8 @@ namespace SRG.Combat
                     && string.IsNullOrEmpty(target.LandedOnShipUid);
                 anim.MissileFrames.TryGetValue(missile.Uid, out var frames);
 
-                // SR2 §4: после первого хода homing-ракеты пытаются перенацелиться, если
-                // потеряли цель. Не применяется в фазе launch и для coast/return.
+                // Головка самонаведения ищет новую цель, если старая потеряна.
+                // Не работает на разгонном участке и для coast/return.
                 if (missile.AutoReacquire
                     && !missile.LaunchPhase
                     && !missile.IsReturning
@@ -238,11 +223,12 @@ namespace SRG.Combat
                     var reacquired = TryReacquireTarget(missile, star, attacker);
                     if (reacquired != null)
                     {
-                        missile.PrevTargetUid = missile.TargetUid;
-                        missile.TargetUid     = reacquired.Uid;
+                        missile.TargetUid = reacquired.Uid;
+                        missile.RecedingTurns = 0;
                         target = reacquired;
                         targetAlive = true;
-                        if (frames != null) PlanFrames(missile, target.Position, subTurn - 1, frames);
+                        ObserveTarget(missile, target.Position);
+                        if (frames != null) PlanFrames(missile, target.Position, Vector2.zero, subTurn - 1, frames);
                     }
                 }
 
@@ -257,7 +243,8 @@ namespace SRG.Combat
                         missile.TargetUid   = missile.AttackerUid;
                         target = attacker;
                         targetAlive = true;
-                        if (frames != null) PlanFrames(missile, target.Position, subTurn - 1, frames);
+                        ObserveTarget(missile, target.Position);
+                        if (frames != null) PlanFrames(missile, target.Position, Vector2.zero, subTurn - 1, frames);
                         GameConsoleController.AddEntry(
                             $"[Торпеда] Цель уничтожена — торпеда возвращается к {attacker.Name}.");
                     }
@@ -268,7 +255,7 @@ namespace SRG.Combat
                         missile.TargetDeadCoasting = true;
                         missile.CoastTargetPos = target != null ? target.Position : missile.Position;
                         if (frames != null && !missile.LaunchPhase)
-                            PlanFrames(missile, missile.CoastTargetPos, subTurn - 1, frames);
+                            PlanFrames(missile, missile.CoastTargetPos, Vector2.zero, subTurn - 1, frames);
                     }
                 }
 
@@ -280,35 +267,13 @@ namespace SRG.Combat
                     continue;
                 }
 
-                // SR2 §3.D force-expire: если ракета не успевает долететь до цели за
-                // оставшийся срок (с учётом текущей скорости) — взрываем сейчас, чтобы не
-                // плодить бесконечно живущие хвосты.
-                if (target != null && missile.MaxRangeFactor > 0f && !missile.LaunchPhase)
-                {
-                    float distToTarget = (target.Position - missile.Position).magnitude;
-                    float effSpeed = Mathf.Max(missile.Speed, missile.SpeedMax) * GalaxyData.SubTurnsPerTurn;
-                    if (effSpeed > 1e-4f)
-                    {
-                        float turnsNeeded = distToTarget / effSpeed;
-                        if (turnsNeeded > missile.DaysLeft * missile.MaxRangeFactor)
-                        {
-                            GameConsoleController.AddEntry(
-                                $"[Ракета] Цель слишком далеко — снаряд самоликвидируется.");
-                            ExplodeMissile(missile, subTurn, equipConfig, anim);
-                            star.ActiveMissiles.RemoveAt(i);
-                            continue;
-                        }
-                    }
-                }
-
                 // Берём заранее посчитанную позицию для этого сабтёрна.
                 Vector2 newPos = frames != null ? frames.SubTurns[subTurn] : missile.Position;
 
                 // Обновляем CurrentHeading из фактического шага — нужно для отрисовки
                 // спрайта и для стартового heading при перепланировании следующего дня.
                 Vector2 step = newPos - missile.Position;
-                if (step.sqrMagnitude > 1e-8f)
-                    missile.CurrentHeading = Mathf.Atan2(step.y, step.x);
+                missile.CurrentHeading = Angles.Of(step, missile.CurrentHeading);
 
                 // Coast: ракета летит к точке смерти цели. Проверяем сближение со стационарной
                 // точкой — на подлёте взрываемся в пустоте (без урона) в самой точке трупа.
@@ -361,24 +326,23 @@ namespace SRG.Combat
 
         /// <summary>
         /// Планирует траекторию ракеты на остаток текущего хода (frames[fromSubTurn..SubTurnsPerTurn]).
-        /// Шаг = один сабтёрн. Каждый день перепланируется заново с актуальной позицией цели
-        /// (см. InitMissileFrames). Аналог ShipTrajectory.GenerateKinematicSpline, но без обхода
-        /// препятствий — ракеты летят сквозь.
+        /// Шаг = один сабтёрн. В начале каждого хода план строится заново по актуальной позиции цели
+        /// (см. InitMissileFrames). Препятствия не учитываются — ракеты летят сквозь.
         ///
-        /// LaunchPhase=true → прямая по CurrentHeading (день запуска, salvo spread фиксирован).
-        /// LaunchPhase=false → дуговой хоминг к targetPos с:
-        ///   • защитой от «вечной спирали» (inside-circle guard): если цель внутри окружности
-        ///     минимального разворота — поворачиваем в противоположную сторону;
-        ///   • Speed ramp (§3.B): на каждом шаге Speed подтягивается к SpeedMax;
-        ///   • MissJitter (§3.B/§9.4): если расстояние до цели начало расти — включается
-        ///     «петля промаха» (зеркальное Y в atan2 на N сабтёрнов).
-        ///
-        /// State, который персистится между ходами: missile.Speed, missile.LastDistSq,
-        /// missile.MissJitterCnt.
+        /// LaunchPhase=true → разгонный участок: прямая по CurrentHeading с шагом LaunchSpeed.
+        /// LaunchPhase=false → наведение:
+        ///   • целимся в упреждённую точку: targetPos + targetVel × t, где t — время подлёта
+        ///     на текущей скорости (не более MaxLeadTurns);
+        ///   • поворот ограничен TurnRadPerTurn;
+        ///   • «вынос петли» (OvershootExtend): если цель сзади и ближе ExtendRadiusFactor радиусов
+        ///     разворота, ракета держит курс, пока не отойдёт на дистанцию, с которой успеет развернуться;
+        ///   • скорость подтягивается к SpeedMax на SpeedRampPerTurn за ход.
         /// </summary>
+        /// <param name="targetVel">Скорость цели, мировых единиц за сабтёрн (ноль — цель неподвижна).</param>
         static void PlanFrames(
             ActiveMissile missile,
             Vector2 targetPos,
+            Vector2 targetVel,
             int fromSubTurn,
             MissileSubTurnFrames frames)
         {
@@ -387,174 +351,100 @@ namespace SRG.Combat
             if (fromSubTurn > last) return;
 
             Vector2 cur = missile.Position;
-            float curA = missile.CurrentHeading;
-
+            float heading = missile.CurrentHeading;
             frames.SubTurns[fromSubTurn] = cur;
 
-            if (missile.SpeedMax < 1e-6f && missile.Speed < 1e-6f)
-            {
-                for (int s = fromSubTurn + 1; s <= last; s++) frames.SubTurns[s] = cur;
-                return;
-            }
-
-            if (missile.LaunchPhase)
-            {
-                // Launch: прямая по углу с бустированным шагом (LaunchSpeed). Это нужно,
-                // чтобы торпеда/ракета сразу оторвалась от стрелка, а не «висела» под ним —
-                // базовая скорость для медленных снарядов сопоставима со скоростью корабля.
-                // LaunchSpeed=0 (старые сохранёнки) → fallback на обычный Speed.
-                Vector2 fwd = new Vector2(Mathf.Cos(curA), Mathf.Sin(curA));
-                float stepLen = missile.LaunchSpeed > 0f ? missile.LaunchSpeed : missile.Speed;
-                for (int s = fromSubTurn + 1; s <= last; s++)
-                {
-                    cur += fwd * stepLen;
-                    frames.SubTurns[s] = cur;
-                }
-                return;
-            }
-
-            float stepTurn = missile.TurnRadPerTurn / last;
-            if (stepTurn < 1e-6f)
-            {
-                Vector2 fwd = new Vector2(Mathf.Cos(curA), Mathf.Sin(curA));
-                float stepLen = missile.Speed;
-                for (int s = fromSubTurn + 1; s <= last; s++)
-                {
-                    cur += fwd * stepLen;
-                    frames.SubTurns[s] = cur;
-                }
-                return;
-            }
-
-            // SR2 §3.B: разгон/торможение на сабтёрн. SpeedRampPerTurn — единицы/ход;
-            // в сабтёрне = ramp/last. SpeedMax — текущий потолок (не меняется в полёте).
-            float speedRampPerStep = missile.SpeedRampPerTurn / last;
-            float curSpeed = missile.Speed;
-
-            // SR2 §3.B: за основу для длительности jitter берём SpeedMax (в SR2 — Speed_max/40..Speed_max/10
-            // кадров). У нас сабтёрнов в ходе всего 10, поэтому масштабируем к более скромному окну:
-            // 1..ceil(SubTurnsPerTurn/2) сабтёрнов.
-            int jitterMin = 1;
-            int jitterMax = Mathf.Max(2, last / 2);
-
-            float lastDistSq = missile.LastDistSq;
-            int jitterCnt = missile.MissJitterCnt;
+            bool guided = !missile.LaunchPhase && missile.TurnRadPerTurn > 1e-5f;
+            float speed = missile.LaunchPhase && missile.LaunchSpeed > 0f ? missile.LaunchSpeed : missile.Speed;
+            float maxTurn = missile.TurnRadPerTurn / last;
+            float accel = missile.SpeedRampPerTurn / last;
 
             for (int s = fromSubTurn + 1; s <= last; s++)
             {
-                // Speed ramp в сторону SpeedMax (вверх или вниз, если стартанули выше из-за инерции).
-                if (speedRampPerStep > 0f && !Mathf.Approximately(curSpeed, missile.SpeedMax))
+                if (guided)
                 {
-                    if (Mathf.Abs(curSpeed - missile.SpeedMax) <= speedRampPerStep) curSpeed = missile.SpeedMax;
-                    else if (curSpeed < missile.SpeedMax) curSpeed += speedRampPerStep;
-                    else                                   curSpeed -= speedRampPerStep;
+                    if (accel > 0f) speed = Mathf.MoveTowards(speed, missile.SpeedMax, accel);
+                    heading = GuidanceHeading(missile, cur, heading, speed, maxTurn,
+                                              targetPos + targetVel * (s - fromSubTurn), targetVel);
                 }
-
-                Vector2 delta = targetPos - cur;
-                float distSq = delta.sqrMagnitude;
-
-                // MissJitter (§3.B/§9.4): детектим начало отдаления и поворачиваем в зеркало.
-                bool jitterActive = false;
-                if (missile.MissJitterEnabled)
-                {
-                    if (jitterCnt > 0)
-                    {
-                        jitterActive = true;
-                        jitterCnt--;
-                    }
-                    else if (lastDistSq >= 0f && distSq > lastDistSq && jitterCnt == 0)
-                    {
-                        // Только что начали отдаляться — запускаем промах.
-                        int seed = (missile.Uid?.GetHashCode() ?? 0) ^ s;
-                        int range = jitterMax - jitterMin + 1;
-                        jitterCnt = jitterMin + Mathf.Abs(seed) % range;
-                        jitterActive = true;
-                        jitterCnt--;
-                    }
-                    lastDistSq = distSq;
-                }
-
-                float desiredA;
-                if (distSq < 1e-8f)
-                    desiredA = curA;
-                else if (jitterActive)
-                    desiredA = Mathf.Atan2(-delta.y, delta.x);   // SR2 §3.B: инверсия Y = «петля»
-                else
-                    desiredA = Mathf.Atan2(delta.y, delta.x);
-
-                float diff = ShipTrajectory.NormalizeAnglePi(desiredA - curA);
-
-                if (Mathf.Abs(diff) <= stepTurn)
-                {
-                    curA = desiredA;
-                }
-                else
-                {
-                    float turnRadius   = curSpeed / Mathf.Sin(stepTurn);
-                    float turnRadiusSq = turnRadius * turnRadius;
-                    Vector2 ccwCenter = cur + new Vector2(-Mathf.Sin(curA),  Mathf.Cos(curA)) * turnRadius;
-                    Vector2 cwCenter  = cur + new Vector2( Mathf.Sin(curA), -Mathf.Cos(curA)) * turnRadius;
-                    bool insideCCW = (targetPos - ccwCenter).sqrMagnitude < turnRadiusSq;
-                    bool insideCW  = (targetPos - cwCenter ).sqrMagnitude < turnRadiusSq;
-
-                    int sign;
-                    if      (insideCCW && insideCW) sign = diff > 0f ? 1 : -1; // обе недостижимы — летим в сторону цели
-                    else if (insideCCW)             sign = -1;                 // принудительно CW
-                    else if (insideCW)              sign = +1;                 // принудительно CCW
-                    else                            sign = diff > 0f ? 1 : -1; // кратчайший разворот
-                    curA += sign * stepTurn;
-                }
-
-                cur += new Vector2(Mathf.Cos(curA), Mathf.Sin(curA)) * curSpeed;
+                cur += Angles.Dir(heading) * speed;
                 frames.SubTurns[s] = cur;
             }
 
-            // Сохраняем «жизненный» state в саму ракету — он переживает ход.
-            missile.Speed         = curSpeed;
-            missile.LastDistSq    = lastDistSq;
-            missile.MissJitterCnt = jitterCnt;
+            if (guided) missile.Speed = speed;
+        }
+
+        /// <summary>Курс ракеты на следующий сабтёрн при наведении на движущуюся точку.</summary>
+        static float GuidanceHeading(ActiveMissile missile, Vector2 pos, float heading, float speed,
+                                     float maxTurn, Vector2 targetPos, Vector2 targetVel)
+        {
+            Vector2 toTarget = targetPos - pos;
+            float dist = toTarget.magnitude;
+            if (dist < 1e-4f || speed < 1e-6f) return heading;
+
+            // Упреждение: где будет цель к моменту подлёта.
+            float leadSteps = Mathf.Min(dist / speed, MaxLeadTurns * GalaxyData.SubTurnsPerTurn);
+            Vector2 aimPoint = targetPos + targetVel * leadSteps;
+            float desired = Angles.Toward(pos, aimPoint, heading);
+
+            if (missile.OvershootExtend && maxTurn > 1e-6f)
+            {
+                // Радиус разворота на текущей скорости. Цель сзади и слишком близко —
+                // доворот всё равно не успеет, поэтому летим прямо и набираем дистанцию.
+                float turnRadius = speed / maxTurn;
+                bool behind = Mathf.Abs(Angles.WrapPi(desired - heading)) > Mathf.PI * 0.5f;
+                if (behind && dist < turnRadius * ExtendRadiusFactor) return heading;
+            }
+            return Angles.StepToward(heading, desired, maxTurn);
+        }
+
+        /// <summary>Запоминает позицию цели на начало плана — по двум наблюдениям подряд
+        /// оценивается её скорость для упреждения.</summary>
+        static void ObserveTarget(ActiveMissile missile, Vector2 targetPos)
+        {
+            missile.LastTargetPos = targetPos;
+            missile.HasTargetFix = true;
         }
 
         /// <summary>
-        /// SR2 §4: ищет ближайшего hostile к стрелявшему в радиусе missile.ReacquireRadius
-        /// от текущей позиции ракеты. Игнорирует PrevTargetUid (мы только что её потеряли).
-        /// Если в радиусе нет врагов — fallback на стрелка (SR2-поведение, см. §4).
+        /// Головка самонаведения: ищет враждебный стрелку корабль в радиусе ReacquireRadius
+        /// и в конусе SeekerConeRad перед носом ракеты. Предпочтение — цели ближе к оси конуса
+        /// и ближе по дистанции. Если никого нет — null (ракета продолжит по инерции).
         /// </summary>
         static ShipData TryReacquireTarget(ActiveMissile missile, StarData star, ShipData attacker)
         {
             if (star?.Ships == null) return null;
-            float bestSq = missile.ReacquireRadius * missile.ReacquireRadius;
+            float radiusSq = missile.ReacquireRadius * missile.ReacquireRadius;
+            float halfCone = missile.SeekerConeRad * 0.5f;
             ShipData best = null;
+            float bestScore = float.MaxValue;
             for (int j = 0; j < star.Ships.Count; j++)
             {
                 var s = star.Ships[j];
                 if (s == null || s.CurrentHull <= 0) continue;
                 if (!string.IsNullOrEmpty(s.LandedOnShipUid)) continue; // пристыкован «внутри» носителя
-                if (s.Uid == missile.PrevTargetUid) continue;
-                if (s.Uid == missile.AttackerUid)   continue;
+                if (s.Uid == missile.AttackerUid) continue;
 
-                // hostile к стрелявшему: используем общий relations-фасад. Если attacker уже
-                // мёртв — допускаем по сохранённым Owner/Race из самой ракеты.
-                bool hostile;
-                if (attacker != null) hostile = Relations.AreHostile(attacker, s);
-                else
-                {
-                    var mgr = OwnerRaceRelationsManager.Instance;
-                    hostile = mgr != null && mgr.AreHostile(missile.AttackerOwner, s.Owner, missile.AttackerRace, s.Race);
-                }
-                if (!hostile) continue;
+                Vector2 to = s.Position - missile.Position;
+                float d2 = to.sqrMagnitude;
+                if (d2 > radiusSq) continue;
+                float off = Mathf.Abs(Angles.WrapPi(Angles.Of(to, missile.CurrentHeading) - missile.CurrentHeading));
+                if (off > halfCone) continue;
+                if (!IsHostileToShooter(missile, attacker, s)) continue;
 
-                float d2 = (s.Position - missile.Position).sqrMagnitude;
-                if (d2 < bestSq) { bestSq = d2; best = s; }
+                // Смещение от оси «удлиняет» дистанцию: цель на краю конуса вдвое «дальше».
+                float score = Mathf.Sqrt(d2) * (1f + off / Mathf.Max(halfCone, 1e-3f));
+                if (score < bestScore) { bestScore = score; best = s; }
             }
-            if (best != null) return best;
+            return best;
+        }
 
-            // SR2-фоллбэк: если врагов рядом нет, ракета наводится на стрелка.
-            // Реалистично только если стрелок ещё жив; иначе оставим target = null,
-            // дальше TickMissiles перейдёт в coast/return.
-            if (attacker != null && attacker.CurrentHull > 0)
-                return attacker;
-            return null;
+        /// <summary>Враждебен ли корабль стрелку. Если стрелок уже мёртв — по Owner/Race из самой ракеты.</summary>
+        static bool IsHostileToShooter(ActiveMissile missile, ShipData attacker, ShipData other)
+        {
+            if (attacker != null) return Relations.AreHostile(attacker, other);
+            var mgr = OwnerRaceRelationsManager.Instance;
+            return mgr != null && mgr.AreHostile(missile.AttackerOwner, other.Owner, missile.AttackerRace, other.Race);
         }
 
         /// <summary>
@@ -739,36 +629,59 @@ namespace SRG.Combat
         }
 
         /// <summary>
-        /// Инициализирует фреймы ракет в начале дня и сразу планирует траекторию
-        /// на этот ход (PlanFrames). Никаких ShotEvent-ов не добавляет — визуал полёта
-        /// обеспечивается спрайтом из SystemViewManager.SpawnMissileVisual.
+        /// Инициализирует фреймы ракет в начале дня и планирует траекторию на этот ход.
+        /// Здесь же ведётся учёт «потери захвата»: если цель отдалилась за прошедший ход
+        /// MaxRecedingTurns раз подряд, ракета самоликвидируется. Никаких ShotEvent-ов для
+        /// полёта не добавляет — визуал обеспечивает SystemViewManager.SpawnMissileVisual.
         /// </summary>
-        public static void InitMissileFrames(StarData star, TurnAnimationData anim)
+        public static void InitMissileFrames(StarData star, ItemsConfig equipConfig, TurnAnimationData anim)
         {
-            foreach (var missile in star.ActiveMissiles)
+            for (int i = star.ActiveMissiles.Count - 1; i >= 0; i--)
             {
+                var missile = star.ActiveMissiles[i];
                 var frames = EnsureMissileFrames(missile.Uid, missile.Position, anim);
-                Vector2 aimAt;
+
                 if (missile.TargetDeadCoasting)
                 {
                     // Coast-ракета летит к зафиксированной точке смерти цели.
-                    aimAt = missile.CoastTargetPos;
+                    PlanFrames(missile, missile.CoastTargetPos, Vector2.zero, 0, frames);
+                    continue;
                 }
-                else
+
+                var target = FindShip(star, missile.TargetUid);
+                if (target == null)
                 {
-                    var target = FindShip(star, missile.TargetUid);
-                    // Если цель потеряна между ходами — летим прямо, дальнейшая судьба
-                    // (взрыв / возврат торпеды / reacquire) решится в TickMissiles.
-                    aimAt = target != null
-                        ? target.Position
-                        : missile.Position + new Vector2(Mathf.Cos(missile.CurrentHeading),
-                                                        Mathf.Sin(missile.CurrentHeading));
+                    // Цель потеряна между ходами — летим прямо, дальнейшая судьба
+                    // (взрыв / возврат торпеды / перенацеливание) решится в TickMissiles.
+                    PlanFrames(missile, missile.Position + Angles.Dir(missile.CurrentHeading), Vector2.zero, 0, frames);
+                    continue;
                 }
-                // На новом ходу LastDistSq «сбрасывается» (новая цель, новый план); jitter-counter
-                // сохраняется — если ракета в петле, она её закончит.
-                missile.LastDistSq = -1f;
-                PlanFrames(missile, aimAt, 0, frames);
+
+                Vector2 targetVel = Vector2.zero;
+                if (missile.HasTargetFix)
+                {
+                    targetVel = (target.Position - missile.LastTargetPos) / GalaxyData.SubTurnsPerTurn;
+                    if (UpdateLockLoss(missile, target.Position))
+                    {
+                        GameConsoleController.AddEntry("[Ракета] Цель уходит — захват потерян, снаряд самоликвидируется.");
+                        ExplodeMissile(missile, 0, equipConfig, anim);
+                        star.ActiveMissiles.RemoveAt(i);
+                        continue;
+                    }
+                }
+                ObserveTarget(missile, target.Position);
+                missile.LastTargetDist = (target.Position - missile.Position).magnitude;
+                PlanFrames(missile, target.Position, targetVel, 0, frames);
             }
+        }
+
+        /// <summary>Обновляет счётчик ходов, в которые цель отдалялась. True — захват потерян.</summary>
+        static bool UpdateLockLoss(ActiveMissile missile, Vector2 targetPos)
+        {
+            if (missile.MaxRecedingTurns <= 0 || missile.IsReturning || missile.LastTargetDist < 0f) return false;
+            float dist = (targetPos - missile.Position).magnitude;
+            missile.RecedingTurns = dist > missile.LastTargetDist ? missile.RecedingTurns + 1 : 0;
+            return missile.RecedingTurns >= missile.MaxRecedingTurns;
         }
 
         static MissileSubTurnFrames EnsureMissileFrames(string uid, Vector2 startPos, TurnAnimationData anim)
