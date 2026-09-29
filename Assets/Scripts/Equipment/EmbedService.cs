@@ -112,7 +112,7 @@ namespace SRG.Equipment
 
             carrier.EmbedItems[embed.Uid] = embed;
             carrier.Embeds.Add(embed.Uid);
-            // После встраивания предмет нельзя улучшить на SB (см. docs/SB_Equipment_Improvement.txt).
+            // После встраивания предмет нельзя улучшить на SB (см. docs/modules/equipment_improvement.md).
             // Извлечение модуля флаг не возвращает — «улучшить можно только один раз в жизни» соблюдается.
             carrier.IsImprovable = false;
             RecomputeCarrier(carrier);

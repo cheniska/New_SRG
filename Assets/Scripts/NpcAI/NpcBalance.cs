@@ -66,9 +66,11 @@ namespace SRG.NpcAI
         /// Меньше MaxEngageRange — для паники важно «прямо здесь», не далёкая перспектива.</summary>
         public static float Fear_MaxThreatRadius = 6f;
 
-        /// <summary>Прирост порога при множественной угрозе: threshold_mul = 1 + (cnt-1) * этот коэф.
-        /// SR2HD-аналог — «(cnt-1) * total * ~0..0.5» в разных классах; у нас единая константа.</summary>
+        /// <summary>Надбавка к давлению за каждого врага сверх первого: raw *= 1 + (cnt-1) * K.</summary>
         public static float Fear_CrowdMultiplier = 0.3f;
+
+        /// <summary>Какая доля силы союзников (того же Owner) в радиусе засчитывается как своя защита.</summary>
+        public static float Fear_AllySupportShare = 0.5f;
 
         /// <summary>Модификаторы порога страха по CombatClass. >1 → пугается сложнее.
         /// Military стоит до последнего, Civilian — самый пугливый.</summary>
@@ -78,8 +80,7 @@ namespace SRG.NpcAI
         public static float Fear_ThresholdMult_Civilian  = 0.7f;
 
         /// <summary>Post-filter: партнёр «сильного лидера» не паникует. Лидер считается сильным,
-        /// если его Strength × этот коэф ≥ Strength self. Аналог SR2HD «партнёр рейнджера при
-        /// сильном лидере не паникует».</summary>
+        /// если его Strength × этот коэф ≥ Strength self.</summary>
         public static float Fear_PartnerLeaderStrengthMult = 1.0f;
 
         /// <summary>Прирост эффективного давления страха от Frustration (0..100):

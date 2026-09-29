@@ -126,7 +126,7 @@ namespace SRG.NpcAI.Orders
     }
 
     /// <summary>Применяет +15 модификатор отношения всем военным с той же HomePlanetUid, что у beneficiary.
-    /// Эмулирует механику Space Rangers HD: «взятка одному воину — благодарность всей планете».</summary>
+    /// Военные одной планеты держатся заодно: откупился от одного — остальные тоже смягчаются.</summary>
     public static class CeasefireSolidarity
     {
         public static void ApplyHomePlanetBonus(ShipData payer, ShipData beneficiary, StarData star)

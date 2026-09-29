@@ -363,7 +363,7 @@ namespace SRG.NpcAI.Spawning
         }
 
         /// <summary>Раскатать шанс SB-апгрейда на установленное оборудование NPC при спавне.
-        /// См. <see cref="SRG.Equipment.ImprovementConfig.NpcSpawnChance"/>, docs/SB_Equipment_Improvement.txt.</summary>
+        /// См. <see cref="SRG.Equipment.ImprovementConfig.NpcSpawnChance"/>, docs/modules/equipment_improvement.md.</summary>
         private static void RollNpcImprovements(ShipData ship, GalaxyGenerationContext ctx)
         {
             var cfg = ctx?.ItemsConfig?.Improvement;

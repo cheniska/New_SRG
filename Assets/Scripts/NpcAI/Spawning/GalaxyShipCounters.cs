@@ -66,8 +66,7 @@ namespace SRG.NpcAI.Spawning
         /// <summary>Общее число обитаемых (Owner ≠ None) систем в галактике. Знаменатель доминации сторон.</summary>
         public int InhabitedSystemsCount;
 
-        /// <summary>Число систем коалиции (Owner=Coalition). Знаменатель для target пиратов/рейнджеров.
-        /// "Normals" в терминологии SR-HD.</summary>
+        /// <summary>Число систем коалиции (Owner=Coalition). Знаменатель для target пиратов/наёмников.</summary>
         public int NormalSystemsCount;
 
         /// <summary>ownerId → число систем этого владельца.</summary>

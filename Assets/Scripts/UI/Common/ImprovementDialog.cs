@@ -15,7 +15,7 @@ namespace SRG.UI.Common
     /// <see cref="Show(ShipData)"/> (или из диалогового action-а "OpenImprovement").
     /// Показывает три секции: установленное на игроке, трюм, оборудование партнёров.
     /// Клик по строке предмета переключает панель на выбор тира/атрибута; кнопка «Улучшить»
-    /// вызывает <see cref="ImprovementService.Apply"/>. См. docs/SB_Equipment_Improvement.txt.
+    /// вызывает <see cref="ImprovementService.Apply"/>. См. docs/modules/equipment_improvement.md.
     /// </summary>
     public class ImprovementDialog : MonoBehaviour
     {
@@ -114,7 +114,7 @@ namespace SRG.UI.Common
             ClearList();
 
             AddLabelRow("Стандартный апгрейд (Min / Avg / Max):");
-            foreach (var kv in cfg.Tiers)
+            foreach (var kv in cfg.CostShare)
             {
                 string tierKey = kv.Key;
                 var q = ImprovementService.GetQuote(el.Item, tierKey, ImprovementService.Mode.Standard, cfg);

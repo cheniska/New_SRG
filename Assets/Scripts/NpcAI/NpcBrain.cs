@@ -46,7 +46,7 @@ namespace SRG.NpcAI
         /// <summary>Дискретный флаг «в панике». Пересчитывается каждым Tick через AssessFear
         /// (не персистится). Читают: диалоги (ShipGreetingSelector.MatchesFear), FearDropService,
         /// JointAttackService (союзник в панике не соглашается на совместную атаку),
-        /// EvaluateSituation (interrupt Flee/SeekShelter). Аналог SR2HD TShip._3B4.</summary>
+        /// EvaluateSituation (interrupt Flee/SeekShelter).</summary>
         public bool  InFear    { get; private set; }
         /// <summary>Непрерывная величина давления страха (0..1+). ≥1 → InFear=true.
         /// Не клэмпится сверху — UI/градации в диалогах могут использовать raw-величину.</summary>
@@ -127,7 +127,7 @@ namespace SRG.NpcAI
 
             // Fear пересчитывается КАЖДЫЙ Tick, до директив и EvaluateSituation. Не персистится.
             // Читают: диалоги (greetings/greeting-фильтр), FearDropService, JointAttackService,
-            // EvaluateSituation (fear как приоритетный interrupt). Аналог SR2HD TShip._3B4.
+            // EvaluateSituation (fear как приоритетный interrupt).
             AssessFear(ship, star);
 
             // Партнёр в критической ситуации (fear/крит.HP) — обычная EvaluateSituation имеет
@@ -150,8 +150,8 @@ namespace SRG.NpcAI
             TickActivity(ship, star, ctx);
         }
 
-        /// <summary>Единая формула страха. Считает эффективное давление угроз в системе
-        /// (сумма ChanceToWin враждебных в радиусе Fear_MaxThreatRadius × «толпа») и сравнивает
+        /// <summary>Единая формула страха. Считает давление угроз: доля вражеской силы в радиусе
+        /// Fear_MaxThreatRadius против своей силы и поддержки союзников, с поправкой на число врагов, и сравнивает
         /// с порогом, зависящим от Caution/CombatClass/Frustration. Обновляет InFear/FearLevel.
         ///
         /// Post-filter'ы:
@@ -172,7 +172,7 @@ namespace SRG.NpcAI
             // 0 Caution). Hard-skip до всех остальных проверок.
             if (ship.Owner == "Dominators") return;
 
-            // Партнёр сильного лидера не паникует (post-filter, аналог SR2HD Ranger-ветки).
+            // Партнёр сильного лидера не паникует — лидер прикроет.
             if (!string.IsNullOrEmpty(ship.PartnerLeaderUid))
             {
                 var leader = FindShipByUid(star, ship.PartnerLeaderUid);
@@ -192,7 +192,7 @@ namespace SRG.NpcAI
             star.RebuildPowerCache(GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0);
             if (star.GetHostilePower(ship.Owner, ship.Race) <= 0f) return;
 
-            // Hard trigger #1: безоружен + враг в звезде → гарантированный fear (SR2HD-аналог).
+            // Hard trigger #1: безоружен + враг в звезде → гарантированный fear.
             if (!NpcTargeting.HasWorkingWeapon(ship))
             {
                 InFear = true;
@@ -212,34 +212,40 @@ namespace SRG.NpcAI
                 }
             }
 
-            // Агрегированная угроза: Σ ChanceToWin(enemy, self) для враждебных в радиусе.
-            // Spatial hash сужает кандидатов до клеток 3×3 вокруг ship.Position (при ≥12 кораблей в звезде).
-            float radiusSq = NpcBalance.Fear_MaxThreatRadius * NpcBalance.Fear_MaxThreatRadius;
-            float sumEnemyCtw = 0f;
-            int   count = 0;
-            foreach (var s in ShipSpatialHash.Nearby(star, ship.Position, NpcBalance.Fear_MaxThreatRadius))
+            // Баланс сил в радиусе: враги давят, свои поддерживают. Вклад каждого корабля
+            // ослабевает с расстоянием (на краю радиуса — вдвое). Spatial hash сужает кандидатов.
+            float radius = NpcBalance.Fear_MaxThreatRadius;
+            float radiusSq = radius * radius;
+            float enemyPower = 0f;
+            float allyPower  = 0f;
+            int   enemies = 0;
+            foreach (var s in ShipSpatialHash.Nearby(star, ship.Position, radius))
             {
                 if (s == null || s == ship || s.CurrentHull <= 0) continue;
                 if (!string.IsNullOrEmpty(s.LandedOnShipUid)) continue;
-                if (!rel.AreHostile(ship, s)) continue;
-                if ((s.Position - ship.Position).sqrMagnitude > radiusSq) continue;
+                float d2 = (s.Position - ship.Position).sqrMagnitude;
+                if (d2 > radiusSq) continue;
 
-                // ChanceToWin(enemy, self) = str_enemy / (str_enemy + str_self).
-                float enemyStr = CalculateStrength(s);
-                float total = enemyStr + _cachedStrength;
-                if (total < 0.001f) continue;
-                sumEnemyCtw += enemyStr / total;
-                count++;
+                float weight = 1f - 0.5f * Mathf.Sqrt(d2) / radius;
+                if (rel.AreHostile(ship, s))
+                {
+                    enemyPower += CalculateStrength(s) * weight;
+                    enemies++;
+                }
+                else if (s.Owner == ship.Owner)
+                {
+                    allyPower += CalculateStrength(s) * weight;
+                }
             }
-            if (count == 0) return;
+            if (enemies == 0) return;
 
-            // «Толпа» повышает эффективное давление.
-            float crowd = 1f + Mathf.Max(0, count - 1) * NpcBalance.Fear_CrowdMultiplier;
-            float raw = sumEnemyCtw * crowd;
+            // Давление: доля вражеской силы против своей (своих союзников учитываем вполовину —
+            // на них надейся, а сам не плошай). Одна равная угроза вплотную даёт 0.5.
+            float defence = _cachedStrength + allyPower * NpcBalance.Fear_AllySupportShare;
+            float raw = enemyPower / Mathf.Max(0.001f, enemyPower + defence);
 
-            // Frustration повышает давление (стресс делает страшнее). 0..100 → +0..+Boost.
-            float frustration = Personality?.Frustration ?? 0f;
-            raw *= 1f + Mathf.Clamp01(frustration / 100f) * NpcBalance.Fear_FrustrationBoost;
+            // Несколько врагов пугают сильнее, чем один той же суммарной силы.
+            raw *= 1f + (enemies - 1) * NpcBalance.Fear_CrowdMultiplier;
 
             // Порог: 1.0 (одна равная угроза = fear=1.0) × class-мод × personality (Caution).
             // Caution 0..100 → +0..+1 к порогу (терпеливые не паникуют).
@@ -557,8 +563,8 @@ namespace SRG.NpcAI
 
         private Interrupt? MercenaryLogic(ShipData ship, StarData star)
         {
-            // Рейнджеры-грабители: жадный рейнджер сдирает с пиратов или высококриминальных,
-            // как в SR2 (тот же механизм, что у пиратов, но легитимная цель — «фрахтовщик закона»).
+            // Наёмники-«охотники за головами»: жадный наёмник трясёт пиратов и высококриминальных
+            // (тот же механизм, что у пиратов, но цель легитимная).
             // Не трогает мирных гражданских (тех грабят только пираты — см. PirateLogic).
             if (Personality.Greed > 40f)
             {
@@ -577,7 +583,7 @@ namespace SRG.NpcAI
                 }
             }
 
-            // Flee по низкому CTW ушёл в fear-ветку: слабый vs сильный → большой sumEnemyCtw → InFear.
+            // Flee по низкому CTW ушёл в fear-ветку: слабый vs сильный → высокое давление → InFear.
             ShipData enemy = FindBestTarget(ship, star);
             if (enemy != null)
             {

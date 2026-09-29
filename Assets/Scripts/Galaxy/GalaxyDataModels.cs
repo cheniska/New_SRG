@@ -1125,7 +1125,7 @@ namespace SRG.Galaxy
         /// <summary>Нод-счёт корабля. Используется <see cref="SRG.Equipment.ImprovementService"/> при
         /// улучшении оборудования с флагом <see cref="ItemInstance.RequiresNodesToImprove"/>: сначала
         /// списываем физические стеки Node из трюма, если не хватает — дораскладываем с нод-счёта.
-        /// Механика пополнения счёта появится позже (диздок docs/SB_Equipment_Improvement.txt).</summary>
+        /// Механика пополнения счёта появится позже (диздок docs/modules/equipment_improvement.md).</summary>
         public int NodeAccount { get; set; }
 
         // ── HP / прочность корпуса ─────────────────────────────────────────────────
@@ -1640,7 +1640,7 @@ namespace SRG.Galaxy
         /// </summary>
         public List<string> CompatibleSlots { get; set; } = new();
 
-        // ── Улучшение оборудования (научная база SB, диздок docs/SB_Equipment_Improvement.txt) ──
+        // ── Улучшение оборудования (научная база SB, диздок docs/modules/equipment_improvement.md) ──
         /// <summary>Разрешено ли улучшение этого предмета. Ставится в true при генерации
         /// eligible-предметов (см. <see cref="EquipmentTemplate"/>.Defaults["IsImprovable"]).
         /// Сбрасывается в false навсегда, как только предмет был улучшен ЛИБО в него встроили

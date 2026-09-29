@@ -6,7 +6,7 @@ using SRG.Galaxy;
 namespace SRG.Equipment
 {
     /// <summary>
-    /// Улучшение оборудования (научная база SB). Диздок: docs/SB_Equipment_Improvement.txt.
+    /// Улучшение оборудования (научная база). Диздок: docs/modules/equipment_improvement.md.
     ///
     /// Общие правила:
     ///   • Один предмет — один апгрейд (обычный ИЛИ продвинутый). После успешного апгрейда
@@ -15,8 +15,8 @@ namespace SRG.Equipment
     ///     (флаг сбрасывается <see cref="EmbedService"/> при установке).
     ///   • Weight/MaxDurability меняются ТОЛЬКО в продвинутом режиме, и только по явному выбору
     ///     атрибута. В обычном апгрейде — только технические характеристики + Price.
-    ///   • Прирост Sign×(current×RandPct + AbsBonus). Sign задаётся категорией (у щитов -1
-    ///     не используется в дефолтном конфиге, но оставлен для симметрии с HD DefGenerator).
+    ///   • Прирост Sign × max(current × Pct × roll, MinStep); Sign — у атрибута или категории
+    ///     (масса оборудования при улучшении уменьшается).
     ///   • Detail-режим: игрок выбирает основной атрибут — остальные атрибуты этой категории
     ///     тоже растут, но с коэф. <see cref="ImprovementCategoryDef.SecondaryGrowthFactor"/>.
     /// </summary>
@@ -106,16 +106,16 @@ namespace SRG.Equipment
             if (cfg == null) return new Quote { Reason = "Нет конфига улучшений." };
 
             string moneyTier = mode == Mode.Advanced ? cfg.AdvancedBaseTier : tierKey;
-            if (!cfg.Tiers.TryGetValue(moneyTier, out var coef))
+            if (!cfg.CostShare.TryGetValue(moneyTier, out var share))
                 return new Quote { Reason = $"Неизвестный тир: {moneyTier}." };
 
-            float raw = item.Weight * coef;
+            float raw = Mathf.Max(0, item.Price) * share;
             if (mode == Mode.Advanced) raw *= Mathf.Max(1f, cfg.AdvancedCostMultiplier);
             int money = Mathf.Max(10, Mathf.RoundToInt(raw / 10f) * 10);
 
             int nodes = 0;
             bool needsNodes = item.RequiresNodesToImprove;
-            if (needsNodes) nodes = Mathf.Max(1, Mathf.RoundToInt(money * cfg.NodeCostRate));
+            if (needsNodes) nodes = Mathf.Max(1, Mathf.CeilToInt(money / (float)Mathf.Max(1, cfg.CreditsPerNode)));
 
             return new Quote { Money = money, Nodes = nodes, NeedsNodes = needsNodes };
         }
@@ -181,11 +181,12 @@ namespace SRG.Equipment
                     float factor = isPrimary ? 1f : Mathf.Max(0f, cat.SecondaryGrowthFactor);
                     if (factor <= 0f) continue;
                     if (!kv.Value.Tiers.TryGetValue(effectiveTier, out var t)) continue;
+                    int sign = kv.Value.ResolveSign(cat);
                     float delta = ComputeDelta(item, kv.Key, t, factor);
-                    ApplyDelta(item, kv.Key, delta, cat.Sign, kv.Value.Integer);
+                    ApplyDelta(item, kv.Key, delta, sign, kv.Value.Integer);
                     if (Mathf.Abs(delta) > 0.0001f)
                     {
-                        changes.Add((kv.Key, delta * cat.Sign));
+                        changes.Add((kv.Key, delta * sign));
                         if (!item.ImprovedAttributes.Contains(kv.Key))
                             item.ImprovedAttributes.Add(kv.Key);
                     }
@@ -199,11 +200,12 @@ namespace SRG.Equipment
                 if (def == null) return Fail($"Атрибут '{selectedAttribute}' не поддерживается.");
                 if (!def.Tiers.TryGetValue(effectiveTier, out var t) && !def.Tiers.TryGetValue(cfg.AdvancedBaseTier, out t))
                     return Fail($"У атрибута '{selectedAttribute}' нет данных для тира '{effectiveTier}'.");
+                int sign = def.ResolveSign(cat);
                 float delta = ComputeDelta(item, selectedAttribute, t, 1f);
-                ApplyDelta(item, selectedAttribute, delta, cat.Sign, def.Integer);
+                ApplyDelta(item, selectedAttribute, delta, sign, def.Integer);
                 if (Mathf.Abs(delta) > 0.0001f)
                 {
-                    changes.Add((selectedAttribute, delta * cat.Sign));
+                    changes.Add((selectedAttribute, delta * sign));
                     if (!item.ImprovedAttributes.Contains(selectedAttribute))
                         item.ImprovedAttributes.Add(selectedAttribute);
                 }
@@ -213,8 +215,8 @@ namespace SRG.Equipment
             payer.Money -= quote.Money;
             if (quote.NeedsNodes) PayNodes(payer, quote.Nodes);
 
-            // Цена предмета растёт (item.Price += money/2, HD-паттерн)
-            item.Price += Mathf.Max(1, quote.Money / 2);
+            // Вложенное в улучшение частично переходит в стоимость предмета.
+            item.Price += Mathf.Max(1, Mathf.RoundToInt(quote.Money * Mathf.Clamp01(cfg.ValueGainShare)));
 
             // Флаги
             item.IsImprovable = false;
@@ -244,7 +246,7 @@ namespace SRG.Equipment
             {
                 if (!kv.Value.Tiers.TryGetValue(tier, out var t)) continue;
                 float delta = ComputeDelta(item, kv.Key, t, 1f);
-                ApplyDelta(item, kv.Key, delta, cat.Sign, kv.Value.Integer);
+                ApplyDelta(item, kv.Key, delta, kv.Value.ResolveSign(cat), kv.Value.Integer);
                 if (Mathf.Abs(delta) > 0.0001f)
                 {
                     if (!item.ImprovedAttributes.Contains(kv.Key))
@@ -289,19 +291,19 @@ namespace SRG.Equipment
 
         private static float ComputeDelta(ItemInstance item, string paramKey, float[] tierArr, float factor)
         {
-            if (tierArr == null || tierArr.Length < 3) return 0f;
-            float basePct = tierArr[0];
-            float deltaPct = tierArr[1];
-            float absBonus = tierArr[2];
+            if (tierArr == null || tierArr.Length < 2) return 0f;
+            float pct     = tierArr[0];
+            float minStep = tierArr[1];
 
             float current;
             if (paramKey == "Weight") current = item.Weight;
             else if (paramKey == "MaxDurability") current = item.MaxDurability;
             else current = item.GetParam(paramKey, 0f);
 
-            float pct = basePct + Random.value * deltaPct;
-            float raw = current * pct + absBonus;
-            return raw * factor;
+            // Среднее двух равномерных — «колокол» с пиком в 1: крайние результаты редки.
+            float roll = 0.75f + 0.25f * (Random.value + Random.value);
+            float delta = Mathf.Max(Mathf.Abs(current) * pct * roll, minStep);
+            return delta * factor;
         }
 
         private static void ApplyDelta(ItemInstance item, string paramKey, float delta, int sign, bool asInt)
