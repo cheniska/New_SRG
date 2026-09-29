@@ -7,8 +7,9 @@ using SRG.Utils;
 
 namespace SRG.Ships.Movement
 {
-    // Кинематический планировщик траектории корабля (Space Rangers HD reference, §7–§8).
-    // От старта (with heading) до цели через дугу с ограничением по угловой скорости разворота.
+    // Кинематический планировщик траектории корабля. Модель — «самолёт на плоскости»:
+    // постоянная скорость и ограниченная угловая скорость разворота. Сторону разворота на каждом
+    // шаге выбираем по длине кратчайшего пути «дуга + прямая» (Dubins-путь класса CS).
     // Препятствия: одно "солнце" (берётся из StarData) + произвольные CircleObstacle/PolygonObstacle.
     // Plan = рекурсивный обход: если прямой сегмент пересекает препятствие, ищем точку обхода
     // (касательная для круга, выпуклая вершина для полигона) и продолжаем от неё.
@@ -180,22 +181,16 @@ namespace SRG.Ships.Movement
                 speedPerTurn, turnRadPerTurn, output, depth + 1);
         }
 
-        // ─── Кинематический генератор waypoint'ов (статья §8) ────────────────
+        // ─── Кинематический генератор waypoint'ов ───────────────────────────
 
-        // Идёт от cur к target с фиксированным шагом и максимальной угловой скоростью разворота.
-        // Каждая итерация = одно "тиковое" перемещение: повернулись на ≤ stepTurn, шагнули на stepLen.
+        // Идёт от cur к target с фиксированным шагом и ограниченной угловой скоростью.
+        // Каждая итерация: выбрали сторону разворота, повернулись на ≤ stepTurn, шагнули на stepLen.
         //
-        // Защита от бесконечного кружения вокруг недостижимой точки:
-        //
-        // У корабля при максимальном развороте есть две окружности возможной траектории —
-        // слева (CCW) и справа (CW) от текущего курса, каждая радиуса R = stepLen / sin(stepTurn).
-        // Если цель находится ВНУТРИ окружности, то поворот в ту сторону приведёт к орбите вокруг
-        // цели (физически невозможно к ней приблизиться по дуге этого радиуса). Поэтому:
-        //   • если цель в одной окружности — принудительно поворачиваем в другую сторону;
-        //   • если цель в обеих — точка недостижима кинематически: добавляем её как финальный
-        //     waypoint (ShipMoveStep потом дойдёт прямой линией) и выходим.
-        // Дополнительный «стрэхователь»: если N итераций нет улучшения минимального расстояния
-        // (на случай экзотической геометрии или скользящих float-краёв), тоже выходим.
+        // Сторона разворота — та, для которой короче путь «дуга минимального радиуса + касательная
+        // прямая до цели» (см. ArcThenLineLength). Если цель внутри обеих окружностей разворота
+        // (оба пути невозможны), корабль идёт прямо и набирает дистанцию, пока цель не выйдет
+        // из окружностей. Страховка от зацикливания — окно «нет прогресса»: по его истечении
+        // цель добавляется финальным waypoint'ом, дальше ShipMoveStep дойдёт по прямой.
         private static void GenerateKinematicSpline(
             Vector2 from, float headingRad, Vector2 target,
             float speedPerTurn, float turnRadPerTurn,
@@ -206,27 +201,21 @@ namespace SRG.Ships.Movement
             float stepTurn = turnRadPerTurn / WaypointsPerTurn;
             if (stepLen < 1e-6f || stepTurn < 1e-6f) return;
 
-            float turnRadius = stepLen / Mathf.Sin(stepTurn);   // R мин. разворота
-            float turnRadiusSq = turnRadius * turnRadius;
+            float turnRadius = stepLen / stepTurn;   // радиус дуги при максимальном развороте
 
             Vector2 cur = from;
-            float curA = float.IsNaN(headingRad)
-                ? Mathf.Atan2(target.y - from.y, target.x - from.x)
-                : headingRad;
+            float curA = float.IsNaN(headingRad) ? Angles.Toward(from, target) : headingRad;
 
-            // Окно «нет прогресса». Долго: легитимный сценарий «облёт почти на полный оборот +
-            // прямая» — около 270° арки + ~25 шагов прямой = ~145 итераций при WPT=80. Берём
-            // полный оборот + полход запаса, чтобы не отрезать такие манёвры.
+            // Окно «нет прогресса»: полный оборот + полхода запаса — этого хватает на
+            // облёт почти на 360° с последующей прямой.
             float minDistSq = (target - cur).sqrMagnitude;
             int iterSinceImprovement = 0;
-            int stuckLimit = Mathf.CeilToInt(2f * Mathf.PI / stepTurn) + WaypointsPerTurn / 2;
+            int stuckLimit = Mathf.CeilToInt(Angles.TwoPi / stepTurn) + WaypointsPerTurn / 2;
             const float ImprovementEps = 1e-5f;
 
             for (int i = 0; i < MaxWaypointsPerSegment; i++)
             {
-                Vector2 delta = target - cur;
-                float distSq = delta.sqrMagnitude;
-
+                float distSq = (target - cur).sqrMagnitude;
                 if (distSq <= stepLen * stepLen)
                 {
                     output.Add(target);
@@ -240,58 +229,53 @@ namespace SRG.Ships.Movement
                 }
                 else if (++iterSinceImprovement > stuckLimit)
                 {
-                    // Не сближаемся, дуга не помогает — даём прямой snap к цели.
-                    // Это работает совместно с ShipMoveStep: если он дойдёт до target до конца
-                    // движения, ход завершится; иначе следующий ход пересчитает путь с новой позиции.
                     output.Add(target);
                     return;
                 }
 
-                // Куда смотрит «по прямой»
-                float desiredA = Mathf.Atan2(delta.y, delta.x);
-                float diff = NormalizeAnglePi(desiredA - curA);
-
-                int sign;
-                if (Mathf.Abs(diff) <= stepTurn)
+                float desiredA = Angles.Toward(cur, target, curA);
+                if (Mathf.Abs(NormalizeAnglePi(desiredA - curA)) <= stepTurn)
                 {
-                    // Уже выровнялись — прямой шаг.
-                    curA = desiredA;
-                    sign = 0;
+                    curA = desiredA;   // уже выровнялись — прямой шаг
                 }
                 else
                 {
-                    // Проверяем, не загонит ли «короткий» поворот цель внутрь нашей дуги разворота.
-                    Vector2 ccwCenter = cur + new Vector2(-Mathf.Sin(curA), Mathf.Cos(curA)) * turnRadius;
-                    Vector2 cwCenter  = cur + new Vector2( Mathf.Sin(curA), -Mathf.Cos(curA)) * turnRadius;
-                    bool insideCCW = (target - ccwCenter).sqrMagnitude < turnRadiusSq;
-                    bool insideCW  = (target - cwCenter ).sqrMagnitude < turnRadiusSq;
-
-                    if (insideCCW && insideCW)
-                    {
-                        // Точка физически недостижима по дуге — snap.
-                        output.Add(target);
-                        return;
-                    }
-                    if (insideCCW)      sign = -1;                   // принудительно CW
-                    else if (insideCW)  sign = +1;                   // принудительно CCW
-                    else                sign = diff > 0f ? 1 : -1;   // кратчайший разворот
-
-                    curA += sign * stepTurn;
+                    float left  = ArcThenLineLength(cur, curA, target, turnRadius, +1);
+                    float right = ArcThenLineLength(cur, curA, target, turnRadius, -1);
+                    if (!float.IsInfinity(left) || !float.IsInfinity(right))
+                        curA += (left <= right ? +1 : -1) * stepTurn;
+                    // иначе — цель внутри обеих окружностей: держим курс и отходим.
                 }
 
-                cur += new Vector2(Mathf.Cos(curA), Mathf.Sin(curA)) * stepLen;
+                cur += Angles.Dir(curA) * stepLen;
                 output.Add(cur);
             }
         }
 
+        /// <summary>
+        /// Длина пути «дуга радиуса R в сторону side (+1 — влево/CCW, −1 — вправо/CW), затем
+        /// прямая по касательной до цели». Если цель внутри окружности разворота — бесконечность.
+        /// </summary>
+        public static float ArcThenLineLength(Vector2 pos, float heading, Vector2 target, float radius, int side)
+        {
+            Vector2 center = pos + Angles.Dir(heading + side * Mathf.PI * 0.5f) * radius;
+            Vector2 toTarget = target - center;
+            float d = toTarget.magnitude;
+            if (d < radius) return float.PositiveInfinity;
+
+            // Касательная из цели к окружности: точка касания видна из центра под углом
+            // acos(R/d) от направления на цель.
+            float tangentLen = Mathf.Sqrt(Mathf.Max(0f, d * d - radius * radius));
+            float tangentAngle = Angles.Of(toTarget) - side * Mathf.Acos(Mathf.Clamp(radius / d, -1f, 1f));
+            float startAngle = Angles.Of(pos - center);
+            // Угол дуги, пройденной в сторону side от стартовой точки до точки касания, ∈ [0, 2π).
+            float sweep = Mathf.Repeat(side * (tangentAngle - startAngle), Angles.TwoPi);
+            return sweep * radius + tangentLen;
+        }
+
         // ─── Утилиты ────────────────────────────────────────────────────────
 
-        public static float NormalizeAnglePi(float a)
-        {
-            while (a > Mathf.PI) a -= 2f * Mathf.PI;
-            while (a < -Mathf.PI) a += 2f * Mathf.PI;
-            return a;
-        }
+        public static float NormalizeAnglePi(float a) => Angles.WrapPi(a);
 
         public static bool SegmentIntersectsCircle(Vector2 a, Vector2 b, Vector2 center, float radius)
         {

@@ -9,7 +9,7 @@ namespace SRG.NpcAI.Orders
 {
     /// <summary>
     /// Атомарная посадка/стыковка НПС на любую <see cref="ILandingSite"/>: планета,
-    /// станция или корабль-носитель. Двухфазный цикл (SR2HD §3–§7):
+    /// станция или корабль-носитель. Двухфазный цикл:
     ///   • PrepareForTurn (ShipVisualController) ставит ship.LandingPhase=Fading, когда
     ///     хвост анимации хода попадает внутрь <see cref="ILandingSite.LandingRadius"/>.
     ///   • На следующем Execute этот ордер увидит Fading → выполнит финализацию:
@@ -58,7 +58,7 @@ namespace SRG.NpcAI.Orders
             }
 
             // Фаза 1 (подлёт): помечаем цель посадки и прокладываем кинематический курс.
-            // Планета — по SR2HD §5.2.C (jitter ±20° по seed-факторам). Корабль-носитель —
+            // Планета — через посадочные коридоры (PlanetGeometry). Корабль-носитель —
             // просто в центр (движется, но перепрокладка идёт следующим Execute).
             Vector2 target;
             if (site is PlanetData planet)

@@ -118,13 +118,13 @@ namespace SRG.Galaxy
     }
 
     /// <summary>
-    /// Двухфазная посадка (SR2HD, docs/Ship_Landing_Pipeline.txt §7).
+    /// Двухфазная посадка (docs/modules/landing.md).
     /// </summary>
     public enum LandingPhase
     {
         None,           // Не садимся (LandingPlanetUid либо пуст, либо ещё не построен курс).
-        Approach,       // Подлёт: цель — точка ВНЕ R_land (избегаем «въезда в орбиту»).
-        Fading,         // Финальный ход: хвост маршрута внутри R_land, идёт film-tied fade-out alpha.
+        Approach,       // Подлёт к посадочному кольцу.
+        Fading,         // Финальный ход: конец маршрута внутри R_land, корабль растворяется.
     }
 
     public enum PlanningReason
@@ -1086,7 +1086,7 @@ namespace SRG.Galaxy
         /// иначе после загрузки при активном follow-режиме LandOnShip авто-стыковка теряет цель.</summary>
         public string LandingCarrierUid { get; set; }
 
-        /// <summary>Фаза двухфазной посадки (SR2HD §7). Транзитное состояние, не сохраняется.
+        /// <summary>Фаза двухфазной посадки. Транзитное состояние, не сохраняется.
         /// Сбрасывается в None при загрузке: на следующий ход PrepareForTurn пересчитает её.</summary>
         [JsonIgnore] public LandingPhase LandingPhase { get; set; } = LandingPhase.None;
 

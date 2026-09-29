@@ -554,8 +554,7 @@ namespace SRG.Ships.Player
             GameConsoleController.AddEntry($"[Навигация] Курс на посадку: {planet.Name}.");
         }
 
-        // SR2HD §5.2.B: catch-up upreждение + парковка ВНЕ R_land на дальнем подлёте.
-        // Реализация в PlanetGeometry (общая с НПС-вариантом §5.2.C).
+        // Упреждение позиции планеты и точка входа в посадочное кольцо — см. PlanetGeometry.
         private Vector2 PredictLandingTarget(PlanetData planet)
             => PlanetGeometry.PredictPlayerLandingTarget(ShipData, planet);
 

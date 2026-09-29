@@ -228,7 +228,7 @@ namespace SRG.Presentation.World
 
             _prevLandedPlanetUid = _data.LandedPlanetUid;
 
-            // SR2HD §7 двухфазная посадка (унифицирована для планеты и корабля-носителя через
+            // Двухфазная посадка (единая для планеты и корабля-носителя через
             // ILandingSite): ставим LandingPhase=Fading если хвост хода попадает внутрь site.LandingRadius
             // от site.CenterPosition (для носителя — конечная позиция его SubTurns; для планеты
             // CenterPosition уже пересчитан по OrbitMath после симуляции). Финализация — в
@@ -315,9 +315,12 @@ namespace SRG.Presentation.World
             if (isLanded && !_data.IsPlayer) gameObject.SetActive(false);
         }
 
-        // SR2HD §7: AlphaDelta = -Alpha / RouteFilm.Count → линейный fade за весь финальный ход.
-        // Раньше начинали с 0.45 — теперь распределяем по всему ходу для плавности.
-        private const float LandingFadeStartProgress = 0f;
+        // Посадка/взлёт: первые LandingFadeHold хода корабль полностью виден (заходит на глиссаду),
+        // затем плавно (smoothstep) растворяется; взлёт — зеркально.
+        private const float LandingFadeHold = 0.25f;
+
+        private static float LandingFade(float progress)
+            => Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((progress - LandingFadeHold) / (1f - LandingFadeHold)));
 
         // Анимирует позицию и визуальное состояние корабля в течение хода.
         // Возвращает вектор движения — вызывающий код использует его для обновления игрового состояния.
@@ -396,8 +399,8 @@ namespace SRG.Presentation.World
         /// Единая точка расчёта прозрачности корабля во время анимации хода. Возвращает alpha,
         /// который НАДО применить (через SetAlpha), либо null если в этой фазе нет fade-override
         /// и текущее значение alpha сохраняется. Приоритет:
-        ///   1. Landing fade-out (фаза Fading посадки, см. PrepareForTurn) — линейно 1→0 за весь ход.
-        ///   2. Takeoff fade-in — линейно 0→1 за ход взлёта.
+        ///   1. Landing fade-out (фаза Fading посадки, см. PrepareForTurn) — 1→0 по LandingFade.
+        ///   2. Takeoff fade-in — 0→1 по LandingFade.
         ///   3. Червоточина HyperEnter — landing-style: полный линейный fade-out 1→0 за ход,
         ///      без хвоста Travel (корабль «садится» на червоточину как на планету).
         ///   4. HyperArrive (гиперпрыжок и червоточина) — корабль стоит невидимо у точки выхода,
@@ -411,11 +414,9 @@ namespace SRG.Presentation.World
         {
             if (_isLandingThisTurn)
             {
-                // SR2HD §7: AlphaDelta = -Alpha / Count → линейно за весь финальный ход посадки.
-                float fadeT = Mathf.Clamp01((progress - LandingFadeStartProgress) / (1f - LandingFadeStartProgress));
-                return 1f - fadeT;
+                return 1f - LandingFade(progress);
             }
-            if (IsTakingOff) return progress;
+            if (IsTakingOff) return 1f - LandingFade(1f - progress);
 
             var phase = _data != null ? _data.HyperjumpPhase : HyperjumpPhase.None;
             bool viaWormhole = _data != null && !string.IsNullOrEmpty(_data.HyperjumpViaWormholeUid);

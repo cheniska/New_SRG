@@ -80,7 +80,7 @@ namespace SRG.Ships.Player
 
             Debug.Log($"[PlayerShip] OnTurnComplete: pos={ShipData.Position:F2} targetReached={targetReached} remaining={_targets.Count}");
 
-            // Двухфазная посадка (SR2HD §7): Phase 1 (Fading) выставлена в PrepareForTurn.
+            // Двухфазная посадка: Phase 1 (Fading) выставлена в PrepareForTurn.
             if (TryFinalizeLanding()) return;
 
             if (_targets.Count > 0)

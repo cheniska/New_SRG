@@ -5,8 +5,8 @@ using SRG.Presentation.Common;
 namespace SRG.Utils
 {
     /// <summary>
-    /// SR2HD landing-pipeline geometry: visual radius, landing zone, approach zone.
-    /// См. docs/Ship_Landing_Pipeline.txt §3, §5.2.B.
+    /// Геометрия посадки на планету: визуальный радиус, зона посадки, зона подхода
+    /// и точки прицеливания для игрока и НПС. См. docs/modules/landing.md.
     /// </summary>
     public static class PlanetGeometry
     {
@@ -57,66 +57,52 @@ namespace SRG.Utils
 
         // ─── Целеуказание для посадки ──────────────────────────────────────────
 
+        /// <summary>Число «посадочных коридоров» вокруг планеты для НПС.</summary>
+        private const int NpcApproachLanes = 8;
+
         /// <summary>
-        /// Точка прицеливания для игрока (SR2HD §5.2.B). Если ship ВНУТРИ R_app —
-        /// целимся в catch-up позицию напрямую. Если ВНЕ — парковка на луче «ship → future»
-        /// ВНЕ R_land с epsilon 0.05, чтобы не «въезжать в орбиту».
+        /// Точка прицеливания для игрока. Вблизи (внутри R_app) — прямо в упреждённую позицию
+        /// планеты. Издалека — в ближнюю к кораблю точку посадочного кольца упреждённой планеты:
+        /// корабль пересекает R_land на подлёте и не пролетает через диск насквозь.
         /// </summary>
         public static Vector2 PredictPlayerLandingTarget(ShipData ship, PlanetData planet)
         {
             if (planet == null || ship == null) return ship?.Position ?? Vector2.zero;
 
             Vector2 shipPos = ship.Position;
-            float speedPerTurn = SRUnits.ToWorld(ship.ActualSpeed);
-            Vector2 future = OrbitMath.PredictPlanetCatchUpPosition(planet, shipPos, speedPerTurn);
+            Vector2 future = OrbitMath.PredictPlanetCatchUpPosition(planet, shipPos, SRUnits.ToWorld(ship.ActualSpeed));
 
-            Vector2 currentPlanetPos = OrbitMath.GetPlanetWorldPosition(planet);
             float rApp = GetApproachRadius(planet);
-            if ((shipPos - currentPlanetPos).sqrMagnitude <= rApp * rApp)
+            if ((shipPos - OrbitMath.GetPlanetWorldPosition(planet)).sqrMagnitude <= rApp * rApp)
                 return future;
 
-            Vector2 toFuture = future - shipPos;
-            float fullDist = toFuture.magnitude;
-            if (fullDist < 0.001f) return future;
-
-            float parkOffset = GetLandingRadius(planet) + 0.05f;
-            if (fullDist <= parkOffset) return future;
-            return future - (toFuture / fullDist) * parkOffset;
+            Vector2 fromPlanet = shipPos - future;
+            float dist = fromPlanet.magnitude;
+            float entryDepth = GetLandingRadius(planet) * 0.6f;
+            if (dist <= entryDepth) return future;
+            return future + fromPlanet / dist * entryDepth;
         }
 
         /// <summary>
-        /// Точка прицеливания для НПС (SR2HD §5.2.C). approach_angle = угол (planet_now → ship)
-        /// + детерминированный jitter ±20° (по seedFactor корабля), target = future_planet + dir * step.
-        /// step = R_land снаружи R_app, R_land/2 + случайная половина внутри R_app.
-        /// Это даёт разнообразие заходов (несколько НПС не подлетают строго в одну точку).
+        /// Точка прицеливания для НПС. Вокруг планеты — <see cref="NpcApproachLanes"/> коридоров
+        /// подхода; корабль берёт коридор, ближайший к своему пеленгу, со сдвигом на соседний
+        /// по хешу пары «корабль–планета», и садится на свою глубину внутри R_land. Так несколько
+        /// НПС, летящих с одной стороны, не сходятся в одну точку, а маршрут стабилен между ходами.
         /// </summary>
         public static Vector2 PredictNpcLandingTarget(ShipData ship, PlanetData planet)
         {
             if (planet == null || ship == null) return ship?.Position ?? Vector2.zero;
 
             Vector2 shipPos = ship.Position;
-            float speed = SRUnits.ToWorld(ship.ActualSpeed);
-            Vector2 curPlanet = OrbitMath.GetPlanetWorldPosition(planet);
-            Vector2 futurePlanet = OrbitMath.PredictPlanetCatchUpPosition(planet, shipPos, speed);
+            Vector2 future = OrbitMath.PredictPlanetCatchUpPosition(planet, shipPos, SRUnits.ToWorld(ship.ActualSpeed));
 
-            Vector2 fromPlanet = shipPos - curPlanet;
-            float approachAngle = fromPlanet.sqrMagnitude > 0.0001f
-                ? Mathf.Atan2(fromPlanet.y, fromPlanet.x)
-                : 0f;
+            uint hash = unchecked((uint)((ship.Uid?.GetHashCode() ?? 0) * 31 + (planet.Uid?.GetHashCode() ?? 0)));
+            float laneWidth = Angles.TwoPi / NpcApproachLanes;
+            float bearing = Angles.Toward(OrbitMath.GetPlanetWorldPosition(planet), shipPos);
+            int lane = Mathf.RoundToInt(bearing / laneWidth) + (int)(hash % 3) - 1;   // свой или соседний
+            float depth = 0.45f + 0.35f * ((hash >> 4) & 0xFF) / 255f;              // доля R_land
 
-            int seed = (ship.Uid?.GetHashCode() ?? 0) ^ (planet.Uid?.GetHashCode() ?? 0);
-            float jitterDeg = ((seed & 0x7FFFFFFF) % 41) - 20;   // [-20, +20]
-            approachAngle += jitterDeg * Mathf.Deg2Rad;
-
-            float rLand = GetLandingRadius(planet);
-            float rAppSq = GetApproachRadiusSq(planet);
-            float distSq = fromPlanet.sqrMagnitude;
-            float step = distSq > rAppSq
-                ? rLand
-                : rLand * 0.5f + rLand * 0.5f * (((seed >> 8) & 0xFF) / 255f);
-
-            return futurePlanet
-                 + new Vector2(Mathf.Cos(approachAngle), Mathf.Sin(approachAngle)) * step;
+            return future + Angles.Dir(lane * laneWidth) * (GetLandingRadius(planet) * depth);
         }
     }
 }
