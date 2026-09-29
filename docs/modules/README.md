@@ -32,7 +32,7 @@
 
 ### Генерация и конфиг
 
-- **[Galaxy Generation](galaxy_generation.md)** — `GalaxyGenerator.*`, `GalaxyDataModels`, `GalaxyConfigLoader`, `OrbitMath`, `VoronoiHelper`. Дополняет [Galaxy_Map_Generation_Consolidated.txt](../Galaxy_Map_Generation_Consolidated.txt) и [world_generation.md](../world_generation.md).
+- **[Galaxy Generation](galaxy_generation.md)** — `GalaxyGenerator.*`, `GalaxyDataModels`, `GalaxyConfigLoader`, `OrbitMath`, `VoronoiHelper`.
 - (планируется) **Config & Constants** — `GameSettingsConfig`, `GalaxyConstants`, `GalaxyConfigurationModels` (частично покрыто в Galaxy Generation).
 
 ### Визуальная подсистема
@@ -46,11 +46,9 @@
 
 | Файл | Описание |
 |---|---|
-| [`Ship_Landing_Pipeline.txt`](../Ship_Landing_Pipeline.txt) | Полная двухфазная пайплайн посадки (SR2HD-style) |
-| [`Ship_Trajectory_*.txt`](../) | Реализация кинематической сплайн-траектории кораблей |
-| [`Galaxy_Map_Generation_Consolidated.txt`](../Galaxy_Map_Generation_Consolidated.txt) | Алгоритмы генерации галактики/секторов/звёзд |
-| [`Spawn_Rules_Consolidated.txt`](../Spawn_Rules_Consolidated.txt) | Правила спавна NPC (политики, расы, типы) |
-| [`Dominator_Equipment_Consolidated.txt`](../Dominator_Equipment_Consolidated.txt) | Оборудование доминаторов |
+| [`landing.md`](landing.md) | Посадка: геометрия, точки прицеливания, двухфазный цикл |
+| [`missiles.md`](missiles.md) | Модель полёта ракет |
+| [`equipment_improvement.md`](equipment_improvement.md) | Улучшение оборудования на научной базе |
 | [`equipment_tiers (2).md`](../equipment_tiers%20(2).md) | GTL/ПТУ-балансировка по тирам |
 | [`planetary_science_system.md`](../planetary_science_system.md) | Дизайн-документ системы изобретений |
 | [`economy_implementation_plan.md`](../economy_implementation_plan.md) | План реализации экономики; что сделано/отложено |

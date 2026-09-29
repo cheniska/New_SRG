@@ -7,8 +7,7 @@
 `Systems/FuelService.cs`, `Ships/ShipFactory.cs`, `Ships/ContainerFactory.cs`,
 `Ships/CargoUtils.cs`.
 
-Связанные документы: `equipment_tiers (2).md`, `Dominator_Equipment_Consolidated.txt`,
-`Ship_Landing_Pipeline.txt`.
+Связанные документы: `equipment_tiers (2).md`, `landing.md`.
 
 ---
 

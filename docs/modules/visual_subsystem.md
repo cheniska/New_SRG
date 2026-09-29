@@ -10,7 +10,7 @@
 `StarVisualController`, `WeaponVisualSystem`, `WeaponRangeIndicator`, `RadarRangeIndicator`,
 `ExplosionPlayback`, `AnimatedSpriteRenderer`, `SortingLayerRegistry`, `CameraController`.
 
-Связанные документы: [`Ship_Trajectory_*.txt`](../), [`Ship_Landing_Pipeline.txt`](../).
+Связанные документы: [`landing.md`](landing.md).
 
 ---
 
@@ -75,7 +75,7 @@ protected SpriteRenderer EnsureRenderer(SpriteRenderer r, string slotName, int s
 public void Setup(ShipData ship);
 public void PrepareForTurn(TurnAnimationData anim, StarData star);
    // Считает геометрию посадки заранее: если конец анимации этого хода попадает в R_land
-   // целевой планеты — выставляет ship.LandingPhase = Fading. См. Ship_Landing_Pipeline.txt.
+   // целевой планеты — выставляет ship.LandingPhase = Fading. См. landing.md.
 public void AnimateTurn(float progress, int currentSubTurn, TurnAnimationData anim);
 public void EndTurn();
 public void PlayExplosion();
@@ -376,7 +376,7 @@ Satellites : { Sizes : Dictionary<string, SizeData> }
    `animating`. Разбор оставлен на следующий заход.
 2. **`ShipVisualController.AnimateTurn` (59 строк)** — на границе «можно ли разбить». Подметоды
    `ComputeAnimatedPosition` и `ApplyFadeOverlay` — кандидаты для извлечения. Не сделано из-за
-   риска изменить timing fade-out при посадке (SR2HD-чувствительно).
+   риска изменить timing fade-out при посадке (чувствительно к балансу анимации).
 3. **Visual-цвета цели** на миникарте через `Relations.GetLevelToPlayer` каждый кадр — потенциальный
    hotspot при сотнях NPC. Кэширование (раз в N кадров) — на потом.
 4. **`AsteroidVisualController` не наследует `BaseVisualController`** — рендер сильно отличается

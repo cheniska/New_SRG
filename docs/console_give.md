@@ -26,7 +26,7 @@ give <id | Category:Id> [amount] [inv | slot | <slotKey>]
 | Категория | Что даёт | Куда попадает |
 |---|---|---|
 | `Goods` (или `Good`) | Товар (Food/Alcohol/…) | Стек в трюме |
-| `Mineral` | Минерал/нод (CommonMineral/Nod/…) | Стек в трюме |
+| `Mineral` | Минерал/нейроядер (CommonMineral/Nod/…) | Стек в трюме |
 | `MicroModule` | Микромодуль (MM_T1_Apper/…) | Отдельный предмет в трюме |
 | `Hull` / `Engine` / `Weapons` / `Artefacts` / `Shield` / `Radar` / `Scanner` / `FuelTank` / `Forsage` / `Droid` / `CargoGrabber` / `BoardingHook` / `TowingRig` | Оборудование | Слот (авто/явный) или трюм |
 
@@ -38,7 +38,7 @@ give <id | Category:Id> [amount] [inv | slot | <slotKey>]
 give W_Laser                     # автопоиск: находит Weapons/W_Laser → в свободный слот
 give Weapons:W_Laser 3           # три отдельных лазера
 give Alcohol 50                  # стек из 50 бутылок в трюм
-give Nod 200                     # стек из 200 нод (не считается «товаром»)
+give Nod 200                     # стек из 200 нейроядер (не считается «товаром»)
 give CommonMineral 10 inv        # минералы, форсированно в трюм
 give MM_T3_Fortress              # микромодуль (не оборудование, всегда в трюм)
 give Engine:E_Coalition_T5       # двигатель Coalition пятого тира
@@ -67,13 +67,13 @@ give AF_SpeedBoost slot Artefacts_2  # артефакт в конкретный 
 > Внимание: `Weapons` и `Minerals` в этой таблице — торговые **товары**, стеки. Оборудование `Weapons` и минералы `Minerals` — отдельные вещи (см. ниже). При коллизии выигрывает первое совпадение в порядке автопоиска (Goods раньше Equipment), поэтому для оружия-как-оборудования пишите `Weapons:W_Laser`.
 
 ### Минералы (Minerals)
-Категория стека `Mineral`. Ноды (`Nod`) — стакабельные, но `IsGoods=false` (не торговый товар).
+Категория стека `Mineral`. Нейроядра (`Nod`) — стакабельные, но `IsGoods=false` (не торговый товар).
 
 | id | Имя | BasePrice | DropRange |
 |---|---|---:|---|
 | `CommonMineral` | Обычный минерал | 10 | 1..50 |
 | `PreciousMineral` | Драгоценный минерал | 150 | 1..20 |
-| `Nod` | Ноды | 20 | 10..300 |
+| `Nod` | Нейроядра | 20 | 10..300 |
 
 ### Микромодули (MicroModules)
 Категория `MicroModule`. Всегда попадают в трюм — не оборудование, ставятся в носителя через встраивание (UI).
@@ -163,7 +163,7 @@ give AF_SpeedBoost slot Artefacts_2  # артефакт в конкретный 
 
 | Side | HullTypes |
 |---|---|
-| `Coalition` | `R` (рейнджер), `T` (транспорт), `W` (военный), `PC` (клановый пират), `BW` (линкор), `D` (дипломат), `P` (пират), `L` (лайнер) |
+| `Coalition` | `R` (вольный пилот), `T` (транспорт), `W` (военный), `PC` (клановый пират), `BW` (линкор), `D` (дипломат), `P` (пират), `L` (лайнер) |
 | `Dominators` | `Dom1` (разведчик), `Dom2` (перехватчик), `Dom3` (штурмовик), `Dom4` (крейсер), `Dom5` (линкор), `Dom6` (разрушитель), `Dom7` (владыка) |
 
 **Станции** (`HullType`; ставятся на корабль-станцию, но давать игроку смысла обычно нет):

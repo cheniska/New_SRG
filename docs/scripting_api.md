@@ -861,7 +861,7 @@ return { ok=true, consume=true, message='[Активация]: субпорта�
 | `PlayerGreetingProfile.ResolveStatus(ship)` / `ResolveRank(ship)` / `ResolveRating(ship, cfg)` | Производные признаки игрока. |
 | `PlanetGreetingSelector.QuantOf*(...)` (`ShipCount`, `Stock`, `Price`, `Population`, `Money`) | Кванты в имена (Mini/Small/…/Huge). |
 
-Схема правил и все поля — `PlanetGreetings/PlanetGreetingConfig.cs` + диздоки `docs/planets_fields_summary.txt` и `docs/fields_summary(2).txt`.
+Схема правил и все поля — `PlanetGreetings/PlanetGreetingConfig.cs`.
 
 ---
 
