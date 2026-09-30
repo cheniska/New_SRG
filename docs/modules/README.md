@@ -29,13 +29,13 @@
 ### Игровые системы
 
 - **[Combat](combat.md)** — `WeaponSystem`, `MissileSystem`, `AsteroidSystem` (death-репорт, damage pipeline, missile homing/swept-collision). Дополняет [weapons_system.md](../design/weapons_system.md).
-- **[Equipment & Pull](equipment_and_pull.md)** — `EquipmentSystem`, `InventoryService`, `ShopService`, `PickupSystem`, `TowSystem`, `BoardingSystem`, `HyperjumpController`, `FuelService`. Дополняет [Ship_Landing_Pipeline.txt](../design/Ship_Landing_Pipeline.txt) и [equipment_tiers.md](../design/equipment_tiers.md).
+- **[Equipment & Pull](equipment_and_pull.md)** — `EquipmentSystem`, `InventoryService`, `ShopService`, `PickupSystem`, `TowSystem`, `BoardingSystem`, `HyperjumpController`, `FuelService`. Дополняет [Ship_Landing_Pipeline.md](../design/Ship_Landing_Pipeline.md) и [equipment_tiers.md](../design/equipment_tiers.md).
 - **[Trade & Economy](trade_economy.md)** — `TradeSystem`, `InflationSystem`, `EquipmentShopSystem`, `PlanetaryEventSystem`, `PlanetaryTechSystem`, `GovernmentChangeService`, `EconomicLog`. Дополняет [economy_implementation_plan.md](../design/economy_implementation_plan.md).
-- **[Spawn](spawn.md)** — `SpawnSystem`, `ISpawnPolicy` (Civilian/Warrior/Ranger/Pirate/Linkor/Dominator), `DominationCalculator`, `GalaxyShipCounters`, `SubtypePicker`, `NpcSpawner`. Дополняет [Spawn_Rules_Consolidated.txt](../design/Spawn_Rules_Consolidated.txt) и [Dominator_Equipment_Consolidated.txt](../design/Dominator_Equipment_Consolidated.txt).
+- **[Spawn](spawn.md)** — `SpawnSystem`, `ISpawnPolicy` (Civilian/Warrior/Ranger/Pirate/Linkor/Dominator), `DominationCalculator`, `GalaxyShipCounters`, `SubtypePicker`, `NpcSpawner`. Дополняет [Spawn_Rules_Consolidated.md](../design/Spawn_Rules_Consolidated.md) и [Dominator_Equipment_Consolidated.md](../design/Dominator_Equipment_Consolidated.md).
 
 ### Генерация и конфиг
 
-- **[Galaxy Generation](galaxy_generation.md)** — `GalaxyGenerator.*`, модели `Galaxy/Models/*`, `GalaxyConfigLoader`, `OrbitMath`, `VoronoiHelper`. Дополняет [Galaxy_Map_Generation_Consolidated.txt](../design/Galaxy_Map_Generation_Consolidated.txt) и [world_generation.md](../design/world_generation.md).
+- **[Galaxy Generation](galaxy_generation.md)** — `GalaxyGenerator.*`, модели `Galaxy/Models/*`, `GalaxyConfigLoader`, `OrbitMath`, `VoronoiHelper`. Дополняет [Galaxy_Map_Generation_Consolidated.md](../design/Galaxy_Map_Generation_Consolidated.md) и [world_generation.md](../design/world_generation.md).
 - (планируется) **Config & Constants** — `GameSettingsConfig`, `GalaxyConstants`, модели `Config/Models/*` (частично покрыто в Galaxy Generation).
 
 ### Визуальная подсистема
@@ -49,11 +49,11 @@
 
 | Файл | Описание |
 |---|---|
-| [`Ship_Landing_Pipeline.txt`](../design/Ship_Landing_Pipeline.txt) | Полная двухфазная пайплайн посадки (SR2HD-style) |
-| [`Ship_Trajectory_*.txt`](../design/) | Реализация кинематической сплайн-траектории кораблей |
-| [`Galaxy_Map_Generation_Consolidated.txt`](../design/Galaxy_Map_Generation_Consolidated.txt) | Алгоритмы генерации галактики/секторов/звёзд |
-| [`Spawn_Rules_Consolidated.txt`](../design/Spawn_Rules_Consolidated.txt) | Правила спавна NPC (политики, расы, типы) |
-| [`Dominator_Equipment_Consolidated.txt`](../design/Dominator_Equipment_Consolidated.txt) | Оборудование доминаторов |
+| [`Ship_Landing_Pipeline.md`](../design/Ship_Landing_Pipeline.md) | Полная двухфазная пайплайн посадки (SR2HD-style) |
+| [`Ship_Trajectory_*.md`](../design/) | Реализация кинематической сплайн-траектории кораблей |
+| [`Galaxy_Map_Generation_Consolidated.md`](../design/Galaxy_Map_Generation_Consolidated.md) | Алгоритмы генерации галактики/секторов/звёзд |
+| [`Spawn_Rules_Consolidated.md`](../design/Spawn_Rules_Consolidated.md) | Правила спавна NPC (политики, расы, типы) |
+| [`Dominator_Equipment_Consolidated.md`](../design/Dominator_Equipment_Consolidated.md) | Оборудование доминаторов |
 | [`equipment_tiers.md`](../design/equipment_tiers.md) | GTL/ПТУ-балансировка по тирам |
 | [`planetary_science_system.md`](../design/planetary_science_system.md) | Дизайн-документ системы изобретений |
 | [`economy_implementation_plan.md`](../design/economy_implementation_plan.md) | План реализации экономики; что сделано/отложено |

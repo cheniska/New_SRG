@@ -7,7 +7,7 @@ namespace SRG.Utils
 {
     /// <summary>
     /// SR2HD landing-pipeline geometry: visual radius, landing zone, approach zone.
-    /// См. docs/design/Ship_Landing_Pipeline.txt §3, §5.2.B.
+    /// См. docs/design/Ship_Landing_Pipeline.md §3, §5.2.B.
     /// </summary>
     public static class PlanetGeometry
     {

@@ -284,7 +284,7 @@ return Random.value < chance
     _done = true
 ```
 
-См. `Ship_Landing_Pipeline.txt` в `docs/` для деталей геометрии R_land/R_app.
+См. `Ship_Landing_Pipeline.md` в `docs/` для деталей геометрии R_land/R_app.
 
 ---
 

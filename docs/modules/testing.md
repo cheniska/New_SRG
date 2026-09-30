@@ -1,7 +1,7 @@
 # Тестирование
 
 EditMode-тесты — `Assets/Tests/EditMode`, сборка `SRG.Tests.EditMode` (ссылается только на
-`SRG.Simulation`). Запуск: Unity → Window → General → Test Runner → EditMode → Run All,
+`SRG.Simulation` и `SRG.UI.Logic`). Запуск: Unity → Window → General → Test Runner → EditMode → Run All,
 или из командной строки:
 
 ```
@@ -31,7 +31,10 @@ CI (`.github/workflows/ci.yml`): job `headless-tests` на каждый push/PR;
 | `SaveFormatTests` | миграции v0→v2, v1→v2, отказ на будущей версии и битом файле |
 | `EconomyTests` | инфляция, легальность товаров, базовый сток |
 | `NewsServiceTests` | Id новостей после загрузки |
-| `SimulationDeterminismTests` | **golden**: генерация и N ходов при одном сиде дают одинаковое состояние (SHA-256 всего мира); сохранение → загрузка сохраняет состояние |
+| `SimulationDeterminismTests` | **golden**: генерация и N ходов при одном сиде дают одинаковое состояние (SHA-256 всего мира); сохранение → загрузка сохраняет состояние; `SaveLoad_ContinuesIdentically` — игра, загруженная из сейва, дальше идёт день в день так же, как без сохранения |
+| `AiStateSerializationTests` | решения ИИ (`NpcBrain`, действия, приказы) переживают сохранение; ссылки на объекты мира в состоянии ИИ помечены `[NonSerialized]`; инкрементальные счётчики спавна совпадают с полным пересчётом |
+| `SaveSchemaTests` | формат сохранения совпадает с эталоном `SaveSchema.txt` (см. [saves.md](saves.md)) |
+| `UiPresenterTests` | логика экранов без UI: магазины товаров и оборудования, ангар, описание предмета, цвета карты галактики |
 | `ArchitectureTests` | в симуляции нет `UnityEngine.Random`, `Guid.NewGuid`, `new System.Random()`, `Uid.GetHashCode()` |
 
 `SimulationDeterminismTests` помечены категорией `Slow` (генерируют настоящую галактику из
@@ -51,3 +54,9 @@ CI (`.github/workflows/ci.yml`): job `headless-tests` на каждый push/PR;
    состояние, переживающее сессию, обход `HashSet`/`Dictionary` с ключами-объектами.
 2. `SaveLoad_RoundTrip_PreservesState` — новое поле, влияющее на игру, не сериализуется
    (`[JsonIgnore]`/`static`) или пересчитывается при загрузке.
+3. `SaveLoad_ContinuesIdentically` — после загрузки мир расходится с исходным: не сохраняется
+   состояние, влияющее на следующие ходы (решения ИИ, поля кораблей), кэш после загрузки
+   расходует общий RNG, или случайный выбор идёт в порядке обхода `Dictionary`
+   (после удалений порядок у загруженного словаря другой — сортируйте ключи).
+4. `SaveSchemaTests` — поменялся формат сохранения. Если так и задумано — добавьте миграцию
+   (если старые сейвы иначе не прочитаются) и обновите эталон: `SRG_UPDATE_SAVE_SCHEMA=1 dotnet test tools/headless-tests`.

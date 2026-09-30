@@ -241,7 +241,7 @@ namespace SRG.Combat
         public DamageType DamageType;
         public List<WeaponEffect> Effects = new List<WeaponEffect>();
 
-        // ── SR2-расширения (Missile_Trajectory.txt §§3.A–D, 4) ────────────────────
+        // ── SR2-расширения (Missile_Trajectory.md §§3.A–D, 4) ────────────────────
 
         /// <summary>Потолок скорости — куда ракета разгоняется при SpeedRampPerTurn &gt; 0.
         /// Если SpeedRampPerTurn = 0, Speed = SpeedMax с первого сабтёрна.</summary>

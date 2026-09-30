@@ -10,7 +10,7 @@ namespace SRG.Dialog
     ///
     /// В DialogsConfig.json достаточно узла реплики с <c>Action: OpenImprovement</c> — можно
     /// добавить в диалог станции SB, чтобы игрок из обычного разговора попадал в модальный
-    /// экран улучшения. См. docs/design/SB_Equipment_Improvement.txt.
+    /// экран улучшения. См. docs/design/SB_Equipment_Improvement.md.
     /// </summary>
     public static class DialogSbImprovementActions
     {

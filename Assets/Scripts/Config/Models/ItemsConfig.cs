@@ -81,7 +81,7 @@ namespace SRG.Config
         [JsonProperty("EquipmentTemplates")] public JObject EquipmentTemplates { get; set; }
 
         /// <summary>Балансовая конфигурация улучшения оборудования на научной базе (SB).
-        /// См. docs/design/SB_Equipment_Improvement.txt / docs/design/SB_Improvement_Formulas.txt.</summary>
+        /// См. docs/design/SB_Equipment_Improvement.md / docs/design/SB_Improvement_Formulas.md.</summary>
         [JsonProperty("Improvement")] public ImprovementConfig Improvement { get; set; } = new();
 
         /// <summary>Уровни редкости встраиваемых (T1/T2/T3/…).</summary>
@@ -505,7 +505,7 @@ namespace SRG.Config
         [JsonProperty("Activatable")] public bool Activatable { get; set; } = false;
         /// <summary>Экземпляр разрешено улучшать на научной базе (SB). По умолчанию true для оборудования
         /// (задаётся в <c>Defaults["IsImprovable"]</c> шаблона категории). Сбрасывается в false после
-        /// первого апгрейда или встраивания микромодуля. См. docs/design/SB_Equipment_Improvement.txt.</summary>
+        /// первого апгрейда или встраивания микромодуля. См. docs/design/SB_Equipment_Improvement.md.</summary>
         [JsonProperty("IsImprovable")] public bool IsImprovable { get; set; } = true;
         /// <summary>При улучшении требуется расходовать Ноды (стеки Node в трюме или нод-счёт корабля).
         /// Обычно ставится для доминаторского/трофейного оборудования.</summary>
@@ -585,7 +585,7 @@ namespace SRG.Config
         /// до TurnDeg/SubTurnsPerTurn градусов в сторону цели (как у кораблей).</summary>
         [JsonProperty("TurnDeg")]              public float  TurnDeg     { get; set; } = 720f;
 
-        // ── Дополнения по SR2-модели (Missile_Trajectory.txt §§2.1, 3.A–D, 4) ──
+        // ── Дополнения по SR2-модели (Missile_Trajectory.md §§2.1, 3.A–D, 4) ──
 
         /// <summary>SR2-смещение точки спавна вдоль угла, чтобы ракеты залпа не пересекались.
         /// В наших единицах ≈ 0.08 (соответствует 8 у SR2). 0 = выключено.</summary>

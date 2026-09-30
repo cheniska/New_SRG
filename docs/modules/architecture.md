@@ -9,16 +9,18 @@
 
 ```
 SRG.Simulation   ← SRG.Presentation ← SRG.Game
-      ↑                                   
-SRG.Tests.EditMode
+      ↑        ↖                          ↙
+      │         SRG.UI.Logic ←───────────
+SRG.Tests.EditMode (→ SRG.Simulation, SRG.UI.Logic)
 ```
 
 | Сборка | Папки `Assets/Scripts` | Что внутри | Может ссылаться на |
 |---|---|---|---|
 | **SRG.Simulation** | `Simulation` (asmdef), `Combat`, `Config`, `Economy`, `Equipment`, `Galaxy`, `NpcAI`, `Ships`, `Science`, `Dialog`, `Scripting`, `Utils` (через `.asmref`) | Данные мира, генерация, расчёт хода, ИИ, экономика, диалоговая логика, Lua | UnityEngine (математика, `Debug`), Newtonsoft, MoonSharp. **Не** UGUI, не Presentation/Game |
 | **SRG.Presentation** | `Presentation` | Визуальные контроллеры объектов, эффекты, камера, миникарты, графика | SRG.Simulation, UGUI |
+| **SRG.UI.Logic** | `UI/Logic` | Презентеры экранов: строки магазинов, цены, проверки, тексты и цвета — без MonoBehaviour и UGUI | SRG.Simulation |
 | **SRG.Game** | `Core` (asmdef), `Controllers`, `UI` (через `.asmref`) | Менеджеры сцены, игрок/NPC-контроллеры, все экраны | всё выше |
-| **SRG.Tests.EditMode** | `Assets/Tests/EditMode` | EditMode-тесты | SRG.Simulation, NUnit |
+| **SRG.Tests.EditMode** | `Assets/Tests/EditMode` | EditMode-тесты | SRG.Simulation, SRG.UI.Logic, NUnit |
 
 Папки подключены к сборкам через `.asmref`, поэтому пути файлов и namespace'ы не менялись.
 Нарушение слоя — ошибка компиляции, а не замечание на ревью.
@@ -26,6 +28,9 @@ SRG.Tests.EditMode
 UI, Core и Controllers живут в одной сборке, потому что ссылаются друг на друга
 (экраны читают `PlayerShip`, а `PlayerShip` показывает HUD). Их разделение — следующий шаг,
 если понадобится.
+
+Логику экранов выносим в `SRG.UI.Logic` (презентеры): она тестируется без сцены, а экран
+только строит виджеты и пишет результат в лог. Подробнее — [ui_subsystem.md](ui_subsystem.md#презентеры-srguilogic).
 
 ---
 

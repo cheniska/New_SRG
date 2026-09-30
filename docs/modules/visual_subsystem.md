@@ -10,7 +10,7 @@
 `StarVisualController`, `WeaponVisualSystem`, `WeaponRangeIndicator`, `RadarRangeIndicator`,
 `ExplosionPlayback`, `AnimatedSpriteRenderer`, `SortingLayerRegistry`, `CameraController`.
 
-Связанные документы: [`Ship_Trajectory_*.txt`](..), [`Ship_Landing_Pipeline.txt`](..).
+Связанные документы: [`Ship_Trajectory_*.md`](..), [`Ship_Landing_Pipeline.md`](..).
 
 ---
 
@@ -75,7 +75,7 @@ protected SpriteRenderer EnsureRenderer(SpriteRenderer r, string slotName, int s
 public void Setup(ShipData ship);
 public void PrepareForTurn(TurnAnimationData anim, StarData star);
    // Считает геометрию посадки заранее: если конец анимации этого хода попадает в R_land
-   // целевой планеты — выставляет ship.LandingPhase = Fading. См. Ship_Landing_Pipeline.txt.
+   // целевой планеты — выставляет ship.LandingPhase = Fading. См. Ship_Landing_Pipeline.md.
 public void AnimateTurn(float progress, int currentSubTurn, TurnAnimationData anim);
 public void EndTurn();
 public void PlayExplosion();
