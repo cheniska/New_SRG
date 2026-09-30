@@ -143,7 +143,9 @@ namespace SRG.Presentation.Common
             Resources.UnloadUnusedAssets();
         }
 
-        public Sprite[] GetSpriteSheet(string path) => LoadSpriteSheet(path);
+        /// <summary>Из расчёта хода (фоновый поток) — через главный поток: Resources и кэши только там.</summary>
+        public Sprite[] GetSpriteSheet(string path)
+            => MainThread.IsCurrent ? LoadSpriteSheet(path) : MainThread.Send(() => LoadSpriteSheet(path));
 
         /// <summary>Асинхронно прогревает кэш одного спрайт-листа. Тяжёлое —
         /// Resources.LoadAsync (декод текстуры) — уходит в фоновый поток; на главном потоке
@@ -212,6 +214,7 @@ namespace SRG.Presentation.Common
         public string[] EnumerateSheetPathsInFolder(string folderPath)
         {
             if (string.IsNullOrEmpty(folderPath)) return System.Array.Empty<string>();
+            if (!MainThread.IsCurrent) return MainThread.Send(() => EnumerateSheetPathsInFolder(folderPath));
             if (_folderVariantsCache.TryGetValue(folderPath, out var cached)) return cached;
 
             var metas = Resources.LoadAll<TextAsset>(folderPath);

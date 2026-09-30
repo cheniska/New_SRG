@@ -20,6 +20,9 @@ namespace SRG.Simulation
         GameSettingsConfig Settings { get; }
         TurnPhase Phase { get; }
         TurnAnimationData LastTurnData { get; }
+        /// <summary>true — ход сейчас считается в фоновом потоке: главный поток не должен ни
+        /// читать мир (он меняется), ни менять его. См. <see cref="MainThread"/>.</summary>
+        bool IsCalculating { get; }
 
         void RequestPlanning(PlanningReason reason);
         void ExecuteInstantTurn();

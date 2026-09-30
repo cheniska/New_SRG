@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using SRG.Config;
 using SRG.Core;
 using SRG.Controllers;
+using SRG.Simulation;
 
 namespace SRG.UI.Screens
 {
@@ -60,6 +61,10 @@ namespace SRG.UI.Screens
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (IsSuppressed()) return;

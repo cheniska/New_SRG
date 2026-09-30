@@ -158,6 +158,10 @@ namespace SRG.Presentation.Map
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             if (!IsReady || screenBoundsRect == null) return;
 
             Vector3 camPos = mainCamera.transform.position;

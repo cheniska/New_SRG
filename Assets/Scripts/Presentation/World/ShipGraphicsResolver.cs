@@ -1,3 +1,4 @@
+using SRG.Simulation;
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
@@ -49,6 +50,8 @@ namespace SRG.Presentation.World
         public static string ResolveFromBase(string basePath, string ownerId, string raceId)
         {
             if (string.IsNullOrEmpty(basePath)) return basePath;
+            // Resources и кэши — только с главного потока; из расчёта хода — через него.
+            if (!MainThread.IsCurrent) return MainThread.Send(() => ResolveFromBase(basePath, ownerId, raceId));
             var cacheKey = (basePath, ownerId ?? "", raceId ?? "");
             if (_fromBaseCache.TryGetValue(cacheKey, out var cached)) return cached;
 

@@ -71,6 +71,10 @@ namespace SRG.UI.Screens
 
         void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             // Переключение консоли
             if (Input.GetKeyDown(ToggleKey))
             {

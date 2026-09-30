@@ -132,6 +132,10 @@ namespace SRG.Controllers
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             if (ShipData == null || ShipData.CurrentHull <= 0) return;
             if (!_isTurnInProgress)
             {

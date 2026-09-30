@@ -1,3 +1,4 @@
+using SRG.Simulation;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -97,6 +98,10 @@ namespace SRG.UI.HUD
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             _refreshTimer += Time.deltaTime;
             if (_refreshTimer < REFRESH_INTERVAL) return;
             _refreshTimer = 0f;
@@ -206,8 +211,9 @@ namespace SRG.UI.HUD
 
         // ── Обработка ленты ────────────────────────────────────────
 
-        private void OnNewsAdded(GalaxyNewsEntry e)   => RebuildIcons();
-        private void OnNewsRemoved(GalaxyNewsEntry e) => RebuildIcons();
+        // Новости рождаются и во время расчёта хода (фоновый поток) — UI обновляем на главном.
+        private void OnNewsAdded(GalaxyNewsEntry e)   => MainThread.Post(RebuildIcons);
+        private void OnNewsRemoved(GalaxyNewsEntry e) => MainThread.Post(RebuildIcons);
 
         private void RebuildIcons()
         {

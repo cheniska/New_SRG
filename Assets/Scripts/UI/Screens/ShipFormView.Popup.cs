@@ -14,6 +14,7 @@ using SRG.Controllers;
 using SRG.UI.Common;
 using SRG.UI.HUD;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.UI.Screens
 {
@@ -37,6 +38,10 @@ namespace SRG.UI.Screens
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             // Пока открыт диалог количества — рука «заморожена»; Esc обрабатывает сам диалог.
             if (_throwDialog != null && _throwDialog.IsOpen)
                 return;

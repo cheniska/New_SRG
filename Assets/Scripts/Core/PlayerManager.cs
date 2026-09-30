@@ -198,8 +198,11 @@ namespace SRG.Core
         /// Работает для планет (<see cref="PlanetData"/>), станций и кораблей-носителей
         /// (<see cref="ShipData"/>). PlanetUIController слушает <see cref="OnLanded"/> и по
         /// <see cref="ILandingSite.Kind"/> выбирает набор вкладок.</summary>
+        // Методы IPlayerHost меняют сцену/UI: из расчёта хода (фоновый поток) выполняются на
+        // главном, поток расчёта ждёт — порядок и результат те же, что при расчёте на главном.
         public void LandOn(ILandingSite site)
         {
+            if (!MainThread.IsCurrent) { MainThread.Send(() => LandOn(site)); return; }
             if (site == null || IsLanded) return;
             LandedSite = site;
             GalaxyManager.Instance?.RequestPlanning(PlanningReason.PlayerInput);
@@ -215,6 +218,7 @@ namespace SRG.Core
         /// решается PlanetUIController по <see cref="ILandingSite.Kind"/>.</summary>
         public void DockOnShip(ShipData carrier)
         {
+            if (!MainThread.IsCurrent) { MainThread.Send(() => DockOnShip(carrier)); return; }
             if (carrier == null || IsLanded) return;
             var site = SRG.Ships.Services.ShipDockingService.AsLandingSite(carrier);
             if (site == null) return;
@@ -224,6 +228,7 @@ namespace SRG.Core
 
         public void LeavePlanet()
         {
+            if (!MainThread.IsCurrent) { MainThread.Send(() => LeavePlanet()); return; }
             if (!IsLanded) return;
             var was = LandedSite;
             LandedSite = null;
@@ -242,6 +247,7 @@ namespace SRG.Core
         /// </summary>
         public bool KillPlayer(PlayerDeathCause cause, string killerName = null, string killerOwner = null)
         {
+            if (!MainThread.IsCurrent) return MainThread.Send(() => KillPlayer(cause, killerName, killerOwner));
             if (IsPlayerDead) return true;
             var ship = PlayerShipData ?? GetOrFindPlayerShip();
             if (ship == null) return false;

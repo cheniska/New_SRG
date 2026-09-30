@@ -90,16 +90,28 @@ namespace SRG.Ships
             return Mathf.Pow(maxHull / baseSize, k);
         }
 
+        // Размер листа не меняется за игру, а чтение Sprite доступно только с главного потока:
+        // из расчёта хода каждый промах кэша стоит ожидания кадра.
+        private static readonly Dictionary<string, float> _spriteWorldSizeCache = new();
+
         public static float ResolveSpriteWorldSize(string spritePath)
         {
             if (string.IsNullOrEmpty(spritePath)) return 1.0f;
+            lock (_spriteWorldSizeCache)
+                if (_spriteWorldSizeCache.TryGetValue(spritePath, out var cached)) return cached;
 
-            var frames = GameWorld.Graphics?.GetSpriteSheet(spritePath);
-            Sprite first = frames != null && frames.Length > 0 ? frames[0] : null;
-            if (first == null) return 1.0f;
-
-            // sprites are square — width / pixelsPerUnit gives world size
-            return first.rect.width / first.pixelsPerUnit;
+            float size = MainThread.Send(() =>
+            {
+                var frames = GameWorld.Graphics?.GetSpriteSheet(spritePath);
+                Sprite first = frames != null && frames.Length > 0 ? frames[0] : null;
+                if (first == null) return 1.0f;
+                // sprites are square — width / pixelsPerUnit gives world size
+                return first.rect.width / first.pixelsPerUnit;
+            });
+            // Без графики (headless) не кэшируем: хост может подключиться позже.
+            if (GameWorld.Graphics != null)
+                lock (_spriteWorldSizeCache) _spriteWorldSizeCache[spritePath] = size;
+            return size;
         }
 
         public static string GetRandomShipTypeForOwner(string ownerId,

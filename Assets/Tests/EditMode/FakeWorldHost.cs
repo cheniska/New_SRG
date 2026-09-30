@@ -15,6 +15,7 @@ namespace SRG.Tests
         public GameSettingsConfig Settings { get; set; }
         public TurnPhase Phase { get; set; }
         public TurnAnimationData LastTurnData { get; set; }
+        public bool IsCalculating { get; set; }
         public int PlanningRequests { get; private set; }
         public int InstantTurns { get; private set; }
 

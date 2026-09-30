@@ -64,6 +64,10 @@ namespace SRG.UI.HUD
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             _fpsFrameCount++;
             _fpsAccum += Time.unscaledDeltaTime;
 
@@ -309,6 +313,10 @@ namespace SRG.UI.HUD
 
         private void OnGUI()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             var player = PlayerShip.Instance?.ShipData;
             if (player == null) return;
             if (player.PartnerFollowerUids == null || player.PartnerFollowerUids.Count == 0) return;

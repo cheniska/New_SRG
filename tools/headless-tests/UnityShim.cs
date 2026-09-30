@@ -197,10 +197,26 @@ namespace UnityEngine
         public static void DrawLine(Vector3 a, Vector3 b, Color c, float d = 0) { }
     }
 
+    /// <summary>
+    /// Проверка потока, как у Unity: Application/Resources/Time доступны только с главного потока.
+    /// Тест задаёт главный поток (<see cref="MainThreadId"/>); по умолчанию проверки нет.
+    /// </summary>
+    public static class ShimThreading
+    {
+        public static int MainThreadId = -1;
+
+        public static void Check(string api)
+        {
+            int main = MainThreadId;
+            if (main >= 0 && System.Threading.Thread.CurrentThread.ManagedThreadId != main)
+                throw new InvalidOperationException($"{api} can only be called from the main thread.");
+        }
+    }
+
     public static class Application
     {
-        public static string persistentDataPath => System.IO.Path.Combine(System.IO.Path.GetTempPath(), "srg-tests");
-        public static string dataPath => System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Assets");
+        public static string persistentDataPath { get { ShimThreading.Check("get_persistentDataPath"); return System.IO.Path.Combine(System.IO.Path.GetTempPath(), "srg-tests"); } }
+        public static string dataPath { get { ShimThreading.Check("get_dataPath"); return System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Assets"); } }
         public static bool runInBackground { get; set; }
         public static bool isPlaying => false;
         public static bool isEditor => false;
@@ -286,9 +302,9 @@ namespace UnityEngine
     public class Font : Object { }
     public static class Resources
     {
-        public static T Load<T>(string path) where T : Object => null;
-        public static Object Load(string path) => null;
-        public static T[] LoadAll<T>(string path) where T : Object => Array.Empty<T>();
+        public static T Load<T>(string path) where T : Object { ShimThreading.Check("Resources.Load"); return null; }
+        public static Object Load(string path) { ShimThreading.Check("Resources.Load"); return null; }
+        public static T[] LoadAll<T>(string path) where T : Object { ShimThreading.Check("Resources.LoadAll"); return Array.Empty<T>(); }
         public static T GetBuiltinResource<T>(string path) where T : Object => null;
     }
     public enum FullScreenMode { ExclusiveFullScreen, FullScreenWindow, MaximizedWindow, Windowed }

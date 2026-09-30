@@ -17,6 +17,7 @@ namespace SRG.Simulation
         public StarData CurrentStar { get; set; }
         public TurnAnimationData LastTurnData { get; private set; }
         public TurnPhase Phase => TurnPhase.Planning;
+        public bool IsCalculating => false;
 
         /// <summary>Причины паузы, запрошенные симуляцией за время жизни хоста.</summary>
         public HashSet<PlanningReason> PlanningRequests { get; } = new();

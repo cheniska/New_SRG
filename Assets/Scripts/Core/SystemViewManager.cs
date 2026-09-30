@@ -897,6 +897,8 @@ namespace SRG.Core
         /// контейнер появился в космосе мгновенно, а не на следующем кадре симуляции.</summary>
         public void EnsureShipVisual(ShipData ship)
         {
+            // Из расчёта хода (фоновый поток) — после расчёта, на главном потоке.
+            if (!MainThread.IsCurrent) { MainThread.Post(() => EnsureShipVisual(ship)); return; }
             var star = GalaxyManager.Instance?.CurrentStar;
             EnsureShipVisual(ship, star);
         }

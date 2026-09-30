@@ -59,6 +59,8 @@ namespace SRG.Simulation
         public static GameSettingsConfig Settings => Host?.Settings;
         public static TurnPhase Phase => Host?.Phase ?? TurnPhase.Planning;
         public static TurnAnimationData LastTurnData => Host?.LastTurnData;
+        /// <summary>Ход считается в фоновом потоке — визуал и UI не трогают мир (см. <see cref="IWorldHost.IsCalculating"/>).</summary>
+        public static bool IsCalculating => Host?.IsCalculating ?? false;
 
         public static void RequestPlanning(PlanningReason reason) => Host?.RequestPlanning(reason);
         public static void ExecuteInstantTurn() => Host?.ExecuteInstantTurn();
@@ -87,6 +89,7 @@ namespace SRG.Simulation
             Host = null; Player = null; View = null; Graphics = null; Dialogs = null;
             ShipSheetResolver = null;
             OnTurnCalculate = null; OnTurnAnimate = null; OnTurnComplete = null;
+            MainThread.Dispatcher = null;
         }
     }
 }

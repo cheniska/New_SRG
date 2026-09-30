@@ -125,7 +125,11 @@ namespace SRG.UI.Screens
         // ───── Public API ────────────────────────────────────────────────
 
         /// <summary>Окно улучшения оборудования (научная база) — вызывается диалоговым действием.</summary>
-        public void ShowImprovementDialog(ShipData player) => SRG.UI.Common.ImprovementDialog.Show(player);
+        public void ShowImprovementDialog(ShipData player)
+        {
+            if (!MainThread.IsCurrent) { MainThread.Send(() => ShowImprovementDialog(player)); return; }
+            SRG.UI.Common.ImprovementDialog.Show(player);
+        }
 
         public bool OpenSpaceDialog(string dialogId, ShipData targetShip = null)
         {
@@ -143,6 +147,8 @@ namespace SRG.UI.Screens
         /// что делать дальше — обычно сразу переходить к атаке.</summary>
         public bool OpenIncomingSpaceDialog(string dialogId, ShipData initiator)
         {
+            // Вызывается из ИИ во время расчёта хода (фоновый поток): UI — только на главном.
+            if (!MainThread.IsCurrent) return MainThread.Send(() => OpenIncomingSpaceDialog(dialogId, initiator));
             if (!CanShowIncoming()) return false;
             var player = PlayerShip.Instance?.ShipData ?? PlayerManager.Instance?.GetOrFindPlayerShip();
             if (player == null) return false;
@@ -191,6 +197,7 @@ namespace SRG.UI.Screens
 
         private void HandleStart(DialogContext ctx)
         {
+            if (!MainThread.IsCurrent) { MainThread.Post(() => HandleStart(ctx)); return; }
             _scope = ctx.Scope;
             if (_panel == null) BuildUI();
             ApplyLayout(_scope);
@@ -200,12 +207,14 @@ namespace SRG.UI.Screens
 
         private void HandleNodeChanged(DialogContext ctx)
         {
+            if (!MainThread.IsCurrent) { MainThread.Post(() => HandleNodeChanged(ctx)); return; }
             UpdateTitle(ctx);
             RenderCurrentNode();
         }
 
         private void HandleEnd(DialogContext ctx)
         {
+            if (!MainThread.IsCurrent) { MainThread.Post(() => HandleEnd(ctx)); return; }
             if (_panel != null) _panel.SetActive(false);
         }
 

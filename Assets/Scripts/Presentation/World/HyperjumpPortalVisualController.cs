@@ -334,6 +334,8 @@ namespace SRG.Presentation.World
         /// </summary>
         private void Update()
         {
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+            if (GameWorld.IsCalculating) return;
             if (_portals.Count == 0) return;
             List<string> toRemove = null;
             foreach (var kv in _portals)

@@ -47,6 +47,10 @@ namespace SRG.Presentation.World
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             if (GameWorld.Phase == TurnPhase.Simulation)
             {
                 HideAll();

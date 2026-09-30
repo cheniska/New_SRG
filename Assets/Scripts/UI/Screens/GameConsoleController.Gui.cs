@@ -22,6 +22,8 @@ namespace SRG.UI.Screens
     {
         void Log(string m)
         {
+            // GameLog.Add зовётся и из расчёта хода (фоновый поток).
+            if (!MainThread.IsCurrent) { MainThread.Post(() => Log(m)); return; }
             _logs.Add(m);
             if (_logs.Count > MaxLog) _logs.RemoveAt(0);
             _scroll.y = float.MaxValue;
@@ -31,7 +33,8 @@ namespace SRG.UI.Screens
         {
             if (!_showConsole) return;
 
-            if (_pendingCmd != null)
+            // Команды меняют мир — во время фонового расчёта хода ждут его окончания.
+            if (_pendingCmd != null && !GameWorld.IsCalculating)
             {
                 string cmd = _pendingCmd;
                 _pendingCmd = null;

@@ -72,6 +72,10 @@ namespace SRG.UI.HUD
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             if (Input.GetMouseButtonDown(1) && GalaxyManager.Instance?.Phase != TurnPhase.Simulation
                     && !IsMouseBlocked)
                 HandleRightClick();
@@ -238,6 +242,10 @@ namespace SRG.UI.HUD
 
         private void OnGUI()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             if (_showContextMenu && _contextMenuShip != null)
             {
                 _contextMenuRect = GUILayout.Window(9901, _contextMenuRect, DrawContextMenu,

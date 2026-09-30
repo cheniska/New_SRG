@@ -9,6 +9,7 @@ using SRG.Galaxy.Generation;
 using SRG.Presentation.Common;
 using SRG.Presentation.Map;
 using SRG.Ships.Movement;
+using SRG.Simulation;
 
 namespace SRG.UI.Screens
 {
@@ -114,6 +115,10 @@ namespace SRG.UI.Screens
 
         private void Update()
         {
+
+            // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
+
+            if (GameWorld.IsCalculating) return;
             if (GameConsoleController.IsOpen) return;
             if (Input.GetKeyDown(KeyCode.M)) ToggleMap();
             if (!_isOpen) return;

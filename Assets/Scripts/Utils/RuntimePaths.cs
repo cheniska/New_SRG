@@ -12,14 +12,28 @@ namespace SRG.Utils
     /// </summary>
     public static class RuntimePaths
     {
+        // Application.dataPath/persistentDataPath доступны только с главного потока, а логи
+        // пишутся и из расчёта хода (фоновый поток). Поэтому пути запоминаются при первом
+        // обращении; Warmup() вызывается на старте игры с главного потока.
+        private static string _logsDir, _persistentDir;
+
+        /// <summary>Запомнить пути рантайма. Вызывать с главного потока до первого хода.</summary>
+        public static void Warmup()
+        {
+            _ = LogsDir;
+            _ = PersistentDir;
+        }
+
         /// <summary>Директория логов: &lt;project&gt;/logs (одинаковый нижний регистр — чтобы на case-sensitive ФС не рождались две папки).</summary>
-        public static string LogsDir => Path.Combine(Application.dataPath, "..", "logs");
+        public static string LogsDir => _logsDir ??= Path.Combine(Application.dataPath, "..", "logs");
+
+        private static string PersistentDir => _persistentDir ??= Application.persistentDataPath;
 
         /// <summary>Файл лога в <see cref="LogsDir"/> с заданным именем.</summary>
         public static string LogFile(string fileName) => Path.Combine(LogsDir, fileName);
 
         /// <summary>Файл сейва в persistentDataPath. Единый вход для всех сейвов игры.</summary>
-        public static string SaveFile(string fileName) => Path.Combine(Application.persistentDataPath, fileName);
+        public static string SaveFile(string fileName) => Path.Combine(PersistentDir, fileName);
 
         /// <summary>Создать родительскую директорию файла, если её ещё нет. Ошибки не пробрасываются.</summary>
         public static void EnsureDirFor(string filePath)

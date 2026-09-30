@@ -47,6 +47,9 @@ namespace SRG.Core
         [Tooltip("UID стартовой звезды. Пусто — первая звезда.")]
         [SerializeField] private string startingStarUid;
         [SerializeField] private GameSettingsConfig settings;
+        [Tooltip("Считать ход в фоновом потоке: кадр не замирает на время расчёта. " +
+                 "Выключить — расчёт на главном потоке, как раньше (для отладки).")]
+        [SerializeField] private bool asyncTurnCalculation = true;
 
         // Состояние мира и расчёт хода — в SimulationSession (слой симуляции). Здесь — тайминг
         // фаз, визуал, ввод и сценовые гиперпереходы.
@@ -71,8 +74,13 @@ namespace SRG.Core
         public TurnPhase Phase { get; private set; } = TurnPhase.Planning;
         public bool IsAutoMode => _planningRequests.Count == 0;
         public TurnAnimationData LastTurnData { get; private set; }
+        /// <summary>Ход считается в фоновом потоке (см. <see cref="ExecuteTurnCalculation"/>).
+        /// Пока true, главный поток не читает и не меняет мир: визуал и UI замирают на время расчёта.</summary>
+        public bool IsCalculating => _calcTask != null;
 
         private GalaxyGenerationContext _context;
+        private System.Threading.Tasks.Task<TurnAnimationData> _calcTask;
+        private MainThreadDispatcher _dispatcher;
         private float _simulationTimer;
         private int _currentSubTurn;
         private readonly HashSet<PlanningReason> _planningRequests = new();
@@ -86,6 +94,8 @@ namespace SRG.Core
         private void OnDestroy()
         {
             if (Instance != this) return;
+            WaitForTurnCalculation();
+            if (MainThread.Dispatcher == _dispatcher) MainThread.Dispatcher = null;
             GameWorld.Detach(this);
             Instance = null;
         }
@@ -97,12 +107,20 @@ namespace SRG.Core
             GameWorld.Attach(this);
             DontDestroyOnLoad(gameObject);
 
+            // Расчёт хода идёт в фоновом потоке — Unity API/UI/визуал из него доступны только
+            // через главный поток (SRG.Simulation.MainThread). Пути логов запоминаем сейчас:
+            // Application.dataPath из фонового потока недоступен.
+            _dispatcher = new MainThreadDispatcher();
+            MainThread.Dispatcher = _dispatcher;
+            SRG.Utils.RuntimePaths.Warmup();
+
             // Объекты симуляции (DirectiveManager, OwnerRaceRelationsManager, HighCommandRegistry)
             // и подписки сервисов создаёт SimulationSetup вместе с контекстом.
         }
 
         private void OnApplicationQuit()
         {
+            WaitForTurnCalculation();
             // Гарантированный flush лог-буферов при выходе из приложения.
             EconomicLog.Flush();
             HighCommandLog.Flush();
@@ -119,6 +137,14 @@ namespace SRG.Core
 
         private void Update()
         {
+            // Пока ход считается в фоне — обслуживаем его запросы к главному потоку и больше
+            // ничего не делаем: мир сейчас меняется.
+            if (IsCalculating && !PollTurnCalculation())
+            {
+                HandleSpaceBarInput();
+                return;
+            }
+
             HandleSpaceBarInput();
 
             // Если на прошлом кадре мы показали loading и отложили тяжёлый scene swap —
@@ -153,7 +179,7 @@ namespace SRG.Core
             if (GameConsoleController.IsOpen) return;
             if (!Input.GetKeyDown(KeyCode.Space)) return;
 
-            if (Phase == TurnPhase.Simulation)
+            if (Phase == TurnPhase.Simulation || IsCalculating)
                 RequestPlanning(PlanningReason.PlayerInput);
             else if (Phase == TurnPhase.Planning)
             {
@@ -164,6 +190,8 @@ namespace SRG.Core
 
         public void RequestPlanning(PlanningReason reason)
         {
+            // Симуляция просит паузу и из расчёта хода (фоновый поток) — применяем после расчёта.
+            if (!MainThread.IsCurrent) { MainThread.Post(() => RequestPlanning(reason)); return; }
             _planningRequests.Add(reason);
             UnityEngine.Debug.Log($"[GalaxyManager] Planning requested: {reason}. Total: {_planningRequests.Count}");
         }
@@ -174,14 +202,89 @@ namespace SRG.Core
 
         public void StartTurn()
         {
-            if (Phase == TurnPhase.Simulation) return;
+            if (Phase == TurnPhase.Simulation || IsCalculating) return;
             ExecuteTurnCalculation();
         }
 
+        /// <summary>
+        /// Расчёт хода. По умолчанию — в фоновом потоке: главный продолжает рисовать кадры, а
+        /// результат подхватывает <see cref="PollTurnCalculation"/>. Пока идёт расчёт, визуал и UI
+        /// не читают мир (<see cref="GameWorld.IsCalculating"/>), ввод UI заблокирован, а обращения
+        /// симуляции к Unity/UI идут через <see cref="MainThread"/>.
+        /// </summary>
         private void ExecuteTurnCalculation()
         {
-            if (GeneratedGalaxy == null) return;
-            LastTurnData = _session.SimulateDay();
+            if (GeneratedGalaxy == null || IsCalculating) return;
+            if (!asyncTurnCalculation)
+            {
+                OnTurnCalculated(_session.SimulateDay());
+                return;
+            }
+
+            var session = _session;
+            SetUiInputBlocked(true);
+            _calcTask = System.Threading.Tasks.Task.Run(() => session.SimulateDay());
+        }
+
+        /// <summary>Обслужить фоновый расчёт. true — расчёт завершён и обработан.</summary>
+        private bool PollTurnCalculation()
+        {
+            _dispatcher.PumpSends();
+            if (!_calcTask.IsCompleted) return false;
+
+            var task = _calcTask;
+            _calcTask = null;
+            SetUiInputBlocked(false);
+            // Отложенные уведомления расчёта (лог, новости, визуал новых кораблей, паузы) —
+            // в том порядке, в каком симуляция их подняла, до событий хода.
+            _dispatcher.DrainPosts();
+
+            if (task.IsFaulted)
+            {
+                // Как и при расчёте на главном потоке: ошибка в лог, остаёмся в планировании.
+                UnityEngine.Debug.LogException(task.Exception?.GetBaseException());
+                RequestPlanning(PlanningReason.PlayerInput);
+                return true;
+            }
+            OnTurnCalculated(task.Result);
+            return true;
+        }
+
+        /// <summary>Дождаться фонового расчёта (выход из игры, уничтожение менеджера): обслуживает
+        /// его запросы к главному потоку, иначе расчёт, ждущий главный поток, не завершится.</summary>
+        private void WaitForTurnCalculation()
+        {
+            if (_calcTask == null) return;
+            while (!_calcTask.IsCompleted)
+            {
+                _dispatcher.PumpSends();
+                System.Threading.Thread.Sleep(1);
+            }
+            _dispatcher.PumpSends();
+            _dispatcher.DrainPosts();
+            _calcTask = null;
+            SetUiInputBlocked(false);
+        }
+
+        // UI-клики во время расчёта изменили бы мир, который меняет поток расчёта.
+        private UnityEngine.EventSystems.EventSystem _blockedEventSystem;
+        private void SetUiInputBlocked(bool blocked)
+        {
+            if (blocked)
+            {
+                var es = UnityEngine.EventSystems.EventSystem.current;
+                if (es != null && es.enabled) { es.enabled = false; _blockedEventSystem = es; }
+            }
+            else if (_blockedEventSystem != null)
+            {
+                _blockedEventSystem.enabled = true;
+                _blockedEventSystem = null;
+            }
+        }
+
+        private void OnTurnCalculated(TurnAnimationData data)
+        {
+            LastTurnData = data;
             PlayerManager.Instance?.CheckPauseConditions(LastTurnData);
             foreach (var reason in LastTurnData.PlanningReasons)
                 RequestPlanning(reason);
@@ -313,6 +416,7 @@ namespace SRG.Core
 
         public void GenerateNewGalaxy(int seed)
         {
+            WaitForTurnCalculation(); // мир сейчас заменится — результат недосчитанного хода не нужен
             EnsureContextInitialized();
             if (_context == null) return;
 
@@ -335,6 +439,7 @@ namespace SRG.Core
         /// игрок остаётся там, где он был. Для перемещения игрока используй <see cref="TeleportToStar"/>.</summary>
         public bool SwitchActiveGalaxy(string galaxyKey)
         {
+            if (IsCalculating) return false;
             if (_session == null || !_session.SwitchActiveGalaxy(galaxyKey)) return false;
             UnityEngine.Debug.Log($"[GalaxyManager] Active galaxy: {galaxyKey}");
             return true;
@@ -380,7 +485,7 @@ namespace SRG.Core
         /// </summary>
         public void TeleportToStar(StarData target)
         {
-            if (target == null || GeneratedGalaxy == null) return;
+            if (target == null || GeneratedGalaxy == null || IsCalculating) return;
             var playerShip = PlayerManager.Instance?.GetOrFindPlayerShip();
             if (playerShip == null) return;
 
@@ -411,7 +516,7 @@ namespace SRG.Core
         /// </summary>
         public bool JumpToStar(StarData target)
         {
-            if (target == null || GeneratedGalaxy == null) return false;
+            if (target == null || GeneratedGalaxy == null || IsCalculating) return false;
             var playerShip = PlayerManager.Instance?.GetOrFindPlayerShip();
             if (playerShip == null) return false;
             bool ok = HyperjumpController.RequestJump(playerShip, target, GeneratedGalaxy);
@@ -465,12 +570,15 @@ namespace SRG.Core
 
         public void SaveGame()
         {
+            // Сохранение посреди фонового расчёта записало бы полуготовый мир.
+            if (IsCalculating) { UnityEngine.Debug.LogWarning("[GalaxyManager] SaveGame во время расчёта хода — пропущено."); return; }
             HighCommandLog.Flush();
             GalaxySaveManager.SaveGalaxies(Galaxies, ActiveGalaxyKey);
         }
 
         public void LoadGame()
         {
+            WaitForTurnCalculation(); // мир сейчас заменится — результат недосчитанного хода не нужен
             EnsureContextInitialized();
             if (_session == null) return;
             var loaded = GalaxySaveManager.LoadGalaxies(out string activeKey);
@@ -500,7 +608,7 @@ namespace SRG.Core
         /// </summary>
         public void ExecuteInstantTurn()
         {
-            if (Phase == TurnPhase.Simulation || GeneratedGalaxy == null) return;
+            if (Phase == TurnPhase.Simulation || IsCalculating || GeneratedGalaxy == null) return;
             ClearAllPlanning();
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
