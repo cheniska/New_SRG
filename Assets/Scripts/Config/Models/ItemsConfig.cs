@@ -81,7 +81,7 @@ namespace SRG.Config
         [JsonProperty("EquipmentTemplates")] public JObject EquipmentTemplates { get; set; }
 
         /// <summary>Балансовая конфигурация улучшения оборудования на научной базе (SB).
-        /// См. docs/SB_Equipment_Improvement.txt / docs/SB_Improvement_Formulas.txt.</summary>
+        /// См. docs/design/SB_Equipment_Improvement.txt / docs/design/SB_Improvement_Formulas.txt.</summary>
         [JsonProperty("Improvement")] public ImprovementConfig Improvement { get; set; } = new();
 
         /// <summary>Уровни редкости встраиваемых (T1/T2/T3/…).</summary>
@@ -488,7 +488,7 @@ namespace SRG.Config
         [JsonProperty("Activatable")] public bool Activatable { get; set; } = false;
         /// <summary>Экземпляр разрешено улучшать на научной базе (SB). По умолчанию true для оборудования
         /// (задаётся в <c>Defaults["IsImprovable"]</c> шаблона категории). Сбрасывается в false после
-        /// первого апгрейда или встраивания микромодуля. См. docs/SB_Equipment_Improvement.txt.</summary>
+        /// первого апгрейда или встраивания микромодуля. См. docs/design/SB_Equipment_Improvement.txt.</summary>
         [JsonProperty("IsImprovable")] public bool IsImprovable { get; set; } = true;
         /// <summary>При улучшении требуется расходовать Ноды (стеки Node в трюме или нод-счёт корабля).
         /// Обычно ставится для доминаторского/трофейного оборудования.</summary>

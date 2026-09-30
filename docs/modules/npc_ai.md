@@ -2,7 +2,7 @@
 
 Модули: `NpcAI/NpcBrain.cs`, `NpcAI/Actions/Action*.cs` (18 файлов), `NpcAI/Orders/Order*.cs` (18 файлов),
 `NpcAI/NpcAction.cs` (база), `NpcAI/NpcOrder.cs` (база), `NpcAI/FactionDirective.cs`,
-`NpcAI/TraderAI.cs`, `NpcAI/NpcSystem.cs`, `NpcAI/NpcSpawner.cs`, `NpcAI/NpcController.cs`,
+`NpcAI/TraderAI.cs`, `NpcAI/NpcSystem.cs`, `NpcAI/NpcSpawner.cs`, `Controllers/NpcController.cs`,
 `NpcAI/NpcDecisionTable.cs`, `Ships/ShipPersonality.cs`, `Ships/ShipRole.cs`.
 
 Этап рефакторинга **B1/B1b** разнёс ранее монолитные `NpcAction.cs` (886 LOC, 18 классов) и
@@ -164,7 +164,7 @@ NpcController : ShipVisualController (RequireComponent)
 
 Зависимости НА уровень UI/Visual:
 - `NpcController` имеет `[RequireComponent(typeof(ShipVisualController))]` — AI привязан к рендеру (см. TODO).
-- `OrderOfferMoneyRansom`, `OrderRequestCeasefire` (через `CeasefireSolidarity`) пишут в `GameConsoleController.AddEntry` — лог UI.
+- `OrderOfferMoneyRansom`, `OrderRequestCeasefire` (через `CeasefireSolidarity`) пишут в `GameLog.Add` — лог UI.
 
 ---
 

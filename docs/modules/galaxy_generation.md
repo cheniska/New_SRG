@@ -1,8 +1,8 @@
 # Galaxy Generation
 
-Модули: `Generation/*.cs` (9 файлов) + `Config/GalaxyConfigurationModels.cs` +
+Модули: `Generation/*.cs` (9 файлов) + `Config/Models/*.cs` +
 `Config/GalaxyConfigLoader.cs` + `Config/GalaxyConstants.cs` +
-`Generation/GalaxyDataModels.cs` (data) + `Utils/VoronoiHelper.cs` + `Utils/OrbitMath.cs`.
+`Galaxy/Models/*.cs` (data) + `Utils/VoronoiHelper.cs` + `Utils/OrbitMath.cs`.
 
 Файлы `GalaxyGenerator` — partial class, разбит на:
 `GalaxyGenerator.cs` (orchestration), `.SectorStars.cs`, `.Placement.cs`, `.Owners.cs`,
@@ -10,8 +10,8 @@
 `GalaxyUtils.cs` (5 классов): `OwnerResolver`, `CustomPropertyResolver`, `GalaxyLogger`,
 `GenerationHelpers`, `OwnershipDisplayResolver`.
 
-Связанные документы: [`Galaxy_Map_Generation_Consolidated.txt`](../Galaxy_Map_Generation_Consolidated.txt),
-[`world_generation.md`](../world_generation.md), [`planet_formulas.md`](../planet_formulas.md).
+Связанные документы: [`Galaxy_Map_Generation_Consolidated.txt`](../design/Galaxy_Map_Generation_Consolidated.txt),
+[`world_generation.md`](../design/world_generation.md), [`planet_formulas.md`](../design/planet_formulas.md).
 
 ---
 
@@ -453,10 +453,11 @@ Personality : RacePersonalityTemplate    # для NPC дефолтов
 
 ## Известные ограничения / TODO
 
-1. **`GalaxyDataModels.cs` (1909 LOC)** содержит 20+ классов модели + симуляционные методы
-   (`StarData.StarNextDay`, `GalaxyData.GalaxyNextDay`, `CombatSubTurn`, `ProcessPlayerManualShot`).
-   Разделение симуляции и данных — Тир C (отложено решением пользователя).
-2. **`GalaxyConfigurationModels.cs` (1096 LOC)** — 30+ вложенных конфиг-классов + методы парсинга
+1. Модели разнесены по `Galaxy/Models/*.cs` (сентябрь 2026). Оркестрация дня вынесена в
+   `Galaxy/Simulation/GalaxySimulator` (`GalaxyData.GalaxyNextDay` — делегат), день звезды —
+   в `StarSimulator`. В моделях ещё остаются `ShipData.ShipNextDay`/`ShipMoveStep` (движение
+   завязано на приватные поля) — кандидат на следующий шаг.
+2. **Конфиг-модели** разнесены по `Config/Models/*.cs` по темам; в `ItemsConfig` остаются методы парсинга
    (`EnsureItemsCache`, `EnsureTemplatesCache`). Парсинг внутри конфиг-модели — нарушение SRP,
    но миграция в отдельный `EquipmentConfigParser` отложена (изменения схемы конфигов будут
    массовые).

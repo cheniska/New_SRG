@@ -66,7 +66,7 @@ namespace SRG.Galaxy
         public Dictionary<string, int> PersonalRelations { get; set; } = new();
 
         /// <summary>Глобальное состояние науки: завершённые/активные изобретения и динамические
-        /// модификаторы цен/событий/шаблонов (см. ScienceSystem, диздок docs/planetary_science_system.md).</summary>
+        /// модификаторы цен/событий/шаблонов (см. ScienceSystem, диздок docs/design/planetary_science_system.md).</summary>
         public GalacticResearchState ResearchState { get; set; } = new();
 
         /// <summary>Активные фракционные директивы (Attack/Defend/etc). Живут вместе с сейвом.

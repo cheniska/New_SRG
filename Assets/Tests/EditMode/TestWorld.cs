@@ -24,13 +24,21 @@ namespace SRG.Tests
         private TestWorld(HeadlessWorldHost host) => Host = host;
 
         /// <summary>Папка Assets. В Unity тесты запускаются из корня проекта; вне Unity
-        /// путь можно задать переменной окружения SRG_ASSETS_DIR.</summary>
+        /// (tools/headless-tests) ищем вверх от папки сборки. Можно задать явно: SRG_ASSETS_DIR.</summary>
         public static string AssetsDir
         {
             get
             {
                 string env = Environment.GetEnvironmentVariable("SRG_ASSETS_DIR");
                 if (!string.IsNullOrEmpty(env)) return env;
+                foreach (var start in new[] { Directory.GetCurrentDirectory(), AppContext.BaseDirectory })
+                {
+                    for (var dir = new DirectoryInfo(start); dir != null; dir = dir.Parent)
+                    {
+                        string candidate = Path.Combine(dir.FullName, "Assets");
+                        if (File.Exists(Path.Combine(candidate, "Config", "GalaxyConfig.json"))) return candidate;
+                    }
+                }
                 return Path.Combine(Directory.GetCurrentDirectory(), "Assets");
             }
         }

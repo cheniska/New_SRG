@@ -9,7 +9,7 @@
 - `Assets/Scripts/Systems/MissileSystem.cs` — управление активными ракетами между ходами.
 - `Assets/Scripts/Ships/CombatData.cs` — все боевые модели данных (DamageType, HitPattern, эффекты, щит, ракеты).
 - `Assets/Scripts/Visual/WeaponVisualSystem.cs` — рендер VFX выстрелов и попаданий.
-- `Assets/Scripts/Generation/GalaxyDataModels.cs` (`CombatSubTurn`, `ProcessPlayerManualShot`) — точка входа для симуляции боя.
+- `Assets/Scripts/Galaxy/Models/*.cs` (`CombatSubTurn`, `ProcessPlayerManualShot`) — точка входа для симуляции боя.
 - `Assets/Scripts/Equipment/EquipmentSystem.cs` — хранение оружия в слотах, износ, состояние щита.
 
 ## 2. Модель данных
@@ -58,7 +58,7 @@ MinDmg/MaxDmg, Range, ArmorPenetration, ShieldPenetration, EquipHitChance, Equip
 
 ## 3. Цикл боя
 
-В `GalaxyDataModels.CombatSubTurn` каждый сабтёрн:
+В `StarData.CombatSubTurn` каждый сабтёрн:
 
 1. **Игрок** — ручной выстрел из `ProcessPlayerManualShot` (только в сабтёрне 1).
 2. **NPC** — каждый живой не-выключенный (`Shutdown`) корабль ищет ближайшую враждебную цель через `OwnerRaceRelationsManager.AreHostile`.

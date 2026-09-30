@@ -1,7 +1,7 @@
 # Combat
 
 Модули: `Systems/WeaponSystem.cs`, `Systems/MissileSystem.cs`, `Systems/AsteroidSystem.cs`,
-`Generation/GalaxyDataModels.cs` (`StarData.CombatSubTurn`, `StarData.ProcessPlayerManualShot`,
+`Galaxy/Models/*.cs` (`StarData.CombatSubTurn`, `StarData.ProcessPlayerManualShot`,
 `ShotEvent`, `ActiveMissile`, `CombatResult`, `WeaponShotParams`).
 
 Связанные: `weapons_system.md` (старый дизайн-документ урона/эффектов в `docs/`).
@@ -112,14 +112,14 @@ WeaponSystem.ProcessShot
    ├─► EquipmentSystem.ApplyShieldHitWear / ApplyWeaponShotWear
    ├─► PlayerManager.KillPlayer                    (через RegisterTargetDeath, если IsPlayer)
    ├─► OwnerRaceRelationsManager                   (snowball-эффект StarReputationHitDelta)
-   └─► GameConsoleController.AddEntry              (логи попаданий)
+   └─► GameLog.Add              (логи попаданий)
 
 MissileSystem.TickMissiles
    ├─► WeaponSystem.ApplyMissileImpact             (3 ветки HandleMissileImpact)
    ├─► WeaponSystem.RegisterTargetDeath
    ├─► ShipTrajectory.NormalizeAnglePi             (для хоминга)
    ├─► EquipmentSystem.GetEquipped                 (SizeSmall корпуса для радиуса)
-   └─► GameConsoleController.AddEntry
+   └─► GameLog.Add
 
 AsteroidSystem
    ├─► WeaponSystem.RegisterTargetDeath

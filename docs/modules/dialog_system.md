@@ -179,7 +179,7 @@ float, иначе регистронезависимое строковое. Р�
 
 ## 5. Кто говорит: реплики NPC против реплик игрока
 
-Схемы SR2HD (`docs/Space_Dialog_Schemes.txt`, `Base_Dialog_Schemes.txt`) размечают это явно, и
+Схемы SR2HD (`docs/design/Space_Dialog_Schemes.txt`, `Base_Dialog_Schemes.txt`) размечают это явно, и
 разметку надо соблюдать — иначе игрок «говорит» словами NPC:
 
 | в схеме | что это | куда в конфиге |

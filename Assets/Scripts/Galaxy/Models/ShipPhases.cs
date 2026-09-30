@@ -42,7 +42,7 @@ namespace SRG.Galaxy
     }
 
     /// <summary>
-    /// Двухфазная посадка (SR2HD, docs/Ship_Landing_Pipeline.txt §7).
+    /// Двухфазная посадка (SR2HD, docs/design/Ship_Landing_Pipeline.txt §7).
     /// </summary>
     public enum LandingPhase
     {

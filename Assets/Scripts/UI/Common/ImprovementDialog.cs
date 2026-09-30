@@ -16,7 +16,7 @@ namespace SRG.UI.Common
     /// <see cref="Show(ShipData)"/> (или из диалогового action-а "OpenImprovement").
     /// Показывает три секции: установленное на игроке, трюм, оборудование партнёров.
     /// Клик по строке предмета переключает панель на выбор тира/атрибута; кнопка «Улучшить»
-    /// вызывает <see cref="ImprovementService.Apply"/>. См. docs/SB_Equipment_Improvement.txt.
+    /// вызывает <see cref="ImprovementService.Apply"/>. См. docs/design/SB_Equipment_Improvement.txt.
     /// </summary>
     public class ImprovementDialog : MonoBehaviour
     {

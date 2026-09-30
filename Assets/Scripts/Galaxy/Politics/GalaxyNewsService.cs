@@ -11,7 +11,7 @@ namespace SRG.Galaxy.Politics
 {
     /// <summary>
     /// Единичная новость галактики (инфоцентр планетарной формы).
-    /// Категории соответствуют секциям docs/GalaxyNews.txt (Occupation/Planet/Directive/Science/…),
+    /// Категории соответствуют секциям docs/design/GalaxyNews.txt (Occupation/Planet/Directive/Science/…),
     /// но не привязаны к ним 1-в-1 — часть реализована на существующих подсистемах, часть свои.
     /// </summary>
     /// <summary>Группа уведомлений — управляет тем, в какую секцию нижней панели попадёт иконка.

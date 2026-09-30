@@ -7,7 +7,7 @@ using SRG.Simulation;
 namespace SRG.Equipment
 {
     /// <summary>
-    /// Улучшение оборудования (научная база SB). Диздок: docs/SB_Equipment_Improvement.txt.
+    /// Улучшение оборудования (научная база SB). Диздок: docs/design/SB_Equipment_Improvement.txt.
     ///
     /// Общие правила:
     ///   • Один предмет — один апгрейд (обычный ИЛИ продвинутый). После успешного апгрейда

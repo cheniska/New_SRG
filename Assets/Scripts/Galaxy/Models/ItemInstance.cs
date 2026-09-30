@@ -152,7 +152,7 @@ namespace SRG.Galaxy
         /// </summary>
         public List<string> CompatibleSlots { get; set; } = new();
 
-        // ── Улучшение оборудования (научная база SB, диздок docs/SB_Equipment_Improvement.txt) ──
+        // ── Улучшение оборудования (научная база SB, диздок docs/design/SB_Equipment_Improvement.txt) ──
         /// <summary>Разрешено ли улучшение этого предмета. Ставится в true при генерации
         /// eligible-предметов (см. <see cref="EquipmentTemplate"/>.Defaults["IsImprovable"]).
         /// Сбрасывается в false навсегда, как только предмет был улучшен ЛИБО в него встроили

@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Тесты симуляции без Unity: исходники SRG.Simulation + Assets/Tests/EditMode
+  # компилируются с управляемым заменителем UnityEngine (tools/headless-tests).
+  # Не требует лицензии, ~1 мин.
+  headless-tests:
+    name: Simulation tests (headless)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Test
+        run: dotnet test tools/headless-tests --logger "trx;LogFileName=headless.trx" --results-directory test-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: headless-test-results
+          path: test-results
+
+  # Компиляция всех сборок и EditMode-тесты в настоящем Unity (GameCI).
+  # Нужны секреты репозитория UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD —
+  # см. https://game.ci/docs/github/activation. Без них job пропускается.
+  unity-editmode:
+    name: Unity EditMode tests
+    runs-on: ubuntu-latest
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    steps:
+      - name: Check Unity license
+        id: license
+        run: |
+          if [ -n "$UNITY_LICENSE" ]; then echo "available=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::UNITY_LICENSE не задан — Unity-тесты пропущены"; echo "available=false" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v4
+        if: steps.license.outputs.available == 'true'
+        with:
+          lfs: true
+      - uses: actions/cache@v4
+        if: steps.license.outputs.available == 'true'
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: Library-
+      - uses: game-ci/unity-test-runner@v4
+        if: steps.license.outputs.available == 'true'
+        id: tests
+        with:
+          testMode: editmode
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Unity EditMode results
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.license.outputs.available == 'true'
+        with:
+          name: unity-test-results
+          path: ${{ steps.tests.outputs.artifactsPath }}

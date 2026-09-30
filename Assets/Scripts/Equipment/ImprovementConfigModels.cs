@@ -6,7 +6,7 @@ namespace SRG.Equipment
     /// <summary>
     /// Балансовая конфигурация улучшения оборудования на научной базе (SB).
     /// Живёт в <c>ItemsConfig.Improvement</c>. Полный разбор источника —
-    /// docs/SB_Equipment_Improvement.txt и docs/SB_Improvement_Formulas.txt.
+    /// docs/design/SB_Equipment_Improvement.txt и docs/design/SB_Improvement_Formulas.txt.
     ///
     /// Общая формула цены: <c>money = round10(item.Weight × Tiers[tier])</c>.
     /// Для продвинутого улучшения — то же × <see cref="AdvancedCostMultiplier"/>.

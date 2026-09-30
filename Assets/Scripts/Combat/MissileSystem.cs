@@ -16,7 +16,7 @@ namespace SRG.Combat
     /// Ракеты — это персистентные сущности в StarData.ActiveMissiles, которые
     /// преследуют цель между сабтёрнами и сохраняются между днями.
     ///
-    /// Модель воспроизводит снаряды SR2HD (docs/Missile_Trajectory.txt):
+    /// Модель воспроизводит снаряды SR2HD (docs/design/Missile_Trajectory.txt):
     ///   • двухфазная — launch (день запуска: прямая по LaunchDirection) + homing
     ///     (дуговая, ограниченная TurnRadPerTurn);
     ///   • SR2-spread: 60°/(N+3) с чередованием знака + offset 8 (в наших — ~0.08) от ствола;

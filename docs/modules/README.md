@@ -20,20 +20,23 @@
 
 ### Архитектурное ядро
 
+- **[Architecture](architecture.md)** — сборки (asmdef) и слои, `GameWorld` и интерфейсы хостов, `SimulationSession`, правила детерминизма.
+- **[Saves](saves.md)** — формат сохранения, версии и миграции, что сохраняется, известные ограничения.
+- **[Testing](testing.md)** — EditMode-тесты, golden-тесты детерминизма, `TestWorld`.
 - **[Turn Pipeline](turn_pipeline.md)** — `GalaxyManager`, `SystemViewManager`, `PlayerManager`, фазы хода (Planning ↔ Simulation), события `OnTurnCalculate`/`OnTurnAnimate`/`OnTurnComplete`, гиперпереход.
-- **[NPC AI](npc_ai.md)** — `NpcBrain` + иерархия `NpcAction`/`NpcOrder`, `FactionDirective`, `TraderAI`, `NpcSpawner`.
+- **[NPC AI](npc_ai.md)** — `NpcBrain` + иерархия `NpcAction`/`NpcOrder`, `FactionDirective`, `TraderAI`, `NpcSystemSpawner`.
 
 ### Игровые системы
 
-- **[Combat](combat.md)** — `WeaponSystem`, `MissileSystem`, `AsteroidSystem` (death-репорт, damage pipeline, missile homing/swept-collision). Дополняет [weapons_system.md](../weapons_system.md).
-- **[Equipment & Pull](equipment_and_pull.md)** — `EquipmentSystem`, `InventoryService`, `ShopService`, `PickupSystem`, `TowSystem`, `BoardingSystem`, `HyperjumpController`, `FuelService`. Дополняет [Ship_Landing_Pipeline.txt](../Ship_Landing_Pipeline.txt) и [equipment_tiers.md](../equipment_tiers%20(2).md).
-- **[Trade & Economy](trade_economy.md)** — `TradeSystem`, `InflationSystem`, `EquipmentShopSystem`, `PlanetaryEventSystem`, `PlanetaryTechSystem`, `GovernmentChangeService`, `EconomicLog`. Дополняет [economy_implementation_plan.md](../economy_implementation_plan.md).
-- **[Spawn](spawn.md)** — `SpawnSystem`, `ISpawnPolicy` (Civilian/Warrior/Ranger/Pirate/Linkor/Dominator), `DominationCalculator`, `GalaxyShipCounters`, `SubtypePicker`, `NpcSpawner`. Дополняет [Spawn_Rules_Consolidated.txt](../Spawn_Rules_Consolidated.txt) и [Dominator_Equipment_Consolidated.txt](../Dominator_Equipment_Consolidated.txt).
+- **[Combat](combat.md)** — `WeaponSystem`, `MissileSystem`, `AsteroidSystem` (death-репорт, damage pipeline, missile homing/swept-collision). Дополняет [weapons_system.md](../design/weapons_system.md).
+- **[Equipment & Pull](equipment_and_pull.md)** — `EquipmentSystem`, `InventoryService`, `ShopService`, `PickupSystem`, `TowSystem`, `BoardingSystem`, `HyperjumpController`, `FuelService`. Дополняет [Ship_Landing_Pipeline.txt](../design/Ship_Landing_Pipeline.txt) и [equipment_tiers.md](../design/equipment_tiers.md).
+- **[Trade & Economy](trade_economy.md)** — `TradeSystem`, `InflationSystem`, `EquipmentShopSystem`, `PlanetaryEventSystem`, `PlanetaryTechSystem`, `GovernmentChangeService`, `EconomicLog`. Дополняет [economy_implementation_plan.md](../design/economy_implementation_plan.md).
+- **[Spawn](spawn.md)** — `SpawnSystem`, `ISpawnPolicy` (Civilian/Warrior/Ranger/Pirate/Linkor/Dominator), `DominationCalculator`, `GalaxyShipCounters`, `SubtypePicker`, `NpcSpawner`. Дополняет [Spawn_Rules_Consolidated.txt](../design/Spawn_Rules_Consolidated.txt) и [Dominator_Equipment_Consolidated.txt](../design/Dominator_Equipment_Consolidated.txt).
 
 ### Генерация и конфиг
 
-- **[Galaxy Generation](galaxy_generation.md)** — `GalaxyGenerator.*`, `GalaxyDataModels`, `GalaxyConfigLoader`, `OrbitMath`, `VoronoiHelper`. Дополняет [Galaxy_Map_Generation_Consolidated.txt](../Galaxy_Map_Generation_Consolidated.txt) и [world_generation.md](../world_generation.md).
-- (планируется) **Config & Constants** — `GameSettingsConfig`, `GalaxyConstants`, `GalaxyConfigurationModels` (частично покрыто в Galaxy Generation).
+- **[Galaxy Generation](galaxy_generation.md)** — `GalaxyGenerator.*`, модели `Galaxy/Models/*`, `GalaxyConfigLoader`, `OrbitMath`, `VoronoiHelper`. Дополняет [Galaxy_Map_Generation_Consolidated.txt](../design/Galaxy_Map_Generation_Consolidated.txt) и [world_generation.md](../design/world_generation.md).
+- (планируется) **Config & Constants** — `GameSettingsConfig`, `GalaxyConstants`, модели `Config/Models/*` (частично покрыто в Galaxy Generation).
 
 ### Визуальная подсистема
 
@@ -42,22 +45,22 @@
 - **[UI](ui_subsystem.md)** — `GalaxyMapController`, `ShipFormView`, `PlanetUIController`, `DialogUIController`, утилиты `UIBuilder` + `UIColorPalette`, диалоговая система.
 - **[Dialog System](dialog_system.md)** — `DialogService`, `DialogTexts`, `DialogActions`, приветствия, пулы фраз, условия (тег-DSL + Lua). Разделение «структура в `DialogsConfig.json` / фразы в `TextsConfig.json`».
 
-## Существующая документация (вне `modules/`)
+## Дизайн-документы (`docs/design/`)
 
 | Файл | Описание |
 |---|---|
-| [`Ship_Landing_Pipeline.txt`](../Ship_Landing_Pipeline.txt) | Полная двухфазная пайплайн посадки (SR2HD-style) |
-| [`Ship_Trajectory_*.txt`](../) | Реализация кинематической сплайн-траектории кораблей |
-| [`Galaxy_Map_Generation_Consolidated.txt`](../Galaxy_Map_Generation_Consolidated.txt) | Алгоритмы генерации галактики/секторов/звёзд |
-| [`Spawn_Rules_Consolidated.txt`](../Spawn_Rules_Consolidated.txt) | Правила спавна NPC (политики, расы, типы) |
-| [`Dominator_Equipment_Consolidated.txt`](../Dominator_Equipment_Consolidated.txt) | Оборудование доминаторов |
-| [`equipment_tiers (2).md`](../equipment_tiers%20(2).md) | GTL/ПТУ-балансировка по тирам |
-| [`planetary_science_system.md`](../planetary_science_system.md) | Дизайн-документ системы изобретений |
-| [`economy_implementation_plan.md`](../economy_implementation_plan.md) | План реализации экономики; что сделано/отложено |
-| [`weapons_system.md`](../weapons_system.md) | Расчёт урона, эффекты, паттерны |
-| [`world_generation.md`](../world_generation.md) | Алгоритмы генерации (старый формат) |
-| [`ai_system.md`](../ai_system.md) | Старый обзор AI (см. `modules/npc_ai.md` для актуального) |
-| [`planet_formulas.md`](../planet_formulas.md) | Формулы планет (размер, население, цены) |
+| [`Ship_Landing_Pipeline.txt`](../design/Ship_Landing_Pipeline.txt) | Полная двухфазная пайплайн посадки (SR2HD-style) |
+| [`Ship_Trajectory_*.txt`](../design/) | Реализация кинематической сплайн-траектории кораблей |
+| [`Galaxy_Map_Generation_Consolidated.txt`](../design/Galaxy_Map_Generation_Consolidated.txt) | Алгоритмы генерации галактики/секторов/звёзд |
+| [`Spawn_Rules_Consolidated.txt`](../design/Spawn_Rules_Consolidated.txt) | Правила спавна NPC (политики, расы, типы) |
+| [`Dominator_Equipment_Consolidated.txt`](../design/Dominator_Equipment_Consolidated.txt) | Оборудование доминаторов |
+| [`equipment_tiers.md`](../design/equipment_tiers.md) | GTL/ПТУ-балансировка по тирам |
+| [`planetary_science_system.md`](../design/planetary_science_system.md) | Дизайн-документ системы изобретений |
+| [`economy_implementation_plan.md`](../design/economy_implementation_plan.md) | План реализации экономики; что сделано/отложено |
+| [`weapons_system.md`](../design/weapons_system.md) | Расчёт урона, эффекты, паттерны |
+| [`world_generation.md`](../design/world_generation.md) | Алгоритмы генерации (старый формат) |
+| [`ai_system.md`](../archive/ai_system.md) | Старый обзор AI (см. `modules/npc_ai.md` для актуального) |
+| [`planet_formulas.md`](../design/planet_formulas.md) | Формулы планет (размер, население, цены) |
 
 ## Состояние
 
@@ -77,5 +80,7 @@
 | Spawn | ✅ Готов (`spawn.md`) |
 | Dialog System | ✅ Готов (`dialog_system.md`) — разделение структуры и фраз, июль 2026 |
 
-Для остальных модулей актуальной является существующая документация в родительской папке `docs/`
+| Architecture / Saves / Testing | ✅ Готов — сентябрь 2026 (слои, детерминизм, сохранения) |
+
+Для остальных модулей актуальной является документация в `docs/design/`
 плюс docstring'и в исходниках (после рефакторинга июня 2026 публичные API хорошо комментированы).

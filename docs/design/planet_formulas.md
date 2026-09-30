@@ -4,8 +4,8 @@
 - `Assets/Scripts/Generation/GalaxyGenerator.Planets.cs` — генерация размера, плотности, спутников, орбит, площадь поверхности
 - `Assets/Scripts/Generation/GalaxyGenerator.StarPhysics.cs` — `RollStellarPhysics`, `RollSurfaceTypes`, `RecomputeHydrologyState`, `CheckRaceConditions`
 - `Assets/Scripts/Generation/GalaxyGenerator.Expansion.cs` — `RunExpansion`, `ExpansionIsHabitable`, `ExpansionIsTerraformable`, `ExpansionApplyOptimal`
-- `Assets/Scripts/Config/GalaxyConfigurationModels.cs` — `RacePlanetConditionsConfig`, `PlanetSizeData`, `StarColorData`, `StarTypeData`
-- `Assets/Scripts/Generation/GalaxyDataModels.cs` — поля `PlanetData`
+- `Assets/Scripts/Config/Models/*.cs` — `RacePlanetConditionsConfig`, `PlanetSizeData`, `StarColorData`, `StarTypeData`
+- `Assets/Scripts/Galaxy/Models/*.cs` — поля `PlanetData`
 
 ---
 

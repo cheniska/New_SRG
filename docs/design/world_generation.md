@@ -15,7 +15,7 @@
 - `GalaxyGenerator.StarPhysics.cs` — звёздная и планетарная физика.
 - `GalaxyGenerationContext.cs` — конфиги, пулы имён, доступные типы.
 - `GalaxyUtils.cs` — `OwnerResolver`, `CustomPropertyResolver`, утилиты.
-- `GalaxyDataModels.cs` — `GalaxyData`, `StarData`, `PlanetData`, `SatelliteData`, `ShipData`.
+- `Galaxy/Models/*.cs` — `GalaxyData`, `StarData`, `PlanetData`, `SatelliteData`, `ShipData`.
 
 ## 2. Конвейер генерации
 

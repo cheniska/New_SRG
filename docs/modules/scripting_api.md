@@ -34,7 +34,7 @@
 | Метод | Аргументы | Что делает |
 |---|---|---|
 | `EndDialog` | — | Закрывает диалог (`ctx.ShouldClose = true`). |
-| `Log` | `msg...` | Печатает сообщение в игровую консоль (`GameConsoleController.AddEntry`). |
+| `Log` | `msg...` | Печатает сообщение в игровую консоль (`GameLog.Add`). |
 | `AddMoney` | `amount` | Прибавляет игроку кредиты. |
 | `TakeMoney` | `amount` | Снимает с игрока (клампится в 0). |
 | `Repair` | `hp` | Восстанавливает корпус (клампится в MaxHull). |
@@ -120,7 +120,7 @@
 Открытие — `` ` `` (по умолчанию). Две ветки исполнения:
 
 - **Команды.** Строки без `.`, `(`, `:`, `=` — команды из встроенного реестра (`save`, `spawntest N` и т.п., см. ниже).
-- **Lua-режим.** Всё остальное уходит в [`LuaHost.Core`](../Assets/Scripts/Scripting/LuaHost.cs) как выражение или statement.
+- **Lua-режим.** Всё остальное уходит в [`LuaHost.Core`](../../Assets/Scripts/Scripting/LuaHost.cs) как выражение или statement.
   Результат печатается через `= <value>`, ошибка — `! <msg>`. Пример:
   ```lua
   WormholeService.Spawn(Positions.Near(Player(), 100))
@@ -740,7 +740,7 @@ return { ok=true, consume=true, message='[Активация]: субпорта�
 ### `NpcSpawner` / `NpcSystemSpawner`
 | Метод | Что делает |
 |---|---|
-| `NpcSpawner.Attach(obj, ship, star)` | Подключить `NpcController` к GameObject корабля. |
+| `NpcController.Attach(obj, ship, star)` | Подключить `NpcController` к GameObject корабля. |
 | `NpcSystemSpawner.PopulateStarWithNpcs(star, ctx)` | Начальный спавн NPC в системе. |
 | `NpcSystemSpawner.PopulateSectorEntities(sector, ctx)` | То же для сектора. |
 | `NpcSystemSpawner.FinalizeAfterGeneration(galaxy, ctx)` | Пост-генерация. |
@@ -861,7 +861,7 @@ return { ok=true, consume=true, message='[Активация]: субпорта�
 | `PlayerGreetingProfile.ResolveStatus(ship)` / `ResolveRank(ship)` / `ResolveRating(ship, cfg)` | Производные признаки игрока. |
 | `PlanetGreetingSelector.QuantOf*(...)` (`ShipCount`, `Stock`, `Price`, `Population`, `Money`) | Кванты в имена (Mini/Small/…/Huge). |
 
-Схема правил и все поля — `PlanetGreetings/PlanetGreetingConfig.cs` + диздоки `docs/planets_fields_summary.txt` и `docs/fields_summary(2).txt`.
+Схема правил и все поля — `PlanetGreetings/PlanetGreetingConfig.cs` + диздоки `docs/reference/planet_dialog_condition_fields.txt` и `docs/reference/dialog_condition_fields.txt`.
 
 ---
 

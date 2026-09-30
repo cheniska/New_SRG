@@ -165,7 +165,7 @@ ShipFormView
    ├─► ContainerFactory.SpawnContainerWithItem / SpawnContainerWithStack
    ├─► ShipFactory.RecalculateSpriteWorldSize (после PlaceHull)
    ├─► SystemViewManager.EnsureShipVisual
-   └─► GameConsoleController.AddEntry
+   └─► GameLog.Add
 
 PlanetUIController
    ├─► ShopService (этап C4 — Buy/Sell)
@@ -188,7 +188,7 @@ DialogUIController
 
 HUDController
    ├─► PlayerShip.Instance
-   ├─► GalaxyManager.OnTurnCalculate/OnTurnComplete
+   ├─► GameWorld.OnTurnCalculate/OnTurnComplete
    └─► PlayerManager.OnPlayerDeath*
 ```
 

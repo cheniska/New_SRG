@@ -5,8 +5,8 @@
 плюс политики `Policies/*SpawnPolicy.cs` (Civilian, Warrior, Ranger, Pirate, Linkor, Dominator).
 Также: `NpcAI/NpcSpawner.cs` (механика собственно создания NPC при генерации галактики).
 
-Связанные документы: [`Spawn_Rules_Consolidated.txt`](../Spawn_Rules_Consolidated.txt),
-[`Dominator_Equipment_Consolidated.txt`](../Dominator_Equipment_Consolidated.txt).
+Связанные документы: [`Spawn_Rules_Consolidated.txt`](../design/Spawn_Rules_Consolidated.txt),
+[`Dominator_Equipment_Consolidated.txt`](../design/Dominator_Equipment_Consolidated.txt).
 
 ---
 

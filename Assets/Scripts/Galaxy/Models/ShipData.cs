@@ -292,7 +292,7 @@ namespace SRG.Galaxy
         /// <summary>Нод-счёт корабля. Используется <see cref="SRG.Equipment.ImprovementService"/> при
         /// улучшении оборудования с флагом <see cref="ItemInstance.RequiresNodesToImprove"/>: сначала
         /// списываем физические стеки Node из трюма, если не хватает — дораскладываем с нод-счёта.
-        /// Механика пополнения счёта появится позже (диздок docs/SB_Equipment_Improvement.txt).</summary>
+        /// Механика пополнения счёта появится позже (диздок docs/design/SB_Equipment_Improvement.txt).</summary>
         public int NodeAccount { get; set; }
 
         // ── HP / прочность корпуса ─────────────────────────────────────────────────

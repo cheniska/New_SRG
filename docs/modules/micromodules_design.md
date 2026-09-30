@@ -15,7 +15,7 @@
   использования обычного слота (Пропорционар, Армс, Артефактор,
   Проглот и т.п.).
 
-Основано на классических правилах SR2HD (см. `docs/микромодули.txt`),
+Основано на классических правилах SR2HD (см. `docs/design/micromodules.txt`),
 адаптировано под нашу кодовую базу и правки после ревью.
 
 Что портируем из исходного:
@@ -700,7 +700,7 @@ namespace SRG.Equipment
 2. **Модели.** Добавить `EmbedConfig`, `EmbedCompat`, `EmbedCarrierMods`.
    Расширить `ItemInstance`/`EquipmentItemConfig`: `IsEmbeddable`,
    `Embed`, `AllowEmbeds`, `MaxEmbeds`, `EmbedItems`, `BaseParams`,
-   переименование `Modules → Embeds`. `LegacyNamespaceBinder` для старых
+   переименование `Modules → Embeds`. `SaveTypeBinder` для старых
    сейвов.
 3. **Конфиг ММ и фабрика.** `MicroModuleConfig` в
    `Config/MicroModules.json`, загрузка через `GalaxyConfig`.
@@ -712,7 +712,7 @@ namespace SRG.Equipment
    `Spawn`.
 5. **Валидатор конфига.** Проверка ссылок на расы/стороны/категории/
    эффекты/флаги (§8.1). Ошибки — при загрузке, не в рантайме.
-6. **Импортёр из `docs/микромодули.txt`.** Оффлайн-скрипт
+6. **Импортёр из `docs/design/micromodules.txt`.** Оффлайн-скрипт
    (`Assets/Editor/EmbedImporter.cs`), однократно генерит стартовый пул
    встраиваемых.
 7. **Слоты корпуса.** Правки `EquipmentSystem.GetHullSlotPlan` — учёт
@@ -738,4 +738,4 @@ namespace SRG.Equipment
   боя? Пока — да.
 - **Реорганизация артефактов.** Какие именно артефакты станут
   встраиваемыми, а какие останутся «активными»? Требует отдельного
-  ревью списка `docs/артефакты.txt`.
+  ревью списка `docs/reference/SR_Arts.txt`.

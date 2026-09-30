@@ -10,7 +10,7 @@
 `StarVisualController`, `WeaponVisualSystem`, `WeaponRangeIndicator`, `RadarRangeIndicator`,
 `ExplosionPlayback`, `AnimatedSpriteRenderer`, `SortingLayerRegistry`, `CameraController`.
 
-Связанные документы: [`Ship_Trajectory_*.txt`](../), [`Ship_Landing_Pipeline.txt`](../).
+Связанные документы: [`Ship_Trajectory_*.txt`](..), [`Ship_Landing_Pipeline.txt`](..).
 
 ---
 
