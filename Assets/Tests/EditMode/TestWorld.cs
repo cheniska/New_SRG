@@ -18,13 +18,8 @@ namespace SRG.Tests
         public HeadlessWorldHost Host { get; }
         public SimulationSession Session => Host.Session;
 
-        /// <summary>Настройки сериализации — те же, что у сейва (GalaxySaveManager).</summary>
-        public static readonly JsonSerializerSettings SaveSettings = new()
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto,
-            SerializationBinder = SaveTypeBinder.Instance,
-        };
+        /// <summary>Настройки сериализации — те же, что у файла сохранения.</summary>
+        public static JsonSerializerSettings SaveSettings => SaveSerializer.Settings;
 
         private TestWorld(HeadlessWorldHost host) => Host = host;
 
@@ -72,11 +67,11 @@ namespace SRG.Tests
         public static TestWorld FromSnapshot(Snapshot snapshot)
         {
             var host = CreateHost();
-            var container = JsonConvert.DeserializeObject<SnapshotContainer>(snapshot.Json, SaveSettings);
-            if (!host.Session.LoadFrom(container.Galaxies, container.ActiveKey))
+            var data = SaveSerializer.Deserialize(snapshot.Json);
+            if (!host.Session.LoadFrom(data.Galaxies, data.ActiveKey))
                 throw new InvalidOperationException("Снимок пуст");
             host.Session.RecountSpawns();
-            GameRng.SetState(snapshot.RngState);
+            GameRng.SetState(data.RngState);
             return new TestWorld(host);
         }
 
@@ -95,15 +90,16 @@ namespace SRG.Tests
             for (int i = 0; i < days; i++) Host.Step();
         }
 
-        public Snapshot TakeSnapshot()
+        /// <summary>Снимок в формате файла сохранения (тот же сериализатор, что и в игре).</summary>
+        public Snapshot TakeSnapshot() => new Snapshot
         {
-            var container = new SnapshotContainer { ActiveKey = Session.ActiveGalaxyKey, Galaxies = Session.Galaxies };
-            return new Snapshot
+            Json = SaveSerializer.Serialize(new SaveData
             {
-                Json = JsonConvert.SerializeObject(container, SaveSettings),
+                ActiveKey = Session.ActiveGalaxyKey,
+                Galaxies = Session.Galaxies,
                 RngState = GameRng.GetState(),
-            };
-        }
+            }, Formatting.None),
+        };
 
         /// <summary>SHA-256 сериализованного состояния всех галактик.</summary>
         public string StateHash()
@@ -121,13 +117,6 @@ namespace SRG.Tests
         public sealed class Snapshot
         {
             public string Json;
-            public uint[] RngState;
-        }
-
-        private sealed class SnapshotContainer
-        {
-            public string ActiveKey { get; set; }
-            public System.Collections.Generic.Dictionary<string, GalaxyData> Galaxies { get; set; }
         }
     }
 }
