@@ -47,6 +47,10 @@ namespace SRG.Simulation
             // какие типы можно создать при загрузке.
             TypeNameHandling = TypeNameHandling.Auto,
             SerializationBinder = SaveTypeBinder.Instance,
+            // Состояние ИИ (NpcBrain/NpcAction/NpcOrder) — по полям, без вызова конструкторов.
+            ContractResolver = new AiStateContractResolver(),
+            // Vector2 — компактно {x,y}, без вычисляемых normalized/magnitude.
+            Converters = { new Vector2JsonConverter() },
         };
 
         /// <summary>Шаг i переводит JSON версии i в версию i + 1.</summary>

@@ -103,7 +103,13 @@ namespace SRG.Simulation
                 ? activeKey
                 : Galaxies.Keys.First();
             ApplyActiveGalaxyConfig();
-            foreach (var g in Galaxies.Values) g.InitSimulation(resetOrbits: false);
+            foreach (var g in Galaxies.Values)
+            {
+                g.InitSimulation(resetOrbits: false);
+                foreach (var star in g.StarsMap.Values)
+                    foreach (var ship in star.Ships)
+                        ship?.Brain?.RestoreAfterLoad(ship);
+            }
             ResetTransientState();
             return true;
         }

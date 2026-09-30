@@ -29,7 +29,7 @@ namespace SRG.NpcAI.Orders
         private readonly List<string> _itemUids;    // конкретные Items к сбросу (SpawnContainers)
         private readonly List<string> _stackIds;    // конкретные Stacks к сбросу (SpawnContainers)
         private readonly float _stackFraction;      // доля веса каждого стека (SpawnContainers)
-        private ShipData _target;
+        [System.NonSerialized] private ShipData _target;
         private bool _done;
 
         /// <summary>Прямая передача одного предмета/стека. Требует близости к получателю.</summary>

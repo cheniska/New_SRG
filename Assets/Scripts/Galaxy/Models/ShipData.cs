@@ -83,13 +83,15 @@ namespace SRG.Galaxy
         public bool SpriteFixedRotation;
 
         public Vector2 Position;
-        [JsonIgnore] public Vector2 PreviousPosition;
+        public Vector2 PreviousPosition;
         public Vector2 TargetPosition;
 
-        [JsonIgnore] public Queue<Vector2> TargetQueue = new Queue<Vector2>();
-        [JsonIgnore] public float CurrentHeading = float.NaN;
-        [JsonIgnore] public List<Vector2> Waypoints = new List<Vector2>();
-        [JsonIgnore] public int WaypointIndex = 0;
+        // Маршрут и курс — сохраняются: без них после загрузки траектория строится заново
+        // из текущей точки, и корабль идёт немного иначе, чем шёл бы без сохранения.
+        public Queue<Vector2> TargetQueue = new Queue<Vector2>();
+        public float CurrentHeading = float.NaN;
+        public List<Vector2> Waypoints = new List<Vector2>();
+        public int WaypointIndex = 0;
         [JsonIgnore] public List<Vector2> TrailPositions = new List<Vector2>();
 
         // Кеш слотов оружия — строится один раз, не на каждый сабтёрн
@@ -198,11 +200,10 @@ namespace SRG.Galaxy
 
         // Последний агрессор (UID корабля), нанёсший урон этому кораблю.
         // Устанавливается в WeaponSystem.ProcessShot/ApplyMissileImpact. Очищается по таймауту в NpcBrain.
-        [JsonIgnore] public string LastAttackerUid { get; set; }
-        [JsonIgnore] public int LastAttackerTurn { get; set; } = -1;
-        /// <summary>Ход последнего SOS-вызова этого корабля (ActionCallForHelp).
-        /// Не сериализуется — кулдаун переживать save/load не обязан.</summary>
-        [JsonIgnore] public int LastHelpCallTurn { get; set; } = -1;
+        public string LastAttackerUid { get; set; }
+        public int LastAttackerTurn { get; set; } = -1;
+        /// <summary>Ход последнего SOS-вызова этого корабля (ActionCallForHelp) — кулдаун.</summary>
+        public int LastHelpCallTurn { get; set; } = -1;
 
         /// <summary>Ход, на котором игрок заступился за этот корабль (ProtectService.TryProtect).
         /// Пока значение не «протухло» (см. ProtectService.RewardMemoryTurns) — при следующем диалоге
@@ -283,9 +284,10 @@ namespace SRG.Galaxy
 
         /// <summary>Характер NPC. Сохраняется: после загрузки корабль остаётся «тем же» пилотом.</summary>
         public ShipPersonality Personality { get; set; }
-        /// <summary>Текущее решение ИИ. Не сохраняется — после загрузки пересоздаётся
-        /// (<see cref="NpcBrain"/> берёт сохранённый <see cref="Personality"/>).</summary>
-        [JsonIgnore] public NpcBrain Brain { get; set; }
+        /// <summary>Состояние ИИ (активность, приказы, директива, страх). Сохраняется через
+        /// <see cref="SRG.Simulation.AiStateContractResolver"/>; после загрузки связывается с
+        /// <see cref="Personality"/> корабля (<see cref="NpcBrain.RestoreAfterLoad"/>).</summary>
+        public NpcBrain Brain { get; set; }
 
         public int Money { get; set; }
 
@@ -389,7 +391,7 @@ namespace SRG.Galaxy
         /// <summary>false — буксир ещё «садится» в позицию (плавный подход с cap target.Speed/2); true — жёсткое крепление.</summary>
         public bool IsTowSettled { get; set; }
         /// <summary>Скорость буксируемого относительно мира для физики «груз на привязи в невесомости» (PD-демпфер).</summary>
-        [JsonIgnore] public Vector2 TowVelocity { get; set; }
+        public Vector2 TowVelocity { get; set; }
 
         // ── Очередь захвата (CargoGrabber) ─────────────────────────────────────────
         /// <summary>FIFO-очередь UID'ов целей (обычно IsItem-контейнеры), которые корабль будет
@@ -483,17 +485,18 @@ namespace SRG.Galaxy
         /// (в т.ч. DetectedByRaces) переживало загрузку. См. <see cref="SRG.Ships.Disguise.DisguiseState"/>.</summary>
         public SRG.Ships.Disguise.DisguiseState Disguise { get; set; }
 
-        [JsonIgnore] public bool ForsageActive { get; set; } = false;
+        public bool ForsageActive { get; set; } = false;
         /// <summary>UID цели для выстрела игрока в следующем ходу. Сбрасывается после выстрела.</summary>
-        [JsonIgnore] public string ManualShootTargetUid { get; set; }
+        public string ManualShootTargetUid { get; set; }
         /// <summary>true — цель является астероидом, false — кораблём.</summary>
-        [JsonIgnore] public bool ManualShootTargetIsAsteroid { get; set; }
+        public bool ManualShootTargetIsAsteroid { get; set; }
         /// <summary>true — стрелять только из самой дальнобойной пушки (режим follow-attack «дальняя»).</summary>
-        [JsonIgnore] public bool ManualShootOnlyLongestRange { get; set; }
+        public bool ManualShootOnlyLongestRange { get; set; }
         /// <summary>true — стрельба назначена авто-режимом следования, не ручным кликом;
         /// подавляет сообщение «нет оружия в радиусе» при многократных тиках.</summary>
-        [JsonIgnore] public bool ManualShootIsAutoFollow { get; set; }
-        [JsonIgnore] public List<ActiveCombatEffect> ActiveEffects { get; set; } = new List<ActiveCombatEffect>();
+        public bool ManualShootIsAutoFollow { get; set; }
+        /// <summary>Активные боевые эффекты (замедления, DoT, дренаж…) — сохраняются.</summary>
+        public List<ActiveCombatEffect> ActiveEffects { get; set; } = new List<ActiveCombatEffect>();
         /// <summary>Скорость корабля (формула от скорости двигателя с учётом forsage, перегруза, буксира).</summary>
         [JsonIgnore] public float ActualSpeed => EquipmentSystem.CalculateSpeed(this);
         /// <summary>Алиас на ActualSpeed: скорость корабля = f(скорость двигателя). Двигатель — оборудование в SlotKeys.Engine.</summary>

@@ -182,6 +182,23 @@ namespace SRG.Config
             return null;
         }
 
+        /// <summary>
+        /// Описание для создания НОВОГО экземпляра предмета: у сгенерированных по шаблону предметов
+        /// размер/вместимость бросаются из общего потока симуляции (у каждого экземпляра свои).
+        /// Для справочных запросов используйте <see cref="GetItem(string, string)"/> — он детерминирован
+        /// и не расходует случайность симуляции.
+        /// </summary>
+        public ItemConfig GetItemForNewInstance(string category, string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return null;
+            if (Items != null && Items.TryGetValue(category, out var byId) && byId != null && byId.ContainsKey(itemId))
+                return GetItem(category, itemId);
+            EnsureTemplatesCache();
+            if (_templatesCache.TryGetValue(category, out var tpl))
+                return tpl.Resolve(itemId, null, GameRng.SharedStream);
+            return null;
+        }
+
         /// <summary>Все предметы-оборудование (Kind ∈ Weapons/Artefacts/Hull/Engine/...):
         /// рукописные + резолвы шаблонов. Goods/Useless/MicroModules сюда НЕ входят.</summary>
         public IEnumerable<(string category, string itemId, ItemConfig config)> EnumerateAllItems()

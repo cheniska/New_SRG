@@ -83,6 +83,13 @@ namespace SRG.Galaxy
         /// <see cref="GalaxyNewsService"/> из подписок на игровые события.</summary>
         public List<GalaxyNewsEntry> News { get; set; } = new();
 
+        /// <summary>Счётчики кораблей/систем этой галактики для спавна, ИИ и генштабов.
+        /// Не сохраняются — пересчитываются при генерации, загрузке и каждый день в SpawnSystem.</summary>
+        [JsonIgnore] public SRG.NpcAI.Spawning.GalaxyShipCounters ShipCounters { get; } = new();
+
+        /// <summary>Флаги доминации сторон в этой галактике (производные от <see cref="ShipCounters"/>).</summary>
+        [JsonIgnore] public SRG.NpcAI.Spawning.DominationFlags Domination { get; set; } = new();
+
         /// <summary>Курсор chunked-анализа <see cref="StarPresenceService"/> (какая звезда следующая).
         /// Живёт в сейве и у каждой галактики свой — иначе фоновые галактики сбивали курсор активной.</summary>
         public int PresenceCursor { get; set; }

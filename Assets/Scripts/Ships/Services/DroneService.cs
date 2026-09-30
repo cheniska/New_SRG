@@ -34,6 +34,8 @@ namespace SRG.Ships.Services
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto,
             SerializationBinder = SRG.Utils.SaveTypeBinder.Instance,
+            ContractResolver = new SRG.Simulation.AiStateContractResolver(),
+            Converters = { new SRG.Utils.Vector2JsonConverter() },
         };
 
         /// <summary>Разворачивает упакованный дрон-предмет в корабль. Возвращает spawned ShipData или null.</summary>
@@ -57,6 +59,9 @@ namespace SRG.Ships.Services
                 return null;
             }
             if (drone == null) return null;
+            // Упакованный дрон разворачивается с новым решением ИИ (как и до сериализации Brain):
+            // старое состояние относится к другой звезде и другому хозяину.
+            drone.Brain = null;
 
             // Позиция рядом с хозяином на окружности радиуса SpawnOffset.
             drone.Position = host.Position + Positions.RandomOnCircle(SpawnOffset);

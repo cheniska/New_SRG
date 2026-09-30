@@ -34,7 +34,15 @@ namespace SRG.NpcAI
             public override int GetHashCode() => ((int)Kind * 397) ^ (TargetUid?.GetHashCode() ?? 0);
         }
 
-        public ShipPersonality Personality { get; private set; }
+        // Тот же объект, что ship.Personality: сохраняется у корабля, после загрузки связывается заново.
+        [field: System.NonSerialized] public ShipPersonality Personality { get; private set; }
+
+        /// <summary>После загрузки сейва: вернуть общую ссылку на характер корабля.</summary>
+        public void RestoreAfterLoad(ShipData ship)
+        {
+            if (ship.Personality != null) Personality = ship.Personality;
+            else ship.Personality = Personality ??= ShipPersonality.Generate(PersonalityRange.ForShipType(ship.ShipTypeId));
+        }
         public CombatClass CombatClass { get; private set; }
         public string CurrentOrder =>
             _directiveActivity != null ? _directiveName

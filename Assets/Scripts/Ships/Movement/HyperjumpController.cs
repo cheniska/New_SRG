@@ -516,7 +516,7 @@ namespace SRG.Ships.Movement
             ship.HyperjumpHeading = ship.HyperjumpArrivalHeading;
             ship.PreviousStarUid = ship.CurrentStarUid;
             // Обновление материализованных списков GalaxyShipCounters — до присваивания нового UID.
-            SRG.NpcAI.Spawning.SpawnSystem.Counters.OnShipMigrated(ship, ship.CurrentStarUid, target.Uid);
+            SRG.NpcAI.Spawning.SpawnSystem.CountersFor(galaxy).OnShipMigrated(ship, ship.CurrentStarUid, target.Uid);
             ship.CurrentStarUid = target.Uid;
             ship.CurrentStar = null;        // обновится в MigrateShipsBetweenStars
             ship.Position = ship.HyperjumpArrivalEdge;

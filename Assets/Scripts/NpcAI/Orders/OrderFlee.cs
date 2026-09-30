@@ -9,7 +9,7 @@ namespace SRG.NpcAI.Orders
     public class OrderFlee : NpcOrder
     {
         private readonly string _fromTargetUid;
-        private ShipData _threat;           // прямая ссылка
+        [System.NonSerialized] private ShipData _threat;           // прямая ссылка
         // FleeDistance вынесен в NpcBalance.FleeDistance.
         private bool _completed;
 

@@ -25,7 +25,7 @@ namespace SRG.Galaxy
         public string Uid { get; set; } = GameRng.NewUid();
         public string TypeId { get; set; }
         public Vector2 Position { get; set; }
-        [JsonIgnore] public Vector2 PreviousPosition { get; set; }
+        public Vector2 PreviousPosition { get; set; }
         public Vector2 Velocity { get; set; }
         public float Mass { get; set; }
         public float CollisionRadius { get; set; }

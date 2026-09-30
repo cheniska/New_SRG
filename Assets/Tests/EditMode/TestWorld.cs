@@ -109,15 +109,38 @@ namespace SRG.Tests
             }, Formatting.None),
         };
 
-        /// <summary>SHA-256 сериализованного состояния всех галактик.</summary>
+        /// <summary>
+        /// SHA-256 состояния всех галактик в канонической форме: свойства объектов (и ключи словарей)
+        /// отсортированы. Порядок обхода Dictionary после удалений зависит от истории вставок и не
+        /// переживает сохранение — это не состояние игры, и код не должен от него зависеть.
+        /// </summary>
         public string StateHash()
         {
-            string json = JsonConvert.SerializeObject(Session.Galaxies, SaveSettings);
+            var token = Newtonsoft.Json.Linq.JToken.FromObject(Session.Galaxies, JsonSerializer.Create(SaveSettings));
+            string json = Canonical(token).ToString(Formatting.None);
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(json));
             var sb = new StringBuilder(bytes.Length * 2);
             foreach (var b in bytes) sb.Append(b.ToString("x2"));
             return sb.ToString();
+        }
+
+        private static Newtonsoft.Json.Linq.JToken Canonical(Newtonsoft.Json.Linq.JToken t)
+        {
+            switch (t)
+            {
+                case Newtonsoft.Json.Linq.JObject o:
+                    var sorted = new Newtonsoft.Json.Linq.JObject();
+                    foreach (var p in System.Linq.Enumerable.OrderBy(o.Properties(), x => x.Name, StringComparer.Ordinal))
+                        sorted.Add(p.Name, Canonical(p.Value));
+                    return sorted;
+                case Newtonsoft.Json.Linq.JArray a:
+                    var arr = new Newtonsoft.Json.Linq.JArray();
+                    foreach (var x in a) arr.Add(Canonical(x));
+                    return arr;
+                default:
+                    return t;
+            }
         }
 
         public void Dispose() => GameWorld.ResetForTests();

@@ -8,7 +8,7 @@ namespace SRG.NpcAI.Orders
     public class OrderFollow : NpcOrder
     {
         private readonly string _targetUid;
-        private ShipData _target;           // прямая ссылка, инициализируется лениво
+        [System.NonSerialized] private ShipData _target;           // прямая ссылка, инициализируется лениво
         // FollowDistance вынесен в NpcBalance.FollowDistance.
 
         public OrderFollow(string targetUid) => _targetUid = targetUid;

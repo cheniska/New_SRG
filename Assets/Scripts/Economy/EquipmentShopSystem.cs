@@ -292,6 +292,9 @@ namespace SRG.Economy
             var uids = new List<string>();
             foreach (var kv in site.Settlement.EquipmentShop.Items)
                 if (kv.Value != null && kv.Value.Category == category) uids.Add(kv.Key);
+            // Канонический порядок до перемешивания: порядок обхода Dictionary после удалений зависит
+            // от истории вставок и не совпадает после загрузки сейва — выбор был бы другим.
+            uids.Sort(System.StringComparer.Ordinal);
 
             // Перемешивание (Fisher-Yates) — небольшая выборка, OK.
             for (int i = uids.Count - 1; i > 0; i--)

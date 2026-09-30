@@ -20,7 +20,8 @@ namespace SRG.Equipment
             int? gtlOverride = null,
             string overrideRace = null)
         {
-            var cfg = equipConfig?.GetItem(category, itemId);
+            // Новый экземпляр: разброс характеристик шаблонных предметов — из общего потока симуляции.
+            var cfg = equipConfig?.GetItemForNewInstance(category, itemId);
             if (cfg == null)
             {
                 UnityEngine.Debug.LogError($"[ItemFactory] Item '{category}/{itemId}' not found in ItemsConfig.");

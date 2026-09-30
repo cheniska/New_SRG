@@ -19,7 +19,7 @@ namespace SRG.NpcAI.Orders
     {
         private readonly string _receiverUid;
         private readonly int _offerAmount;
-        private ShipData _receiver;
+        [System.NonSerialized] private ShipData _receiver;
         private bool _done;
         private bool _accepted;
         // NegotiateRange вынесен в NpcBalance.NegotiateRange (общий с OrderRequestCeasefire).

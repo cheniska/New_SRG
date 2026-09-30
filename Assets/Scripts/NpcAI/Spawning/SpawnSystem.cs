@@ -26,8 +26,19 @@ namespace SRG.NpcAI.Spawning
     /// </summary>
     public static class SpawnSystem
     {
-        public static GalaxyShipCounters Counters { get; private set; } = new();
-        public static DominationFlags Domination { get; private set; } = new();
+        // Счётчики и доминация — у каждой галактики свои (GalaxyData.ShipCounters/Domination).
+        // Раньше это была одна статическая пара на все галактики: после тика фоновых галактик
+        // ИИ, генштабы и директивы активной галактики читали счётчики чужой галактики.
+        private static readonly GalaxyShipCounters NoGalaxyCounters = new();
+        private static readonly DominationFlags NoGalaxyDomination = new();
+
+        /// <summary>Счётчики галактики, которая сейчас тикает (вне тика — активной).</summary>
+        public static GalaxyShipCounters Counters => CountersFor(GameWorld.TargetGalaxy);
+        /// <summary>Флаги доминации галактики, которая сейчас тикает (вне тика — активной).</summary>
+        public static DominationFlags Domination => GameWorld.TargetGalaxy?.Domination ?? NoGalaxyDomination;
+
+        /// <summary>Счётчики конкретной галактики (без галактики — пустой «сток», например при генерации).</summary>
+        public static GalaxyShipCounters CountersFor(GalaxyData galaxy) => galaxy?.ShipCounters ?? NoGalaxyCounters;
 
         private static readonly List<ISpawnPolicy> _policies = new();
 
@@ -57,8 +68,9 @@ namespace SRG.NpcAI.Spawning
         /// <summary>Полный пересчёт счётчиков из текущей галактики — после загрузки или генерации.</summary>
         public static void RecountFromGalaxy(GalaxyData galaxy, GalaxyConfig cfg)
         {
-            Counters.RecalculateFromScratch(galaxy);
-            Domination = DominationCalculator.Recalculate(Counters, cfg);
+            if (galaxy == null) return;
+            galaxy.ShipCounters.RecalculateFromScratch(galaxy);
+            galaxy.Domination = DominationCalculator.Recalculate(galaxy.ShipCounters, cfg);
         }
 
         /// <summary>Главный тик. Вызывается из GalaxyData.GalaxyNextDay один раз в день.</summary>
@@ -71,8 +83,9 @@ namespace SRG.NpcAI.Spawning
                 star.SpawnsToday = 0;
 
             // 2) Пересчёт состояния (полный O(N) — на текущий масштаб ~5к кораблей пренебрежимо дёшево)
-            Counters.RecalculateFromScratch(galaxy);
-            Domination = DominationCalculator.Recalculate(Counters, ctx.Config);
+            var counters = galaxy.ShipCounters;
+            counters.RecalculateFromScratch(galaxy);
+            galaxy.Domination = DominationCalculator.Recalculate(counters, ctx.Config);
 
             // 3) Прогон политик
             var tickCtx = new SpawnTickContext
@@ -81,8 +94,8 @@ namespace SRG.NpcAI.Spawning
                 Gen = ctx,
                 Config = ctx.Config,
                 Settings = GameWorld.Settings,
-                Counters = Counters,
-                Domination = Domination,
+                Counters = counters,
+                Domination = galaxy.Domination,
                 CurrentTurn = galaxy.CurrentTurn
             };
             var sb = new System.Text.StringBuilder("[SpawnSystem] Turn ").Append(galaxy.CurrentTurn).Append(':');

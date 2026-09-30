@@ -21,6 +21,13 @@ namespace SRG.Simulation
     {
         private static readonly Stream Shared = new Stream(Environment.TickCount);
 
+        /// <summary>Общий поток симуляции — для API, которые принимают <see cref="Stream"/>.</summary>
+        public static Stream SharedStream => Shared;
+
+        /// <summary>Локальный поток, однозначно определяемый ключом (для детерминированных
+        /// «случайных» свойств справочных данных; общий поток не расходует).</summary>
+        public static Stream StreamFor(string key) => new Stream(SRG.Utils.StableHash.Of(key ?? ""));
+
         /// <summary>Пересеять поток (новая игра, тесты).</summary>
         public static void InitState(int seed) => Shared.InitState(seed);
 

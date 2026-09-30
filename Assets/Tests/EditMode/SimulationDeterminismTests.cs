@@ -57,12 +57,9 @@ namespace SRG.Tests
         }
 
         [Test]
-        [Ignore("Известное ограничение: текущее решение ИИ (NpcBrain: активность, приказ, директива) " +
-                "не сохраняется и пересоздаётся после загрузки — NPC «передумывают». Снять Ignore, " +
-                "когда NpcBrain начнёт сериализоваться (см. docs/modules/saves.md).")]
         public void SaveLoad_ContinuesIdentically()
         {
-            const int before = 5, after = 5;
+            const int before = 5, after = 10;
             string continued, reloaded;
             TestWorld.Snapshot snapshot;
 

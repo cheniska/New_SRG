@@ -71,9 +71,17 @@ namespace SRG.Equipment
 
         public ItemConfig Resolve(string itemId) => Resolve(itemId, null);
 
-        /// <summary>sideOverride: имя кластера (Coalition, Dominators, ...). Если не задан — извлекается из id.</summary>
-        public ItemConfig Resolve(string itemId, string sideOverride)
+        /// <summary>
+        /// Описание предмета по id. sideOverride: имя кластера (Coalition, Dominators, ...), если не задан —
+        /// извлекается из id.
+        /// <para><paramref name="rng"/> — источник разброса размера/вместимости. null (справочный запрос:
+        /// кандидаты магазина, бой, UI) — детерминированный поток по id: одно и то же описание при
+        /// каждом вызове, общий поток симуляции не расходуется. Для нового экземпляра предмета
+        /// передаётся общий поток (<see cref="ItemsConfig.GetItemForNewInstance"/>).</para>
+        /// </summary>
+        public ItemConfig Resolve(string itemId, string sideOverride, GameRng.Stream rng = null)
         {
+            rng ??= GameRng.StreamFor(Category + "|" + itemId + "|" + sideOverride);
             var parts = ParseId(itemId);
             if (parts == null) return null;
 
@@ -106,19 +114,19 @@ namespace SRG.Equipment
             if (IsHullCategory && hullType != null && hullType.IsStation)
             {
                 // Станционный корпус: своя формула размера (=вместимость=прочность) — 2000 + tier*250 ± 100.
-                size = Mathf.RoundToInt(2000f + tier * 250f + GameRng.Range(-100f, 101f));
+                size = Mathf.RoundToInt(2000f + tier * 250f + rng.Range(-100f, 101f));
             }
             else if (IsHullCategory && hullType?.CapacityMult != null && hullType.CapacityMult.Length >= 2)
             {
-                float baseCap = BaseWeight * GameRng.Range(hullType.CapacityMult[0], hullType.CapacityMult[1]);
-                float cap = baseCap * (1f + GameRng.Range(0.01f, 0.20f));
+                float baseCap = BaseWeight * rng.Range(hullType.CapacityMult[0], hullType.CapacityMult[1]);
+                float cap = baseCap * (1f + rng.Range(0.01f, 0.20f));
                 cap *= 1f + 0.5f * (tier - 1) / 9f;
                 size = Mathf.RoundToInt(cap);
             }
             else
             {
                 size = BaseWeight > 0
-                    ? Mathf.RoundToInt(BaseWeight * GameRng.Range(SizeMultMin[0], SizeMultMin[1]))
+                    ? Mathf.RoundToInt(BaseWeight * rng.Range(SizeMultMin[0], SizeMultMin[1]))
                     : 0;
             }
 
