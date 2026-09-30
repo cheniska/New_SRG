@@ -1,11 +1,8 @@
 {
-    "name": "SRG.Game",
-    "rootNamespace": "SRG",
+    "name": "SRG.UI.Logic",
+    "rootNamespace": "SRG.UI.Logic",
     "references": [
-        "SRG.Simulation",
-        "SRG.UI.Logic",
-        "SRG.Presentation",
-        "UnityEngine.UI"
+        "SRG.Simulation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

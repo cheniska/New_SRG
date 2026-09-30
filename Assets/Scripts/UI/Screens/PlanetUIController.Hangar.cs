@@ -14,6 +14,7 @@ using SRG.Ships.Services;
 using SRG.UI.Common;
 using SRG.UI.HUD;
 using SRG.Utils;
+using SRG.UI.Logic;
 
 namespace SRG.UI.Screens
 {
@@ -79,52 +80,21 @@ namespace SRG.UI.Screens
             PlayerManager.Instance.LeavePlanet();
         }
 
+        // Логика ангара — HangarPresenter (SRG.UI.Logic); здесь только отрисовка и лог.
+
         private void RefuelShip()
-        {
-            var ship = PlayerShip.Instance?.ShipData;
-            if (ship == null || _site == null) return;
-
-            int missing = EquipmentSystem.GetFuelCapacity(ship) - EquipmentSystem.GetCurrentFuel(ship);
-            if (missing <= 0) { GameLog.Add("[Ангар] Бак уже полон."); return; }
-
-            int filled = FuelService.RefillToFull(ship, _site);
-            if (filled <= 0) { GameLog.Add("[Ангар] Недостаточно кредитов для дозаправки."); return; }
-
-            GameLog.Add(
-                $"[Ангар] Дозаправка: +{filled} ед. за {filled * FuelService.FuelCostPerUnit} кр.");
-            UpdateMoneyDisplay();
-            RefreshHangar();
-        }
+            => ApplyHangarResult(new HangarPresenter(_site).Refuel(PlayerShip.Instance?.ShipData));
 
         private void RepairHull()
-        {
-            var ship = PlayerShip.Instance?.ShipData;
-            if (ship == null || _site == null) return;
-
-            if (ship.CurrentHull >= ship.MaxHull) { GameLog.Add("[Ангар] Корпус цел."); return; }
-
-            int restored = RepairService.RepairHullOnly(ship, _site);
-            if (restored <= 0) { GameLog.Add("[Ангар] Недостаточно кредитов для ремонта."); return; }
-
-            GameLog.Add($"[Ангар] Ремонт корпуса: +{restored} HP.");
-            UpdateMoneyDisplay();
-            RefreshHangar();
-        }
+            => ApplyHangarResult(new HangarPresenter(_site).RepairHull(PlayerShip.Instance?.ShipData));
 
         private void ReloadWeapons()
+            => ApplyHangarResult(new HangarPresenter(_site).ReloadWeapons(PlayerShip.Instance?.ShipData));
+
+        private void ApplyHangarResult(UiActionResult result)
         {
-            var ship = PlayerShip.Instance?.ShipData;
-            if (ship == null || _site == null) return;
-
-            if (!AmmoService.HasReloadableWeapons(ship))
-            { GameLog.Add("[Ангар] Ракетного оружия нет."); return; }
-            if (AmmoService.EstimateReloadCost(ship) <= 0)
-            { GameLog.Add("[Ангар] Боезапас полон."); return; }
-
-            int loaded = AmmoService.ReloadAllAmmo(ship, _site);
-            if (loaded <= 0) { GameLog.Add("[Ангар] Недостаточно кредитов для зарядки."); return; }
-
-            GameLog.Add($"[Ангар] Заряжено снарядов: {loaded}.");
+            foreach (var m in result.Messages) GameLog.Add(m);
+            if (!result.Success) return;
             UpdateMoneyDisplay();
             RefreshHangar();
         }
@@ -132,33 +102,10 @@ namespace SRG.UI.Screens
         // Обновляет метки кнопок ангара актуальными ценами (вызывается из RefreshHangar).
         private void RefreshHangarButtons(ShipData ship)
         {
-            if (_hangarRefuelLabel != null)
-            {
-                int missing = ship == null ? 0
-                    : EquipmentSystem.GetFuelCapacity(ship) - EquipmentSystem.GetCurrentFuel(ship);
-                _hangarRefuelLabel.text = missing > 0
-                    ? $"Дозаправиться\n{missing * FuelService.FuelCostPerUnit} кр."
-                    : "Дозаправиться\n(полный)";
-            }
-            if (_hangarRepairLabel != null)
-            {
-                int cost = RepairService.EstimateHullRepairCost(ship);
-                _hangarRepairLabel.text = cost > 0
-                    ? $"Починить корпус\n{cost} кр."
-                    : "Починить корпус\n(цел)";
-            }
-            if (_hangarReloadLabel != null)
-            {
-                if (ship == null || !AmmoService.HasReloadableWeapons(ship))
-                    _hangarReloadLabel.text = "Зарядить оружие\n(нет ракет)";
-                else
-                {
-                    int cost = AmmoService.EstimateReloadCost(ship);
-                    _hangarReloadLabel.text = cost > 0
-                        ? $"Зарядить оружие\n{cost} кр."
-                        : "Зарядить оружие\n(полный)";
-                }
-            }
+            var labels = HangarPresenter.ButtonLabels(ship);
+            if (_hangarRefuelLabel != null) _hangarRefuelLabel.text = labels.Refuel;
+            if (_hangarRepairLabel != null) _hangarRepairLabel.text = labels.Repair;
+            if (_hangarReloadLabel != null) _hangarReloadLabel.text = labels.Reload;
         }
 
         private void RefreshHangar()
@@ -167,90 +114,33 @@ namespace SRG.UI.Screens
             var ship = PlayerShip.Instance?.ShipData;
             RefreshHangarButtons(ship);
             RefreshHangarShips();
-            if (ship == null) { txt.text = "Нет данных о корабле."; return; }
-
-            var equipCfg = GalaxyManager.Instance?.Context?.ItemsConfig;
-            var sb = new StringBuilder(1024);
-
-            sb.AppendLine($"<b>Корабль:</b> {ship.Name}");
-            sb.AppendLine($"HP      : {ship.CurrentHull} / {ship.MaxHull}");
-            sb.AppendLine($"Скорость: {ship.ActualSpeed:F0}");
-            sb.AppendLine($"Кредиты : {ship.Money:N0}");
-            sb.AppendLine();
-
-            float freeW = EquipmentSystem.GetFreeSpace(ship);
-            sb.AppendLine($"Грузовой трюм: свободно {freeW} ед.");
-            sb.AppendLine();
-            sb.AppendLine("─── Снаряжение ───");
-
-            if (ship.Equipment?.Slots != null)
-            {
-                foreach (var slotKey in ship.Equipment.Slots.Keys)
-                {
-                    string uid = ship.Equipment.GetItemUid(slotKey);
-                    if (uid == null || !ship.AllItems.TryGetValue(uid, out var item))
-                        continue;
-                    string dur = item.NoWear ? "без износа" : $"{item.Durability}/{item.MaxDurability}";
-                    sb.AppendLine($"  [{slotKey.Split('_')[0]}] {item.Name}  ({dur})  ТУ{item.TechLevel}");
-                }
-            }
-
-            if (ship.Inventory?.Stacks?.Count > 0)
-            {
-                sb.AppendLine(); sb.AppendLine("─── Грузы ───");
-                foreach (var kv in ship.Inventory.Stacks)
-                    sb.AppendLine($"  {kv.Value.Name}: {kv.Value.TotalWeight} ед.  x{kv.Value.BasePrice} = {kv.Value.TotalPrice}");
-            }
-
-            txt.text = sb.ToString();
+            txt.text = HangarPresenter.ShipSummary(ship);
         }
 
-        /// <summary>Заполняет секцию «Корабли на объекте»: все чужие ShipData, у которых
-        /// LandedPlanetUid равен uid этой планеты (для планет) либо LandedOnShipUid равен
-        /// uid этого корабля-носителя/станции. У каждой строки — кнопка «Сканировать»,
-        /// открывающая <see cref="ShipScanUIController"/> для выбранного корабля.</summary>
+        /// <summary>Заполняет секцию «Корабли на объекте» (см. <see cref="HangarPresenter.DockedShips"/>).
+        /// У каждой строки — кнопка «Сканировать», открывающая <see cref="ShipScanUIController"/>.</summary>
         private void RefreshHangarShips()
         {
             if (_hangarShipsContent == null) return;
             ClearChildren(_hangarShipsContent);
 
-            var star = GalaxyManager.Instance?.CurrentStar;
-            if (star?.Ships == null || _site == null) { UpdateHangarShipsHeader(0); return; }
-
-            string uid = _site.Uid;
-            bool siteIsShip = _site is ShipData;
-
-            int count = 0;
-            for (int i = 0; i < star.Ships.Count; i++)
+            var docked = new HangarPresenter(_site).DockedShips(GalaxyManager.Instance?.CurrentStar);
+            foreach (var d in docked)
             {
-                var s = star.Ships[i];
-                if (s == null || s.IsPlayer) continue;
-                if (s.CurrentHull <= 0) continue;
-                bool onSite = siteIsShip
-                    ? s.LandedOnShipUid == uid
-                    : s.LandedPlanetUid == uid;
-                if (!onSite) continue;
-
                 var row = MakeShopRow(_hangarShipsContent,
-                    $"HangarShipRow_{s.Uid}", 28f, 6f, new RectOffset(6, 6, 2, 2));
-
-                string type = string.IsNullOrEmpty(s.ShipTypeId) ? "—" : s.ShipTypeId;
-                string race = string.IsNullOrEmpty(s.Race) ? "—" : s.Race;
-                MakeRowLabel(row, $"[{type}] {s.Name}", 220f, flexible: true);
-                MakeRowLabel(row, race, 80f);
-                var scanShip = s;
+                    $"HangarShipRow_{d.Ship.Uid}", 28f, 6f, new RectOffset(6, 6, 2, 2));
+                MakeRowLabel(row, d.Label, 220f, flexible: true);
+                MakeRowLabel(row, d.Race, 80f);
+                var scanShip = d.Ship;
                 MakeSmallButton(row, "Сканировать", ColBtn, () => OpenShipScan(scanShip));
-                count++;
             }
-            UpdateHangarShipsHeader(count);
+            UpdateHangarShipsHeader(docked.Count);
         }
 
         private void UpdateHangarShipsHeader(int count)
         {
             if (_hangarShipsHeader == null) return;
-            _hangarShipsHeader.text = count == 0
-                ? "Корабли на объекте: нет"
-                : $"Корабли на объекте: {count}";
+            _hangarShipsHeader.text = HangarPresenter.DockedHeader(count);
         }
 
         private static void OpenShipScan(ShipData ship)

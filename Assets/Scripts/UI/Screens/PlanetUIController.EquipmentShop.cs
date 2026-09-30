@@ -14,32 +14,32 @@ using SRG.Ships.Services;
 using SRG.UI.Common;
 using SRG.UI.HUD;
 using SRG.Utils;
+using SRG.UI.Logic;
 
 namespace SRG.UI.Screens
 {
     public partial class PlanetUIController
     {
         // ── Equipment Shop ─────────────────────────────────────────
+        // Логика — EquipmentShopPresenter (SRG.UI.Logic); здесь только отрисовка.
 
         private void RefreshEquipShop()
         {
             if (_equipContent == null || _site?.Settlement?.EquipmentShop == null) return;
             ClearChildren(_equipContent);
 
+            var presenter = new EquipmentShopPresenter(_site);
             var ship = PlayerShip.Instance?.ShipData;
 
-            foreach (var kv in _site.Settlement.EquipmentShop.Items)
+            foreach (var r in presenter.BuildBuyRows())
             {
-                var item = kv.Value;
-                var row = MakeShopRow(_equipContent, $"EquipRow_{item.Uid}", 28f, 4f, new RectOffset(2, 2, 1, 1));
-
-                MakeRowLabel(row, $"[{item.Category}] {item.Name}", EQUIP_COL_NAME, flexible: true);
-                MakeRowLabel(row, $"ТУ{item.TechLevel}", EQUIP_COL_TU);
-                MakeRowLabel(row, $"{item.Price} кр.", EQUIP_COL_PRICE);
-
+                var row = MakeShopRow(_equipContent, $"EquipRow_{r.ItemUid}", 28f, 4f, new RectOffset(2, 2, 1, 1));
+                MakeRowLabel(row, r.Label, EQUIP_COL_NAME, flexible: true);
+                MakeRowLabel(row, r.TechLevelLabel, EQUIP_COL_TU);
+                MakeRowLabel(row, $"{r.Price} кр.", EQUIP_COL_PRICE);
                 if (ship != null)
                 {
-                    string uid = item.Uid;
+                    string uid = r.ItemUid;
                     MakeSmallButton(row, "Купить", ColGreen, () => BuyEquipment(uid));
                 }
             }
@@ -53,63 +53,22 @@ namespace SRG.UI.Screens
                 var sepTxt = MakeText(sep.transform, "SepText", "── Продать из трюма ──", 11, FontStyle.Italic, ColAccent);
                 SetAnchors(sepTxt.gameObject, 0f, 0f, 1f, 1f);
 
-                foreach (var kv in ship.AllItems)
+                foreach (var r in presenter.BuildSellRows(ship))
                 {
-                    var item = kv.Value;
-                    bool equipped = false;
-                    foreach (var s in ship.Equipment.Slots.Values)
-                        if (s == item.Uid) { equipped = true; break; }
-                    if (equipped) continue;
-
-                    var row2 = MakeShopRow(_equipContent, $"SellRow_{item.Uid}", 26f, 4f, new RectOffset(2, 2, 1, 1));
-
-                    int sellPrice = Mathf.RoundToInt(item.Price * 0.5f);
-                    MakeRowLabel(row2, $"[{item.Category}] {item.Name}", EQUIP_COL_NAME, flexible: true);
-                    MakeRowLabel(row2, "", EQUIP_COL_TU); // пустая колонка ТУ — для выравнивания с секцией покупки
-                    MakeRowLabel(row2, $"{sellPrice} кр.", EQUIP_COL_PRICE);
-                    string uid = item.Uid;
+                    var row2 = MakeShopRow(_equipContent, $"SellRow_{r.ItemUid}", 26f, 4f, new RectOffset(2, 2, 1, 1));
+                    MakeRowLabel(row2, r.Label, EQUIP_COL_NAME, flexible: true);
+                    MakeRowLabel(row2, r.TechLevelLabel, EQUIP_COL_TU); // пустая колонка ТУ — для выравнивания
+                    MakeRowLabel(row2, $"{r.Price} кр.", EQUIP_COL_PRICE);
+                    string uid = r.ItemUid;
                     MakeSmallButton(row2, "Продать", ColRed, () => SellEquipment(uid));
                 }
             }
         }
 
         private void BuyEquipment(string itemUid)
-        {
-            var ship = PlayerShip.Instance?.ShipData;
-            if (ship == null || !_site.Settlement.EquipmentShop.Items.TryGetValue(itemUid, out var item)) return;
-
-            if (ship.Money < item.Price)
-            {
-                GameLog.Add("[Магазин] Недостаточно кредитов.");
-                return;
-            }
-
-            ship.Money -= item.Price;
-            InventoryService.PutItem(ship, item);
-            _site.Settlement.EquipmentShop.Items.Remove(itemUid);
-
-            GameLog.Add($"[Магазин] Куплено оборудование: {item.Name} за {item.Price} кр.");
-            UpdateMoneyDisplay();
-            RefreshEquipShop();
-            RefreshHangar();
-        }
+            => ApplyShopResult(new EquipmentShopPresenter(_site).Buy(PlayerShip.Instance?.ShipData, itemUid), RefreshEquipShop);
 
         private void SellEquipment(string itemUid)
-        {
-            var ship = PlayerShip.Instance?.ShipData;
-            if (ship == null || !ship.AllItems.TryGetValue(itemUid, out var item)) return;
-
-            int price = Mathf.RoundToInt(item.Price * 0.5f);
-            ship.AllItems.Remove(itemUid);
-            ship.Inventory.Remove(itemUid);
-            ship.Money += price;
-
-            _site.Settlement.EquipmentShop.Items[item.Uid] = item;
-
-            GameLog.Add($"[Магазин] Продано: {item.Name} за {price} кр.");
-            UpdateMoneyDisplay();
-            RefreshEquipShop();
-            RefreshHangar();
-        }
+            => ApplyShopResult(new EquipmentShopPresenter(_site).Sell(PlayerShip.Instance?.ShipData, itemUid), RefreshEquipShop);
     }
 }
