@@ -1,0 +1,14 @@
+<!--
+  Защита от вырезания кода IL2CPP (managed stripping) для того, что создаётся через рефлексию:
+  модели конфигов/сейвов (Newtonsoft.Json), типы, доступные Lua (MoonSharp), политики и
+  действия ИИ, которые находятся по имени. Уровень урезания в Player Settings — Minimal
+  (пользовательские сборки не режутся); этот файл — страховка при повышении уровня.
+-->
+<linker>
+  <assembly fullname="SRG.Simulation" preserve="all" />
+  <assembly fullname="SRG.Presentation" preserve="all" />
+  <assembly fullname="SRG.Game" preserve="all" />
+  <assembly fullname="SRG.UI.Logic" preserve="all" />
+  <assembly fullname="Newtonsoft.Json" preserve="all" />
+  <assembly fullname="MoonSharp.Interpreter" preserve="all" />
+</linker>

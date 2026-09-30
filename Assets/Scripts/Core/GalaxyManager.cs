@@ -130,6 +130,7 @@ namespace SRG.Core
 
         private void Start()
         {
+            ApplyFrameRate();
             EnsureContextInitialized();
             if (GeneratedGalaxy == null)
                 GenerateNewGalaxy(GalaxySeed != 0 ? GalaxySeed : (int)DateTime.Now.Ticks);
@@ -137,6 +138,8 @@ namespace SRG.Core
 
         private void Update()
         {
+            UpdateFramePacing();
+
             // Пока ход считается в фоне — обслуживаем его запросы к главному потоку и больше
             // ничего не делаем: мир сейчас меняется.
             if (IsCalculating && !PollTurnCalculation())
@@ -158,6 +161,36 @@ namespace SRG.Core
             }
 
             if (Phase == TurnPhase.Simulation) TickSimulation();
+        }
+
+        // ── Темп кадров ─────────────────────────────────────────────────────────
+        // Пошаговой игре не нужны сотни кадров в секунду: ограничиваем FPS, а в планировании без
+        // ввода игрока рисуем каждый N-й кадр (OnDemandRendering) — Update/ввод идут каждый кадр.
+        private float _lastInputTime;
+        private Vector3 _lastMousePos;
+
+        /// <summary>Применить ограничение FPS из настроек (после их смены тоже).</summary>
+        public void ApplyFrameRate()
+        {
+            int fps = settings != null ? settings.TargetFrameRate : 0;
+            Application.targetFrameRate = fps > 0 ? fps : -1;
+        }
+
+        private void UpdateFramePacing()
+        {
+            var mouse = Input.mousePosition;
+            if (Input.anyKey || Input.mouseScrollDelta.sqrMagnitude > 0f || (mouse - _lastMousePos).sqrMagnitude > 0.25f)
+                _lastInputTime = Time.unscaledTime;
+            _lastMousePos = mouse;
+
+            int interval = settings != null ? Mathf.Max(1, settings.IdleRenderInterval) : 1;
+            float delay = settings != null ? settings.IdleRenderDelay : 0.5f;
+            bool idle = Phase == TurnPhase.Planning
+                        && !LoadingScreenController.IsVisible
+                        && Time.unscaledTime - _lastInputTime > delay;
+            int wanted = idle ? interval : 1;
+            if (UnityEngine.Rendering.OnDemandRendering.renderFrameInterval != wanted)
+                UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = wanted;
         }
 
         private void ProcessDeferredArrivalTransition()

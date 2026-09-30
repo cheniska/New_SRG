@@ -83,6 +83,16 @@ namespace SRG.Config
         [Tooltip("Окно следует за курсором, пока объект под курсором не изменился.")]
         public bool InfoPopupFollowMouse = false;
 
+        [Header("Performance")]
+        [Tooltip("Ограничение кадров в секунду. 0 — без ограничения (или по vSync уровня качества).\n" +
+                 "Без ограничения при выключенном vSync игра рисует сотни кадров впустую.")]
+        public int TargetFrameRate = 60;
+        [Tooltip("В фазе планирования без ввода игрока (мышь/клавиши) рисовать каждый N-й кадр.\n" +
+                 "Ввод и логика по-прежнему обрабатываются каждый кадр. 1 — рисовать всегда.")]
+        public int IdleRenderInterval = 2;
+        [Tooltip("Сколько секунд без ввода считается простоем для IdleRenderInterval.")]
+        public float IdleRenderDelay = 0.5f;
+
         [Header("Game Logic")]
         public float TurnDuration = 2.0f;
         [Tooltip("Останавливать авторежим когда игрок выполнил все действия маршрута.")]
