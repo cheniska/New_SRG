@@ -132,61 +132,9 @@ namespace SRG.Galaxy
         }
         public const int SubTurnsPerTurn = 10;
 
+        /// <summary>Рассчитать один день галактики (см. <see cref="SRG.Galaxy.Simulation.GalaxySimulator"/>).</summary>
         public TurnAnimationData GalaxyNextDay(GalaxyGenerationContext ctx = null)
-        {
-            CurrentTurn++;
-            MigrateShipsBetweenStars();
-            var anim = new TurnAnimationData();
-
-            SRG.Galaxy.Simulation.StarSimulator.ResetTelemetry();
-            var swStars = System.Diagnostics.Stopwatch.StartNew();
-            foreach (var star in StarsMap.Values)
-                star.StarNextDay(anim, ctx);
-            swStars.Stop();
-            SRG.Galaxy.Simulation.StarSimulator.LogTelemetry(CurrentTurn);
-
-            long tTrade = 0, tEvt = 0, tSci = 0, tTech = 0, tShop = 0, tSpawn = 0, tWorm = 0, tInf = 0, tPres = 0, tRate = 0;
-            if (ctx != null)
-            {
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                TradeSystem.TickAll(this, ctx.Config);              sw.Stop(); tTrade = sw.ElapsedMilliseconds; sw.Restart();
-                PlanetaryEventSystem.TickAll(this, ctx);            sw.Stop(); tEvt   = sw.ElapsedMilliseconds; sw.Restart();
-                ScienceSystem.TickAll(this, ctx);                   sw.Stop(); tSci   = sw.ElapsedMilliseconds; sw.Restart();
-                PlanetaryTechSystem.TickAll(this, ctx);             sw.Stop(); tTech  = sw.ElapsedMilliseconds; sw.Restart();
-                EquipmentShopSystem.TickAll(this, ctx);             sw.Stop(); tShop  = sw.ElapsedMilliseconds; sw.Restart();
-                SpawnSystem.DailyTick(this, ctx);                   sw.Stop(); tSpawn = sw.ElapsedMilliseconds; sw.Restart();
-                WormholeSystem.DailyTick(this, ctx);                sw.Stop(); tWorm  = sw.ElapsedMilliseconds; sw.Restart();
-                if (CurrentTurn % 30 == 0)
-                    InflationSystem.TickMonthly(this, ctx.Config);
-                sw.Stop(); tInf = sw.ElapsedMilliseconds; sw.Restart();
-                // Аналитика/новости — плотность в звёздах (недельный тик) и рейтинги кораблей (по конфигу Ratings).
-                StarPresenceService.TickIfDue(this);                sw.Stop(); tPres  = sw.ElapsedMilliseconds; sw.Restart();
-                ShipRatingService.TickIfDue(this, ctx.Config);      sw.Stop(); tRate  = sw.ElapsedMilliseconds;
-                // Fear-driven cargo drop (DropGoodsInFear): преследуемые с грузом сбрасывают часть трюма.
-                SRG.Ships.Services.FearDropService.TickAll(this);
-            }
-
-            SRG.Utils.PerfLog.Log($"[GND] Turn {CurrentTurn}: stars={swStars.ElapsedMilliseconds}ms " +
-                $"trade={tTrade} evt={tEvt} sci={tSci} tech={tTech} shop={tShop} " +
-                $"spawn={tSpawn} worm={tWorm} inf={tInf} pres={tPres} rate={tRate}");
-
-            // Спайк-диагностика на секции, которые дорого стреляли:
-            // T184 evt=227мс (тут увидим, сколько планет тикнуло + сколько событий стартовало).
-            // T322 shop=128мс (сколько магазинов оказалось в day-slot + сколько предметов
-            // родилось/удалилось). Порог 30мс — чтобы шум не забивал типичный лог.
-            if (tEvt >= 30)
-                SRG.Utils.PerfLog.Log($"[GND-spike] Turn {CurrentTurn} evt: " +
-                    $"planetsTicked={SRG.Science.PlanetaryEventSystem._diagPlanetsTicked} " +
-                    $"eventsStarted={SRG.Science.PlanetaryEventSystem._diagEventsStarted} " +
-                    $"lastId={SRG.Science.PlanetaryEventSystem._diagLastStartedEventId ?? "-"}");
-            if (tShop >= 30)
-                SRG.Utils.PerfLog.Log($"[GND-spike] Turn {CurrentTurn} shop: " +
-                    $"shopsRefreshed={SRG.Economy.EquipmentShopSystem._diagShopsRefreshed} " +
-                    $"itemsAdded={SRG.Economy.EquipmentShopSystem._diagItemsAdded} " +
-                    $"itemsRemoved={SRG.Economy.EquipmentShopSystem._diagItemsRemoved}");
-
-            return anim;
-        }
+            => SRG.Galaxy.Simulation.GalaxySimulator.SimulateDay(this, ctx);
 
         public void MigrateShipsBetweenStars()
         {
