@@ -48,22 +48,24 @@ namespace SRG.Core
         [SerializeField] private string startingStarUid;
         [SerializeField] private GameSettingsConfig settings;
 
+        // Состояние мира и расчёт хода — в SimulationSession (слой симуляции). Здесь — тайминг
+        // фаз, визуал, ввод и сценовые гиперпереходы.
+        private SimulationSession _session;
+        private static readonly Dictionary<string, GalaxyData> NoGalaxies = new();
+
         /// <summary>Все сгенерированные галактики (ключ = ключ в GalaxyConfig.Galaxies).
         /// Пусто до первой генерации/загрузки. Каждая галактика тикается каждый ход независимо.</summary>
-        public Dictionary<string, GalaxyData> Galaxies { get; private set; } = new();
+        public Dictionary<string, GalaxyData> Galaxies => _session?.Galaxies ?? NoGalaxies;
         /// <summary>Ключ активной галактики — той, где сейчас игрок. Смена — через <see cref="SwitchActiveGalaxy"/>.</summary>
-        public string ActiveGalaxyKey { get; private set; }
-        /// <summary>Активная галактика — та, где сейчас игрок. Совместимость: если галактик нет, вернёт null.</summary>
-        public GalaxyData GeneratedGalaxy
-            => !string.IsNullOrEmpty(ActiveGalaxyKey) && Galaxies.TryGetValue(ActiveGalaxyKey, out var g) ? g : null;
+        public string ActiveGalaxyKey => _session?.ActiveGalaxyKey;
+        /// <summary>Активная галактика — та, где сейчас игрок. Если галактик нет, вернёт null.</summary>
+        public GalaxyData GeneratedGalaxy => _session?.ActiveGalaxy;
 
-        /// <summary>Галактика, чей GalaxyNextDay сейчас исполняется. Устанавливается в try/finally
-        /// вокруг каждого вызова GalaxyNextDay в ExecuteTurnCalculation/ExecuteInstantTurn.
-        /// Нужен реактивным подписчикам (GalaxyNewsService, DirectiveManager), чтобы события
-        /// от неактивной галактики адресовались правильной галактике, а не активной.
+        /// <summary>Галактика, чей GalaxyNextDay сейчас исполняется (см. <see cref="SimulationSession.CurrentTickingGalaxy"/>).
         /// Вне тика равен null — подписчики должны падать обратно на GeneratedGalaxy.</summary>
-        public GalaxyData CurrentTickingGalaxy { get; private set; }
+        public GalaxyData CurrentTickingGalaxy => _session?.CurrentTickingGalaxy;
         public GalaxyGenerationContext Context => _context;
+        public SimulationSession Session => _session;
         public GameSettingsConfig Settings => settings;
         public StarData CurrentStar { get; private set; }
         public TurnPhase Phase { get; private set; } = TurnPhase.Planning;
@@ -202,54 +204,7 @@ namespace SRG.Core
         private void ExecuteTurnCalculation()
         {
             if (GeneratedGalaxy == null) return;
-            var sw = Stopwatch.StartNew();
-            var swNext = Stopwatch.StartNew();
-            // Сначала — активная галактика (её TurnAnimationData возвращаем/используем для симуляции UI).
-            CurrentTickingGalaxy = GeneratedGalaxy;
-            try { LastTurnData = GeneratedGalaxy.GalaxyNextDay(_context); }
-            finally { CurrentTickingGalaxy = null; }
-            // Все прочие галактики тоже тикают экономику/оккупации/орбиты, но их анимация не показывается.
-            foreach (var kv in Galaxies)
-            {
-                if (kv.Key == ActiveGalaxyKey) continue;
-                var prev = _context.ActiveGalaxyConfig;
-                if (_context.Config?.Galaxies != null && _context.Config.Galaxies.TryGetValue(kv.Key, out var cfg))
-                    _context.ActiveGalaxyConfig = cfg;
-                CurrentTickingGalaxy = kv.Value;
-                try { kv.Value.GalaxyNextDay(_context); }
-                finally { CurrentTickingGalaxy = null; _context.ActiveGalaxyConfig = prev; }
-            }
-            swNext.Stop();
-            var swMig = Stopwatch.StartNew();
-            // Применяем "ожидающие" миграции (CurrentStarUid сменился в FinalizeTurn) СРАЗУ —
-            // чтобы NpcSystem.TickAllSystems увидел корабли в их новых системах и AI-приказ
-            // для следующего хода считался относительно правильной (целевой) звезды.
-            // Это критично для гиперперехода: корабль завершил HyperEnter (CurrentStarUid=dest),
-            // и его brain.Tick на этом же ходу должен принять решение в новой системе.
-            GeneratedGalaxy.MigrateShipsBetweenStars();
-            foreach (var kv in Galaxies)
-                if (kv.Key != ActiveGalaxyKey) kv.Value.MigrateShipsBetweenStars();
-            swMig.Stop();
-            var swNpc = Stopwatch.StartNew();
-            NpcSystem.TickAllSystems(GeneratedGalaxy, _context);
-            // NPC-логика для неактивных галактик — пока минимальная (движение/бой не проигрывается,
-            // но состояние живо). Расширять NpcSystem до мультигалактики — задача следующего этапа.
-            swNpc.Stop();
-            sw.Stop();
-            SRG.Utils.PerfLog.Log($"[GalaxyManager] Turn {GeneratedGalaxy.CurrentTurn} split: " +
-                $"GalaxyNextDay={swNext.ElapsedMilliseconds}ms " +
-                $"Migrate={swMig.ElapsedMilliseconds}ms " +
-                $"NpcTick={swNpc.ElapsedMilliseconds}ms");
-            // Раз в 30 ходов скидываем буфер EconomicLog+HighCommandLog на диск — на случай
-            // аварийного выхода данные не теряются. Внутри ещё есть авто-flush по FlushThreshold.
-            if (GeneratedGalaxy.CurrentTurn % 30 == 0)
-            {
-                EconomicLog.Flush();
-                HighCommandLog.Flush();
-                SRG.Galaxy.Politics.NewsLog.Flush();
-            }
-            SRG.Utils.PerfLog.Log($"[GalaxyManager] Turn {GeneratedGalaxy.CurrentTurn} calc: {sw.ElapsedMilliseconds} ms");
-            SRG.Utils.PerfLog.Flush();
+            LastTurnData = _session.SimulateDay();
             PlayerManager.Instance?.CheckPauseConditions(LastTurnData);
             foreach (var reason in LastTurnData.PlanningReasons)
                 RequestPlanning(reason);
@@ -298,7 +253,7 @@ namespace SRG.Core
 
             // Финализируем фазу гиперперехода ПОСЛЕ анимации (а не внутри StarNextDay) —
             // чтобы во время симуляции у кораблей была их «текущая» фаза, а не следующая.
-            FinalizeHyperjumpPhases();
+            _session.FinalizeHyperjumpPhases();
 
             // Может выставить _pendingArrivalTransition (отложит scene swap на следующий кадр).
             HandleHyperjumpTransitions();
@@ -324,28 +279,6 @@ namespace SRG.Core
             else
                 UnityEngine.Debug.Log($"[GalaxyManager] Planning after turn {GeneratedGalaxy.CurrentTurn}. " +
                           $"Reasons: {string.Join(", ", _planningRequests)}");
-        }
-
-        /// <summary>
-        /// Финализирует фазы гиперперехода для ВСЕХ кораблей ВСЕХ звёзд. Должен вызываться
-        /// после OnTurnComplete: к этому моменту анимация хода уже проиграна, и переход
-        /// к следующей фазе не «съест» визуал текущей.
-        /// </summary>
-        private void FinalizeHyperjumpPhases()
-        {
-            foreach (var g in Galaxies.Values)
-            {
-                if (g == null) continue;
-                foreach (var star in g.StarsMap.Values)
-                {
-                    for (int i = 0; i < star.Ships.Count; i++)
-                    {
-                        var ship = star.Ships[i];
-                        if (ship == null || ship.HyperjumpPhase == HyperjumpPhase.None) continue;
-                        HyperjumpController.FinalizeTurn(ship, star, g);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -407,44 +340,11 @@ namespace SRG.Core
             if (_context == null) return;
 
             GalaxySeed = seed;
-            Galaxies.Clear();
-            ActiveGalaxyKey = null;
             PlayerManager.Instance?.ClearPlayerShip();
             ShipGraphicsResolver.ClearCache();
 
-            // Генерируем ВСЕ галактики, определённые в GalaxyConfig.Galaxies. Активной становится
-            // либо DEFAULT_GALAXY_KEY (если такая есть), либо первая по порядку.
-            var galaxyCfgs = _context.Config?.Galaxies;
-            if (galaxyCfgs == null || galaxyCfgs.Count == 0)
-            {
-                UnityEngine.Debug.LogError("[GalaxyManager] GalaxyConfig.Galaxies пуст — нечего генерировать.");
-                return;
-            }
-
-            var generator = new GalaxyGenerator(_context);
-            int slot = 0;
-            foreach (var kv in galaxyCfgs)
-            {
-                // DEFAULT_GALAXY_KEY получает оригинальный seed — иначе ломается репродуктивность
-                // старых сидов (до мультигалактики). Прочие галактики XOR-мутируют seed, чтобы не
-                // быть копией первой.
-                int gSeed = kv.Key == GalaxyConstants.DEFAULT_GALAXY_KEY
-                    ? seed
-                    : unchecked(seed ^ (int)(0x9E3779B1 * (slot + 1)));
-                var g = generator.Generate(gSeed, kv.Key);
-                g.InitSimulation();
-                Galaxies[kv.Key] = g;
-                GalaxyLogger.LogGalaxy(g, gSeed, _context.Config, _context.AvailableRaces);
-                slot++;
-            }
-
-            ActiveGalaxyKey = galaxyCfgs.ContainsKey(GalaxyConstants.DEFAULT_GALAXY_KEY)
-                ? GalaxyConstants.DEFAULT_GALAXY_KEY
-                : System.Linq.Enumerable.First(galaxyCfgs.Keys);
-
-            // Восстанавливаем ActiveGalaxyConfig для последующих обращений (использует UI, стартовая звезда).
-            if (_context.Config.Galaxies.TryGetValue(ActiveGalaxyKey, out var actCfg))
-                _context.ActiveGalaxyConfig = actCfg;
+            // Генерируем ВСЕ галактики, определённые в GalaxyConfig.Galaxies.
+            if (!_session.GenerateAll(seed)) return;
 
             PreloadAllVisuals();
 
@@ -458,33 +358,13 @@ namespace SRG.Core
         /// игрок остаётся там, где он был. Для перемещения игрока используй <see cref="TeleportToStar"/>.</summary>
         public bool SwitchActiveGalaxy(string galaxyKey)
         {
-            if (string.IsNullOrEmpty(galaxyKey)) return false;
-            if (!Galaxies.ContainsKey(galaxyKey)) return false;
-            ActiveGalaxyKey = galaxyKey;
-            if (_context?.Config?.Galaxies != null
-                && _context.Config.Galaxies.TryGetValue(galaxyKey, out var cfg))
-                _context.ActiveGalaxyConfig = cfg;
-            // Инвалидация per-turn кэшей, ключей которых нет galaxyKey — иначе они возвращают
-            // stale-данные из прошлой галактики (multi-galaxy safety):
-            //   TraderAI._reachableCache хранит (originUid → List<StarData>) — StarData ссылки чужие.
-            //   ShipSpatialHash — гриды на starUid, звёзды в новой галактике теже UID иметь не должны,
-            //   но CleanupStale работает по turn — сбрасываем явно.
-            SRG.NpcAI.TraderAI.ResetReachableCache();
-            SRG.NpcAI.ShipSpatialHash.ResetAll();
+            if (_session == null || !_session.SwitchActiveGalaxy(galaxyKey)) return false;
             UnityEngine.Debug.Log($"[GalaxyManager] Active galaxy: {galaxyKey}");
             return true;
         }
 
-        /// <summary>Возвращает галактику, в которой сейчас находится игрок (по CurrentStarUid),
-        /// либо активную, если не удалось определить. Используется командой teleport для перекрёстных прыжков.</summary>
-        public string FindGalaxyOfStar(string starUid)
-        {
-            if (string.IsNullOrEmpty(starUid)) return null;
-            foreach (var kv in Galaxies)
-                if (kv.Value != null && kv.Value.StarsMap.ContainsKey(starUid))
-                    return kv.Key;
-            return null;
-        }
+        /// <summary>Ключ галактики, где находится звезда, либо null. Используется командой teleport.</summary>
+        public string FindGalaxyOfStar(string starUid) => _session?.FindGalaxyOfStar(starUid);
 
         /// <summary>Прогревает кэш GraphicsManager всеми спрайт-листами, чей первый показ иначе
         /// даёт хитч на Resources.Load + парсинге .png.json + Sprite.Create. Без этого:
@@ -741,20 +621,11 @@ namespace SRG.Core
 
         public void LoadGame()
         {
+            EnsureContextInitialized();
+            if (_session == null) return;
             var loaded = GalaxySaveManager.LoadGalaxies(out string activeKey);
-            if (loaded == null || loaded.Count == 0) return;
-            Galaxies = loaded;
-            // Восстанавливаем Key на случай старых сейвов, где поле было null.
-            foreach (var kv in Galaxies)
-                if (string.IsNullOrEmpty(kv.Value.Key)) kv.Value.Key = kv.Key;
-            ActiveGalaxyKey = !string.IsNullOrEmpty(activeKey) && Galaxies.ContainsKey(activeKey)
-                ? activeKey
-                : System.Linq.Enumerable.First(Galaxies.Keys);
-            if (_context?.Config?.Galaxies != null
-                && _context.Config.Galaxies.TryGetValue(ActiveGalaxyKey, out var cfg))
-                _context.ActiveGalaxyConfig = cfg;
+            if (!_session.LoadFrom(loaded, activeKey)) return;
             PlayerManager.Instance?.ClearPlayerShip();
-            foreach (var g in Galaxies.Values) g.InitSimulation();
             PreloadAllVisuals();
             var playerStar = PlayerManager.Instance?.FindPlayerStar();
             var startStar = playerStar ?? ResolveStartingStar();
@@ -768,9 +639,7 @@ namespace SRG.Core
             PreloadStarVisuals(startStar);
             SetCurrentStar(startStar);
             // SpawnSystem: регистрация политик и пересчёт счётчиков для загруженной галактики
-            SpawnSystem.RegisterDefaultPolicies();
-            foreach (var g in Galaxies.Values)
-                SpawnSystem.RecountFromGalaxy(g, _context?.Config);
+            _session.RecountSpawns();
             UnityEngine.Debug.Log($"[GalaxyManager] Game loaded. Galaxies: {Galaxies.Count}, active: {ActiveGalaxyKey}");
         }
 
@@ -785,20 +654,8 @@ namespace SRG.Core
             ClearAllPlanning();
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            CurrentTickingGalaxy = GeneratedGalaxy;
-            try { LastTurnData = GeneratedGalaxy.GalaxyNextDay(_context); }
-            finally { CurrentTickingGalaxy = null; }
-            foreach (var kv in Galaxies)
-            {
-                if (kv.Key == ActiveGalaxyKey) continue;
-                var prev = _context.ActiveGalaxyConfig;
-                if (_context.Config?.Galaxies != null && _context.Config.Galaxies.TryGetValue(kv.Key, out var cfg))
-                    _context.ActiveGalaxyConfig = cfg;
-                CurrentTickingGalaxy = kv.Value;
-                try { kv.Value.GalaxyNextDay(_context); }
-                finally { CurrentTickingGalaxy = null; _context.ActiveGalaxyConfig = prev; }
-            }
-            NpcSystem.TickAllSystems(GeneratedGalaxy, _context);
+            // Мгновенный ход (игрок на планете) исторически не применяет межзвёздные миграции сразу.
+            LastTurnData = _session.SimulateDay(migrateShips: false);
             sw.Stop();
             UnityEngine.Debug.Log($"[GalaxyManager] InstantTurn {GeneratedGalaxy.CurrentTurn}: {sw.ElapsedMilliseconds} ms");
 
@@ -842,71 +699,23 @@ namespace SRG.Core
         {
             if (_context != null) return;
 
-            if (!GalaxyConfigLoader.TryLoadConfigs(
-                galaxyConfigJson, textConfigJson, premadeConfigJson, itemsConfigJson,
-                out var cfg, out var txt, out var pre, out var itemsCfg))
+            _context = SimulationSetup.CreateContext(new ConfigSources
+            {
+                Galaxy   = galaxyConfigJson   ? galaxyConfigJson.text   : null,
+                Texts    = textConfigJson     ? textConfigJson.text     : null,
+                Premade  = premadeConfigJson  ? premadeConfigJson.text  : null,
+                Items    = itemsConfigJson    ? itemsConfigJson.text    : null,
+                Dialogs  = dialogsConfigJson  ? dialogsConfigJson.text  : null,
+                Partners = partnersConfigJson ? partnersConfigJson.text : null,
+            }, settings);
+            if (_context == null)
             {
                 UnityEngine.Debug.LogError("[GalaxyManager] Config initialization failed.");
                 return;
             }
 
-            if (dialogsConfigJson != null)
-            {
-                try
-                {
-                    var dlg = Newtonsoft.Json.JsonConvert.DeserializeObject<DialogsConfig>(dialogsConfigJson.text);
-                    if (dlg != null)
-                    {
-                        cfg.Dialogs = dlg;
-                        // Фразы (пулы строк, тексты приветствий, дефолты тегов) живут в TextsConfig —
-                        // связываем до валидации, иначе она увидит правила приветствий без текстов.
-                        SRG.Dialog.DialogTexts.Link(dlg, txt);
-                        SRG.Dialog.DialogConfigValidator.Validate(dlg);
-                    }
-                }
-                catch (System.Exception e)
-                {
-                    UnityEngine.Debug.LogError($"[GalaxyManager] Failed to parse DialogsConfig: {e.Message}");
-                }
-            }
-            else
-            {
-                UnityEngine.Debug.LogWarning("[GalaxyManager] DialogsConfig not assigned — диалоги будут пусты.");
-            }
-
-            if (partnersConfigJson != null)
-            {
-                try
-                {
-                    var partners = Newtonsoft.Json.JsonConvert.DeserializeObject<PartnersConfig>(partnersConfigJson.text);
-                    if (partners != null) cfg.Partners = partners;
-                }
-                catch (System.Exception e)
-                {
-                    UnityEngine.Debug.LogError($"[GalaxyManager] Failed to parse PartnersConfig: {e.Message}");
-                }
-            }
-            else
-            {
-                UnityEngine.Debug.LogWarning("[GalaxyManager] PartnersConfig not assigned — партнёрство будет использовать дефолты.");
-            }
-
-            _context = new GalaxyGenerationContext(cfg, txt, pre, itemsCfg);
-            GalaxyConstants.Initialize(settings);
-            GalaxyConstants.InitializeFromGalaxyConfig(cfg);
-            NpcBalance.LoadFromSettings(settings);
+            _session = new SimulationSession(_context);
             GraphicsManager.Instance?.Init(_context);
-            OwnerRaceRelationsManager.Instance?.Initialize(cfg);
-            SRG.Equipment.EmbedConfigValidator.Validate(itemsCfg, cfg);
-
-            // Регистрируем встроенные скрипты артефактов (BigExplosion → Кварковая бомба,
-            // SpawnBlackHole → Субпортал) и подписываем шину смерти контейнеров. Идемпотентно.
-            SRG.Equipment.ContainerHitScripts.RegisterBuiltins();
-            SRG.Equipment.CargoHitRegistry.EnsureHooked();
-
-            // Компиляция Lua-скриптов артефактов (TurnScript/UseScript из ItemsConfig).
-            // Должно идти ДО первого хода: скрипты нужны как в симуляции, так и в UI-активациях.
-            SRG.Equipment.LuaArtefactScripts.CompileAndRegisterAll(itemsCfg);
         }
     }
 }

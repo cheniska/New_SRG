@@ -69,8 +69,8 @@ namespace SRG.NpcAI
 
         public NpcBrain(ShipData ship, StarData star)
         {
-            var range = PersonalityRange.ForShipType(ship.ShipTypeId);
-            Personality = ShipPersonality.Generate(range);
+            // После загрузки сейва характер уже есть — не перегенерируем его.
+            Personality = ship.Personality ?? ShipPersonality.Generate(PersonalityRange.ForShipType(ship.ShipTypeId));
             // Дублируем на ShipData: Directive.ShouldObey и переговоры (Ceasefire/Ransom)
             // читают ship.Personality. Раньше это делал только NpcSpawner.Attach — корабли
             // без визуала (вся галактика вне системы игрока) оставались с null и молча

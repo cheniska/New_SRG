@@ -26,34 +26,31 @@ namespace SRG.Galaxy.Simulation
         private const int TransportMany = 6;
         private const int RangersMany   = 3;
 
-        // История прошлых объявлений — чтобы не постить одно и то же каждый тик.
-        // Ключ = starUid | категория (например, "abc123|pirates").
-        private static readonly Dictionary<string, string> _lastPost = new();
-
+        // Состояние (курсор и история объявлений) хранится в GalaxyData: у каждой галактики своё,
+        // и оно переживает сохранение/загрузку.
+        //
         // Chunked анализ: вместо всплеска раз в 30 ходов раскладываем по ~stars/30 звёзд
         // каждый тик. Каждая звезда всё равно попадает в анализ ~раз в 30 ходов, семантика
         // PostIfChanged не меняется. Убирает 200-мс лаг на 30-х ходах.
-        private static readonly List<StarData> _starsCache = new();
-        private static int _cursor;
+        private static readonly List<StarData> _starsBuf = new();
 
         public static void TickIfDue(GalaxyData galaxy)
         {
             if (galaxy == null || galaxy.CurrentTurn <= 0) return;
 
-            if (_starsCache.Count != galaxy.StarsMap.Count)
-            {
-                _starsCache.Clear();
-                foreach (var s in galaxy.StarsMap.Values) _starsCache.Add(s);
-                _cursor = 0;
-            }
-            if (_starsCache.Count == 0) return;
+            // Порядок звёзд — как в структуре секторов: он одинаков после генерации и после загрузки.
+            _starsBuf.Clear();
+            foreach (var sector in galaxy.Sectors)
+                foreach (var s in sector.Stars) _starsBuf.Add(s);
+            if (_starsBuf.Count == 0) return;
 
-            int chunk = Mathf.Max(1, Mathf.CeilToInt(_starsCache.Count / (float)StrideTurns));
+            galaxy.PresenceLastPost ??= new Dictionary<string, string>();
+            int chunk = Mathf.Max(1, Mathf.CeilToInt(_starsBuf.Count / (float)StrideTurns));
             for (int i = 0; i < chunk; i++)
             {
-                var star = _starsCache[_cursor % _starsCache.Count];
-                _cursor++;
-                if (IsInteresting(star)) AnalyzeStar(star);
+                var star = _starsBuf[galaxy.PresenceCursor % _starsBuf.Count];
+                galaxy.PresenceCursor = (galaxy.PresenceCursor + 1) % _starsBuf.Count;
+                if (IsInteresting(star)) AnalyzeStar(galaxy, star);
             }
         }
 
@@ -66,7 +63,7 @@ namespace SRG.Galaxy.Simulation
             return false;
         }
 
-        private static void AnalyzeStar(StarData star)
+        private static void AnalyzeStar(GalaxyData galaxy, StarData star)
         {
             int pirates = 0, transports = 0;
             int rangersWar = 0, rangersTrader = 0, rangersPirate = 0;
@@ -97,25 +94,25 @@ namespace SRG.Galaxy.Simulation
             string pirateBucket = pirates <= PirateNone ? "none"
                                 : pirates >= PirateMany ? "many"
                                 : "some";
-            PostIfChanged(star, "pirates", pirateBucket, BuildPirateNews(star, pirates, pirateBucket));
+            PostIfChanged(galaxy, star, "pirates", pirateBucket, BuildPirateNews(star, pirates, pirateBucket));
 
             // Транспорты — только при превышении
             if (transports >= TransportMany)
-                PostIfChanged(star, "transport", "many",
+                PostIfChanged(galaxy, star, "transport", "many",
                     $"Таможенные службы системы {star.Name} не справляются с потоком транспортов " +
                     $"({transports} судов). Возможны заторы и рост криминальной активности.");
 
             // Рейнджеры
             if (rangersWar >= RangersMany)
-                PostIfChanged(star, "rangers_war", "many",
+                PostIfChanged(galaxy, star, "rangers_war", "many",
                     $"В системе {star.Name} собралась группа рейнджеров-воинов: {Join(warriorNames)}. " +
                     $"Возможно, готовится удар по врагам Коалиции.");
             if (rangersTrader >= RangersMany)
-                PostIfChanged(star, "rangers_trader", "many",
+                PostIfChanged(galaxy, star, "rangers_trader", "many",
                     $"Аналитики отмечают выгодные условия торговли в системе {star.Name}: " +
                     $"туда слетелись рейнджеры-торговцы — {Join(traderNames)}.");
             if (rangersPirate >= RangersMany)
-                PostIfChanged(star, "rangers_pirate", "many",
+                PostIfChanged(galaxy, star, "rangers_pirate", "many",
                     $"В системе {star.Name} промышляют рейнджеры с подмоченной репутацией: {Join(pirateRangerNames)}. " +
                     $"Мирным судам рекомендуется облетать её стороной.");
         }
@@ -132,11 +129,11 @@ namespace SRG.Galaxy.Simulation
             };
         }
 
-        private static void PostIfChanged(StarData star, string key, string bucket, string text)
+        private static void PostIfChanged(GalaxyData galaxy, StarData star, string key, string bucket, string text)
         {
             string id = $"{star.Uid}|{key}";
-            if (_lastPost.TryGetValue(id, out var prev) && prev == bucket) return;
-            _lastPost[id] = bucket;
+            if (galaxy.PresenceLastPost.TryGetValue(id, out var prev) && prev == bucket) return;
+            galaxy.PresenceLastPost[id] = bucket;
             if (!string.IsNullOrEmpty(text))
             {
                 string cat = key.StartsWith("rangers") ? GalaxyNewsService.CAT_RANGERS

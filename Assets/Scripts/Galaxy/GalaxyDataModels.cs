@@ -272,6 +272,14 @@ namespace SRG.Galaxy
         /// <see cref="GalaxyNewsService"/> из подписок на игровые события.</summary>
         public List<GalaxyNewsEntry> News { get; set; } = new();
 
+        /// <summary>Курсор chunked-анализа <see cref="StarPresenceService"/> (какая звезда следующая).
+        /// Живёт в сейве и у каждой галактики свой — иначе фоновые галактики сбивали курсор активной.</summary>
+        public int PresenceCursor { get; set; }
+
+        /// <summary>Последние опубликованные «корзины» присутствия (ключ = starUid|категория) —
+        /// чтобы не постить одну и ту же новость каждый тик. Живёт в сейве.</summary>
+        public Dictionary<string, string> PresenceLastPost { get; set; } = new();
+
         /// <summary>Полностью разгромленные «сюжетные» фракции (Owner-ключи). Заполняется
         /// внешними подсистемами (кампания, скрипты); используется в приветствиях планет
         /// (PlanetGreetingRule.FactionDefeated / AnyMajorFactionDefeated).</summary>
@@ -405,13 +413,17 @@ namespace SRG.Galaxy
             }
         }
 
-        public void InitSimulation()
+        /// <param name="resetOrbits">true — после генерации: планеты ставятся в стартовую точку
+        /// орбиты (InitialAngle). false — после загрузки сейва: сохранённые углы не трогаем,
+        /// иначе планеты «прыгают» в начальное положение и игра идёт иначе, чем без сохранения.</param>
+        public void InitSimulation(bool resetOrbits = true)
         {
             foreach (var c in Sectors)
                 foreach (var star in c.Stars)
                 {
-                    foreach (var planet in star.Planets)
-                        planet.InitRotation();
+                    if (resetOrbits)
+                        foreach (var planet in star.Planets)
+                            planet.InitRotation();
 
                     // Реконсиляция инвентарей после десериализации: uid-индекс и теневые
                     // ItemInstance стеков (включая пересчёт инвентарных иконок по ItemsConfig).
@@ -1116,7 +1128,10 @@ namespace SRG.Galaxy
         /// <summary>Сколько ходов «думать» прежде чем пытаться искать рейс снова (после неудачи).</summary>
         public int TraderIdleTurnsLeft { get; set; }
 
-        [JsonIgnore] public ShipPersonality Personality { get; set; }
+        /// <summary>Характер NPC. Сохраняется: после загрузки корабль остаётся «тем же» пилотом.</summary>
+        public ShipPersonality Personality { get; set; }
+        /// <summary>Текущее решение ИИ. Не сохраняется — после загрузки пересоздаётся
+        /// (<see cref="NpcBrain"/> берёт сохранённый <see cref="Personality"/>).</summary>
         [JsonIgnore] public NpcBrain Brain { get; set; }
 
         public int Money { get; set; }
@@ -1255,6 +1270,8 @@ namespace SRG.Galaxy
         /// ShipLoadoutService попробует надеть подобранное оборудование, если оно лучше текущего.
         /// -1 = отложенной проверки нет.</summary>
         public int PendingAutoEquipTurn { get; set; } = -1;
+        /// <summary>Ход последнего «сброса груза от страха» (FearDropService) — кулдаун. Живёт в сейве.</summary>
+        public int LastFearDropTurn { get; set; } = -9999;
         /// <summary>
         /// Uid'ы объектов, прикреплённых К ЭТОМУ кораблю напрямую (на его якорях TowAnchors).
         /// Дерево буксира: tug -> children -> grandchildren (Back-цепочка). Каждый ребёнок занимает ОДИН якорь.

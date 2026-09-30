@@ -34,6 +34,11 @@ namespace SRG.Equipment
             RegisterOp(TriggerOps.AddWeaponEffect, ApplyAddWeaponEffect);
         }
 
+        /// <summary>Гарантирует, что встроенные операции зарегистрированы (запускает статический
+        /// конструктор). Вызывать до валидации конфигов: иначе EmbedConfigValidator не видит
+        /// встроенных операций и выдаёт ложные «неизвестная операция».</summary>
+        public static void EnsureBuiltinsRegistered() { }
+
         /// <summary>Зарегистрировать обработчик операции. Одновременно фиксирует имя в
         /// <see cref="EmbedRegistry"/> — валидатор перестаёт ругаться.</summary>
         public static void RegisterOp(string name, Action<TriggerContext, TriggerOp> handler)

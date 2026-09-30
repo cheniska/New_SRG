@@ -597,6 +597,9 @@ namespace SRG.Dialog.PlanetGreetings
         // Per-turn кэш StarInBattle: (starUid, turn) → результат. Инвалидируется автоматически по ходу.
         private static readonly Dictionary<string, (int turn, bool value)> _starInBattleCache = new();
 
+        /// <summary>Сбросить кэш (новая игра/загрузка: номера ходов начинаются заново).</summary>
+        public static void ResetCache() => _starInBattleCache.Clear();
+
         public static bool StarInBattle(StarData star)
         {
             if (star?.Ships == null || string.IsNullOrEmpty(star.Uid)) return false;

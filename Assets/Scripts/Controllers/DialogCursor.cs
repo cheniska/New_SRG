@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace SRG.Dialog
+namespace SRG.Controllers
 {
     // Процедурный курсор-микрофон для режима связи.
     // Маленькая текстура рисуется один раз и кешируется.

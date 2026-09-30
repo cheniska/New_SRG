@@ -125,6 +125,20 @@ namespace SRG.Galaxy.Politics
             }
         }
 
+        /// <summary>Выставить счётчик Id новостей после генерации/загрузки: следующий Id больше всех
+        /// уже существующих во всех галактиках — иначе после перезапуска игры Id начинались бы с 1
+        /// и совпадали со старыми (RemoveById удалял бы не ту запись).</summary>
+        public static void SyncNextId(IEnumerable<GalaxyData> galaxies)
+        {
+            int max = 0;
+            if (galaxies != null)
+                foreach (var g in galaxies)
+                    if (g?.News != null)
+                        foreach (var n in g.News)
+                            if (n != null && n.Id > max) max = n.Id;
+            _nextId = max + 1;
+        }
+
         public static void Initialize()
         {
             if (_initialized) return;
