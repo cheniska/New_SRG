@@ -34,7 +34,7 @@
 					"Optimal":       [253.0, 293.0],
 					"Acceptable":    [238.0, 298.0],
 					"Limit":         [223.0, 303.0],
-					"Terraformable": [198.0, 318.0]
+					"Terraformable": [203.0, 343.0]
 				},
 				"WaterAbundanceTerraformable":        [0.03, 0.9],
 				"OxygenPartialPressureTerraformable": [0.07, 0.3],
@@ -74,7 +74,7 @@
 					"Optimal":       [295.0, 303.0],
 					"Acceptable":    [288.0, 311.0],
 					"Limit":         [280.0, 316.0],
-					"Terraformable": [263.0, 330.0]
+					"Terraformable": [229.0, 369.0]
 				},
 				"WaterAbundanceTerraformable":        [0.25, 1.0],
 				"OxygenPartialPressureTerraformable": [0.12, 0.45],
@@ -114,12 +114,12 @@
 					"Optimal":       [288.0, 303.0],
 					"Acceptable":    [263.0, 313.0],
 					"Limit":         [243.0, 323.0],
-					"Terraformable": [193.0, 393.0]
+					"Terraformable": [210.0, 380.0]
 				},
 				"WaterAbundanceTerraformable":        [0.0, 1.0],
 				"OxygenPartialPressureTerraformable": [0.0, 0.6],
-				"gTerraformable":                    [2.9, 24.5],
-				"AtmPressureTerraformable":           [0.02, 8.0],
+				"gTerraformable":                    [3.4, 19.6],
+				"AtmPressureTerraformable":           [0.1, 6.0],
 				"SurfaceRadiationTerraformable":      [0.0, 8000.0]
 			},
 			"Trade": {
@@ -154,7 +154,7 @@
 					"Optimal":       [295.0, 303.0],
 					"Acceptable":    [285.0, 311.0],
 					"Limit":         [273.0, 313.0],
-					"Terraformable": [255.0, 335.0]
+					"Terraformable": [229.0, 369.0]
 				},
 				"WaterAbundanceTerraformable":        [0.15, 1.0],
 				"OxygenPartialPressureTerraformable": [0.13, 0.45],
@@ -194,7 +194,7 @@
 					"Optimal":       [297.0, 307.0],
 					"Acceptable":    [283.0, 318.0],
 					"Limit":         [268.0, 328.0],
-					"Terraformable": [245.0, 355.0]
+					"Terraformable": [232.0, 372.0]
 				},
 				"WaterAbundanceTerraformable":        [0.0, 0.7],
 				"OxygenPartialPressureTerraformable": [0.07, 0.4],
@@ -234,7 +234,7 @@
 					"Optimal":       [285.0, 293.0],
 					"Acceptable":    [263.0, 298.0],
 					"Limit":         [248.0, 308.0],
-					"Terraformable": [225.0, 330.0]
+					"Terraformable": [219.0, 359.0]
 				},
 				"WaterAbundanceTerraformable":        [0.03, 1.0],
 				"OxygenPartialPressureTerraformable": [0.06, 0.38],
@@ -834,7 +834,7 @@
 			"ConstCount": 20,
 			"MinStarsPerConstellation": 2,
 			"MaxStarsPerConstellation": 8,
-			"MinPlanetsPerStar": 0,
+			"MinPlanetsPerStar": 2,
 			"MaxPlanetsPerStar": 20,
 			"StartingStarName": "Солнце",
 			"MinStarDistanceParsecs": 5,
@@ -866,7 +866,7 @@
 				"Jitter": 2
 			},
 			"RaceRoles": {
-				"Major": { "Races": ["Race1", "Race2", "Race3", "Race4", "Race5", "Race8"], "Colonize": true, "SystemsShare": 0.8, "Overlap": 1.5, "Jitter": 1, "GuaranteeNiche": true },
+				"Major": { "Races": ["Race1", "Race2", "Race3", "Race4", "Race5", "Race8"], "Colonize": true, "Coverage": [0.90, 0.95], "RaceSpread": [0.05, 0.10], "OccupiedPenalty": 2, "Overlap": 1.5, "GuaranteeNiche": true },
 				"Hostile": { "Races": ["RaceDominators1", "RaceDominators2", "RaceDominators3"], "Colonize": false }
 			}
 		},
@@ -878,7 +878,7 @@
 			"ConstCount": 20,
 			"MinStarsPerConstellation": 2,
 			"MaxStarsPerConstellation": 8,
-			"MinPlanetsPerStar": 0,
+			"MinPlanetsPerStar": 2,
 			"MaxPlanetsPerStar": 20,
 			"StartingStarName": "Aegis",
 			"MinStarDistanceParsecs": 5,
@@ -910,7 +910,7 @@
 				"Jitter": 2
 			},
 			"RaceRoles": {
-				"Major": { "Races": ["Race6", "Race7"], "Colonize": true, "SystemsShare": 0.8, "Overlap": 1.5, "Jitter": 1, "GuaranteeNiche": true },
+				"Major": { "Races": ["Race6", "Race7"], "Colonize": true, "Coverage": [0.90, 0.95], "RaceSpread": [0.05, 0.10], "OccupiedPenalty": 2, "Overlap": 1.5, "GuaranteeNiche": true },
 				"Invader": { "Races": ["RaceThreat1"], "Colonize": false }
 			}
 		}
@@ -919,7 +919,7 @@
 		"Types": {
 			"Dwarf": {
 				"GraphicSizeMult": 0.75,
-				"MaxPlanets": 3,
+				"MaxPlanets": 5,
 				"MassSolar": 0.312,
 				"HZ_SizeMult": 0.533
 			},
@@ -1016,8 +1016,9 @@
 	},
 	"Planets": {
 		"OrbitsEccentricity": [0.0, 0.05],
-		"HabitableSlotChance": 0.5,
+		"HabitableSlotChance": 1.0,
 		"HabitableSlotTemp": [250.0, 315.0],
+		"HabitableSlotScale": [0.25, 4.0],
 		"Sizes": {
 			"Tiny":   { "BaseScale": 0.75,  "MaxSatellites": 0, "AtmosphereChance": 0,   "SatOrbitPixelRadius": 120, "Population": [0,    0],    "DensityRange": [1.5, 4.0], "GravityRange": [0.5,  2.5],  "GeoK": 0.069, "SurfaceArea": [270, 292], "Weight": 15 },
 			"Small":  { "BaseScale": 0.875, "MaxSatellites": 2, "AtmosphereChance": 30,  "SatOrbitPixelRadius": 140, "Population": [10,   200],  "DensityRange": [2.5, 6.0], "GravityRange": [2.0,  6.0],  "GeoK": 0.128, "SurfaceArea": [368, 398], "Weight": 25 },

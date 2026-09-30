@@ -44,7 +44,7 @@ namespace SRG.Galaxy.Generation
                 star.FlareRisk = colorData.FlareRisk;
             }
 
-            if (!star.IsPremade) PlaceHabitableSlot(star, hzSizeMult);
+            if (!star.IsPremade) PlaceHabitableSlot(star);
             star.SystemSize = CalculateSystemSize(star.Planets);
 
             foreach (var planet in star.Planets)
@@ -57,11 +57,13 @@ namespace SRG.Galaxy.Generation
         }
 
         /// <summary>
-        /// «Слот обитаемой зоны»: с шансом Planets.HabitableSlotChance ближайшая к обитаемой зоне каменная
-        /// планета заселяемого размера сдвигается на орбиту с целевой температурой из Planets.HabitableSlotTemp —
-        /// только в пределах зазоров с соседними орбитами, порядок планет не меняется.
+        /// «Слот обитаемой зоны»: с шансом Planets.HabitableSlotChance выбирается каменная планета заселяемого
+        /// размера (в первую очередь Normal, затем Big, затем Small), ближайшая к орбите с целевой температурой
+        /// из Planets.HabitableSlotTemp, и вся система масштабируется так, чтобы эта планета оказалась на целевой
+        /// орбите. Порядок и пропорции орбит сохраняются (компактность реальных систем различается в разы);
+        /// множитель ограничен Planets.HabitableSlotScale.
         /// </summary>
-        private void PlaceHabitableSlot(StarData star, float hzSizeMult)
+        private void PlaceHabitableSlot(StarData star)
         {
             var pc = _ctx.Config?.Planets;
             if (pc == null || pc.HabitableSlotChance <= 0f || star.Planets == null || star.Planets.Count == 0) return;
@@ -75,32 +77,28 @@ namespace SRG.Galaxy.Generation
             float tEq = Mathf.Max(50f, UnityEngine.Random.Range(tMin, tMax) - 8f);
             float target = StellarD0 * Mathf.Pow(278f * Mathf.Pow(lStar, 0.25f) / tEq, 2f);
 
-            var list = new List<PlanetData>(star.Planets);
-            list.Sort((a, b) => a.OrbitRadius.CompareTo(b.OrbitRadius));
-
-            int best = -1;
-            float bestDist = float.MaxValue;
-            for (int i = 0; i < list.Count; i++)
+            PlanetData chosen = null;
+            foreach (var size in HabitableSlotSizes)
             {
-                var p = list[i];
-                if (p.HasFixedOrbitRadius || p.Density < 2f || !IsPopulatedSize(p)) continue;
-                float dist = Mathf.Abs(p.OrbitRadius - target);
-                if (dist < bestDist) { bestDist = dist; best = i; }
+                float bestLog = float.MaxValue;
+                foreach (var p in star.Planets)
+                {
+                    if (p.HasFixedOrbitRadius || p.Density < 2f || p.Size != size || !IsPopulatedSize(p) || p.OrbitRadius <= 0f) continue;
+                    float dl = Mathf.Abs(Mathf.Log(p.OrbitRadius / target));
+                    if (dl < bestLog) { bestLog = dl; chosen = p; }
+                }
+                if (chosen != null) break;
             }
-            if (best < 0) return;
+            if (chosen == null) return;
 
-            var planet = list[best];
-            float e = Mathf.Clamp(planet.OrbitEccentricity, 0f, 0.99f);
-            float margin = GalaxyConstants.ORBIT_GAP_MIN * 0.35f * hzSizeMult;
-            float lo = best > 0
-                ? (list[best - 1].OrbitRadius * (1f + Mathf.Clamp(list[best - 1].OrbitEccentricity, 0f, 0.99f)) + margin) / Mathf.Max(1f - e, 0.01f)
-                : GalaxyConstants.FIRST_ORBIT_MIN * 0.5f * hzSizeMult;
-            float hi = best + 1 < list.Count
-                ? (list[best + 1].OrbitRadius * (1f - Mathf.Clamp(list[best + 1].OrbitEccentricity, 0f, 0.99f)) - margin) / (1f + e)
-                : float.MaxValue;
-            if (lo > hi) return;
-            planet.OrbitRadius = Mathf.Clamp(target, lo, hi);
+            float kMin = pc.HabitableSlotScale?.Length > 0 ? pc.HabitableSlotScale[0] : 0.25f;
+            float kMax = pc.HabitableSlotScale?.Length > 1 ? pc.HabitableSlotScale[1] : 4f;
+            float k = Mathf.Clamp(target / chosen.OrbitRadius, kMin, kMax);
+            foreach (var p in star.Planets)
+                if (!p.HasFixedOrbitRadius) p.OrbitRadius *= k;
         }
+
+        private static readonly string[] HabitableSlotSizes = { "Normal", "Big", "Small" };
 
         private static void RollStellarPhysics(PlanetData planet, StarData star)
         {

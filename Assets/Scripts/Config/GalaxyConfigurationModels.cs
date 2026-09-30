@@ -305,6 +305,33 @@ namespace SRG.Config
         /// (параметры → Optimal/середина Acceptable). Выравнивает узкоспециализированные расы.
         /// </summary>
         [JsonProperty("GuaranteeNiche")] public bool GuaranteeNiche { get; set; } = true;
+
+        /// <summary>
+        /// Режим покрытия: [min, max] — доля систем галактики, которую роль заселяет суммарно (разыгрывается
+        /// на каждую генерацию). Если задан — вместо SystemsShare/Overlap: расы роли расселяются по очереди,
+        /// пока доля заселённых ролью систем не достигнет цели или расам некуда расти.
+        /// </summary>
+        [JsonProperty("Coverage")] public float[] Coverage { get; set; }
+
+        /// <summary>
+        /// Режим покрытия: [min, max] — разница между самой крупной и самой мелкой расой роли, в долях от числа
+        /// звёзд галактики. Разыгрывается на каждую генерацию; верхняя граница — жёсткий потолок разницы.
+        /// </summary>
+        [JsonProperty("RaceSpread")] public float[] RaceSpread { get; set; } = { 0.05f, 0.10f };
+
+        /// <summary>
+        /// Необязательные веса рас роли (режим покрытия): задают, какие расы крупнее. Разница весов
+        /// масштабируется в RaceSpread. Не задано — порядок рас случайный на каждую генерацию.
+        /// </summary>
+        [JsonProperty("Weights")] public Dictionary<string, float> Weights { get; set; }
+
+        /// <summary>
+        /// Штраф за уже заселённую систему при выборе цели расселения (в «уровнях спорности» планеты).
+        /// Больше — меньше смешанных систем и выше покрытие; 0 — без предпочтения пустых систем.
+        /// </summary>
+        [JsonProperty("OccupiedPenalty")] public int OccupiedPenalty { get; set; } = 2;
+
+        public bool UsesCoverage => Coverage != null && Coverage.Length >= 1 && Coverage[0] > 0f;
     }
 
     public class TargetSystemsPerRaceConfig
@@ -370,12 +397,15 @@ namespace SRG.Config
 
         /// <summary>
         /// Шанс, что у случайной (не premade) системы одна каменная планета заселяемого размера окажется
-        /// в обитаемой зоне: её орбита сдвигается (в пределах зазоров с соседями) туда, где температура
-        /// поверхности попадает в <see cref="HabitableSlotTemp"/>. Оценки η⊕ для звёзд типа Солнца — 0.3–0.6.
+        /// в обитаемой зоне: система масштабируется так, чтобы температура поверхности этой планеты попала
+        /// в <see cref="HabitableSlotTemp"/>. Реалистичная оценка η⊕ для звёзд типа Солнца — 0.3–0.6;
+        /// 1.0 — игровое допущение ради заселённости галактики 90–95 %.
         /// </summary>
         [JsonProperty("HabitableSlotChance")] public float HabitableSlotChance { get; set; } = 0.5f;
         /// <summary>Диапазон целевой температуры поверхности (K) для планеты обитаемой зоны.</summary>
         [JsonProperty("HabitableSlotTemp")] public float[] HabitableSlotTemp { get; set; } = { 250f, 315f };
+        /// <summary>Допустимый множитель масштаба орбит системы при размещении планеты обитаемой зоны [min, max].</summary>
+        [JsonProperty("HabitableSlotScale")] public float[] HabitableSlotScale { get; set; } = { 0.25f, 4f };
     }
 
     public class GovernmentTypeConfig

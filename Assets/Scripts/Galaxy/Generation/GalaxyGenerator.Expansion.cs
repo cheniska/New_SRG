@@ -77,34 +77,37 @@ namespace SRG.Galaxy.Generation
 
             AssignExpansionTargets(states, galaxy.StarsMap.Count);
 
+            BuildHomeSectors(galaxy, states);
+
             foreach (var st in states)
             {
                 foreach (var star in galaxy.StarsMap.Values)
                     if (star.IsPremade)
                         foreach (var p in star.Planets)
                             if (p.Race == st.Key) { st.Frontier.Add(star); st.Presence.Add(star.Uid); break; }
-                st.Done = st.Target <= 0 || st.Frontier.Count == 0;
+                bool coverage = st.Role != null && st.Role.UsesCoverage;
+                st.Done = (!coverage && st.Target <= 0) || st.Frontier.Count == 0;
             }
 
-            // Честная очередь: на каждом шаге ходит раса с наименьшей долей выполненной цели
-            // (при равенстве — раньше начавшая колонизацию). Раньше расы расселялись строго по очереди,
-            // и поздние/узкоспециализированные (напр. Race4) получали только объедки за «универсалами».
             var allCfgs = new List<RaceConfig>(states.Count);
             foreach (var st in states) allCfgs.Add(st.Cfg);
-            while (true)
-            {
-                ExpansionRaceState cur = null;
-                float curRatio = float.MaxValue;
-                foreach (var st in states)
-                {
-                    if (st.Done) continue;
-                    float ratio = (float)st.Colonized / Mathf.Max(1, st.Target);
-                    if (ratio < curRatio) { curRatio = ratio; cur = st; }   // states отсортированы по дате — tie-break
-                }
-                if (cur == null) break;
 
-                if (!ExpansionStep(cur, galaxy, premadeUids, allCfgs)) cur.Done = true;
-                if (cur.Colonized >= cur.Target) cur.Done = true;
+            // Группы по ролям (порядок — по самой ранней дате начала колонизации в группе).
+            var groups = new List<List<ExpansionRaceState>>();
+            var groupByRole = new Dictionary<string, List<ExpansionRaceState>>();
+            foreach (var st in states)
+            {
+                string gk = st.RoleKey ?? string.Empty;
+                if (!groupByRole.TryGetValue(gk, out var g)) { g = new List<ExpansionRaceState>(); groupByRole[gk] = g; groups.Add(g); }
+                g.Add(st);
+            }
+
+            foreach (var group in groups)
+            {
+                if (group[0].Role != null && group[0].Role.UsesCoverage)
+                    RunCoverageExpansion(group, galaxy, premadeUids, allCfgs);
+                else
+                    RunTargetExpansion(group, galaxy, premadeUids, allCfgs);
             }
 
             foreach (var sector in galaxy.Sectors)
@@ -132,10 +135,133 @@ namespace SRG.Galaxy.Generation
             public int Target;
             public int Colonized;
             public int Seeded;
+            public float Offset;   // режим покрытия: насколько раса «крупнее» минимальной, в системах
             public bool Done;
             public readonly List<StarData> Frontier = new();
             public readonly HashSet<string> Presence = new();
         }
+
+        /// <summary>
+        /// Честная очередь по целям (SystemsShare/Overlap или старая TargetSystemsPerRace): ходит раса с наименьшей
+        /// долей выполненной цели (при равенстве — раньше начавшая колонизацию).
+        /// </summary>
+        private void RunTargetExpansion(List<ExpansionRaceState> group, GalaxyData galaxy,
+            HashSet<string> premadeUids, List<RaceConfig> allCfgs)
+        {
+            while (true)
+            {
+                ExpansionRaceState cur = null;
+                float curRatio = float.MaxValue;
+                foreach (var st in group)
+                {
+                    if (st.Done) continue;
+                    float ratio = (float)st.Colonized / Mathf.Max(1, st.Target);
+                    if (ratio < curRatio) { curRatio = ratio; cur = st; }
+                }
+                if (cur == null) break;
+
+                if (!ExpansionStep(cur, galaxy, premadeUids, allCfgs)) cur.Done = true;
+                if (cur.Colonized >= cur.Target) cur.Done = true;
+            }
+        }
+
+        /// <summary>
+        /// Режим покрытия: расы роли расселяются, пока доля систем галактики, заселённых ролью, не достигнет
+        /// цели (Coverage). Каждая раса получает сдвиг Offset (0..spread систем); ходит раса с наименьшим
+        /// Colonized − Offset, поэтому итоговая разница между расами ≈ spread. Раса не может обогнать самую
+        /// мелкую (включая исчерпавшие варианты) больше чем на верхнюю границу RaceSpread.
+        /// </summary>
+        private void RunCoverageExpansion(List<ExpansionRaceState> group, GalaxyData galaxy,
+            HashSet<string> premadeUids, List<RaceConfig> allCfgs)
+        {
+            var role = group[0].Role;
+            int starsCount = galaxy.StarsMap.Count;
+            float goal   = RollRange(role.Coverage, 0.9f) * starsCount;
+            float spread = RollRange(role.RaceSpread, 0.05f) * starsCount;
+            float cap    = (role.RaceSpread != null && role.RaceSpread.Length > 1 ? role.RaceSpread[1]
+                          : role.RaceSpread != null && role.RaceSpread.Length > 0 ? role.RaceSpread[0] : 0.1f) * starsCount;
+            AssignRaceOffsets(group, role, spread);
+            foreach (var st in group)
+                st.Target = Mathf.RoundToInt(goal * Mathf.Max(1f, role.Overlap) / group.Count + st.Offset);   // оценка — для дат рёбер и лога
+
+            var raceSet = new HashSet<string>();
+            foreach (var st in group) raceSet.Add(st.Key);
+
+            while (CountCoveredStars(galaxy, raceSet) < goal)
+            {
+                int minColonized = int.MaxValue;
+                foreach (var st in group) minColonized = Mathf.Min(minColonized, st.Colonized);
+
+                ExpansionRaceState cur = null;
+                float best = float.MaxValue;
+                foreach (var st in group)
+                {
+                    if (st.Done || st.Colonized + 1 - minColonized > cap) continue;
+                    float key = st.Colonized - st.Offset;
+                    if (key < best) { best = key; cur = st; }
+                }
+                if (cur == null) break;
+
+                if (!ExpansionStep(cur, galaxy, premadeUids, allCfgs)) cur.Done = true;
+            }
+        }
+
+        private static float RollRange(float[] range, float fallback)
+        {
+            if (range == null || range.Length == 0) return fallback;
+            if (range.Length == 1) return range[0];
+            return UnityEngine.Random.Range(Mathf.Min(range[0], range[1]), Mathf.Max(range[0], range[1]));
+        }
+
+        /// <summary>Сдвиги рас 0..spread: по весам роли, а если весов нет или они равны — случайно.</summary>
+        private static void AssignRaceOffsets(List<ExpansionRaceState> group, GalaxyRaceRoleConfig role, float spread)
+        {
+            var raw = new float[group.Count];
+            bool weighted = role.Weights != null && role.Weights.Count > 0;
+            for (int i = 0; i < group.Count; i++)
+                raw[i] = weighted && role.Weights.TryGetValue(group[i].Key, out var w) ? w : 1f;
+
+            float min = float.MaxValue, max = float.MinValue;
+            foreach (var v in raw) { min = Mathf.Min(min, v); max = Mathf.Max(max, v); }
+            if (max - min < 1e-4f)
+            {
+                for (int i = 0; i < raw.Length; i++) raw[i] = UnityEngine.Random.value;
+                min = float.MaxValue; max = float.MinValue;
+                foreach (var v in raw) { min = Mathf.Min(min, v); max = Mathf.Max(max, v); }
+            }
+            for (int i = 0; i < group.Count; i++)
+                group[i].Offset = max - min < 1e-4f ? 0f : (raw[i] - min) / (max - min) * spread;
+        }
+
+        private static int CountCoveredStars(GalaxyData galaxy, HashSet<string> raceSet)
+        {
+            int n = 0;
+            foreach (var star in galaxy.StarsMap.Values)
+                foreach (var p in star.Planets)
+                    if (raceSet.Contains(p.Race)) { n++; break; }
+            return n;
+        }
+
+        // Родные сектора: premade-сектор с расой, у которой там есть premade-звезда. Другие расы его не колонизируют.
+        private readonly Dictionary<string, string> _homeSectorRace = new();
+
+        private void BuildHomeSectors(GalaxyData galaxy, List<ExpansionRaceState> states)
+        {
+            _homeSectorRace.Clear();
+            var keys = new HashSet<string>();
+            foreach (var st in states) keys.Add(st.Key);
+            foreach (var sector in galaxy.Sectors)
+            {
+                if (string.IsNullOrEmpty(sector.Race) || !keys.Contains(sector.Race)) continue;
+                foreach (var star in sector.Stars)
+                    if (star.IsPremade) { _homeSectorRace[sector.Uid] = sector.Race; break; }
+            }
+        }
+
+        private bool IsForeignHomeSector(StarData star, string raceKey) =>
+            star.ParentSector != null
+            && _homeSectorRace.TryGetValue(star.ParentSector.Uid, out var owner)
+            && owner != raceKey;
 
         /// <summary>
         /// Цели по системам. Расы с ролью, у которой задан SystemsShare, получают одинаковую цель внутри роли:
@@ -151,6 +277,7 @@ namespace SRG.Galaxy.Generation
 
             foreach (var st in states)
             {
+                if (st.Role != null && st.Role.UsesCoverage) continue;   // цели считает RunCoverageExpansion
                 if (st.Role != null && st.Role.SystemsShare > 0f)
                 {
                     int count  = perRole[st.RoleKey];
@@ -222,7 +349,7 @@ namespace SRG.Galaxy.Generation
             var sb = new System.Text.StringBuilder();
             sb.Append("[GalaxyGen] Expansion result: ");
             foreach (var st in states)
-                sb.Append($"{st.Key}[{st.RoleKey ?? "-"}]={perRace[st.Key]}/{st.Target}(seeded {st.Seeded}) ");
+                sb.Append($"{st.Key}[{st.RoleKey ?? "-"}]={perRace[st.Key]}/{st.Target}(offset {st.Offset:F1}, seeded {st.Seeded}) ");
             int totalStars = galaxy.StarsMap.Count;
             float emptyPct = totalStars > 0 ? 100f * emptySystems / totalStars : 0f;
             float emptyPlanetsPct = planetsInHabitedSystems > 0 ? 100f * emptyPlanetsInHabitedSystems / planetsInHabitedSystems : 0f;
@@ -253,15 +380,17 @@ namespace SRG.Galaxy.Generation
                 {
                     if (st.Presence.Contains(star.Uid)) continue;
                     if (premadeUids.Contains(star.Uid)) continue;
+                    if (IsForeignHomeSector(star, st.Key)) continue;
 
                     float minDist = MinDistToFrontier(star, st.Frontier);
                     if (minDist > radius) continue;
 
-                    bool hasHab = false, hasTf = false;
+                    bool hasHab = false, hasTf = false, occupied = false;
                     int contest = int.MaxValue;
                     foreach (var p in star.Planets)
                     {
-                        if (p.Race != GalaxyConstants.RACE_NONE_KEY || !IsPopulatedSize(p)) continue;
+                        if (p.Race != GalaxyConstants.RACE_NONE_KEY) { occupied = true; continue; }
+                        if (!IsPopulatedSize(p)) continue;
                         bool h = ExpansionIsHabitable(p, st.Cfg);
                         bool t = !h && ExpansionIsTerraformable(p, st.Cfg);
                         if (!h && !t) continue;
@@ -269,6 +398,8 @@ namespace SRG.Galaxy.Generation
                         contest = Mathf.Min(contest, ExpansionContest(p, allCfgs));
                     }
                     if (!hasHab && !hasTf) continue;
+                    // Предпочтение пустых систем: уже заселённая система «спорнее» на OccupiedPenalty.
+                    if (occupied) contest += st.Role?.OccupiedPenalty ?? 0;
 
                     bool same = frontierSectors.Contains(star.ParentSector?.Uid);
                     var  entry = (star, minDist, contest);
@@ -378,6 +509,7 @@ namespace SRG.Galaxy.Generation
             foreach (var star in galaxy.StarsMap.Values)
             {
                 if (st.Presence.Contains(star.Uid) || premadeUids.Contains(star.Uid)) continue;
+                if (IsForeignHomeSector(star, st.Key)) continue;
 
                 bool inhabited = false;
                 PlanetData cand = null;
