@@ -48,16 +48,18 @@ namespace SRG.Galaxy.Generation
 
             foreach (var planet in star.Planets)
             {
-                RollStellarPhysics(planet, star, hzSizeMult);
+                RollStellarPhysics(planet, star);
                 CheckRaceConditions(planet);
             }
 
             CustomPropertyResolver.ResolveAndApplyProperties(star, star.CustomProperties, "Stars", _ctx.Config);
         }
 
-        private static void RollStellarPhysics(PlanetData planet, StarData star, float hzSizeMult)
+        private static void RollStellarPhysics(PlanetData planet, StarData star)
         {
-            float d = planet.OrbitRadius * hzSizeMult;
+            // OrbitRadius уже домножен на HZ_SizeMult выше (FinalizeStarProps). Повторное умножение
+            // смещало физику: у Giant планеты «отодвигались» ×12.5 (вечный лёд), у Dwarf — ×0.28 (пекло).
+            float d = planet.OrbitRadius;
             if (d < 0.001f) return;
 
             float lStar = Mathf.Pow(star.MassSolar, 1.267f) * star.RadiationMult;

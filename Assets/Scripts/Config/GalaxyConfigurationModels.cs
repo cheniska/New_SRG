@@ -246,6 +246,65 @@ namespace SRG.Config
         /// <summary>Целевой охват одной расы в режиме Expansion: round(StarsCount × Rnd(BaseFractionMin..Max) × 2 / RaceCount) ± Jitter.
         /// Множитель ×2 учитывает, что системы могут быть мультирасовыми.</summary>
         [JsonProperty("TargetSystemsPerRace")] public TargetSystemsPerRaceConfig TargetSystemsPerRace { get; set; }
+
+        /// <summary>
+        /// Роли рас в галактике: ключ — произвольное имя роли ("Major", "Hostile", "Invader", …),
+        /// значение — список рас и правила расселения. Позволяет балансировать не конкретные расы,
+        /// а группы («все основные расы получают равную долю систем»). Если задано — список рас
+        /// галактики = объединение рас всех ролей (поле <see cref="Races"/> можно не заполнять).
+        /// </summary>
+        [JsonProperty("RaceRoles")] public Dictionary<string, GalaxyRaceRoleConfig> RaceRoles { get; set; }
+
+        /// <summary>Все расы галактики: <see cref="Races"/> ∪ расы из <see cref="RaceRoles"/>. null — список не задан.</summary>
+        public HashSet<string> GetAllRaces()
+        {
+            HashSet<string> set = null;
+            if (Races != null && Races.Count > 0) set = new HashSet<string>(Races);
+            if (RaceRoles != null)
+                foreach (var role in RaceRoles.Values)
+                    if (role?.Races != null)
+                        foreach (var r in role.Races) (set ??= new HashSet<string>()).Add(r);
+            return set;
+        }
+
+        /// <summary>Роль, к которой относится раса (первая найденная), или null.</summary>
+        public string FindRaceRole(string raceKey, out GalaxyRaceRoleConfig role)
+        {
+            role = null;
+            if (RaceRoles == null || string.IsNullOrEmpty(raceKey)) return null;
+            foreach (var kv in RaceRoles)
+                if (kv.Value?.Races != null && kv.Value.Races.Contains(raceKey)) { role = kv.Value; return kv.Key; }
+            return null;
+        }
+    }
+
+    /// <summary>Правила расселения для группы рас (роли) в галактике.</summary>
+    public class GalaxyRaceRoleConfig
+    {
+        /// <summary>Ключи рас (из GalaxyConfig.Races), входящих в роль.</summary>
+        [JsonProperty("Races")] public List<string> Races { get; set; } = new();
+
+        /// <summary>Участвует ли роль в расселении (Expansion). Непланетарные расы не расселяются в любом случае.</summary>
+        [JsonProperty("Colonize")] public bool Colonize { get; set; } = true;
+
+        /// <summary>
+        /// Доля систем галактики, которую роль должна суммарно занять (0..1). Целевое число систем на расу:
+        /// round(StarsCount × SystemsShare × Overlap / RaceCount) ± Jitter — одинаковое для всех рас роли.
+        /// 0 — использовать старую формулу <see cref="GalaxyConfigData.TargetSystemsPerRace"/>.
+        /// </summary>
+        [JsonProperty("SystemsShare")] public float SystemsShare { get; set; } = 0f;
+
+        /// <summary>Средняя «мультирасовость» заселённой системы (сколько рас роли в среднем делят одну систему).</summary>
+        [JsonProperty("Overlap")] public float Overlap { get; set; } = 1.3f;
+
+        [JsonProperty("Jitter")] public int Jitter { get; set; } = 1;
+
+        /// <summary>
+        /// Гарантия ниши: если расе не хватает пригодных планет до цели, генератор превращает ближайшую
+        /// свободную планету подходящего размера с температурой в пределах Terraformable в «родной» мир расы
+        /// (параметры → Optimal/середина Acceptable). Выравнивает узкоспециализированные расы.
+        /// </summary>
+        [JsonProperty("GuaranteeNiche")] public bool GuaranteeNiche { get; set; } = true;
     }
 
     public class TargetSystemsPerRaceConfig
