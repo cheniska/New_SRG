@@ -243,7 +243,7 @@ namespace SRG.Dialog
                 if (star == null) return;
                 foreach (var uid in player.PartnerFollowerUids)
                 {
-                    var follower = FindInStar(star, uid);
+                    var follower = star?.FindShip(uid);
                     if (follower == null || follower.CurrentHull <= 0) continue;
                     follower.PartnerOrder = kind;
                     follower.PartnerOrderTargetUid = kind == PartnerOrderKind.FlyToMe ? null : uidArg;
@@ -286,7 +286,7 @@ namespace SRG.Dialog
             if (!string.IsNullOrEmpty(order))
             {
                 string brand = BrandOf(target);
-                // Реплик отказа нет ни у рейнджера, ни у робота — у них это «мне не до тебя».
+                // Реплик отказа нет ни у вольного пилота, ни у робота — у них это «мне не до тебя».
                 ctx.Data[ACK_KEY] = obey
                     ? $"{brand}.ComputerAgree{order}"
                     : (brand == "Pirate" ? $"Pirate.ComputerDisagree{order}" : $"{brand}.ComputerInFear");
@@ -342,7 +342,7 @@ namespace SRG.Dialog
                 DialogService.PickFromPool("Tranclucator.Options.Land")
                 ?? DialogTexts.Phrase("drone_land_target_any"), isVolatile: true);
 
-            // Имя рейнджера, который уже нанял цель («меня уже нанял рейнджер …» — <Partner>
+            // Имя вольного пилота, который уже нанял цель («меня уже нанял вольный пилот …» — <Partner>
             // в строках пула Partner.AlreadyHavePartner).
             //
             // Порядок поиска — по возрастанию цены: игрок → текущая звезда (партнёр обычно
@@ -418,7 +418,7 @@ namespace SRG.Dialog
                 int n = 0;
                 foreach (var uid in p.PartnerFollowerUids)
                 {
-                    var f = FindInStar(star, uid);
+                    var f = star?.FindShip(uid);
                     if (f != null && f.CurrentHull > 0) n++;
                 }
                 return n.ToString();
@@ -434,14 +434,6 @@ namespace SRG.Dialog
             if (cfg == null) return fallback;
             if (!cfg.PartnerableShipTypes.TryGetValue(target.ShipTypeId ?? "", out var t)) return fallback;
             return Mathf.RoundToInt(cfg.Global.BasePrice * t.PriceMultiplier * cfg.Global.MinFeeRatio);
-        }
-
-        private static ShipData FindInStar(StarData star, string uid)
-        {
-            if (star == null || string.IsNullOrEmpty(uid)) return null;
-            for (int i = 0; i < star.Ships.Count; i++)
-                if (star.Ships[i].Uid == uid) return star.Ships[i];
-            return null;
         }
     }
 }

@@ -97,7 +97,7 @@ protected static ShipData FindShip / FindAliveShip;
 - `OrderMoveTo(target)` — лететь до точки (порог `ArrivalThresholdSq=0.25`).
 - `OrderFollow(targetUid)` — следовать за кораблём, точка позади leader-а с jitter ±45° по UID-seed.
 - `OrderOrbit(center, radius, speed=15°)` — облёт точки.
-- `OrderLand(planetUid)` — двухфазная посадка SR2HD: фаза 1 (подлёт) → ShipVisualController ставит `LandingPhase=Fading` → фаза 2 (финализация в OrderLand) — `LandedPlanetUid` присвоен. Для NPC в чужой звезде (без визуала) fallback по `distSq <= R_land²`.
+- `OrderLand(planetUid)` — двухфазная посадка: фаза 1 (подлёт) → ShipVisualController ставит `LandingPhase=Fading` → фаза 2 (финализация в OrderLand) — `LandedPlanetUid` присвоен. Для NPC в чужой звезде (без визуала) fallback по `distSq <= R_land²`.
 - `OrderUndock` — улететь на 1.5 ед. в случайном направлении (одноразово).
 - `OrderHyperJump(targetStarUid)` — запросить прыжок через `HyperjumpController`, дальше фазы крутятся в `StarNextDay`.
 - `OrderAttack(targetUid)` — преследовать до `stopDist = max(sprite, targetSprite) * 1.5`, не зависать сверху. Считается выполненным когда цель в радиусе `ChaseRadius=8`.
@@ -119,7 +119,7 @@ protected static ShipData FindShip / FindAliveShip;
 public static void ApplyHomePlanetBonus(ShipData payer, ShipData beneficiary, StarData star);
 ```
 
-При успешном перемирии — всем военным кораблям в звезде, у которых `HomePlanetUid == beneficiary.HomePlanetUid`, ставится `ApplyAllyBonus(payer.Uid)`. Эмулирует SR2-механику «взятка одному — благодарность планеты».
+При успешном перемирии — всем военным кораблям в звезде, у которых `HomePlanetUid == beneficiary.HomePlanetUid`, ставится `ApplyAllyBonus(payer.Uid)`. Военные одной планеты держатся заодно: откупился от одного — смягчаются и остальные.
 
 ### `FactionDirective`
 
@@ -190,18 +190,19 @@ NpcController : ShipVisualController (RequireComponent)
 4. _currentActivity.Tick(ship, star, ctx)
 ```
 
-### `OrderFollow` — точка позади leader-а
+### `OrderFollow` — место в строю «клин»
 
-Стабильная (без дребезга) формула:
 ```
-refHeading = leader.CurrentHeading (или направление leader→self, если NaN)
-seed = ship.Uid.GetHashCode()
-jitterDeg = ((seed & 0x7FFFFFFF) % 91) - 45     # [-45..+45]
-angle = refHeading + π + jitterDeg * π/180
-target = leader.Position + (cos(angle), sin(angle)) * FollowDistance   # FollowDistance=1.5
+leaderHeading = leader.CurrentHeading (или направление self→leader, если NaN)
+hash = ship.Uid.GetHashCode()
+row  = 1 + hash % 3            # ряд 1..3 назад
+side = ±1 по биту hash         # левый/правый борт
+offset = normalize(back·(0.6 + 0.4·row) + flank·(0.5·row)) · (0.8 + 0.2·row)
+target = leader.Position + offset · FollowDistance
 ```
 
-Несколько followers не накладываются благодаря per-ship jitter; target стабилен (зависит только от leader-а и UID, не от позиции follower-а).
+Место зависит только от курса ведущего и UID ведомого, поэтому цель не дрожит между ходами,
+а несколько ведомых выстраиваются клином, не сходясь в одну точку.
 
 ### `OrderAttack` — STOP-distance
 
@@ -284,7 +285,7 @@ return Random.value < chance
     _done = true
 ```
 
-См. `Ship_Landing_Pipeline.txt` в `docs/` для деталей геометрии R_land/R_app.
+Геометрия R_land/R_app и точки прицеливания — `landing.md`.
 
 ---
 

@@ -29,7 +29,7 @@ namespace SRG.Galaxy.Politics
 
         /// <summary>Сторона (Owner) полностью потеряла все свои системы во всей галактике. Триггерится
         /// последним изменением контроля в её пользу. Слушается GalaxyNewsService — публикует
-        /// «глобальное поражение стороны» (аналог Globals.CoalitionDefeated из GalaxyNews.txt).</summary>
+        /// «глобальное поражение стороны».</summary>
         public static event Action<string> OnFactionDefeated;
 
         /// <summary>Эффективный владелец планеты сейчас. Если оккупирована — оккупант, иначе родной Owner.</summary>

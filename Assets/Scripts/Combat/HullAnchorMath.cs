@@ -2,6 +2,7 @@ using UnityEngine;
 using SRG.Config;
 using SRG.Equipment;
 using SRG.Galaxy;
+using SRG.Utils;
 
 namespace SRG.Combat
 {
@@ -46,12 +47,12 @@ namespace SRG.Combat
             if (k > 0)
             {
                 var d = path[k] - path[k - 1];
-                if (d.sqrMagnitude > 1e-6f) return Mathf.Atan2(d.y, d.x);
+                if (d.sqrMagnitude > 1e-6f) return Angles.Of(d);
             }
             if (k + 1 < path.Count)
             {
                 var d = path[k + 1] - path[k];
-                if (d.sqrMagnitude > 1e-6f) return Mathf.Atan2(d.y, d.x);
+                if (d.sqrMagnitude > 1e-6f) return Angles.Of(d);
             }
             return fallback;
         }

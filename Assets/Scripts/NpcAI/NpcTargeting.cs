@@ -45,7 +45,7 @@ namespace SRG.NpcAI
         // ── Поиск укрытий (используется fear-веткой AssessFear / ActionSeekShelter) ──
 
         /// <summary>Есть ли у корабля хоть одно рабочее оружие (по слотам корпуса).
-        /// «Безоружен» → hard-trigger fear (эквивалент SR2HD «все пушки сбиты»).</summary>
+        /// «Безоружен» → hard-trigger fear.</summary>
         public static bool HasWorkingWeapon(ShipData ship)
         {
             if (ship?.Equipment == null || ship.AllItems == null) return false;

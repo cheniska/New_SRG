@@ -17,7 +17,7 @@ namespace SRG.NpcAI
     {
         private static readonly BufferedFileLog _log = new(
             fileName: "factions_log.txt",
-            header:   "# Factions log —\n# Format: T<turn> HC <faction> <action> key=value ...\n# faction: Owner либо Owner|Race (для per-race ГШ доминаторов).",
+            header:   "# Factions log —\n# Format: T<turn> HC <faction> <action> key=value ...\n# faction: Owner либо Owner|Race (для per-race ГШ синтетов).",
             tag:      "HighCommandLog",
             flushThreshold: 50);
 

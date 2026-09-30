@@ -78,15 +78,7 @@ namespace SRG.Dialog
         {
             ctx.Data[REASON_KEY]  = reason;
             ctx.Data[VICTIM_KEY]  = victimUid ?? "";
-            ctx.Data[VICTIM_NAME] = FindShip(target.CurrentStar, victimUid)?.Name ?? "";
-        }
-
-        private static ShipData FindShip(StarData star, string uid)
-        {
-            if (star == null || string.IsNullOrEmpty(uid)) return null;
-            for (int i = 0; i < star.Ships.Count; i++)
-                if (star.Ships[i].Uid == uid) return star.Ships[i];
-            return null;
+            ctx.Data[VICTIM_NAME] = target.CurrentStar?.FindShip(victimUid)?.Name ?? "";
         }
     }
 }

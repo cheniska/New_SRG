@@ -17,7 +17,7 @@ namespace SRG.Equipment
     ///
     /// Терминология:
     /// <list type="bullet">
-    /// <item><b>Стек</b> (<see cref="ItemStack"/>) — стакабельный предмет: товары и минералы (в т.ч. ноды).
+    /// <item><b>Стек</b> (<see cref="ItemStack"/>) — стакабельный предмет: товары и минералы (в т.ч. нейроядра).
     ///   Не имеют уникального Uid, агрегируются по <see cref="ItemStack.ItemId"/>.
     ///   <see cref="ItemStack.IsGoods"/> отличает «торговый товар» от useless-стека.</item>
     /// <item><b>Экземпляр</b> (<see cref="ItemInstance"/>) — уникальный предмет: оборудование, микромодули,
@@ -27,13 +27,13 @@ namespace SRG.Equipment
     public static class ItemGrantService
     {
         // ═══════════════════════════════════════════════════════════════════════
-        //  СТЕКИ (стакабельные: товары/минералы/ноды)
+        //  СТЕКИ (стакабельные: товары/минералы/нейроядра)
         // ═══════════════════════════════════════════════════════════════════════
 
         /// <summary>
         /// Собрать стакабельный стек. Общий билдер для всего стакабельного: товары
-        /// (Category="Goods", IsGoods=true), минералы и ноды (Category="Mineral").
-        /// <paramref name="isGoods"/> определяет торговую пригодность (ноды — false).
+        /// (Category="Goods", IsGoods=true), минералы и нейроядра (Category="Mineral").
+        /// <paramref name="isGoods"/> определяет торговую пригодность (нейроядра — false).
         /// </summary>
         public static ItemStack BuildStack(string itemId, string category, string name,
                                            int unitPrice, int amount, bool isGoods) =>
@@ -50,7 +50,7 @@ namespace SRG.Equipment
         /// <summary>
         /// Автоматически создать стек по id: ищет предмет в <see cref="ItemsConfig.Items"/>.
         /// Категория стека выбирается по <see cref="ItemConfig.Kind"/>: Goods → грузовой отсек,
-        /// Useless (Ноды/находки) → отдельная категория "Mineral". Возвращает null, если id не найден
+        /// Useless (Нейроядра/находки) → отдельная категория "Mineral". Возвращает null, если id не найден
         /// или предмет не стакается. Для магазинных/торговых сценариев с рантайм-ценой используйте
         /// <see cref="BuildStack"/>.
         /// </summary>

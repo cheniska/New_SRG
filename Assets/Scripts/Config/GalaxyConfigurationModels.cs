@@ -52,7 +52,7 @@ namespace SRG.Config
     }
 
     // ──────────────────────────────────────────────
-    // Рейтинги кораблей (рейнджерский, пиратский, торговый, …)
+    // Рейтинги кораблей (пилотский, пиратский, торговый, …)
     // ──────────────────────────────────────────────
 
     /// <summary>
@@ -648,7 +648,7 @@ namespace SRG.Config
 
         /// <summary>Флаг «этот тип не садится ради заправки/ремонта/апгрейда».
         /// true — корабль игнорирует триггеры LandResupply (fuel/hull/money) и остаётся в бою.
-        /// Проектно для доминаторов, которые «не заходят на планеты».
+        /// Проектно для синтетов, которые «не заходят на планеты».
         /// Смертельно опасные ситуации (пустой бак → застревание) конфигуратор должен закладывать сам.</summary>
         [JsonProperty("SkipsResupplyLandings")] public bool SkipsResupplyLandings { get; set; }
 
@@ -692,12 +692,12 @@ namespace SRG.Config
         [JsonProperty("AvailableShipTypes")] public List<string> AvailableShipTypes { get; set; } = new();
 
         /// <summary>Модификатор размера военного флота расы (-1..+1). Прибавляется к target воинов на планетах
-        /// этой расы. Применяется ТОЛЬКО к Warrior — гражданские/линкоры/доминаторы используют свои таблицы.</summary>
+        /// этой расы. Применяется ТОЛЬКО к Warrior — гражданские/линкоры/синтеты используют свои таблицы.</summary>
         [JsonProperty("FleetSizeModifier")] public int FleetSizeModifier { get; set; } = 0;
 
         /// <summary>Признак, что раса использует таблицу подтипов (SubtypeTables) для выбора конкретного
-        /// типа корабля при спавне. true для рас доминаторов (RaceDominators1..3) — у них одна точка спавна
-        /// «доминатор», конкретный Dom1..Dom6 выбирается из таблицы по ступени доминации.
+        /// типа корабля при спавне. true для рас синтетов (RaceDominators1..3) — у них одна точка спавна
+        /// «синтет», конкретный Dom1..Dom6 выбирается из таблицы по ступени доминации.
         /// false (по умолчанию) — спавнится тип, указанный в политике напрямую (нет выбора подтипа).</summary>
         [JsonProperty("UseShipTypeTable")] public bool UseShipTypeTable { get; set; } = false;
 
@@ -877,7 +877,7 @@ namespace SRG.Config
     ///   <list type="bullet">
     ///     <item><see cref="MicroModules"/> — встраиваемые (embed).</item>
     ///     <item><see cref="Goods"/> — торговые товары (стекаются, участвуют в TraderAI).</item>
-    ///     <item><see cref="Useless"/> — прочие предметы без спец-семантики (Ноды, квестовые находки).
+    ///     <item><see cref="Useless"/> — прочие предметы без спец-семантики (Нейроядра, квестовые находки).
     ///           Стакабельность задаётся флагом <see cref="ItemConfig.Stackable"/>.</item>
     ///   </list>
     /// </summary>
@@ -898,7 +898,7 @@ namespace SRG.Config
         public const string TowingRig    = "TowingRig";
         public const string MicroModules = "MicroModules";
         public const string Goods        = "Goods";
-        /// <summary>Прочие предметы: Ноды, квестовые находки, статуэтки. Не оборудование,
+        /// <summary>Прочие предметы: Нейроядра, квестовые находки, статуэтки. Не оборудование,
         /// не встраиваются, не участвуют в торговом рейсе. Стакабельность — через
         /// <see cref="ItemConfig.Stackable"/>.</summary>
         public const string Useless      = "Useless";
@@ -934,7 +934,7 @@ namespace SRG.Config
         [JsonProperty("EquipmentTemplates")] public JObject EquipmentTemplates { get; set; }
 
         /// <summary>Балансовая конфигурация улучшения оборудования на научной базе (SB).
-        /// См. docs/SB_Equipment_Improvement.txt / docs/SB_Improvement_Formulas.txt.</summary>
+        /// См. docs/modules/equipment_improvement.md.</summary>
         [JsonProperty("Improvement")] public ImprovementConfig Improvement { get; set; } = new();
 
         /// <summary>Уровни редкости встраиваемых (T1/T2/T3/…).</summary>
@@ -1341,10 +1341,10 @@ namespace SRG.Config
         [JsonProperty("Activatable")] public bool Activatable { get; set; } = false;
         /// <summary>Экземпляр разрешено улучшать на научной базе (SB). По умолчанию true для оборудования
         /// (задаётся в <c>Defaults["IsImprovable"]</c> шаблона категории). Сбрасывается в false после
-        /// первого апгрейда или встраивания микромодуля. См. docs/SB_Equipment_Improvement.txt.</summary>
+        /// первого апгрейда или встраивания микромодуля. См. docs/modules/equipment_improvement.md.</summary>
         [JsonProperty("IsImprovable")] public bool IsImprovable { get; set; } = true;
-        /// <summary>При улучшении требуется расходовать Ноды (стеки Node в трюме или нод-счёт корабля).
-        /// Обычно ставится для доминаторского/трофейного оборудования.</summary>
+        /// <summary>При улучшении требуется расходовать Нейроядра (стеки Node в трюме или нейроядер-счёт корабля).
+        /// Обычно ставится для синтетского/трофейного оборудования.</summary>
         [JsonProperty("RequiresNodesToImprove")] public bool RequiresNodesToImprove { get; set; } = false;
         [JsonProperty("Manufacturer")] public ManufacturerConfig Manufacturer { get; set; } = new();
         [JsonProperty("WeaponPorts")] public List<float[]> WeaponPorts { get; set; }
@@ -1363,18 +1363,18 @@ namespace SRG.Config
         /// <summary>Товар нелегальный (Kind=Goods).</summary>
         [JsonProperty("Illegal")] public bool Illegal { get; set; }
         /// <summary>Предмет объединяется в стек. Задаётся явно в JSON: обычно true для Goods
-        /// и стакабельных Useless (Ноды); false для оборудования, микромодулей и квестовых уникумов.</summary>
+        /// и стакабельных Useless (Нейроядра); false для оборудования, микромодулей и квестовых уникумов.</summary>
         [JsonProperty("Stackable")] public bool Stackable { get; set; } = false;
-        /// <summary>Минимальное число единиц в дропе (Ноды/астероидные находки). 1 если не задан.</summary>
+        /// <summary>Минимальное число единиц в дропе (Нейроядра/астероидные находки). 1 если не задан.</summary>
         [JsonProperty("DropWeightMin")] public int DropWeightMin { get; set; } = 1;
-        /// <summary>Максимальное число единиц в дропе (Ноды/астероидные находки). 50 если не задан.</summary>
+        /// <summary>Максимальное число единиц в дропе (Нейроядра/астероидные находки). 50 если не задан.</summary>
         [JsonProperty("DropWeightMax")] public int DropWeightMax { get; set; } = 50;
         /// <summary>Базовый путь к спрайтшитам стакабельной находки в космосе (легаси Tier_N). Для
         /// современных стеков используется <see cref="GraphicSteps"/>.</summary>
         [JsonProperty("SpritePath")] public string SpritePath { get; set; }
         /// <summary>Ступени графики стакабельных предметов по количеству — приоритет над Icon/SpritePath.</summary>
         [JsonProperty("GraphicSteps")] public List<StackGraphicStep> GraphicSteps { get; set; }
-        /// <summary>Правила появления встраиваемого предмета в мире (дроп, магазины, центр рейнджеров).</summary>
+        /// <summary>Правила появления встраиваемого предмета в мире (дроп, магазины, центр вольных пилотов).</summary>
         [JsonProperty("Sources")] public ItemSources Sources { get; set; }
         /// <summary>Графика контейнера-выброса (переопределяет <see cref="CategoryCommonConfig.ContainerGraphic"/>).</summary>
         [JsonProperty("ContainerGraphic")] public string ContainerGraphic { get; set; }
@@ -1413,49 +1413,50 @@ namespace SRG.Config
         [JsonProperty("GraphicPath")]          public string GraphicPath { get; set; }
         [JsonProperty("Scale")]                public float  Scale       { get; set; } = 0.07f;
         [JsonProperty("ReturnsOnTargetDeath")] public bool   ReturnsOnTargetDeath { get; set; } = false;
-        /// <summary>Сколько ракет вылетает за один выстрел (залп). По SR2-формуле:
-        /// угол отклонения i-й ракеты = 60° / (N+3) × ⌈i/2⌉ с чередованием знака.</summary>
+        /// <summary>Сколько ракет вылетает за один выстрел (залп).</summary>
         [JsonProperty("SalvoCount")]           public int    SalvoCount  { get; set; } = 1;
         /// <summary>Максимальная угловая скорость поворота ракеты в градусах/ход.
-        /// Используется в кинематическом шаге: каждый сабтёрн ракета может довернуть
-        /// до TurnDeg/SubTurnsPerTurn градусов в сторону цели (как у кораблей).</summary>
+        /// Каждый сабтёрн ракета может довернуть до TurnDeg/SubTurnsPerTurn градусов.</summary>
         [JsonProperty("TurnDeg")]              public float  TurnDeg     { get; set; } = 720f;
 
-        // ── Дополнения по SR2-модели (Missile_Trajectory.txt §§2.1, 3.A–D, 4) ──
+        // ── Залп ──
 
-        /// <summary>SR2-смещение точки спавна вдоль угла, чтобы ракеты залпа не пересекались.
-        /// В наших единицах ≈ 0.08 (соответствует 8 у SR2). 0 = выключено.</summary>
-        [JsonProperty("SpawnOffset")]          public float  SpawnOffset { get; set; } = 0.08f;
+        /// <summary>Полная ширина веера залпа в градусах: крайние ракеты уходят на ±SpreadDeg/2.</summary>
+        [JsonProperty("SpreadDeg")]            public float  SpreadDeg   { get; set; } = 24f;
+        /// <summary>Расстояние между соседними направляющими поперёк корпуса (мировые единицы).</summary>
+        [JsonProperty("RailSpacing")]          public float  RailSpacing { get; set; } = 0.06f;
+        /// <summary>Вынос точки старта вперёд по курсу стрелка (мировые единицы).</summary>
+        [JsonProperty("NoseOffset")]           public float  NoseOffset  { get; set; } = 0.05f;
 
-        /// <summary>Доля скорости стрелка, наследуемой как «инерция» на старте.
-        /// Σ скорости стрелка × InertiaFactor + Speed = стартовая скорость ракеты.
-        /// 0 = без инерции (обратно совместимо).</summary>
+        // ── Двигатель ──
+
+        /// <summary>Доля скорости стрелка, которую ракета наследует на старте. 0 = без инерции.</summary>
         [JsonProperty("InertiaFactor")]        public float  InertiaFactor { get; set; } = 0.5f;
 
-        /// <summary>Множитель скорости только на launch-фазе (день запуска). Действует на step
-        /// в LaunchPhase, чтобы ракета визуально «вылетала» из ствола сразу, не зависая на
-        /// одной скорости со стрелком. После сброса LaunchPhase используется обычный Speed/SpeedMax.
-        /// 1.0 = без буста (обратно совместимо).</summary>
+        /// <summary>Множитель шага на разгонном участке (ход запуска), чтобы ракета сразу
+        /// отрывалась от стрелка. 1.0 = без буста.</summary>
         [JsonProperty("LaunchSpeedMultiplier")] public float  LaunchSpeedMultiplier { get; set; } = 2.5f;
 
-        /// <summary>Если &gt; 0 — стартовая скорость ниже Speed, потом разгоняется
-        /// до Speed со скоростью SpeedRampPerTurn единиц/ход. 0 = мгновенный разгон.</summary>
+        /// <summary>Если &gt; 0 — ракета стартует с половины Speed и разгоняется до Speed
+        /// на SpeedRampPerTurn единиц/ход. 0 = мгновенный разгон.</summary>
         [JsonProperty("SpeedRampPerTurn")]     public float  SpeedRampPerTurn { get; set; } = 0f;
 
-        /// <summary>SR2 §3.B/§9.4: при отдалении от цели ракета входит в фазу «петли
-        /// промаха» — летит в зеркальном направлении до 0.05·Lifedays. Параметр
-        /// отключает механику, если в конкретной ракете это нежелательно.</summary>
-        [JsonProperty("MissJitter")]           public bool   MissJitter { get; set; } = true;
+        // ── Наведение ──
 
-        /// <summary>SR2 §3.D: ракета умирает раньше Lifedays, если для долёта до цели
-        /// нужно более MaxRangeFactor × оставшегося срока. 0 = выключено.</summary>
-        [JsonProperty("MaxRangeFactor")]       public float  MaxRangeFactor { get; set; } = 2f;
+        /// <summary>При проскоке цели ракета сначала отходит на дистанцию разворота и только потом
+        /// разворачивается (петля), а не кружит вокруг цели.</summary>
+        [JsonProperty("OvershootExtend")]      public bool   OvershootExtend { get; set; } = true;
 
-        /// <summary>SR2 §4: автозамена цели (homing class 5). После потери цели ракета
-        /// ищет ближайшего hostile в радиусе ReacquireRadius. Если не нашла — наводится
-        /// на стрелка. По умолчанию выключено: цель остаётся фиксированной.</summary>
+        /// <summary>Сколько ходов подряд цель может отдаляться от ракеты, прежде чем захват
+        /// будет потерян и ракета самоликвидируется. 0 = не терять захват.</summary>
+        [JsonProperty("MaxRecedingTurns")]     public int    MaxRecedingTurns { get; set; } = 2;
+
+        /// <summary>Головка самонаведения: после потери цели ракета ищет нового врага стрелка
+        /// в радиусе ReacquireRadius и в конусе SeekerConeDeg перед носом.
+        /// По умолчанию выключено: цель остаётся фиксированной.</summary>
         [JsonProperty("AutoReacquire")]        public bool   AutoReacquire { get; set; } = false;
         [JsonProperty("ReacquireRadius")]      public float  ReacquireRadius { get; set; } = 5f;
+        [JsonProperty("SeekerConeDeg")]        public float  SeekerConeDeg { get; set; } = 120f;
     }
 
     /// <summary>

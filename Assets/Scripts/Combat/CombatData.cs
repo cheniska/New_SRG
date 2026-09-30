@@ -142,7 +142,7 @@ namespace SRG.Combat
         /// <summary>Эффекты, накладываемые при попадании.</summary>
         public List<WeaponEffect> Effects = new List<WeaponEffect>();
 
-        /// <summary>Флаг: пробить броню и щит полностью (аналог SR2 Undefendable). Ставится
+        /// <summary>Флаг: пробить броню и щит полностью . Ставится
         /// микромодулем через <c>WeaponFlags: ["IgnoreArmorAndShield"]</c>.</summary>
         public bool IgnoreArmorAndShield;
 
@@ -241,41 +241,39 @@ namespace SRG.Combat
         public DamageType DamageType;
         public List<WeaponEffect> Effects = new List<WeaponEffect>();
 
-        // ── SR2-расширения (Missile_Trajectory.txt §§3.A–D, 4) ────────────────────
+        // ── Двигатель и наведение ─────────────────────────────────────────────
 
-        /// <summary>Потолок скорости — куда ракета разгоняется при SpeedRampPerTurn &gt; 0.
+        /// <summary>Крейсерская скорость — куда ракета разгоняется при SpeedRampPerTurn &gt; 0.
         /// Если SpeedRampPerTurn = 0, Speed = SpeedMax с первого сабтёрна.</summary>
         public float  SpeedMax;
         public float  SpeedRampPerTurn;
 
-        /// <summary>Шаг полёта в launch-фазе (день запуска). Обычно = Speed × LaunchSpeedMultiplier,
+        /// <summary>Шаг полёта на разгонном участке (ход запуска). Обычно = Speed × LaunchSpeedMultiplier,
         /// чтобы ракета сразу же отрывалась от стрелка. Используется только пока LaunchPhase=true.</summary>
         public float  LaunchSpeed;
 
-        /// <summary>SR2 §3.D: ракета умирает раньше Lifedays, если требуемое
-        /// время долёта &gt; MaxRangeFactor × оставшийся срок. 0 = выключено.</summary>
-        public float  MaxRangeFactor;
+        /// <summary>Разрешён «вынос петли» при проскоке цели (см. MissileSystem.GuidanceHeading).</summary>
+        public bool   OvershootExtend;
 
-        /// <summary>SR2 §4: автозамена цели после age &gt;= SubTurnsPerTurn (после первого
-        /// хода жизни). Только для homing-классов.</summary>
+        /// <summary>Сколько ходов подряд цель может отдаляться, прежде чем захват будет потерян.
+        /// 0 = не терять захват.</summary>
+        public int    MaxRecedingTurns;
+        public int    RecedingTurns;
+
+        /// <summary>Дистанция до цели на начало прошлого хода; −1 — ещё не измерялась.</summary>
+        public float  LastTargetDist = -1f;
+
+        /// <summary>Позиция цели на начало прошлого плана — для оценки её скорости (упреждение).</summary>
+        public UnityEngine.Vector2 LastTargetPos;
+        public bool   HasTargetFix;
+
+        /// <summary>Головка самонаведения: перенацеливание после потери цели в радиусе
+        /// ReacquireRadius и в конусе SeekerConeRad (полный угол, радианы) перед носом.</summary>
         public bool   AutoReacquire;
         public float  ReacquireRadius;
+        public float  SeekerConeRad;
 
-        /// <summary>SR2 §3.B: счётчик «петли промаха». &gt; 0 — летим в зеркальном
-        /// направлении эти сабтёрны; &lt; 0 — jitter подавлен (после расхода); 0 — нет jitter,
-        /// можно запустить при первом отдалении.</summary>
-        public bool   MissJitterEnabled;
-        public int    MissJitterCnt;
-
-        /// <summary>SR2 §3.B: предыдущий квадрат расстояния до цели — для детекции
-        /// «начала отдаления». −1 = не инициализирован (бесконечно далеко).</summary>
-        public float  LastDistSq = -1f;
-
-        /// <summary>SR2 §4: для AutoReacquire — куда «нельзя» снова навестись. Это та цель,
-        /// которую мы потеряли (умерла или ушла). Без этой защиты ракета крутится между двух врагов.</summary>
-        public string PrevTargetUid;
-
-        /// <summary>Общий возраст ракеты в сабтёрнах (нужен для AutoReacquire и force-expire).</summary>
+        /// <summary>Общий возраст ракеты в сабтёрнах.</summary>
         public int    AgeSubTurns;
     }
 }

@@ -552,7 +552,7 @@ namespace SRG.Core
                 if (tangent.sqrMagnitude > 1e-8f)
                 {
                     // Спрайт нарисован "носом вверх" (как корабли) — компенсируем -90°.
-                    float angle = Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg - 90f;
+                    float angle = Angles.Of(tangent) * Mathf.Rad2Deg - 90f;
                     t.localRotation = Quaternion.Euler(0f, 0f, angle);
                 }
             }

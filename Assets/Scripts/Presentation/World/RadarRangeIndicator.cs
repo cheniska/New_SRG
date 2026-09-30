@@ -97,7 +97,7 @@ namespace SRG.Presentation.World
             {
                 float angleDeg = i * DotAngularStep;
                 float angleRad = angleDeg * Mathf.Deg2Rad;
-                Vector2 pos = center + new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * radius;
+                Vector2 pos = center + Angles.Dir(angleRad) * radius;
 
                 var sr = _dots[i];
                 sr.transform.position = new Vector3(pos.x, pos.y, 0f);

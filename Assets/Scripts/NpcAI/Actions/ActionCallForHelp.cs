@@ -13,7 +13,7 @@ namespace SRG.NpcAI.Actions
     /// Кто зовёт кого (по CombatClass):
     ///   Civilian  → Civilian + Mercenary + Military (все, кроме пиратов).
     ///   Pirate    → только Pirate.
-    ///   Mercenary → Mercenary + Military (рейнджеры зовут «власть»).
+    ///   Mercenary → Mercenary + Military (вольные пилоты зовут «власть»).
     ///   Military  → не зовёт (у них своя доктрина, атакуют сами).
     ///
     /// Дополнительно: не зовёт своего атакующего (само собой), не зовёт мёртвых/пристыкованных,

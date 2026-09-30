@@ -12,7 +12,7 @@ namespace SRG.Ships.Services
 {
     /// <summary>
     /// Убегающий с грузом корабль сбрасывает часть трюма «в пользу» преследователя, чтобы тот отстал.
-    /// Соответствует ветке <c>DropGoodsInFear</c> из ShipTalks.
+    /// Реплика берётся из пула <c>DropGoodsInFear</c> (TextsConfig).
     ///
     /// Условия срабатывания на ходу:
     ///   • у корабля <see cref="NpcBrain.InFear"/> = true (единый fear-флаг, унифицированный

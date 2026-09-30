@@ -249,7 +249,7 @@ namespace SRG.Dialog.PlanetGreetings
             return playerIdx >= needIdx;
         }
 
-        // ── Плоские SR2-совместимые ключи: <Side>InCurStar, <Ship>InCurStar,
+        // ── Плоские ключи: <Side>InCurStar, <Ship>InCurStar,
         //    CurStarInBattle<Side>, CurPlanetOccupiedBy<Side>. ─────────
         internal static bool MatchesExtrasForCurrent(GreetingRule r, PlanetData planet, StarData star, GalaxyData galaxy)
         {
@@ -586,7 +586,7 @@ namespace SRG.Dialog.PlanetGreetings
 
         public static string RelationLevelName(RelationLevel lvl) => lvl switch
         {
-            RelationLevel.Hostile => "Enemy",   // SR2-совместимо; "Hostile" тоже принимается через ContainsRelation.
+            RelationLevel.Hostile => "Enemy",   // "Hostile" тоже принимается через ContainsRelation.
             RelationLevel.Bad     => "Bad",
             RelationLevel.Normal  => "Normal",
             RelationLevel.Good    => "Good",

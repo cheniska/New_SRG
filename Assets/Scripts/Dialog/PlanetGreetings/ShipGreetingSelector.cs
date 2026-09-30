@@ -496,7 +496,7 @@ namespace SRG.Dialog.PlanetGreetings
             Vector2 targetPos;
             if (!string.IsNullOrEmpty(ship.NextPlanetUid) && star != null)
             {
-                var planet = star.Planets.Find(p => p.Uid == ship.NextPlanetUid);
+                var planet = star.FindPlanet(ship.NextPlanetUid);
                 targetPos = planet != null ? PlanetPos(planet) : ship.TargetPosition;
             }
             else targetPos = ship.TargetPosition;
@@ -575,7 +575,7 @@ namespace SRG.Dialog.PlanetGreetings
                 string level = player != null
                     ? PlanetGreetingSelector.RelationLevelName(Relations.GetLevelToPlayer(target))
                     : "Normal";
-                // "War" синоним враждебных отношений (SR2-совместимо).
+                // "War" синоним враждебных отношений.
                 if (!PlanetGreetingSelector.ContainsRelation(r.ToShipRelations, level)
                     && !(ContainsCI(r.ToShipRelations, "War")
                          && string.Equals(level, "Enemy", System.StringComparison.OrdinalIgnoreCase)))

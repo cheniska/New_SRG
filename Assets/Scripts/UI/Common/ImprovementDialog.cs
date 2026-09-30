@@ -15,7 +15,7 @@ namespace SRG.UI.Common
     /// <see cref="Show(ShipData)"/> (или из диалогового action-а "OpenImprovement").
     /// Показывает три секции: установленное на игроке, трюм, оборудование партнёров.
     /// Клик по строке предмета переключает панель на выбор тира/атрибута; кнопка «Улучшить»
-    /// вызывает <see cref="ImprovementService.Apply"/>. См. docs/SB_Equipment_Improvement.txt.
+    /// вызывает <see cref="ImprovementService.Apply"/>. См. docs/modules/equipment_improvement.md.
     /// </summary>
     public class ImprovementDialog : MonoBehaviour
     {
@@ -77,7 +77,7 @@ namespace SRG.UI.Common
         {
             _titleText.text = "Научная база — улучшение оборудования";
             _statusText.text = _player != null
-                ? $"Кредиты: {_player.Money:N0}   Ноды: {NodesAvailable(_player)}"
+                ? $"Кредиты: {_player.Money:N0}   Нейроядра: {NodesAvailable(_player)}"
                 : "";
             ClearList();
 
@@ -114,12 +114,12 @@ namespace SRG.UI.Common
             ClearList();
 
             AddLabelRow("Стандартный апгрейд (Min / Avg / Max):");
-            foreach (var kv in cfg.Tiers)
+            foreach (var kv in cfg.CostShare)
             {
                 string tierKey = kv.Key;
                 var q = ImprovementService.GetQuote(el.Item, tierKey, ImprovementService.Mode.Standard, cfg);
                 string btnLbl = q.Ok
-                    ? $"{tierKey}: {q.Money} кред." + (q.NeedsNodes ? $", {q.Nodes} нод" : "")
+                    ? $"{tierKey}: {q.Money} кред." + (q.NeedsNodes ? $", {q.Nodes} нейроядер" : "")
                     : $"{tierKey}: {q.Reason}";
                 bool enabled = q.Ok && _player.Money >= q.Money &&
                                (!q.NeedsNodes || NodesAvailable(_player) >= q.Nodes);
@@ -129,7 +129,7 @@ namespace SRG.UI.Common
             AddLabelRow("Продвинутый апгрейд (одна характеристика, включая массу/прочность):");
             var qa = ImprovementService.GetQuote(el.Item, cfg.AdvancedBaseTier, ImprovementService.Mode.Advanced, cfg);
             string alabel = qa.Ok
-                ? $"Продвинутое: {qa.Money} кред." + (qa.NeedsNodes ? $", {qa.Nodes} нод" : "")
+                ? $"Продвинутое: {qa.Money} кред." + (qa.NeedsNodes ? $", {qa.Nodes} нейроядер" : "")
                 : $"Продвинутое: {qa.Reason}";
             bool aenabled = qa.Ok && _player.Money >= qa.Money &&
                             (!qa.NeedsNodes || NodesAvailable(_player) >= qa.Nodes);

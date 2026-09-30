@@ -94,7 +94,7 @@ namespace SRG.NpcAI.Actions
 
         private bool TickLanded(ShipData ship, StarData star, GalaxyGenerationContext ctx)
         {
-            var planet = FindPlanetInStar(star, ship.LandedPlanetUid ?? _targetPlanetUid);
+            var planet = star?.FindPlanet(ship.LandedPlanetUid ?? _targetPlanetUid);
             if (planet == null) { IsCompleted = true; return true; }
             if (!_departOnly) RunLandedPipeline(ship, planet, ctx);
             _phase = Phase.Depart;
@@ -247,11 +247,5 @@ namespace SRG.NpcAI.Actions
             return best;
         }
 
-        private static PlanetData FindPlanetInStar(StarData star, string uid)
-        {
-            if (star?.Planets == null || string.IsNullOrEmpty(uid)) return null;
-            foreach (var p in star.Planets) if (p.Uid == uid) return p;
-            return null;
-        }
     }
 }

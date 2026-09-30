@@ -113,7 +113,7 @@ namespace SRG.Equipment
         {
             if (ship == null || string.IsNullOrEmpty(ship.LandingPlanetUid)) return false;
             var star = GalaxyManager.Instance?.CurrentStar;
-            var planet = star?.Planets?.Find(p => p.Uid == ship.LandingPlanetUid);
+            var planet = star?.FindPlanet(ship.LandingPlanetUid);
             if (planet == null) return false;
 
             float speedPerTurn = SRUnits.ToWorld(ship._turnCachedSpeed >= 0f ? ship._turnCachedSpeed : ship.ActualSpeed);

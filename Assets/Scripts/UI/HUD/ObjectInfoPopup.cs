@@ -742,7 +742,7 @@ namespace SRG.UI.HUD
                 GUILayout.Label($"Посадка: {ship.LandingPhase}   Landing={ship.LandingPlanetUid ?? "—"}   Landed={ship.LandedPlanetUid ?? "—"}");
             if (!string.IsNullOrEmpty(ship.LandedOnShipUid))
             {
-                var carrier = ship.CurrentStar?.Ships?.Find(s => s.Uid == ship.LandedOnShipUid);
+                var carrier = ship.CurrentStar?.FindShip(ship.LandedOnShipUid);
                 GUILayout.Label($"Стыковка: на борту {carrier?.Name ?? SpriteUtility.ShortId(ship.LandedOnShipUid)}");
             }
         }

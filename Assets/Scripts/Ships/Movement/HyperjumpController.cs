@@ -153,11 +153,11 @@ namespace SRG.Ships.Movement
         /// </summary>
         private static Vector2 ApplyEdgeSpread(Vector2 dirOutward, float baseRadius, out float outwardAngleRad)
         {
-            float baseAngle = Mathf.Atan2(dirOutward.y, dirOutward.x);
+            float baseAngle = Angles.Of(dirOutward);
             float angleOffset = UnityEngine.Random.Range(-JumpEdgeArcSpreadDeg, JumpEdgeArcSpreadDeg) * Mathf.Deg2Rad;
             float radiusMul = 1f + UnityEngine.Random.Range(-JumpEdgeRadialSpread, JumpEdgeRadialSpread);
             outwardAngleRad = baseAngle + angleOffset;
-            Vector2 dir = new Vector2(Mathf.Cos(outwardAngleRad), Mathf.Sin(outwardAngleRad));
+            Vector2 dir = Angles.Dir(outwardAngleRad);
             return dir * baseRadius * radiusMul;
         }
 
@@ -239,7 +239,7 @@ namespace SRG.Ships.Movement
             // Курс наружу — в направлении из позиции корабля к червоточине (нужен для визуала входа).
             Vector2 dirIn = wormhole.Position - ship.Position;
             if (dirIn.sqrMagnitude < 0.0001f) dirIn = Vector2.right;
-            ship.HyperjumpHeading = Mathf.Atan2(dirIn.y, dirIn.x);
+            ship.HyperjumpHeading = Angles.Of(dirIn);
 
             // Точка выхода: приоритет — позиция парной червоточины (спавн создаёт её сразу
             // рядом с источником). Fallback — FixedTargetPosition, а если и её нет — случайная
@@ -267,7 +267,7 @@ namespace SRG.Ships.Movement
             // визуально выехал вглубь). Если выход строго в центре — берём arbitrary right.
             Vector2 toCenter = -arrivalPos;
             ship.HyperjumpArrivalHeading = toCenter.sqrMagnitude > 0.0001f
-                ? Mathf.Atan2(toCenter.y, toCenter.x)
+                ? Angles.Of(toCenter)
                 : 0f;
             ship.HyperjumpArrivalEdge = arrivalPos;
 
@@ -359,7 +359,7 @@ namespace SRG.Ships.Movement
                     }
                     else
                     {
-                        Vector2 dir = new Vector2(Mathf.Cos(ship.HyperjumpHeading), Mathf.Sin(ship.HyperjumpHeading));
+                        Vector2 dir = Angles.Dir(ship.HyperjumpHeading);
                         destination = ship.HyperjumpEdge + dir * HyperEnterSlideDistance;
                     }
                     ship.TargetPosition = destination;
@@ -401,7 +401,7 @@ namespace SRG.Ships.Movement
                     {
                         // Цель не задана — небольшое скольжение вглубь системы, чтобы корабль
                         // визуально выехал из портала (после этого ИИ возьмётся на следующем ходу).
-                        Vector2 dir = new Vector2(Mathf.Cos(ship.HyperjumpHeading), Mathf.Sin(ship.HyperjumpHeading));
+                        Vector2 dir = Angles.Dir(ship.HyperjumpHeading);
                         target = ship.HyperjumpArrivalEdge + dir * Mathf.Max(ship.SpriteWorldSize, 1f);
                         ship.TargetPosition = target;
                     }

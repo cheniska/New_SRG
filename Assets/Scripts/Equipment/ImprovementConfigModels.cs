@@ -4,38 +4,41 @@ using Newtonsoft.Json;
 namespace SRG.Equipment
 {
     /// <summary>
-    /// Балансовая конфигурация улучшения оборудования на научной базе (SB).
-    /// Живёт в <c>ItemsConfig.Improvement</c>. Полный разбор источника —
-    /// docs/SB_Equipment_Improvement.txt и docs/SB_Improvement_Formulas.txt.
+    /// Балансовая конфигурация улучшения оборудования на научной базе.
+    /// Живёт в <c>ItemsConfig.Improvement</c>. Дизайн — docs/modules/equipment_improvement.md.
     ///
-    /// Общая формула цены: <c>money = round10(item.Weight × Tiers[tier])</c>.
-    /// Для продвинутого улучшения — то же × <see cref="AdvancedCostMultiplier"/>.
-    /// Ноды (если <c>ItemInstance.RequiresNodesToImprove</c>): <c>nodes = round(money × NodeCostRate)</c>.
+    /// Цена: <c>money = round10(item.Price × CostShare[tier])</c>; продвинутое улучшение —
+    /// то же от <see cref="AdvancedBaseTier"/> × <see cref="AdvancedCostMultiplier"/>.
+    /// Нейроядра (если <c>ItemInstance.RequiresNodesToImprove</c>): <c>nodes = ceil(money / CreditsPerNode)</c>.
+    /// После улучшения стоимость предмета растёт на <c>money × ValueGainShare</c>.
     ///
     /// Прирост параметра из <see cref="ImprovementAttributeDef"/>:
-    /// <c>delta = current × RandRange(BasePct, BasePct + DeltaPct) + AbsBonus</c>.
-    /// В обычном улучшении «второй» атрибут категории поднимается на
-    /// <see cref="ImprovementCategoryDef.SecondaryGrowthFactor"/> от полного значения.
+    /// <c>delta = max(current × Pct × roll, MinStep)</c>, roll — «колокол» 0.75..1.25.
+    /// В обычном улучшении с выбранной характеристикой остальные атрибуты категории растут на
+    /// <see cref="ImprovementCategoryDef.SecondaryGrowthFactor"/> от полного прироста.
     /// </summary>
     public class ImprovementConfig
     {
-        /// <summary>Множители Weight → base money по тирам. Дефолт из статьи HD: 0.3 / 0.6 / 1.2.</summary>
-        [JsonProperty("Tiers")] public Dictionary<string, float> Tiers { get; set; } = new()
+        /// <summary>Доля цены предмета, которую стоит улучшение каждого тира.</summary>
+        [JsonProperty("CostShare")] public Dictionary<string, float> CostShare { get; set; } = new()
         {
-            { "Min", 0.3f },
-            { "Avg", 0.6f },
-            { "Max", 1.2f },
+            { "Min", 0.12f },
+            { "Avg", 0.25f },
+            { "Max", 0.5f },
         };
 
-        /// <summary>Множитель к базовой цене для продвинутого улучшения (одна конкретная характеристика,
-        /// включая Weight/Durability). Дефолт — 3× стоимости тира Max.</summary>
-        [JsonProperty("AdvancedCostMultiplier")] public float AdvancedCostMultiplier { get; set; } = 3f;
+        /// <summary>Множитель к цене базового тира для продвинутого улучшения (одна конкретная
+        /// характеристика, включая Weight/MaxDurability).</summary>
+        [JsonProperty("AdvancedCostMultiplier")] public float AdvancedCostMultiplier { get; set; } = 2.5f;
 
         /// <summary>Тир, от цены которого считается стоимость продвинутого апгрейда.</summary>
         [JsonProperty("AdvancedBaseTier")] public string AdvancedBaseTier { get; set; } = "Max";
 
-        /// <summary>Ноды = round(money × NodeCostRate). Из HD: 0.01 (1 нода на 100 монет).</summary>
-        [JsonProperty("NodeCostRate")] public float NodeCostRate { get; set; } = 0.01f;
+        /// <summary>Сколько кредитов стоимости улучшения соответствует одной нейроядру.</summary>
+        [JsonProperty("CreditsPerNode")] public int CreditsPerNode { get; set; } = 120;
+
+        /// <summary>Какая доля потраченного на улучшение переходит в стоимость предмета.</summary>
+        [JsonProperty("ValueGainShare")] public float ValueGainShare { get; set; } = 0.7f;
 
         /// <summary>Категория оборудования → правила прироста атрибутов.
         /// Ключ — <see cref="EquipmentCategory"/>: "Hull"/"Weapons"/"Engine"/... </summary>
@@ -47,9 +50,9 @@ namespace SRG.Equipment
         /// <summary>Веса тиров для NPC-спавна. Из ключей выбирается один по весам, если сработал <see cref="NpcSpawnChance"/>.</summary>
         [JsonProperty("NpcTierWeights")] public Dictionary<string, float> NpcTierWeights { get; set; } = new()
         {
-            { "Min", 0.6f },
-            { "Avg", 0.3f },
-            { "Max", 0.1f },
+            { "Min", 0.55f },
+            { "Avg", 0.33f },
+            { "Max", 0.12f },
         };
 
         public ImprovementCategoryDef GetCategory(string category)
@@ -67,9 +70,9 @@ namespace SRG.Equipment
         /// прирост, остальные — умножаются на <see cref="SecondaryGrowthFactor"/>.</summary>
         [JsonProperty("Attributes")] public Dictionary<string, ImprovementAttributeDef> Attributes { get; set; } = new();
 
-        /// <summary>Доля прироста для «второго» атрибута при выборе конкретной характеристики
-        /// в Detail-режиме. Дефолт 0.35 — второй параметр качается на 35% от основного.</summary>
-        [JsonProperty("SecondaryGrowthFactor")] public float SecondaryGrowthFactor { get; set; } = 0.35f;
+        /// <summary>Доля прироста для остальных атрибутов при выборе конкретной характеристики
+        /// в Detail-режиме.</summary>
+        [JsonProperty("SecondaryGrowthFactor")] public float SecondaryGrowthFactor { get; set; } = 0.4f;
 
         /// <summary>Атрибуты, доступные ТОЛЬКО в продвинутом режиме. Стандартный туда не заглядывает.
         /// Обычно: Weight, MaxDurability, специфичные для категории (Armor у Hull).</summary>
@@ -79,20 +82,25 @@ namespace SRG.Equipment
         [JsonProperty("Sign")] public int Sign { get; set; } = 1;
     }
 
-    /// <summary>Диапазон прироста для одного атрибута. Формула:
-    /// <c>delta = current × RandRange(BasePct, BasePct + DeltaPct) + AbsBonus</c>.
-    /// Итог округляется до целого (для целых полей). Итоговое значение = current + Sign × delta.
+    /// <summary>Прирост одного атрибута. Формула:
+    /// <c>delta = max(current × Pct × roll, MinStep)</c>, roll ∈ [0.75..1.25] с пиком в 1.
+    /// Итоговое значение = current + Sign × delta (для целых полей — с округлением).
     /// </summary>
     public class ImprovementAttributeDef
     {
         /// <summary>Отображаемое имя атрибута для UI.</summary>
         [JsonProperty("DisplayName")] public string DisplayName { get; set; }
 
-        /// <summary>Тир → [BasePct, DeltaPct, AbsBonus]. Пример из статьи (Weapon.Damage):
-        /// Min=[0.20, 0.05, 1], Avg=[0.30, 0.10, 2], Max=[0.40, 0.10, 3].</summary>
+        /// <summary>Тир → [Pct, MinStep]: доля текущего значения и минимальный шаг прироста.</summary>
         [JsonProperty("Tiers")] public Dictionary<string, float[]> Tiers { get; set; } = new();
 
         /// <summary>true — параметр целочисленный (округлять до int). Дефолт true (большинство статов).</summary>
         [JsonProperty("Integer")] public bool Integer { get; set; } = true;
+
+        /// <summary>Знак прироста для этого атрибута: −1 — улучшение уменьшает значение
+        /// (масса оборудования). 0 — взять знак категории.</summary>
+        [JsonProperty("Sign")] public int Sign { get; set; } = 0;
+
+        public int ResolveSign(ImprovementCategoryDef category) => Sign != 0 ? Sign : (category?.Sign ?? 1);
     }
 }

@@ -436,7 +436,7 @@
 	"Ratings": [
 		{
 			"Id": "Rangers",
-			"DisplayName": "Рейтинг рейнджеров",
+			"DisplayName": "Рейтинг вольных пилотов",
 			"ShipTypes": ["Ranger"],
 			"Score": { "KillsDominator": 3, "KillsPirate": 1 },
 			"IncludePlayer": true,
@@ -802,9 +802,9 @@
 			}
 		},
 		"DominatorOccupation": {
-			"DisplayName": "Захват доминаторами",
+			"DisplayName": "Захват синтетами",
 			"DurationMonths": null,
-			"NewsMessage": "Планета {planet} захвачена доминаторами!",
+			"NewsMessage": "Планета {planet} захвачена синтетами!",
 			"Trade": {
 				"GoodPriceModifiers": {}
 			},
@@ -1491,7 +1491,7 @@
 		},
 		"ShipTypes": {
 			"Ranger": {
-				"DisplayName": "Рейнджер",
+				"DisplayName": "Вольный пилот",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Mercenary",
 				"Personality": "Default",
@@ -1637,7 +1637,7 @@
 				"BaseSkills": [2, 3, 2, 1, 1, 1]
 			},
 			"Dom1": {
-				"DisplayName": "Доминатор",
+				"DisplayName": "Синтет",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Military",
 				"Personality": "Dominator",
@@ -1655,7 +1655,7 @@
 				"BaseSkills": [3, 3, 2, 2, 2, 2]
 			},
 			"Dom2": {
-				"DisplayName": "Доминатор",
+				"DisplayName": "Синтет",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Military",
 				"Personality": "Dominator",
@@ -1673,7 +1673,7 @@
 				"BaseSkills": [3, 3, 2, 2, 2, 2]
 			},
 			"Dom3": {
-				"DisplayName": "Доминатор",
+				"DisplayName": "Синтет",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Military",
 				"Personality": "Dominator",
@@ -1691,7 +1691,7 @@
 				"BaseSkills": [3, 3, 2, 2, 2, 2]
 			},
 			"Dom4": {
-				"DisplayName": "Доминатор",
+				"DisplayName": "Синтет",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Military",
 				"Personality": "Dominator",
@@ -1709,7 +1709,7 @@
 				"BaseSkills": [3, 3, 2, 2, 2, 2]
 			},
 			"Dom5": {
-				"DisplayName": "Доминатор",
+				"DisplayName": "Синтет",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Military",
 				"Personality": "Dominator",
@@ -1727,7 +1727,7 @@
 				"BaseSkills": [3, 3, 2, 2, 2, 2]
 			},
 			"Dom6": {
-				"DisplayName": "Доминатор",
+				"DisplayName": "Синтет",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Military",
 				"Personality": "Dominator",
@@ -1745,7 +1745,7 @@
 				"BaseSkills": [3, 3, 2, 2, 2, 2]
 			},
 			"Dom7": {
-				"DisplayName": "Доминатор",
+				"DisplayName": "Синтет",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Ships/minimap",
 				"CombatClass": "Military",
 				"Personality": "Dominator",
@@ -1917,7 +1917,7 @@
 				"BaseSkills": [4, 1, 4, 1, 1, 4]
 			},
 			"Station_Keller": {
-				"DisplayName": "Станция келлероидов",
+				"DisplayName": "Станция логосов",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Keller",
 				"CombatClass": "Military",
 				"Personality": "Military",
@@ -1934,7 +1934,7 @@
 				"BaseSkills": [4, 1, 4, 1, 1, 4]
 			},
 			"Station_Terron": {
-				"DisplayName": "Станция терроноидов",
+				"DisplayName": "Станция демиургов",
 				"MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Terron",
 				"CombatClass": "Military",
 				"Personality": "Military",

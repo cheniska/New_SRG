@@ -258,7 +258,7 @@ namespace SRG.Core
             string starName = string.IsNullOrEmpty(info.StarName) ? "?" : info.StarName;
             string killer = string.IsNullOrEmpty(killerName) ? "неизвестными" : killerName;
             GalaxyNewsService.Post(GalaxyNewsService.CAT_PLAYER,
-                $"Экстренное сообщение! В системе {starName} погиб рейнджер {ship.Name}. Обстоятельства смерти: {killer} ({cause}).");
+                $"Экстренное сообщение! В системе {starName} погиб вольный пилот {ship.Name}. Обстоятельства смерти: {killer} ({cause}).");
             return true;
         }
 

@@ -143,8 +143,8 @@ namespace SRG.Equipment
             // Артефакты — self-scope: их SlotCode кладёт бонусы в собственные Params через
             // ключ "Artefacts.*". Читаются кодом артефакта (CollectSpeedMult, ApplyTurnEffects, ...).
             AddBonuses(EquipmentCategory.Artefacts,    "SpeedMult", "HealPerTurn", "TurnsDelta", "GalaxyMapScope",
-                                                        "SpeedRecoveryMult"); // Отморозки: доп. декремент Slow за ход.
-            // TODO Отморозки/солнце: как только появится система урона от звезды, читать
+                                                        "SpeedRecoveryMult"); // Криоколония: доп. декремент Slow за ход.
+            // TODO Криоколония/солнце: как только появится система урона от звезды, читать
             // Hull.SunDamageMult (снижение теплового урона от звезды) — уже добавлен в Hull-ключи ниже.
             AddBonuses(EquipmentCategory.Weapons,
                 "MinDmg", "MaxDmg", "Range",

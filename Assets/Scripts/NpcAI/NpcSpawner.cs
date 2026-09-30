@@ -43,7 +43,7 @@ namespace SRG.NpcAI
     {
 
         // ──────────────────────────────────────────
-        // Per-star: гражданские + воины (per-planet) + рейнджеры/пираты (per-system)
+        // Per-star: гражданские + воины (per-planet) + вольные пилоты/пираты (per-system)
         // ──────────────────────────────────────────
 
         public static void PopulateStarWithNpcs(StarData star, GalaxyGenerationContext ctx)
@@ -159,8 +159,8 @@ namespace SRG.NpcAI
                 "Diplomat"  => $"Дипломат-{index + 1}",
                 "Warrior"   => $"Воин-{index + 1}",
                 "Linkor"    => $"Линкор-{index + 1}",
-                "Ranger"    => $"Рейнджер-{index + 1}",
-                "Dom1" or "Dom2" or "Dom3" or "Dom4" or "Dom5" or "Dom6" => $"Доминатор-{index + 1}",
+                "Ranger"    => $"Вольный пилот-{index + 1}",
+                "Dom1" or "Dom2" or "Dom3" or "Dom4" or "Dom5" or "Dom6" => $"Синтет-{index + 1}",
                 _ => $"NPC-{index + 1}"
             };
         }

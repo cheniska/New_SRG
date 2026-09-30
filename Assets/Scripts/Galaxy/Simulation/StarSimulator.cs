@@ -195,7 +195,7 @@ namespace SRG.Galaxy.Simulation
                 }
             }
 
-            MissileSystem.InitMissileFrames(star, anim);
+            MissileSystem.InitMissileFrames(star, GalaxyManager.Instance?.Context?.ItemsConfig, anim);
 
             int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
             _swSection.Restart();

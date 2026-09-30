@@ -60,7 +60,7 @@ namespace SRG.NpcAI
                 || planet.Owner == GalaxyConstants.OWNER_UNRESOLVED_KEY
                 || planet.Owner == GalaxyConstants.OWNER_MIXED_KEY) return false;
 
-            // NonPlanetary-раса (доминаторы) — гражданский initial-флот не выдаётся.
+            // NonPlanetary-раса (синтеты) — гражданский initial-флот не выдаётся.
             if (config?.Races != null
                 && config.Races.TryGetValue(planet.Race, out var raceCfg)
                 && raceCfg != null

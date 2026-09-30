@@ -437,7 +437,7 @@ namespace SRG.Ships.Player
         private void UndockFromCarrier()
         {
             var star = GalaxyManager.Instance?.CurrentStar;
-            var carrier = star?.Ships?.Find(s => s.Uid == ShipData.LandedOnShipUid);
+            var carrier = star?.FindShip(ShipData.LandedOnShipUid);
             ShipDockingService.Undock(ShipData, carrier);
             BeginTakeoffRoute();
             GameConsoleController.AddEntry($"[Стыковка] Взлёт с {carrier?.Name ?? "носителя"}.");
@@ -456,7 +456,7 @@ namespace SRG.Ships.Player
             float heading = ShipData.CurrentHeading;
             var dir = float.IsNaN(heading)
                 ? Vector2.right
-                : new Vector2(Mathf.Cos(heading), Mathf.Sin(heading));
+                : Angles.Dir(heading);
             var target = ShipData.Position + dir * 1.5f;
 
             _targets.Clear();
@@ -554,8 +554,7 @@ namespace SRG.Ships.Player
             GameConsoleController.AddEntry($"[Навигация] Курс на посадку: {planet.Name}.");
         }
 
-        // SR2HD §5.2.B: catch-up upreждение + парковка ВНЕ R_land на дальнем подлёте.
-        // Реализация в PlanetGeometry (общая с НПС-вариантом §5.2.C).
+        // Упреждение позиции планеты и точка входа в посадочное кольцо — см. PlanetGeometry.
         private Vector2 PredictLandingTarget(PlanetData planet)
             => PlanetGeometry.PredictPlayerLandingTarget(ShipData, planet);
 

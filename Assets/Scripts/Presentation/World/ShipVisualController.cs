@@ -137,7 +137,7 @@ namespace SRG.Presentation.World
             // Станции (FixedRotation-корпус) не поворачивают графику по курсу — висят фиксированно.
             if (_data != null && _data.SpriteFixedRotation) return;
             if (direction.sqrMagnitude < 0.001f) return;
-            _targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            _targetAngle = Angles.Of(direction) * Mathf.Rad2Deg - 90f;
         }
 
         /// <summary>Мгновенно ставит визуал в направление текущего ship.HyperjumpHeading — без плавного разворота.</summary>
@@ -195,7 +195,7 @@ namespace SRG.Presentation.World
             // Обнаружение взлёта: был посажен, сейчас нет, BeginTakeoff ещё не вызывался явно
             if (_prevLandedPlanetUid != null && _data.LandedPlanetUid == null && !IsTakingOff)
             {
-                var p = star?.Planets?.Find(pl => pl.Uid == _prevLandedPlanetUid);
+                var p = star?.FindPlanet(_prevLandedPlanetUid);
                 if (p != null) _landingPlanet = p;
                 BeginTakeoff();
                 // Кадры этого хода в StarSimulator были посчитаны, когда корабль ещё был посажен
@@ -222,13 +222,13 @@ namespace SRG.Presentation.World
             // Обнаружение посадки: был в полёте, теперь сел
             if (_data.LandedPlanetUid != null && _prevLandedPlanetUid == null)
             {
-                var p = star?.Planets?.Find(pl => pl.Uid == _data.LandedPlanetUid);
+                var p = star?.FindPlanet(_data.LandedPlanetUid);
                 if (p != null) _landingPlanet = p;
             }
 
             _prevLandedPlanetUid = _data.LandedPlanetUid;
 
-            // SR2HD §7 двухфазная посадка (унифицирована для планеты и корабля-носителя через
+            // Двухфазная посадка (единая для планеты и корабля-носителя через
             // ILandingSite): ставим LandingPhase=Fading если хвост хода попадает внутрь site.LandingRadius
             // от site.CenterPosition (для носителя — конечная позиция его SubTurns; для планеты
             // CenterPosition уже пересчитан по OrbitMath после симуляции). Финализация — в
@@ -315,9 +315,12 @@ namespace SRG.Presentation.World
             if (isLanded && !_data.IsPlayer) gameObject.SetActive(false);
         }
 
-        // SR2HD §7: AlphaDelta = -Alpha / RouteFilm.Count → линейный fade за весь финальный ход.
-        // Раньше начинали с 0.45 — теперь распределяем по всему ходу для плавности.
-        private const float LandingFadeStartProgress = 0f;
+        // Посадка/взлёт: первые LandingFadeHold хода корабль полностью виден (заходит на глиссаду),
+        // затем плавно (smoothstep) растворяется; взлёт — зеркально.
+        private const float LandingFadeHold = 0.25f;
+
+        private static float LandingFade(float progress)
+            => Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((progress - LandingFadeHold) / (1f - LandingFadeHold)));
 
         // Анимирует позицию и визуальное состояние корабля в течение хода.
         // Возвращает вектор движения — вызывающий код использует его для обновления игрового состояния.
@@ -396,8 +399,8 @@ namespace SRG.Presentation.World
         /// Единая точка расчёта прозрачности корабля во время анимации хода. Возвращает alpha,
         /// который НАДО применить (через SetAlpha), либо null если в этой фазе нет fade-override
         /// и текущее значение alpha сохраняется. Приоритет:
-        ///   1. Landing fade-out (фаза Fading посадки, см. PrepareForTurn) — линейно 1→0 за весь ход.
-        ///   2. Takeoff fade-in — линейно 0→1 за ход взлёта.
+        ///   1. Landing fade-out (фаза Fading посадки, см. PrepareForTurn) — 1→0 по LandingFade.
+        ///   2. Takeoff fade-in — 0→1 по LandingFade.
         ///   3. Червоточина HyperEnter — landing-style: полный линейный fade-out 1→0 за ход,
         ///      без хвоста Travel (корабль «садится» на червоточину как на планету).
         ///   4. HyperArrive (гиперпрыжок и червоточина) — корабль стоит невидимо у точки выхода,
@@ -411,11 +414,9 @@ namespace SRG.Presentation.World
         {
             if (_isLandingThisTurn)
             {
-                // SR2HD §7: AlphaDelta = -Alpha / Count → линейно за весь финальный ход посадки.
-                float fadeT = Mathf.Clamp01((progress - LandingFadeStartProgress) / (1f - LandingFadeStartProgress));
-                return 1f - fadeT;
+                return 1f - LandingFade(progress);
             }
-            if (IsTakingOff) return progress;
+            if (IsTakingOff) return 1f - LandingFade(1f - progress);
 
             var phase = _data != null ? _data.HyperjumpPhase : HyperjumpPhase.None;
             bool viaWormhole = _data != null && !string.IsNullOrEmpty(_data.HyperjumpViaWormholeUid);

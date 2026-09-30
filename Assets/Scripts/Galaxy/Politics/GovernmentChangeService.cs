@@ -55,7 +55,7 @@ namespace SRG.Galaxy.Politics
             return true;
         }
 
-        // Разные варианты «риторики» — как в GalaxyNews.txt/Planet.Revolution.0..4. Ключи:
+        // Разные варианты «риторики». Ключи:
         //   Anarchy/Monarchy/Republic/Democracy — если такие ключи используются в GovernmentTypes;
         //   любые другие проваливаются в дефолтный шаблон.
         private static string BuildRevolutionText(string planetName, string starName, string newGov, string oldGov)

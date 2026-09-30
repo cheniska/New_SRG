@@ -226,7 +226,7 @@ namespace SRG.NpcAI.Spawning
         }
 
         /// <summary>Создаёт станцию (неподвижный ShipData с IsStation) в заданной звезде: выбирает корпус
-        /// (доминаторские — только в доминаторских системах), размещает вне орбит планет, экипирует
+        /// (синтетские — только в синтетских системах), размещает вне орбит планет, экипирует
         /// (вес ×2) и инициализирует Settlement. Возвращает null при неудаче.</summary>
         public static ShipData SpawnStationInStar(StarData star, GalaxyGenerationContext ctx, string codeOverride = null)
         {
@@ -254,7 +254,7 @@ namespace SRG.NpcAI.Spawning
 
             float radiusUnits = ChooseStationOrbitRadius(star);
             float ang = Random.Range(0f, Mathf.PI * 2f);
-            Vector2 pos = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * SRUnits.ToWorld(radiusUnits);
+            Vector2 pos = Angles.Dir(ang) * SRUnits.ToWorld(radiusUnits);
             ship.Position         = pos;
             ship.PreviousPosition = pos;
             ship.TargetPosition   = pos;
@@ -363,7 +363,7 @@ namespace SRG.NpcAI.Spawning
         }
 
         /// <summary>Раскатать шанс SB-апгрейда на установленное оборудование NPC при спавне.
-        /// См. <see cref="SRG.Equipment.ImprovementConfig.NpcSpawnChance"/>, docs/SB_Equipment_Improvement.txt.</summary>
+        /// См. <see cref="SRG.Equipment.ImprovementConfig.NpcSpawnChance"/>, docs/modules/equipment_improvement.md.</summary>
         private static void RollNpcImprovements(ShipData ship, GalaxyGenerationContext ctx)
         {
             var cfg = ctx?.ItemsConfig?.Improvement;

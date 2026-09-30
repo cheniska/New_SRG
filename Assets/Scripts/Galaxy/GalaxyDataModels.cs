@@ -18,6 +18,7 @@ using SRG.Science;
 using SRG.Ships;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
+using SRG.Utils;
 
 namespace SRG.Galaxy
 {
@@ -118,13 +119,13 @@ namespace SRG.Galaxy
     }
 
     /// <summary>
-    /// Двухфазная посадка (SR2HD, docs/Ship_Landing_Pipeline.txt §7).
+    /// Двухфазная посадка (docs/modules/landing.md).
     /// </summary>
     public enum LandingPhase
     {
         None,           // Не садимся (LandingPlanetUid либо пуст, либо ещё не построен курс).
-        Approach,       // Подлёт: цель — точка ВНЕ R_land (избегаем «въезда в орбиту»).
-        Fading,         // Финальный ход: хвост маршрута внутри R_land, идёт film-tied fade-out alpha.
+        Approach,       // Подлёт к посадочному кольцу.
+        Fading,         // Финальный ход: конец маршрута внутри R_land, корабль растворяется.
     }
 
     public enum PlanningReason
@@ -175,7 +176,7 @@ namespace SRG.Galaxy
         /// Задаётся при создании стека из <see cref="ItemConfig.IsGoods"/>. Стек без флага —
         /// «useless» (стакабельные находки, минералы, квестовые предметы).</summary>
         public bool IsGoods { get; set; }
-        /// <summary>Стек создан «естественным» источником (астероид → минерал/ноды), а не выброшен
+        /// <summary>Стек создан «естественным» источником (астероид → минерал/нейроядра), а не выброшен
         /// из трюма. Влияет только на графику дропа в космосе: если у ступени задан
         /// <see cref="StackGraphicStep.NaturalSprite"/>, он используется вместо обычного Sprite.</summary>
         public bool NaturalOrigin { get; set; }
@@ -659,6 +660,15 @@ namespace SRG.Galaxy
             return null;
         }
 
+        /// <summary>Планета этой звезды по UID; null если нет.</summary>
+        public PlanetData FindPlanet(string uid)
+        {
+            if (string.IsNullOrEmpty(uid) || Planets == null) return null;
+            for (int i = 0; i < Planets.Count; i++)
+                if (Planets[i].Uid == uid) return Planets[i];
+            return null;
+        }
+
         // Симуляция дневного хода вынесена в StarSimulator (этап T1 рефакторинга, июнь 2026):
         // StarData теперь содержит только данные и связанные с ними утилиты (Power-кэш для NpcBrain).
         public void StarNextDay(TurnAnimationData anim, GalaxyGenerationContext ctx = null)
@@ -1086,7 +1096,7 @@ namespace SRG.Galaxy
         /// иначе после загрузки при активном follow-режиме LandOnShip авто-стыковка теряет цель.</summary>
         public string LandingCarrierUid { get; set; }
 
-        /// <summary>Фаза двухфазной посадки (SR2HD §7). Транзитное состояние, не сохраняется.
+        /// <summary>Фаза двухфазной посадки. Транзитное состояние, не сохраняется.
         /// Сбрасывается в None при загрузке: на следующий ход PrepareForTurn пересчитает её.</summary>
         [JsonIgnore] public LandingPhase LandingPhase { get; set; } = LandingPhase.None;
 
@@ -1122,10 +1132,10 @@ namespace SRG.Galaxy
 
         public int Money { get; set; }
 
-        /// <summary>Нод-счёт корабля. Используется <see cref="SRG.Equipment.ImprovementService"/> при
+        /// <summary>Нейроядер-счёт корабля. Используется <see cref="SRG.Equipment.ImprovementService"/> при
         /// улучшении оборудования с флагом <see cref="ItemInstance.RequiresNodesToImprove"/>: сначала
-        /// списываем физические стеки Node из трюма, если не хватает — дораскладываем с нод-счёта.
-        /// Механика пополнения счёта появится позже (диздок docs/SB_Equipment_Improvement.txt).</summary>
+        /// списываем физические стеки Node из трюма, если не хватает — дораскладываем с нейроядер-счёта.
+        /// Механика пополнения счёта появится позже (диздок docs/modules/equipment_improvement.md).</summary>
         public int NodeAccount { get; set; }
 
         // ── HP / прочность корпуса ─────────────────────────────────────────────────
@@ -1361,7 +1371,7 @@ namespace SRG.Galaxy
                         continue;
                     }
 
-                    CurrentHeading = Mathf.Atan2(dir.y, dir.x);
+                    CurrentHeading = Angles.Of(dir);
                     if (dist <= remaining)
                     {
                         remaining -= dist;
@@ -1392,7 +1402,7 @@ namespace SRG.Galaxy
                     float toDist = toTarget.magnitude;
                     if (toDist < 0.001f) break;
 
-                    CurrentHeading = Mathf.Atan2(toTarget.y, toTarget.x);
+                    CurrentHeading = Angles.Of(toTarget);
 
                     if (toDist <= remaining)
                     {
@@ -1640,14 +1650,14 @@ namespace SRG.Galaxy
         /// </summary>
         public List<string> CompatibleSlots { get; set; } = new();
 
-        // ── Улучшение оборудования (научная база SB, диздок docs/SB_Equipment_Improvement.txt) ──
+        // ── Улучшение оборудования (научная база SB, диздок docs/modules/equipment_improvement.md) ──
         /// <summary>Разрешено ли улучшение этого предмета. Ставится в true при генерации
         /// eligible-предметов (см. <see cref="EquipmentTemplate"/>.Defaults["IsImprovable"]).
         /// Сбрасывается в false навсегда, как только предмет был улучшен ЛИБО в него встроили
         /// микромодуль (см. <see cref="SRG.Equipment.EmbedService"/>). Один предмет — один апгрейд.</summary>
         public bool IsImprovable { get; set; }
-        /// <summary>Требует расходования Нод при улучшении. Флаг из шаблона (обычно ставится
-        /// доминаторскому/трофейному оборудованию). Формула нод — см. <see cref="SRG.Equipment.ImprovementService"/>.</summary>
+        /// <summary>Требует расходования Нейроядер при улучшении. Флаг из шаблона (обычно ставится
+        /// синтетскому/трофейному оборудованию). Формула нейроядер — см. <see cref="SRG.Equipment.ImprovementService"/>.</summary>
         public bool RequiresNodesToImprove { get; set; }
         /// <summary>Список ключей <see cref="Params"/>, значения которых были подняты апгрейдом.
         /// Используется UI: значения окрашиваются в зелёный (см. <see cref="SRG.UI.Common.UIColorPalette"/>).

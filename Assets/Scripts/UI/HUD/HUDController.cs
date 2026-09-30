@@ -277,7 +277,7 @@ namespace SRG.UI.HUD
             if (ps != null && !string.IsNullOrEmpty(ps.ShipData?.LandedOnShipUid))
             {
                 var star = GalaxyManager.Instance?.CurrentStar;
-                var carrier = star?.Ships?.Find(s => s.Uid == ps.ShipData.LandedOnShipUid);
+                var carrier = star?.FindShip(ps.ShipData.LandedOnShipUid);
                 string prefix = carrier != null && carrier.IsStation ? "На станции" : "На борту";
                 string name = carrier?.Name ?? (carrier != null && carrier.IsStation ? "станция" : "носитель");
                 _followLabel.text = $"{prefix}: {name}";

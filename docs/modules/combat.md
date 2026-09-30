@@ -195,39 +195,15 @@ foreach (unique owner in star.Planets):
 ```
 Буфер `_uniqueOwnersBuf` переиспользуется (single-threaded гарантия).
 
-### `MissileSystem.LaunchSalvo` — углы залпа
+### `MissileSystem` — запуск и наведение
 
-`SalvoCount` берётся из `MissileConfig.SalvoCount` (cap = 72 = полный круг при шаге 5°).
+Подробная модель — [`missiles.md`](missiles.md). Коротко:
 
-```
-SalvoAngle(i):
-   i = 0 → 0°
-   i = 1 → +5°
-   i = 2 → −5°
-   i = 3 → +10°
-   i = 4 → −10°
-   ...
-   step = (i+1)/2
-   sign = +1 если i нечётный, -1 если чётный
-   return step * 5° * sign
-```
-
-Базовое направление — `attacker.CurrentHeading` (если есть) или нормализованный вектор к цели.
-
-### `ComputeNewMissileHeading` (post-B3)
-
-`LaunchPhase=true` (день вылета): курс не меняется, летим прямо по `CurrentHeading`.
-
-`LaunchPhase=false` (хоминг):
-```
-desiredA = atan2(target.Position - missile.Position)
-maxTurn = missile.TurnRadPerTurn / SubTurnsPerTurn        # сабтёрновое ограничение
-diff = NormalizeAnglePi(desiredA - missile.CurrentHeading)
-если |diff| <= maxTurn → newHeading = desiredA
-иначе → newHeading = current + sign(diff) * maxTurn
-```
-
-`TurnRadPerTurn` из `MissileConfig.TurnDeg * Deg2Rad` (default 720°).
+- залп сходит с направляющих поперёк корпуса веером ширины `SpreadDeg`;
+- в ход запуска ракета летит прямо (разгонный участок);
+- далее — упреждающее наведение с ограничением `TurnDeg`/ход и «выносом петли» при проскоке;
+- если цель отдаляется `MaxRecedingTurns` ходов подряд — захват потерян, самоликвидация;
+- головка (`AutoReacquire`) ищет новую цель в конусе `SeekerConeDeg`.
 
 ### `HandleMissileImpact` (post-B3) — 3 ветки
 
@@ -308,9 +284,9 @@ foreach missile:
 |---|---|---|
 | `HitRadius` | 0.15 | Запас сверх радиуса корабля для попадания |
 | `DefaultShipRadius` | 0.35 | Фолбэк, если у корабля нет SizeSmall в Hull |
-| `MaxSalvo` | 72 | Максимум ракет в залпе (= полный круг при шаге 5°) |
-| Шаг угла залпа | 5° | Жёстко в `SalvoAngle` |
-| `1e-8f` | внутри `ComputeNewMissileHeading` | Эпсилон «вектор почти нулевой» |
+| `MaxSalvo` | 72 | Максимум ракет в залпе |
+| `ExtendRadiusFactor` | 2 | Во сколько радиусов разворота отходить перед петлёй |
+| `MaxLeadTurns` | 1.5 | Потолок времени упреждения, ходов |
 | `1e-10f` | внутри `SweptCircleHit` | Эпсилон «оба стоят» |
 | `MissileConfig.SalvoCount` | конфиг | Реальное число ракет в залпе |
 | `MissileConfig.TurnDeg` | конфиг (default 720°/ход) | Скорость поворота для хоминга |

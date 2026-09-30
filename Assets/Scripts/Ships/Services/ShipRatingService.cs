@@ -158,7 +158,7 @@ namespace SRG.Ships.Services
             if (string.IsNullOrEmpty(headline)) headline = $"{title} обновлён. Отличившиеся: {sb}";
             string category = string.IsNullOrEmpty(cfg.NewsCategory) ? title : cfg.NewsCategory;
             // Рейтинг привязан к конкретным сторонам (cfg.Owners). Если не указаны — рейтинг
-            // «свободный» (напр. рейнджерский), считаем его новостью Coalition. Показываем
+            // «свободный» (напр. пилотский), считаем его новостью Coalition. Показываем
             // игроку только если хотя бы одна из сторон рейтинга ему дружественна.
             string sideA = cfg.Owners != null && cfg.Owners.Count > 0 ? cfg.Owners[0] : "Coalition";
             string sideB = cfg.Owners != null && cfg.Owners.Count > 1 ? cfg.Owners[1] : null;

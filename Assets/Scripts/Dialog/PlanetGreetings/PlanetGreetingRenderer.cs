@@ -72,7 +72,7 @@ namespace SRG.Dialog.PlanetGreetings
             map["Player"]              = SafeName(player?.Name, "Player");
             map["PlayerRace"]          = SafeName(player?.Race, "PlayerRace");
             map["PlayerRank"]          = SafeName(PlayerGreetingProfile.ResolveRank(player), "PlayerRank");
-            // <Ranger> — обращение к игроку, поэтому подставляется его имя, а не «рейнджер».
+            // <Ranger> — обращение к игроку, поэтому подставляется его имя, а не «вольный пилот».
             map["Ranger"]              = map["Player"];
             map["CurPlanet"]           = SafeName(cur?.Name, "CurPlanet");
             map["CurPlanetRace"]       = SafeName(cur?.Race, "CurPlanetRace");
@@ -149,7 +149,7 @@ namespace SRG.Dialog.PlanetGreetings
             map["Player"]         = playerName;
             map["PlayerRace"]     = SafeName(player?.Race, "PlayerRace");
             map["PlayerRank"]     = SafeName(PlayerGreetingProfile.ResolveRank(player), "PlayerRank");
-            map["Ranger"]         = playerName;                 // алиас — «рейнджер <Player>» → просто <Player>
+            map["Ranger"]         = playerName;                 // алиас — «вольный пилот <Player>» → просто <Player>
             map["Ship"]           = shipShort;
             map["ShipName"]       = shipShort;                  // алиас <Ship>
             map["FullShip"]       = shipFull;                   // «Транспорт «Заря»»

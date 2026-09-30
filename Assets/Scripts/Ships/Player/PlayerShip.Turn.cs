@@ -6,6 +6,7 @@ using SRG.Ships.Movement;
 using SRG.Ships.Services;
 using SRG.UI.HUD;
 using SRG.UI.Screens;
+using SRG.Utils;
 
 namespace SRG.Ships.Player
 {
@@ -50,7 +51,7 @@ namespace SRG.Ships.Player
             var dir = _visual.AnimateTurn(progress, currentSubTurn, animData);
             if (dir.sqrMagnitude > 0.0001f) IsMovingThisTurn = true;
             if (progress >= 0.99f && dir.sqrMagnitude > 0.0001f)
-                ShipData.CurrentHeading = Mathf.Atan2(dir.y, dir.x);
+                ShipData.CurrentHeading = Angles.Of(dir);
         }
 
         private void OnTurnComplete(TurnAnimationData anim)
@@ -80,7 +81,7 @@ namespace SRG.Ships.Player
 
             Debug.Log($"[PlayerShip] OnTurnComplete: pos={ShipData.Position:F2} targetReached={targetReached} remaining={_targets.Count}");
 
-            // Двухфазная посадка (SR2HD §7): Phase 1 (Fading) выставлена в PrepareForTurn.
+            // Двухфазная посадка: Phase 1 (Fading) выставлена в PrepareForTurn.
             if (TryFinalizeLanding()) return;
 
             if (_targets.Count > 0)
@@ -104,7 +105,7 @@ namespace SRG.Ships.Player
             if (lastAnim == null || !lastAnim.ShipFrames.TryGetValue(ShipData.Uid, out var doneFrames)) return;
             var dv = doneFrames.SubTurns[GalaxyData.SubTurnsPerTurn] - doneFrames.SubTurns[GalaxyData.SubTurnsPerTurn - 1];
             if (dv.sqrMagnitude > 0.0001f)
-                ShipData.CurrentHeading = Mathf.Atan2(dv.y, dv.x);
+                ShipData.CurrentHeading = Angles.Of(dv);
         }
 
         /// <summary>Если в этом ходу был выставлен LandingPhase=Fading — финализирует посадку
@@ -207,7 +208,7 @@ namespace SRG.Ships.Player
         {
             if (ShipData.LandingPlanetUid == null) return false;
             var star = GalaxyManager.Instance?.CurrentStar;
-            var planet = star?.Planets?.Find(p => p.Uid == ShipData.LandingPlanetUid);
+            var planet = star?.FindPlanet(ShipData.LandingPlanetUid);
             if (planet != null)
             {
                 Vector2 aim = PredictLandingTarget(planet);

@@ -118,7 +118,7 @@ namespace SRG.Ships
         /// Начислить опыт. Для category != None применяется diminishing-returns:
         /// scaled = amount / (catExp * K + 1). Затем Points и FreePoints растут на scaled,
         /// ExpByCategory[cat] тоже растёт.
-        /// Для category == None штрафа нет (квестовые награды, ноды, читы).
+        /// Для category == None штрафа нет (квестовые награды, нейроядра, читы).
         /// </summary>
         public void IncPoints(int amount, ExpCategory category, SkillsConfig cfg)
         {

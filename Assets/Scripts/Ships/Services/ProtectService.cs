@@ -102,7 +102,7 @@ namespace SRG.Ships.Services
             var pv = Preview(aggressor, player);
             if (!pv.Accepted) return pv;
             var star = aggressor.CurrentStar;
-            var victim = star?.Ships.Find(s => s.Uid == pv.VictimUid);
+            var victim = star?.FindShip(pv.VictimUid);
             if (victim == null) return ProtectResult.Refuse(ProtectRefusalReason.NoVictim);
 
             if (victim.LastAttackerUid == aggressor.Uid) victim.LastAttackerUid = null;

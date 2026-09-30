@@ -12,7 +12,7 @@ namespace SRG.Equipment
     {
         [JsonProperty("NpcDrop")] public ItemNpcDrop NpcDrop { get; set; }
         [JsonProperty("Shop")]    public ItemShopSource Shop { get; set; }
-        /// <summary>Появляется ли в очереди центра рейнджеров. По умолчанию true.</summary>
+        /// <summary>Появляется ли в очереди центра вольных пилотов. По умолчанию true.</summary>
         [JsonProperty("RangerCenter")] public bool RangerCenter { get; set; } = true;
     }
 
@@ -43,7 +43,7 @@ namespace SRG.Equipment
     /// Резолв — <see cref="StackGraphics"/>.
     ///
     /// <see cref="NaturalSprite"/> — альтернативный космический спрайт для «природного» дропа:
-    /// стек создан естественным источником (астероид → минерал/ноды), а не выброшен из трюма.
+    /// стек создан естественным источником (астероид → минерал/нейроядра), а не выброшен из трюма.
     /// Признак стека — <see cref="ItemStack.NaturalOrigin"/>. Если поле пустое — используется
     /// обычный <see cref="Sprite"/>.
     /// </summary>

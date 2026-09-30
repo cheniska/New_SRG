@@ -98,7 +98,7 @@ namespace SRG.Dialog
                 var ally   = ctx?.TargetShip;
                 var player = ctx?.PlayerShip;
                 if (ally == null || player == null) return;
-                var target = FindShip(ally.CurrentStar, ctx.ReadStr(SEL_UID_KEY));
+                var target = ally.CurrentStar?.FindShip(ctx.ReadStr(SEL_UID_KEY));
                 var res = JointAttackService.TryEnlist(ally, player, target);
                 ctx.Data[REASON_KEY] = res.Reason.ToString();
             });
@@ -110,7 +110,7 @@ namespace SRG.Dialog
             {
                 var (ally, player) = ctx.Pair();
                 if (ally == null || player == null) return "";
-                var target = FindShip(ally.CurrentStar, ctx.ReadStr(SEL_UID_KEY));
+                var target = ally.CurrentStar?.FindShip(ctx.ReadStr(SEL_UID_KEY));
                 if (target == null) return nameof(JointAttackRefusalReason.NoTarget);
                 return JointAttackService.Preview(ally, player, target).Reason.ToString();
             });
@@ -119,14 +119,6 @@ namespace SRG.Dialog
             DialogService.RegisterDataTag("jatk_target_name",   SEL_NAME_KEY);
             DialogService.RegisterDataTag("jatk_targets_count", COUNT_KEY, "0");
             DialogService.RegisterDataTag("jatk_reason",        REASON_KEY);
-        }
-
-        private static ShipData FindShip(StarData star, string uid)
-        {
-            if (star == null || string.IsNullOrEmpty(uid)) return null;
-            for (int i = 0; i < star.Ships.Count; i++)
-                if (star.Ships[i].Uid == uid) return star.Ships[i];
-            return null;
         }
     }
 }

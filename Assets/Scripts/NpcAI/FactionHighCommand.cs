@@ -41,7 +41,7 @@ namespace SRG.NpcAI
     /// <see cref="DirectiveDefendSystem"/> под свои системы, где идёт бой; <see cref="DirectiveAttackSystem"/>
     /// на выбранную по стратегии вражескую систему.
     /// Если у Owner <see cref="OwnerConfig.SeparatePerRaceHighCommand"/>=true — ГШ на каждую Race
-    /// (доминаторы: RaceDominators1/2/3 = 3 отдельных генштаба).
+    /// (синтеты: RaceDominators1/2/3 = 3 отдельных генштаба).
     /// </summary>
     public class FactionHighCommand
     {

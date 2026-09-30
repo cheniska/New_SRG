@@ -83,7 +83,7 @@ namespace SRG.NpcAI
         {
             if (ship?.Owner != OwnerId) return false;
             if (!string.IsNullOrEmpty(RaceId) && ship.Race != RaceId) return false;
-            // К директиве привлекаются только боевые и наёмники (военные+рейнджеры),
+            // К директиве привлекаются только боевые и наёмники (военные+вольные пилоты),
             // мирные и пираты сохраняют своё поведение.
             var cls = NpcBrain.ResolveCombatClass(ship.ShipTypeId);
             return cls == CombatClass.Military || cls == CombatClass.Mercenary;

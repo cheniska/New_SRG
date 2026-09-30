@@ -5,8 +5,7 @@
 плюс политики `Policies/*SpawnPolicy.cs` (Civilian, Warrior, Ranger, Pirate, Linkor, Dominator).
 Также: `NpcAI/NpcSpawner.cs` (механика собственно создания NPC при генерации галактики).
 
-Связанные документы: [`Spawn_Rules_Consolidated.txt`](../Spawn_Rules_Consolidated.txt),
-[`Dominator_Equipment_Consolidated.txt`](../Dominator_Equipment_Consolidated.txt).
+
 
 ---
 
@@ -17,7 +16,7 @@
 учитывает кулдауны спавна на звезду и эффект «доминирования» (если фракция захватила
 большинство — снижает спавн её противников). Политики (`ISpawnPolicy`) реализуют конкретное
 поведение для каждого типа: трейдеры спавнятся у торговых планет, пираты у нейтральных,
-доминаторы — по специальным правилам и т.д.
+синтеты — по специальным правилам и т.д.
 
 Начальный спавн при генерации галактики — отдельная вещь в `NpcSpawner` (вызывается из
 `GalaxyGenerator`); `SpawnSystem` отвечает только за поддержание популяции после старта.
@@ -102,7 +101,7 @@ public static DominationFlags Recalculate(GalaxyShipCounters counters, GalaxyCon
 
 ```csharp
 public HashSet<string> DominatingOwners;       // фракции, превысившие порог доминации
-public bool IsDominator1Active;                // активирован первый эшелон доминаторов
+public bool IsDominator1Active;                // активирован первый эшелон синтетов
 public bool IsDominator2Active;
 public bool IsDominator3Active;
 public Dictionary<string, int> Pressure;       // давление каждой фракции (для UI/AI)
@@ -113,10 +112,10 @@ public Dictionary<string, int> Pressure;       // давление каждой 
 - `CivilianSpawnPolicy(shipTypeId)` — Transport/Liner/Diplomat. Спавнятся у планет с подходящим
   EconomyType (например, Transport у торговых, Diplomat у больших). Квота на фракцию.
 - `WarriorSpawnPolicy` — военные. Спавнятся у военных планет своей фракции, квота от Domination.
-- `RangerSpawnPolicy` — рейнджеры, специальные «свободные охотники» с квотой по галактике.
+- `RangerSpawnPolicy` — вольные пилоты, специальные «свободные охотники» с квотой по галактике.
 - `PirateSpawnPolicy` — пираты, спавнятся у нейтральных/слабых планет.
 - `LinkorSpawnPolicy` — линкоры, только в системах с высокой враждебной активностью.
-- `DominatorSpawnPolicy` — доминаторы (Blazer/Keller/Terron → Race Dominators 1/2/3, Dom1..7);
+- `DominatorSpawnPolicy` — синтеты (Blazer/Keller/Terron → Race Dominators 1/2/3, Dom1..7);
   спавнятся при `DominationFlags.IsDominatorNActive == true`. См. memory
   `project_dominators_rename_jun2026`.
 
@@ -206,7 +205,7 @@ foreach owner, ownerCfg in cfg.Owners:
     если fraction >= cfg.DominationThreshold (например 0.5):
         flags.DominatingOwners.Add(owner)
 
-# Доминаторы (Dominator1/2/3) активируются эскалационно: 1 при появлении любой
+# Синтеты (Dominator1/2/3) активируются эскалационно: 1 при появлении любой
 # домин-фракции > X, 2 при превышении более жёсткого порога, 3 — критический.
 flags.IsDominator1Active = (max_fraction >= cfg.Spawn.Dominator1Threshold)
 flags.IsDominator2Active = ...

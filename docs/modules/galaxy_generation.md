@@ -10,8 +10,7 @@
 `GalaxyUtils.cs` (5 классов): `OwnerResolver`, `CustomPropertyResolver`, `GalaxyLogger`,
 `GenerationHelpers`, `OwnershipDisplayResolver`.
 
-Связанные документы: [`Galaxy_Map_Generation_Consolidated.txt`](../Galaxy_Map_Generation_Consolidated.txt),
-[`world_generation.md`](../world_generation.md), [`planet_formulas.md`](../planet_formulas.md).
+Связанные документы: [`world_generation.md`](../world_generation.md), [`planet_formulas.md`](../planet_formulas.md).
 
 ---
 

@@ -12,7 +12,7 @@ namespace SRG.Galaxy.Politics
 {
     /// <summary>
     /// Единичная новость галактики (инфоцентр планетарной формы).
-    /// Категории соответствуют секциям docs/GalaxyNews.txt (Occupation/Planet/Directive/Science/…),
+    /// Категории — Occupation/Planet/Directive/Science/…,
     /// но не привязаны к ним 1-в-1 — часть реализована на существующих подсистемах, часть свои.
     /// </summary>
     /// <summary>Группа уведомлений — управляет тем, в какую секцию нижней панели попадёт иконка.
@@ -318,7 +318,7 @@ namespace SRG.Galaxy.Politics
             shooter.Money += reward;
 
             string planetName = string.IsNullOrEmpty(planet.Name) ? "неизвестная планета" : planet.Name;
-            string shooterName = string.IsNullOrEmpty(shooter.Name) ? "рейнджер" : shooter.Name;
+            string shooterName = string.IsNullOrEmpty(shooter.Name) ? "вольный пилот" : shooter.Name;
             string raceKey = (planet.Race ?? "").ToLowerInvariant();
             string tplKey = raceKey switch
             {
