@@ -246,6 +246,92 @@ namespace SRG.Config
         /// <summary>Целевой охват одной расы в режиме Expansion: round(StarsCount × Rnd(BaseFractionMin..Max) × 2 / RaceCount) ± Jitter.
         /// Множитель ×2 учитывает, что системы могут быть мультирасовыми.</summary>
         [JsonProperty("TargetSystemsPerRace")] public TargetSystemsPerRaceConfig TargetSystemsPerRace { get; set; }
+
+        /// <summary>
+        /// Роли рас в галактике: ключ — произвольное имя роли ("Major", "Hostile", "Invader", …),
+        /// значение — список рас и правила расселения. Позволяет балансировать не конкретные расы,
+        /// а группы («все основные расы получают равную долю систем»). Если задано — список рас
+        /// галактики = объединение рас всех ролей (поле <see cref="Races"/> можно не заполнять).
+        /// </summary>
+        [JsonProperty("RaceRoles")] public Dictionary<string, GalaxyRaceRoleConfig> RaceRoles { get; set; }
+
+        /// <summary>Все расы галактики: <see cref="Races"/> ∪ расы из <see cref="RaceRoles"/>. null — список не задан.</summary>
+        public HashSet<string> GetAllRaces()
+        {
+            HashSet<string> set = null;
+            if (Races != null && Races.Count > 0) set = new HashSet<string>(Races);
+            if (RaceRoles != null)
+                foreach (var role in RaceRoles.Values)
+                    if (role?.Races != null)
+                        foreach (var r in role.Races) (set ??= new HashSet<string>()).Add(r);
+            return set;
+        }
+
+        /// <summary>Роль, к которой относится раса (первая найденная), или null.</summary>
+        public string FindRaceRole(string raceKey, out GalaxyRaceRoleConfig role)
+        {
+            role = null;
+            if (RaceRoles == null || string.IsNullOrEmpty(raceKey)) return null;
+            foreach (var kv in RaceRoles)
+                if (kv.Value?.Races != null && kv.Value.Races.Contains(raceKey)) { role = kv.Value; return kv.Key; }
+            return null;
+        }
+    }
+
+    /// <summary>Правила расселения для группы рас (роли) в галактике.</summary>
+    public class GalaxyRaceRoleConfig
+    {
+        /// <summary>Ключи рас (из GalaxyConfig.Races), входящих в роль.</summary>
+        [JsonProperty("Races")] public List<string> Races { get; set; } = new();
+
+        /// <summary>Участвует ли роль в расселении (Expansion). Непланетарные расы не расселяются в любом случае.</summary>
+        [JsonProperty("Colonize")] public bool Colonize { get; set; } = true;
+
+        /// <summary>
+        /// Доля систем галактики, которую роль должна суммарно занять (0..1). Целевое число систем на расу:
+        /// round(StarsCount × SystemsShare × Overlap / RaceCount) ± Jitter — одинаковое для всех рас роли.
+        /// 0 — использовать старую формулу <see cref="GalaxyConfigData.TargetSystemsPerRace"/>.
+        /// </summary>
+        [JsonProperty("SystemsShare")] public float SystemsShare { get; set; } = 0f;
+
+        /// <summary>Средняя «мультирасовость» заселённой системы (сколько рас роли в среднем делят одну систему).</summary>
+        [JsonProperty("Overlap")] public float Overlap { get; set; } = 1.3f;
+
+        [JsonProperty("Jitter")] public int Jitter { get; set; } = 1;
+
+        /// <summary>
+        /// Гарантия ниши: если расе не хватает пригодных планет до цели, генератор превращает ближайшую
+        /// свободную планету подходящего размера с температурой в пределах Terraformable в «родной» мир расы
+        /// (параметры → Optimal/середина Acceptable). Выравнивает узкоспециализированные расы.
+        /// </summary>
+        [JsonProperty("GuaranteeNiche")] public bool GuaranteeNiche { get; set; } = true;
+
+        /// <summary>
+        /// Режим покрытия: [min, max] — доля систем галактики, которую роль заселяет суммарно (разыгрывается
+        /// на каждую генерацию). Если задан — вместо SystemsShare/Overlap: расы роли расселяются по очереди,
+        /// пока доля заселённых ролью систем не достигнет цели или расам некуда расти.
+        /// </summary>
+        [JsonProperty("Coverage")] public float[] Coverage { get; set; }
+
+        /// <summary>
+        /// Режим покрытия: [min, max] — разница между самой крупной и самой мелкой расой роли, в долях от числа
+        /// звёзд галактики. Разыгрывается на каждую генерацию; верхняя граница — жёсткий потолок разницы.
+        /// </summary>
+        [JsonProperty("RaceSpread")] public float[] RaceSpread { get; set; } = { 0.05f, 0.10f };
+
+        /// <summary>
+        /// Необязательные веса рас роли (режим покрытия): задают, какие расы крупнее. Разница весов
+        /// масштабируется в RaceSpread. Не задано — порядок рас случайный на каждую генерацию.
+        /// </summary>
+        [JsonProperty("Weights")] public Dictionary<string, float> Weights { get; set; }
+
+        /// <summary>
+        /// Штраф за уже заселённую систему при выборе цели расселения (в «уровнях спорности» планеты).
+        /// Больше — меньше смешанных систем и выше покрытие; 0 — без предпочтения пустых систем.
+        /// </summary>
+        [JsonProperty("OccupiedPenalty")] public int OccupiedPenalty { get; set; } = 2;
+
+        public bool UsesCoverage => Coverage != null && Coverage.Length >= 1 && Coverage[0] > 0f;
     }
 
     public class TargetSystemsPerRaceConfig
@@ -308,6 +394,18 @@ namespace SRG.Config
 
         public float EccentricityMin => OrbitsEccentricity?.Length > 0 ? OrbitsEccentricity[0] : 0f;
         public float EccentricityMax => OrbitsEccentricity?.Length > 1 ? OrbitsEccentricity[1] : 0f;
+
+        /// <summary>
+        /// Шанс, что у случайной (не premade) системы одна каменная планета заселяемого размера окажется
+        /// в обитаемой зоне: система масштабируется так, чтобы температура поверхности этой планеты попала
+        /// в <see cref="HabitableSlotTemp"/>. Реалистичная оценка η⊕ для звёзд типа Солнца — 0.3–0.6;
+        /// 1.0 — игровое допущение ради заселённости галактики 90–95 %.
+        /// </summary>
+        [JsonProperty("HabitableSlotChance")] public float HabitableSlotChance { get; set; } = 0.5f;
+        /// <summary>Диапазон целевой температуры поверхности (K) для планеты обитаемой зоны.</summary>
+        [JsonProperty("HabitableSlotTemp")] public float[] HabitableSlotTemp { get; set; } = { 250f, 315f };
+        /// <summary>Допустимый множитель масштаба орбит системы при размещении планеты обитаемой зоны [min, max].</summary>
+        [JsonProperty("HabitableSlotScale")] public float[] HabitableSlotScale { get; set; } = { 0.25f, 4f };
     }
 
     public class GovernmentTypeConfig
@@ -619,6 +717,12 @@ namespace SRG.Config
         [JsonProperty("Terraformable")] public float[] Terraformable { get; set; }
     }
 
+    /// <summary>
+    /// Условия обитаемости расы. Жёстко проверяются три оси (см. <see cref="SRG.Galaxy.RaceHabitability"/>):
+    /// температура, атмосфера (давление + pO₂) и гравитация. Вода и радиация — мягкие модификаторы
+    /// (комфорт → население), а не фильтры. Для терраформирования проверяются T, давление и g:
+    /// кислород и гидросферу терраформирование создаёт само.
+    /// </summary>
     public class RacePlanetConditionsConfig
     {
         [JsonProperty("WaterAbundance")]    public float[] WaterAbundance    { get; set; }

@@ -1087,7 +1087,7 @@
         "Terron": { "Adj": "станция терроноидов", "Code": "Terron", "CostCoef": 4.0, "IsStation": true, "FixedRotation": true, "BodyGraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_c", "GraphicTemplate": "Graphics/Items/Equipment/Hull/Stations/<HullType>_a", "MinimapIconPath": "Graphics/UI/Minimap/Icons/Station/Terron", "WeaponPorts": [[0,70],[60,40],[-60,40],[60,-40],[-60,-40],[0,-70]], "Tails": [], "BoardAnchor": [130,0], "TowAnchors": {} }
       },
       "SideRaces": {
-        "Coalition": ["Race1", "Race2", "Race3", "Race4", "Race5"],
+        "Coalition": ["Race1", "Race2", "Race3", "Race4", "Race5", "Race8"],
         "Dominators": ["RaceDominators1", "RaceDominators2", "RaceDominators3"]
       },
       "SideHullTypes": {
@@ -1130,6 +1130,7 @@
         "Race3":  { "Engine":  0, "FuelTank": 0, "Forsage":  1, "Shield":  1, "Radar": 0, "Scanner":  0, "Droid":  1, "CargoGrabber": 0, "Weapons":  0, "Artefacts":  2 },
         "Race4":  { "Engine":  0, "FuelTank": 0, "Forsage":  0, "Shield":  0, "Radar": 0, "Scanner":  1, "Droid":  1, "CargoGrabber": 0, "Weapons": -1, "Artefacts":  0 },
         "Race5":  { "Engine":  0, "FuelTank": 0, "Forsage": -1, "Shield": -1, "Radar": 0, "Scanner":  0, "Droid":  0, "CargoGrabber": 0, "Weapons": -2, "Artefacts":  4 },
+        "Race8":  { "Engine":  0, "FuelTank": 0, "Forsage":  0, "Shield":  1, "Radar": 0, "Scanner":  1, "Droid":  0, "CargoGrabber": 0, "Weapons": -1, "Artefacts":  2 },
         "RaceDominators1": { "Engine":  0, "FuelTank": 0, "Forsage":  1, "Shield":  0, "Radar": 0, "Scanner":  0, "Droid":  0, "CargoGrabber": 0, "Weapons":  1, "Artefacts":  0 },
         "RaceDominators2": { "Engine":  0, "FuelTank": 0, "Forsage":  0, "Shield":  1, "Radar": 0, "Scanner":  1, "Droid":  1, "CargoGrabber": 0, "Weapons":  0, "Artefacts":  1 },
         "RaceDominators3": { "Engine":  0, "FuelTank": 0, "Forsage":  0, "Shield":  1, "Radar": 0, "Scanner":  0, "Droid":  1, "CargoGrabber": 0, "Weapons":  2, "Artefacts":  0 }

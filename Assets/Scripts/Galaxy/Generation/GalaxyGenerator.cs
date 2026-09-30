@@ -224,11 +224,11 @@ namespace SRG.Galaxy.Generation
                 _planetaryRaces = new List<string>();
                 // Мульти-галактика: фильтруем «планетарные» расы по списку, разрешённому текущей галактикой
                 // (ActiveGalaxyConfig.Races). Если список пуст/не задан — открытая совместимость: берём всё.
-                var galaxyRaces = _ctx.ActiveGalaxyConfig?.Races;
+                var galaxyRaces = GetActiveGalaxyRaceSet();
                 foreach (var k in _ctx.AvailableRaces.Keys)
                 {
                     if (IsNonPlanetaryRace(k)) continue;
-                    if (galaxyRaces != null && galaxyRaces.Count > 0 && !galaxyRaces.Contains(k)) continue;
+                    if (galaxyRaces != null && !galaxyRaces.Contains(k)) continue;
                     _planetaryRaces.Add(k);
                 }
                 if (_planetaryRaces.Count == 0)
@@ -237,13 +237,8 @@ namespace SRG.Galaxy.Generation
             return _planetaryRaces.Count > 0 ? _planetaryRaces[UnityEngine.Random.Range(0, _planetaryRaces.Count)] : GalaxyConstants.RACE_NONE_KEY;
         }
 
-        /// <summary>Расы, «принадлежащие» текущей галактике по PremadeConfig/GalaxyConfig.Races.
+        /// <summary>Расы, «принадлежащие» текущей галактике: GalaxyConfig.Races ∪ расы из RaceRoles.
         /// Возвращает null если список не задан (совместимость со старыми конфигами — тогда пропускаем фильтр).</summary>
-        internal HashSet<string> GetActiveGalaxyRaceSet()
-        {
-            var list = _ctx.ActiveGalaxyConfig?.Races;
-            if (list == null || list.Count == 0) return null;
-            return new HashSet<string>(list);
-        }
+        internal HashSet<string> GetActiveGalaxyRaceSet() => _ctx.ActiveGalaxyConfig?.GetAllRaces();
     }
 }

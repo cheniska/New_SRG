@@ -304,6 +304,12 @@ namespace SRG.Equipment
                 sizeData.Population?.Length >= 2 && sizeData.Population[1] > 0)
                 planet.Settlement.Population = UnityEngine.Random.Range(sizeData.Population[0], sizeData.Population[1] + 1);
 
+            // Мягкие условия расы (вода, радиация) не запрещают колонию, но снижают население (комфорт 0.25..1).
+            if (planet.Settlement.Population > 0 && planet.Race != null && galaxyConfig?.Races != null &&
+                galaxyConfig.Races.TryGetValue(planet.Race, out var popRaceCfg) && popRaceCfg.PlanetConditions != null)
+                planet.Settlement.Population = Mathf.Max(1, Mathf.RoundToInt(
+                    planet.Settlement.Population * RaceHabitability.Comfort(planet, popRaceCfg.PlanetConditions)));
+
             // --- Магазин товаров (из GalaxyConfig.Goods с полным расчётом цен) ---
             if (galaxyConfig?.Goods != null)
                 TradeSystem.InitPlanetShop(planet, galaxyConfig);
