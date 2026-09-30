@@ -7,6 +7,7 @@ using SRG.Equipment;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI;
+using SRG.Ships.Services;
 
 namespace SRG.Simulation
 {
@@ -87,7 +88,13 @@ namespace SRG.Simulation
             GalaxyConstants.Initialize(settings);
             GalaxyConstants.InitializeFromGalaxyConfig(cfg);
             NpcBalance.LoadFromSettings(settings);
-            OwnerRaceRelationsManager.Instance?.Initialize(cfg);
+            // Объекты сессии симуляции: отношения фракций, директивы, генштабы.
+            OwnerRaceRelationsManager.CreateForSession().Initialize(cfg);
+            DirectiveManager.CreateForSession();
+            // Статические подписки сервисов на игровые события (идемпотентно).
+            GalaxyNewsService.Initialize();
+            ShipRatingService.Initialize();
+            EmbedDropService.EnsureInstalled();
             TriggerBus.EnsureBuiltinsRegistered();
             EmbedConfigValidator.Validate(itemsCfg, cfg);
 

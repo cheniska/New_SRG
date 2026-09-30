@@ -31,7 +31,7 @@ namespace SRG.Tests
         }
 
         [Test]
-        public void Simulation_IsReproducible([Values(10)] int days)
+        public void Simulation_IsReproducible([Values(10, 31)] int days)
         {
             string a, b;
             using (var w = TestWorld.Generate(Seed)) { w.RunDays(days); a = w.StateHash(); }

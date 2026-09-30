@@ -9,7 +9,11 @@ using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
-    public class DirectiveManager : MonoBehaviour
+    /// <summary>
+    /// Директивы фракций (атака/оборона/подавление пиратства). Обычный объект симуляции:
+    /// создаётся на сессию в <see cref="SimulationSetup"/> и тикает по событию хода.
+    /// </summary>
+    public class DirectiveManager
     {
         public static DirectiveManager Instance { get; private set; }
 
@@ -28,23 +32,16 @@ namespace SRG.NpcAI
         // и не пересоздавал под-действие каждый ход.
         private readonly Dictionary<string, ActionPartnerAttend> _partnerActions = new();
 
-        private void Awake()
+        /// <summary>Создать менеджер (и реестр генштабов) для новой сессии симуляции.
+        /// Предыдущий экземпляр отписывается от событий хода.</summary>
+        public static DirectiveManager CreateForSession()
         {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            // Автосоздание HighCommandRegistry — избавляет от необходимости класть его в сцену вручную.
-            if (HighCommandRegistry.Instance == null)
-            {
-                var go = new GameObject("HighCommandRegistry");
-                go.AddComponent<HighCommandRegistry>();
-                DontDestroyOnLoad(go);
-            }
+            if (Instance != null) GameWorld.OnTurnCalculate -= Instance.OnTurnCalculate;
+            Instance = new DirectiveManager();
+            GameWorld.OnTurnCalculate += Instance.OnTurnCalculate;
+            HighCommandRegistry.CreateForSession();
+            return Instance;
         }
-
-        private void OnEnable()  { GameWorld.OnTurnCalculate += OnTurnCalculate; }
-        private void OnDisable() { GameWorld.OnTurnCalculate -= OnTurnCalculate; }
 
         public void Issue(OwnerDirective directive)
         {

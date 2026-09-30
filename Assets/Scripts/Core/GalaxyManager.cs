@@ -97,31 +97,8 @@ namespace SRG.Core
             GameWorld.Attach(this);
             DontDestroyOnLoad(gameObject);
 
-            // DirectiveManager — MonoBehaviour-синглтон верхнего слоя ИИ фракций (директивы, ГШ).
-            // В сцене его нет; создаём программно, чтобы он подписался на OnTurnCalculate.
-            if (DirectiveManager.Instance == null)
-            {
-                var go = new GameObject("DirectiveManager");
-                go.AddComponent<DirectiveManager>();
-                DontDestroyOnLoad(go);
-            }
-
-            // OwnerRaceRelationsManager — MonoBehaviour, тоже не размещён. Без него Initialize(cfg)
-            // из EnsureContextInitialized уходит в no-op (null-conditional), _ownerRelations остаются
-            // пустыми, AreHostile всегда возвращает false → фракции никого не считают врагами.
-            if (OwnerRaceRelationsManager.Instance == null)
-            {
-                var go = new GameObject("OwnerRaceRelationsManager");
-                go.AddComponent<OwnerRaceRelationsManager>();
-                DontDestroyOnLoad(go);
-            }
-
-            // GalaxyNewsService — статические подписки на игровые события. Идемпотентно.
-            GalaxyNewsService.Initialize();
-            // ShipRatingService — подписка на ShipDeathBus для агрегации Kills*.
-            ShipRatingService.Initialize();
-            // EmbedDropService — подписка на ShipDeathBus для дропа микромодулей.
-            SRG.Equipment.EmbedDropService.EnsureInstalled();
+            // Объекты симуляции (DirectiveManager, OwnerRaceRelationsManager, HighCommandRegistry)
+            // и подписки сервисов создаёт SimulationSetup вместе с контекстом.
         }
 
         private void OnApplicationQuit()
