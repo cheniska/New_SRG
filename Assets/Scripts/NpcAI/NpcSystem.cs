@@ -46,8 +46,12 @@ namespace SRG.NpcAI
                 PartnerService.CheckBreakAll(galaxy, turn);
                 _tPartner += _sw.ElapsedMilliseconds;
             }
+            // ИИ звезды — в своём потоке случайности (ключ дня + Uid звезды), как и расчёт звёзд
+            // в GalaxySimulator: решения кораблей звезды не зависят от порядка обхода звёзд.
+            var dayKey = GameRng.NextKey();
             foreach (var star in galaxy.StarsMap.Values)
-                TickStar(star, ctx);
+                using (GameRng.Use(GameRng.Derive(dayKey, star.Uid)))
+                    TickStar(star, ctx);
             LogTelemetry(galaxy.CurrentTurn);
         }
 

@@ -16,13 +16,53 @@ namespace SRG.Simulation
     ///
     /// Семантика методов совпадает с <see cref="UnityEngine.Random"/>: <see cref="Range(int,int)"/>
     /// не включает max, <see cref="Range(float,float)"/> и <see cref="Value"/> включают обе границы.
+    ///
+    /// <para><b>Потоки звёзд.</b> Статические методы берут случайность из <i>текущего</i> потока:
+    /// по умолчанию — общего, а внутри <see cref="Use"/> — из заданного. Расчёт звезды за день
+    /// идёт в своём потоке (<see cref="Derive"/> от ключа дня галактики и Uid звезды): звёзды не
+    /// делят последовательность, их результат не зависит от порядка обхода — это условие для
+    /// параллельного расчёта звёзд. Текущий поток — свой у каждого потока выполнения.</para>
     /// </summary>
     public static class GameRng
     {
         private static readonly Stream Shared = new Stream(Environment.TickCount);
 
-        /// <summary>Общий поток симуляции — для API, которые принимают <see cref="Stream"/>.</summary>
-        public static Stream SharedStream => Shared;
+        [ThreadStatic] private static Stream _current;
+
+        private static Stream Current => _current ?? Shared;
+
+        /// <summary>Текущий поток симуляции (общий или заданный <see cref="Use"/>) — для API,
+        /// которые принимают <see cref="Stream"/>.</summary>
+        public static Stream SharedStream => Current;
+
+        /// <summary>Сделать <paramref name="stream"/> текущим до Dispose возвращённой области.</summary>
+        public static Scope Use(Stream stream)
+        {
+            var prev = _current;
+            _current = stream;
+            return new Scope(prev);
+        }
+
+        public readonly struct Scope : IDisposable
+        {
+            private readonly Stream _prev;
+            internal Scope(Stream prev) => _prev = prev;
+            public void Dispose() => _current = _prev;
+        }
+
+        /// <summary>128-битный ключ из текущего потока (например, ключ дня галактики), из которого
+        /// затем выводятся независимые потоки (<see cref="Derive"/>).</summary>
+        public static uint[] NextKey()
+        {
+            var c = Current;
+            return new[] { c.NextUInt(), c.NextUInt(), c.NextUInt(), c.NextUInt() };
+        }
+
+        /// <summary>Поток, однозначно определяемый ключом и строкой (Uid звезды и т.п.). Разные
+        /// строки при одном ключе дают независимые последовательности; общий поток не расходуется.
+        /// Состояние 128-битное: совпасть потоки могут лишь при совпадении ключа, а ключ новый
+        /// каждый день.</summary>
+        public static Stream Derive(uint[] key, string salt) => new Stream(key, SRG.Utils.StableHash.Of(salt ?? ""));
 
         /// <summary>Локальный поток, однозначно определяемый ключом (для детерминированных
         /// «случайных» свойств справочных данных; общий поток не расходует).</summary>
@@ -67,6 +107,17 @@ namespace SRG.Simulation
             private uint _s0, _s1, _s2, _s3;
 
             public Stream(int seed) => InitState(seed);
+
+            /// <summary>Состояние = ключ XOR развёртка соли (SplitMix32) — см. <see cref="GameRng.Derive"/>.</summary>
+            public Stream(uint[] key, int salt)
+            {
+                uint x = unchecked((uint)salt);
+                _s0 = key[0] ^ SplitMix(ref x); _s1 = key[1] ^ SplitMix(ref x);
+                _s2 = key[2] ^ SplitMix(ref x); _s3 = key[3] ^ SplitMix(ref x);
+                if ((_s0 | _s1 | _s2 | _s3) == 0) _s0 = 0x6A09E667u; // нулевое состояние вырождено
+                // Прогрев: соседние соли дают близкие состояния — несколько шагов их разводят.
+                for (int i = 0; i < 8; i++) NextUInt();
+            }
 
             public void InitState(int seed)
             {

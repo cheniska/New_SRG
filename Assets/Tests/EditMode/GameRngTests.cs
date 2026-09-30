@@ -40,6 +40,37 @@ namespace SRG.Tests
         }
 
         [Test]
+        public void Derive_SameKeyAndSalt_SameSequence_DifferentSalt_Independent()
+        {
+            var key = new uint[] { 1, 2, 3, 4 };
+            var a = GameRng.Derive(key, "star-a");
+            var a2 = GameRng.Derive(key, "star-a");
+            var b = GameRng.Derive(key, "star-b");
+            int same = 0;
+            for (int i = 0; i < 200; i++)
+            {
+                uint va = a.NextUInt();
+                Assert.AreEqual(va, a2.NextUInt());
+                if (va == b.NextUInt()) same++;
+            }
+            Assert.Less(same, 3);
+        }
+
+        [Test]
+        public void Use_SwitchesCurrentStream_AndRestores()
+        {
+            GameRng.InitState(5);
+            var outside = GameRng.GetState();
+            var local = new GameRng.Stream(77);
+            var expected = new GameRng.Stream(77).NextUInt();
+            using (GameRng.Use(local))
+                Assert.AreEqual(expected, GameRng.SharedStream.NextUInt());
+            // Общий поток внутри области не расходовался.
+            CollectionAssert.AreEqual(outside, GameRng.GetState());
+            Assert.AreNotSame(local, GameRng.SharedStream);
+        }
+
+        [Test]
         public void StateRoundTrip_ContinuesSequence()
         {
             var a = new GameRng.Stream(7);

@@ -21,8 +21,12 @@ namespace SRG.Galaxy.Simulation
 
             SRG.Galaxy.Simulation.StarSimulator.ResetTelemetry();
             var swStars = System.Diagnostics.Stopwatch.StartNew();
+            // Каждая звезда считает день в своём потоке случайности (ключ дня + Uid звезды):
+            // результат звезды не зависит от порядка обхода и от других звёзд.
+            var dayKey = SRG.Simulation.GameRng.NextKey();
             foreach (var star in galaxy.StarsMap.Values)
-                star.StarNextDay(anim, ctx);
+                using (SRG.Simulation.GameRng.Use(SRG.Simulation.GameRng.Derive(dayKey, star.Uid)))
+                    star.StarNextDay(anim, ctx);
             swStars.Stop();
             SRG.Galaxy.Simulation.StarSimulator.LogTelemetry(galaxy.CurrentTurn);
 
