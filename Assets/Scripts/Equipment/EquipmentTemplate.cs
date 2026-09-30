@@ -202,7 +202,7 @@ namespace SRG.Equipment
                 : tier.ToString();
 
             // Подстановки в имя/описание/графику
-            var vars = new Dictionary<string, string>
+            var vars = new Dictionary<string, string>(16)
             {
                 ["Side"] = sideKey ?? "",
                 ["Race"] = raceKey ?? "",
@@ -218,23 +218,31 @@ namespace SRG.Equipment
                 ["LineName"] = lineName,
                 ["Weight"] = size.ToString()
             };
-            foreach (var kv in item.Params)
+            // Параметры предмета тоже доступны как <Имя> и перекрывают одноимённые переменные выше.
+            // Строки из них делаются только для переменных, которые реально встречаются в шаблонах:
+            // раньше в строки переводились все Params каждого нового предмета.
+            var itemParams = item.Params;
+            string Lookup(string name)
             {
-                if (kv.Key == "Effects" || kv.Key == "GTLDamageMultipliers") continue;
-                try { vars[kv.Key] = kv.Value.ToString(); } catch { }
+                if (name != "Effects" && name != "GTLDamageMultipliers"
+                    && itemParams.TryGetValue(name, out var tok))
+                {
+                    try { return tok.ToString(); } catch { }
+                }
+                return vars.TryGetValue(name, out var v) ? v : null;
             }
 
-            item.Name = Substitute(NameTemplate, vars);
-            item.Description = Substitute(BaseDesc, vars);
+            item.Name = Substitute(NameTemplate, Lookup);
+            item.Description = Substitute(BaseDesc, Lookup);
             // Станционный (или иной специфичный) HullType может задать собственный шаблон иконки —
             // категорийный содержит <Race>, что не работает для расо-независимых корпусов.
             item.GraphicPath = Substitute(
                 !string.IsNullOrEmpty(hullType?.GraphicTemplate) ? hullType.GraphicTemplate : GraphicTemplate,
-                vars);
+                Lookup);
             // Станционный корпус может переопределить путь к графике тела (Graphics/Items/Equipment/Hull/Stations/<Code>_c).
             item.BodyGraphicPath = Substitute(
                 !string.IsNullOrEmpty(hullType?.BodyGraphicTemplate) ? hullType.BodyGraphicTemplate : GraphicCosmicTemplate,
-                vars);
+                Lookup);
 
             // HullType код в Params (для последующего поиска формы корпуса)
             if (hullTypeKey != null)
@@ -388,11 +396,11 @@ namespace SRG.Equipment
             return result;
         }
 
-        private static string Substitute(string template, Dictionary<string, string> vars)
+        private static string Substitute(string template, System.Func<string, string> lookup)
         {
             if (string.IsNullOrEmpty(template)) return null;
-            return VarRegex.Replace(template, m =>
-                vars.TryGetValue(m.Groups[1].Value, out var v) ? v : m.Value);
+            if (template.IndexOf('<') < 0) return template;
+            return VarRegex.Replace(template, m => lookup(m.Groups[1].Value) ?? m.Value);
         }
 
         private static string Capitalize(string s)

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Headless-бенчмарк хода симуляции без Unity: см. README.md рядом. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Optimize>true</Optimize>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <TieredPGO>true</TieredPGO>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS0162;CS0168;CS0169;CS0219;CS0414;CS0649;CS0067;CS0108;CS0618;CS1998;CS8632</NoWarn>
+    <RootDir>$(MSBuildThisFileDirectory)../../</RootDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Compile Include="../headless-tests/UnityShim.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Simulation/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Combat/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Config/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Economy/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Equipment/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Galaxy/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/NpcAI/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Ships/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Science/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Dialog/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Scripting/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Scripts/Utils/**/*.cs" />
+    <Compile Include="$(RootDir)Assets/Tests/EditMode/TestWorld.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MoonSharp.Interpreter">
+      <HintPath>$(RootDir)Assets/Plugins/MoonSharp/MoonSharp.Interpreter.dll</HintPath>
+    </Reference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>

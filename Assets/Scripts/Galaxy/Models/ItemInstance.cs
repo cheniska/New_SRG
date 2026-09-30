@@ -188,6 +188,29 @@ namespace SRG.Galaxy
         public float GetVulnerability(string damageType) =>
             WeaponVulnerability != null && WeaponVulnerability.TryGetValue(damageType, out var v) ? v : 1.0f;
 
+        /// <summary>Параметр → float по правилам <c>(float)JToken</c> Newtonsoft (число, bool,
+        /// числовая строка в InvariantCulture), но без исключений: раньше каждый строковый/списочный
+        /// параметр бросал FormatException на каждом создании предмета.</summary>
+        private static bool TryParamFloat(Newtonsoft.Json.Linq.JToken t, out float value)
+        {
+            value = 0f;
+            if (t is not Newtonsoft.Json.Linq.JValue v || v.Value == null) return false;
+            switch (v.Type)
+            {
+                case Newtonsoft.Json.Linq.JTokenType.Integer:
+                case Newtonsoft.Json.Linq.JTokenType.Float:
+                case Newtonsoft.Json.Linq.JTokenType.Boolean:
+                    value = System.Convert.ToSingle(v.Value, System.Globalization.CultureInfo.InvariantCulture);
+                    return true;
+                case Newtonsoft.Json.Linq.JTokenType.String:
+                    return float.TryParse((string)v.Value,
+                        System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands,
+                        System.Globalization.CultureInfo.InvariantCulture, out value);
+                default:
+                    return false;
+            }
+        }
+
         public static ItemInstance FromConfig(
             string category,
             string itemId,
@@ -251,8 +274,8 @@ namespace SRG.Galaxy
                         continue;
                     }
 
-                    try { inst.Params[kv.Key] = kv.Value.ToObject<float>(); }
-                    catch
+                    if (TryParamFloat(kv.Value, out float num)) inst.Params[kv.Key] = num;
+                    else
                     {
                         try
                         {

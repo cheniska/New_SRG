@@ -91,6 +91,14 @@ namespace SRG.Config
         private Dictionary<string, EquipmentTemplate> _templatesCache;
         private Dictionary<string, ClusterConfig> _clustersCache;
 
+        // Справочные резолвы шаблонов: Resolve без rng детерминирован по (категория, id), а стоит
+        // дорого (разбор id, Regex-подстановки, JToken) и зовётся на каждый предмет каждый ход
+        // (износ, триггеры, бой). Ключ категории "" — поиск по одному id (GetItem(string)).
+        // Результат — общий экземпляр, как и у рукописных предметов: вызывающие его не меняют.
+        // Под lock — справочники читаются и из параллельных расчётов звёзд.
+        private readonly Dictionary<(string category, string id), ItemConfig> _resolvedCache = new();
+        private readonly object _resolvedLock = new();
+
         private void EnsureItemsCache()
         {
             if (_itemsById != null) return;
@@ -153,13 +161,27 @@ namespace SRG.Config
             if (string.IsNullOrEmpty(id)) return null;
             EnsureItemsCache();
             if (_itemsById.TryGetValue(id, out var it)) return it;
-            EnsureTemplatesCache();
-            foreach (var tpl in _templatesCache.Values)
+            return CachedResolve("", id, () =>
             {
-                var r = tpl.Resolve(id);
-                if (r != null) return r;
-            }
-            return null;
+                EnsureTemplatesCache();
+                foreach (var tpl in _templatesCache.Values)
+                {
+                    var r = tpl.Resolve(id);
+                    if (r != null) return r;
+                }
+                return null;
+            });
+        }
+
+        private ItemConfig CachedResolve(string category, string id, System.Func<ItemConfig> resolve)
+        {
+            var key = (category, id);
+            lock (_resolvedLock)
+                if (_resolvedCache.TryGetValue(key, out var cached)) return cached;
+            var r = resolve();
+            lock (_resolvedLock)
+                _resolvedCache[key] = r;
+            return r;
         }
 
         /// <summary>Ищет предмет с указанной категорией (Kind). Для рукописных предметов —
@@ -176,10 +198,11 @@ namespace SRG.Config
                 return item;
             }
 
-            EnsureTemplatesCache();
-            if (_templatesCache.TryGetValue(category, out var tpl))
-                return tpl.Resolve(itemId);
-            return null;
+            return CachedResolve(category ?? "", itemId, () =>
+            {
+                EnsureTemplatesCache();
+                return _templatesCache.TryGetValue(category, out var tpl) ? tpl.Resolve(itemId) : null;
+            });
         }
 
         /// <summary>

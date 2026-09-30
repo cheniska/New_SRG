@@ -46,6 +46,7 @@ ExportedObj/
 *.csproj
 # Проект headless-тестов пишется руками (не генерируется Unity) — нужен CI.
 !/tools/headless-tests/*.csproj
+!/tools/bench/*.csproj
 *.unityproj
 *.sln
 *.slnx
