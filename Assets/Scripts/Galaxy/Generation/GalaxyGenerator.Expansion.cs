@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -111,9 +111,9 @@ namespace SRG.Galaxy.Generation
             float mult    = cfg?.Multiplier      ?? 2.0f;
             int   jitter  = cfg?.Jitter          ?? 2;
 
-            float fraction = UnityEngine.Random.Range(fracMin, fracMax);
+            float fraction = GameRng.Range(fracMin, fracMax);
             int   baseVal  = Mathf.RoundToInt(starsCount * fraction * mult / raceCount);
-            int   target   = baseVal + UnityEngine.Random.Range(-jitter, jitter + 1);
+            int   target   = baseVal + GameRng.Range(-jitter, jitter + 1);
             return Mathf.Max(0, target);
         }
 

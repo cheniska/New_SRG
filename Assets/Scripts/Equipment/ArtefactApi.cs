@@ -143,7 +143,7 @@ namespace SRG.Equipment
         public static object PickRandom(System.Collections.IList list)
         {
             if (list == null || list.Count == 0) return null;
-            return list[Random.Range(0, list.Count)];
+            return list[GameRng.Range(0, list.Count)];
         }
 
         // ── Ракеты ────────────────────────────────────────────────────────

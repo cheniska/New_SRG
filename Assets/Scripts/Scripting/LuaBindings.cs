@@ -135,8 +135,8 @@ namespace SRG.Scripting
                 GameLog.Add(msg?.ToString() ?? "nil"));
 
             // Быстрый доступ к рандому.
-            s.Globals["Rand"]    = (Func<float, float, float>)((a, b) => UnityEngine.Random.Range(a, b));
-            s.Globals["RandInt"] = (Func<int, int, int>)      ((a, b) => UnityEngine.Random.Range(a, b));
+            s.Globals["Rand"]    = (Func<float, float, float>)((a, b) => GameRng.Range(a, b));
+            s.Globals["RandInt"] = (Func<int, int, int>)      ((a, b) => GameRng.Range(a, b));
         }
     }
 }

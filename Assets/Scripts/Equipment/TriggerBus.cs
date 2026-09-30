@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -82,7 +83,7 @@ namespace SRG.Equipment
             }
 
             float chance = trig.Chance <= 0f ? 1f : trig.Chance;
-            if (chance < 1f && UnityEngine.Random.value > chance) return;
+            if (chance < 1f && GameRng.Value > chance) return;
 
             if (trig.Effects != null)
                 foreach (var op in trig.Effects)

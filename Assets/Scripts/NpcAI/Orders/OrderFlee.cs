@@ -1,8 +1,8 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Orders
 {
@@ -24,7 +24,7 @@ namespace SRG.NpcAI.Orders
             if (_threat == null) { _completed = true; return true; }
 
             Vector2 away = (ship.Position - _threat.Position).normalized;
-            if (away.sqrMagnitude < 0.001f) away = UnityEngine.Random.insideUnitCircle.normalized;
+            if (away.sqrMagnitude < 0.001f) away = GameRng.InsideUnitCircle.normalized;
             Vector2 dest = ship.Position + away * NpcBalance.FleeDistance;
 
             float sysR = SRUnits.ToWorld(star.SystemSize) * 0.85f;

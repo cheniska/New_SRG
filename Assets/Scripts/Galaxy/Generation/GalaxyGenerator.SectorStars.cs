@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -90,7 +90,7 @@ namespace SRG.Galaxy.Generation
 
             for (int attempts = 0; budget > 0 && available.Count > 0 && attempts < budget * 5 + 500; attempts++)
             {
-                int idx = UnityEngine.Random.Range(0, available.Count);
+                int idx = GameRng.Range(0, available.Count);
                 var c = available[idx];
                 if (TryAddStar(galaxy, c, CreateStar(galaxy, c)))
                 {
@@ -152,7 +152,7 @@ namespace SRG.Galaxy.Generation
         {
             star.Owner = GalaxyConstants.OWNER_NONE_KEY;
             star.Race  = GalaxyConstants.RACE_NONE_KEY;
-            star.Type  = _ctx.AvailableStarTypes[UnityEngine.Random.Range(0, _ctx.AvailableStarTypes.Count)];
+            star.Type  = _ctx.AvailableStarTypes[GameRng.Range(0, _ctx.AvailableStarTypes.Count)];
             star.Color = GalaxyConstants.VAL_UNKNOWN;
             star.GraphVar = 0;
             star.Name = GalaxyConstants.VAL_UNKNOWN;

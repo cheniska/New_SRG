@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Simulation;
+using SRG.Utils;
 
 namespace SRG.Economy
 {
@@ -66,7 +66,7 @@ namespace SRG.Economy
                 foreach (var planet in star.Planets)
                 {
                     if (!IsInhabited(planet)) continue;
-                    int slot = Mathf.Abs(planet.Uid?.GetHashCode() ?? 0) % 7;
+                    int slot = (StableHash.Of(planet.Uid) & 0x7fffffff) % 7;
                     if ((day + slot) % 7 != 0) continue;
                     _diagShopsRefreshed++;
                     RefreshShop(planet, ctx);   // PlanetData implicitly = ILandingSite
@@ -144,7 +144,7 @@ namespace SRG.Economy
             foreach (var kv in shop.Items)
                 if (kv.Value != null && kv.Value.Category == MicroModuleFactory.CategoryKey) current++;
 
-            int target = Mathf.Clamp(Random.Range(0, 3), 0, 2);
+            int target = Mathf.Clamp(GameRng.Range(0, 3), 0, 2);
             int diff = target - current;
             if (diff <= 0) return;
 
@@ -169,7 +169,7 @@ namespace SRG.Economy
 
             for (int i = 0; i < diff; i++)
             {
-                var id = pool[Random.Range(0, pool.Count)];
+                var id = pool[GameRng.Range(0, pool.Count)];
                 var inst = ItemGrantService.CreateMicroModule(id, ctx);
                 if (inst != null) shop.Items[inst.Uid] = inst;
             }
@@ -181,7 +181,7 @@ namespace SRG.Economy
 
         private static int ComputeTargetCount(string category, EconomyTypeConfig econ, GovernmentTypeConfig gov)
         {
-            int baseTarget = Random.Range(0, RandomMaxExclusive);
+            int baseTarget = GameRng.Range(0, RandomMaxExclusive);
             int ecoMod = ReadMod(econ?.EquipmentShopMods, category);
             int govMod = ReadMod(gov?.EquipmentShopMods, category);
             return Mathf.Clamp(baseTarget + ecoMod + govMod, MinTargetPerCategory, MaxTargetPerCategory);
@@ -257,13 +257,13 @@ namespace SRG.Economy
                 string id = null;
                 for (int attempt = 0; attempt < 8 && id == null; attempt++)
                 {
-                    string pick = candidates[Random.Range(0, candidates.Count)];
+                    string pick = candidates[GameRng.Range(0, candidates.Count)];
                     if (IsAllowedByResearch(research, site, pick, maxTL)) id = pick;
                 }
                 if (id == null) continue;
 
                 int? gtlOverride = category == EquipmentCategory.Weapons
-                    ? Random.Range(minTL, maxTL + 1)
+                    ? GameRng.Range(minTL, maxTL + 1)
                     : (int?)null;
                 var inst = ItemGrantService.CreateEquipment(
                     category, id, ctx, raceOverride: site.Race, gtlOverride: gtlOverride);
@@ -296,7 +296,7 @@ namespace SRG.Economy
             // Перемешивание (Fisher-Yates) — небольшая выборка, OK.
             for (int i = uids.Count - 1; i > 0; i--)
             {
-                int j = Random.Range(0, i + 1);
+                int j = GameRng.Range(0, i + 1);
                 (uids[i], uids[j]) = (uids[j], uids[i]);
             }
 

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -55,10 +55,10 @@ namespace SRG.Galaxy.Generation
                         "corner"    => SampleCornerPoint(w, h, pad),
                         "neighbour" => hasNeighbour
                                            ? SampleNearPoint(neighbourPos, w, h, pad)
-                                           : new Vector2(UnityEngine.Random.Range(pad, w - pad),
-                                                         UnityEngine.Random.Range(pad, h - pad)),
-                        _           => new Vector2(UnityEngine.Random.Range(pad, w - pad),
-                                                  UnityEngine.Random.Range(pad, h - pad))
+                                           : new Vector2(GameRng.Range(pad, w - pad),
+                                                         GameRng.Range(pad, h - pad)),
+                        _           => new Vector2(GameRng.Range(pad, w - pad),
+                                                  GameRng.Range(pad, h - pad))
                     };
 
                     if (IsFarEnoughFromSectors(candidate, stars, placedList))
@@ -97,26 +97,26 @@ namespace SRG.Galaxy.Generation
             float aTop   = aBot;
             float total  = aLeft + aRight + aBot + aTop;
 
-            float r = UnityEngine.Random.Range(0f, total);
+            float r = GameRng.Range(0f, total);
             if (r < aLeft)
-                return new Vector2(UnityEngine.Random.Range(pad, bw),
-                                   UnityEngine.Random.Range(pad, h - pad));
+                return new Vector2(GameRng.Range(pad, bw),
+                                   GameRng.Range(pad, h - pad));
             r -= aLeft;
             if (r < aRight)
-                return new Vector2(UnityEngine.Random.Range(w - bw, w - pad),
-                                   UnityEngine.Random.Range(pad, h - pad));
+                return new Vector2(GameRng.Range(w - bw, w - pad),
+                                   GameRng.Range(pad, h - pad));
             r -= aRight;
             if (r < aBot)
-                return new Vector2(UnityEngine.Random.Range(bw, w - bw),
-                                   UnityEngine.Random.Range(pad, bw));
-            return new Vector2(UnityEngine.Random.Range(bw, w - bw),
-                               UnityEngine.Random.Range(h - bw, h - pad));
+                return new Vector2(GameRng.Range(bw, w - bw),
+                                   GameRng.Range(pad, bw));
+            return new Vector2(GameRng.Range(bw, w - bw),
+                               GameRng.Range(h - bw, h - pad));
         }
 
         private static Vector2 SampleCenterPoint(float w, float h, float pad)
         {
             float   radius = Mathf.Min(w, h) * CenterZoneRadFrac;
-            Vector2 offset = UnityEngine.Random.insideUnitCircle * radius;
+            Vector2 offset = GameRng.InsideUnitCircle * radius;
             return new Vector2(Mathf.Clamp(w * 0.5f + offset.x, pad, w - pad),
                                Mathf.Clamp(h * 0.5f + offset.y, pad, h - pad));
         }
@@ -124,19 +124,19 @@ namespace SRG.Galaxy.Generation
         private static Vector2 SampleCornerPoint(float w, float h, float pad)
         {
             float cz = Mathf.Min(w, h) * CornerZoneFrac;
-            return UnityEngine.Random.Range(0, 4) switch
+            return GameRng.Range(0, 4) switch
             {
-                0 => new Vector2(UnityEngine.Random.Range(pad, cz),     UnityEngine.Random.Range(pad, cz)),
-                1 => new Vector2(UnityEngine.Random.Range(w - cz, w - pad), UnityEngine.Random.Range(pad, cz)),
-                2 => new Vector2(UnityEngine.Random.Range(pad, cz),     UnityEngine.Random.Range(h - cz, h - pad)),
-                _ => new Vector2(UnityEngine.Random.Range(w - cz, w - pad), UnityEngine.Random.Range(h - cz, h - pad)),
+                0 => new Vector2(GameRng.Range(pad, cz),     GameRng.Range(pad, cz)),
+                1 => new Vector2(GameRng.Range(w - cz, w - pad), GameRng.Range(pad, cz)),
+                2 => new Vector2(GameRng.Range(pad, cz),     GameRng.Range(h - cz, h - pad)),
+                _ => new Vector2(GameRng.Range(w - cz, w - pad), GameRng.Range(h - cz, h - pad)),
             };
         }
 
         private static Vector2 SampleNearPoint(Vector2 target, float w, float h, float pad)
         {
             float   radius = Mathf.Min(w, h) * NeighbourRadiusFrac;
-            Vector2 offset = UnityEngine.Random.insideUnitCircle * radius;
+            Vector2 offset = GameRng.InsideUnitCircle * radius;
             return new Vector2(Mathf.Clamp(target.x + offset.x, pad, w - pad),
                                Mathf.Clamp(target.y + offset.y, pad, h - pad));
         }
@@ -157,14 +157,14 @@ namespace SRG.Galaxy.Generation
             for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
             {
-                float cx = (c + 0.5f) * cellW + UnityEngine.Random.Range(-jx, jx);
-                float cy = (r + 0.5f) * cellH + UnityEngine.Random.Range(-jy, jy);
+                float cx = (c + 0.5f) * cellW + GameRng.Range(-jx, jx);
+                float cy = (r + 0.5f) * cellH + GameRng.Range(-jy, jy);
                 all.Add(new Vector2(Mathf.Clamp(cx, 0, w), Mathf.Clamp(cy, 0, h)));
             }
 
             for (int i = all.Count - 1; i > 0; i--)
             {
-                int j = UnityEngine.Random.Range(0, i + 1);
+                int j = GameRng.Range(0, i + 1);
                 var tmp = all[i]; all[i] = all[j]; all[j] = tmp;
             }
             while (all.Count > n) all.RemoveAt(all.Count - 1);
@@ -338,8 +338,8 @@ namespace SRG.Galaxy.Generation
             for (int i = 0; i < StarPlaceMaxIter; i++)
             {
                 var candidate = new Vector2(
-                    UnityEngine.Random.Range(bbox.xMin, bbox.xMax),
-                    UnityEngine.Random.Range(bbox.yMin, bbox.yMax));
+                    GameRng.Range(bbox.xMin, bbox.xMax),
+                    GameRng.Range(bbox.yMin, bbox.yMax));
 
                 if (!PointInPolygon(candidate, poly)) continue;
                 if (!IsFarFromAll(candidate, usedPos)) continue;

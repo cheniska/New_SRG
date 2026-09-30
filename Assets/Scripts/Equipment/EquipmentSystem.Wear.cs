@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Combat;
 using SRG.Config;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -196,7 +196,7 @@ namespace SRG.Equipment
 
             ship.CurrentHull = Mathf.Max(0, ship.CurrentHull - Mathf.RoundToInt(afterArmor));
 
-            if (equipDamage > 0 && Random.value < equipHitChance)
+            if (equipDamage > 0 && GameRng.Value < equipHitChance)
             {
                 var picked = GetRandomDamageableSlot(ship, equipConfig);
                 if (picked.item != null)
@@ -230,7 +230,7 @@ namespace SRG.Equipment
             }
 
             if (_damageableCandidates.Count == 0) return (null, null);
-            return _damageableCandidates[Random.Range(0, _damageableCandidates.Count)];
+            return _damageableCandidates[GameRng.Range(0, _damageableCandidates.Count)];
         }
     }
 }

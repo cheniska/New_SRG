@@ -1,5 +1,4 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using System.Linq;
 using SRG.Config;
@@ -111,13 +110,13 @@ namespace SRG.Ships
             if (!string.IsNullOrEmpty(ownerId)
                 && ownerLineups.TryGetValue(ownerId, out var lineup)
                 && lineup.Count > 0)
-                return lineup[UnityEngine.Random.Range(0, lineup.Count)];
+                return lineup[GameRng.Range(0, lineup.Count)];
 
             if (availableShipTypeKeys != null && availableShipTypeKeys.Count > 0)
-                return availableShipTypeKeys[UnityEngine.Random.Range(0, availableShipTypeKeys.Count)];
+                return availableShipTypeKeys[GameRng.Range(0, availableShipTypeKeys.Count)];
 
             int count = availableShipTypes.Count;
-            return count > 0 ? availableShipTypes.Keys.ElementAt(UnityEngine.Random.Range(0, count)) : null;
+            return count > 0 ? availableShipTypes.Keys.ElementAt(GameRng.Range(0, count)) : null;
         }
     }
 }

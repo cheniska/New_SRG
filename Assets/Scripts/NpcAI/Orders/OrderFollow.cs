@@ -30,7 +30,7 @@ namespace SRG.NpcAI.Orders
                     ? Mathf.Atan2(toLeader.y, toLeader.x)
                     : 0f;
             }
-            int seed = ship.Uid?.GetHashCode() ?? 0;
+            int seed = StableHash.Of(ship.Uid);
             float jitterDeg = ((seed & 0x7FFFFFFF) % 91) - 45;  // [-45, +45]
             float angle = refHeading + Mathf.PI + jitterDeg * Mathf.Deg2Rad;
             Vector2 offset = new(Mathf.Cos(angle), Mathf.Sin(angle));

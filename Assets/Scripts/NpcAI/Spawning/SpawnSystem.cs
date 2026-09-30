@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Economy;
 using SRG.Equipment;
@@ -215,10 +214,10 @@ namespace SRG.NpcAI.Spawning
             foreach (var sector in galaxy.Sectors)
             {
                 if (sector?.Stars == null || sector.Stars.Count == 0) continue;
-                int count = Random.Range(0, 4); // 0..3
+                int count = GameRng.Range(0, 4); // 0..3
                 for (int i = 0; i < count; i++)
                 {
-                    var star = sector.Stars[Random.Range(0, sector.Stars.Count)];
+                    var star = sector.Stars[GameRng.Range(0, sector.Stars.Count)];
                     if (SpawnStationInStar(star, ctx) != null) total++;
                 }
             }
@@ -238,7 +237,7 @@ namespace SRG.NpcAI.Spawning
             if (string.IsNullOrEmpty(code))
             {
                 var pool = dominator ? DominatorStationCodes : CoalitionStationCodes;
-                code = pool[Random.Range(0, pool.Length)];
+                code = pool[GameRng.Range(0, pool.Length)];
             }
             string shipTypeId = "Station_" + code;
 
@@ -253,7 +252,7 @@ namespace SRG.NpcAI.Spawning
             ship.TurnSpeedDeg = 0f;
 
             float radiusUnits = ChooseStationOrbitRadius(star);
-            float ang = Random.Range(0f, Mathf.PI * 2f);
+            float ang = GameRng.Range(0f, Mathf.PI * 2f);
             Vector2 pos = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * SRUnits.ToWorld(radiusUnits);
             ship.Position         = pos;
             ship.PreviousPosition = pos;
@@ -285,7 +284,7 @@ namespace SRG.NpcAI.Spawning
             const float Margin = 300f;
             var planets = star.Planets;
             if (planets == null || planets.Count == 0)
-                return 2000f + Random.Range(-500f, 500f);
+                return 2000f + GameRng.Range(-500f, 500f);
 
             // Занятые кольца [lo, hi] с учётом эксцентриситета и запаса.
             var bands = new List<(float lo, float hi)>(planets.Count);
@@ -307,11 +306,11 @@ namespace SRG.NpcAI.Spawning
                 float gapLo = bands[i].hi;
                 float gapHi = bands[i + 1].lo;
                 if (gapHi - gapLo > 100f)
-                    candidates.Add(Random.Range(gapLo, gapHi));
+                    candidates.Add(GameRng.Range(gapLo, gapHi));
             }
-            candidates.Add(outer + Random.Range(200f, 700f)); // всегда валиден: дальше всех орбит
+            candidates.Add(outer + GameRng.Range(200f, 700f)); // всегда валиден: дальше всех орбит
 
-            return candidates[Random.Range(0, candidates.Count)];
+            return candidates[GameRng.Range(0, candidates.Count)];
         }
 
         /// <summary>Инициализирует инфраструктуру станции. Станции — НЕ поселения: у них нет населения,
@@ -370,7 +369,7 @@ namespace SRG.NpcAI.Spawning
             if (cfg == null || cfg.NpcSpawnChance <= 0f) return;
             if (ship?.Equipment?.Slots == null) return;
 
-            var rng = new System.Random(ship.Uid?.GetHashCode() ?? System.Environment.TickCount);
+            var rng = ship.Uid != null ? new System.Random(StableHash.Of(ship.Uid)) : GameRng.CreateSystemRandom();
             foreach (var kv in ship.Equipment.Slots)
             {
                 if (kv.Value == null) continue;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using SRG.Galaxy;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Core
 {
@@ -15,6 +16,9 @@ namespace SRG.Core
     {
         public string ActiveKey { get; set; }
         public Dictionary<string, GalaxyData> Galaxies { get; set; } = new();
+        /// <summary>Состояние <see cref="GameRng"/> на момент сохранения — после загрузки игра
+        /// продолжается той же последовательностью случайных чисел. null в старых сейвах.</summary>
+        public uint[] RngState { get; set; }
     }
 
     public static class GalaxySaveManager
@@ -40,6 +44,7 @@ namespace SRG.Core
             {
                 ActiveKey = activeKey,
                 Galaxies = galaxies,
+                RngState = GameRng.GetState(),
             };
             string json = JsonConvert.SerializeObject(container, Formatting.Indented, SaveSettings);
             File.WriteAllText(SavePath, json);
@@ -68,6 +73,8 @@ namespace SRG.Core
                     if (container?.Galaxies == null) return null;
                     foreach (var g in container.Galaxies.Values) g?.InitializeLookups();
                     activeKey = container.ActiveKey;
+                    // Восстанавливаем ПОСЛЕ десериализации: конструкторы моделей берут UID из GameRng.
+                    GameRng.SetState(container.RngState);
                     return container.Galaxies;
                 }
                 // Старый формат: корень = GalaxyData.

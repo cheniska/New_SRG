@@ -343,8 +343,8 @@ namespace SRG.UI.Screens
                     ship.PreviousStarUid = star.Uid;
                     ship.CurrentStar     = star;
 
-                    Vector2 pos = new Vector2(UnityEngine.Random.Range(-5f, 5f),
-                                              UnityEngine.Random.Range(-5f, 5f));
+                    Vector2 pos = new Vector2(GameRng.Range(-5f, 5f),
+                                              GameRng.Range(-5f, 5f));
                     ship.Position = ship.PreviousPosition = ship.TargetPosition = pos;
 
                     if (ctx.AvailableShipTypes.TryGetValue(shipTypeId, out var cfg)

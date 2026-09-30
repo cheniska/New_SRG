@@ -14,7 +14,7 @@ namespace SRG.NpcAI
     /// адресация конкретной расе внутри Owner — через поле RaceId директивы.</summary>
     public abstract class Directive
     {
-        public string Uid { get; } = System.Guid.NewGuid().ToString();
+        public string Uid { get; } = GameRng.NewUid();
         public bool IsExpired { get; protected set; }
         public int TurnsRemaining { get; protected set; } = -1;
 

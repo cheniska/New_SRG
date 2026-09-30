@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Linq;
 using SRG.Config;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.Utils
 {
@@ -89,7 +89,7 @@ namespace SRG.Utils
             star.Owner    = p?.Owner ?? sector.Owner ?? GalaxyConstants.OWNER_UNRESOLVED_KEY;
             star.Race     = p?.Race ?? GalaxyConstants.RACE_NONE_KEY;
             star.Name     = p?.Name ?? GalaxyConstants.VAL_UNKNOWN;
-            star.Position = sector.Center + Random.insideUnitCircle * GalaxyConstants.SECTOR_RADIUS;
+            star.Position = sector.Center + GameRng.InsideUnitCircle * GalaxyConstants.SECTOR_RADIUS;
 
             if (p?.Planets != null && p.Planets.Count > 0)
             {
@@ -129,7 +129,7 @@ namespace SRG.Utils
                 string starRace = star.Race;
                 string race = OwnerResolver.IsFixedRace(starRace, _ctx.AvailableRaces)
                     ? starRace : GetRandomRaceKey();
-                bool isNone = Random.value < 0.2f;
+                bool isNone = GameRng.Value < 0.2f;
 
                 planet.Race  = isNone ? GalaxyConstants.RACE_NONE_KEY : race;
                 planet.Owner = isNone ? GalaxyConstants.OWNER_NONE_KEY : star.Owner;
@@ -150,8 +150,8 @@ namespace SRG.Utils
             else
             {
                 float maxExisting = star.Planets.Count > 0 ? star.Planets.Max(pl => pl.OrbitRadius) : 0f;
-                float gap = Random.Range(GalaxyConstants.ORBIT_GAP_MIN, GalaxyConstants.ORBIT_GAP_MAX) * mult;
-                planet.OrbitRadius = maxExisting > 0f ? maxExisting + gap : Random.Range(GalaxyConstants.FIRST_ORBIT_MIN, GalaxyConstants.FIRST_ORBIT_MAX);
+                float gap = GameRng.Range(GalaxyConstants.ORBIT_GAP_MIN, GalaxyConstants.ORBIT_GAP_MAX) * mult;
+                planet.OrbitRadius = maxExisting > 0f ? maxExisting + gap : GameRng.Range(GalaxyConstants.FIRST_ORBIT_MIN, GalaxyConstants.FIRST_ORBIT_MAX);
             }
 
             if (planet.OrbitIndex <= 0)
@@ -165,7 +165,7 @@ namespace SRG.Utils
         {
             int min = Mathf.Max(1, _ctx.ActiveGalaxyConfig?.MinPlanetsPerStar ?? 1);
             int max = _ctx.ActiveGalaxyConfig?.MaxPlanetsPerStar ?? 8;
-            int total = forcedCount ?? Random.Range(min, max + 1);
+            int total = forcedCount ?? GameRng.Range(min, max + 1);
 
             var list = new List<PlanetData>(total);
             for (int i = 0; i < total; i++)
@@ -206,7 +206,7 @@ namespace SRG.Utils
             if (!string.IsNullOrEmpty(requested) && _ctx.AvailableStarTypes.Contains(requested))
                 return requested;
             if (_ctx.AvailableStarTypes.Count == 0) return requested ?? "";
-            return _ctx.AvailableStarTypes[Random.Range(0, _ctx.AvailableStarTypes.Count)];
+            return _ctx.AvailableStarTypes[GameRng.Range(0, _ctx.AvailableStarTypes.Count)];
         }
 
         private string ResolveSize(string requested)
@@ -214,20 +214,20 @@ namespace SRG.Utils
             if (!string.IsNullOrEmpty(requested) && _ctx.AvailablePlanetSizes.Contains(requested))
                 return requested;
             if (_ctx.AvailablePlanetSizes.Count == 0) return requested ?? "";
-            return _ctx.AvailablePlanetSizes[Random.Range(0, _ctx.AvailablePlanetSizes.Count)];
+            return _ctx.AvailablePlanetSizes[GameRng.Range(0, _ctx.AvailablePlanetSizes.Count)];
         }
 
         private string RandomPlanetType()
         {
             if (_ctx.AvailablePlanetTypes.Count == 0) return "";
-            return _ctx.AvailablePlanetTypes[Random.Range(0, _ctx.AvailablePlanetTypes.Count)];
+            return _ctx.AvailablePlanetTypes[GameRng.Range(0, _ctx.AvailablePlanetTypes.Count)];
         }
 
         private string GetRandomRaceKey()
         {
             int count = _ctx.AvailableRaces.Count;
             return count > 0
-                ? _ctx.AvailableRaces.Keys.ElementAt(Random.Range(0, count))
+                ? _ctx.AvailableRaces.Keys.ElementAt(GameRng.Range(0, count))
                 : GalaxyConstants.RACE_NONE_KEY;
         }
     }

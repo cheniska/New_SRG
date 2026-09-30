@@ -1,5 +1,4 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Simulation;
@@ -154,8 +153,8 @@ namespace SRG.Ships.Movement
         private static Vector2 ApplyEdgeSpread(Vector2 dirOutward, float baseRadius, out float outwardAngleRad)
         {
             float baseAngle = Mathf.Atan2(dirOutward.y, dirOutward.x);
-            float angleOffset = UnityEngine.Random.Range(-JumpEdgeArcSpreadDeg, JumpEdgeArcSpreadDeg) * Mathf.Deg2Rad;
-            float radiusMul = 1f + UnityEngine.Random.Range(-JumpEdgeRadialSpread, JumpEdgeRadialSpread);
+            float angleOffset = GameRng.Range(-JumpEdgeArcSpreadDeg, JumpEdgeArcSpreadDeg) * Mathf.Deg2Rad;
+            float radiusMul = 1f + GameRng.Range(-JumpEdgeRadialSpread, JumpEdgeRadialSpread);
             outwardAngleRad = baseAngle + angleOffset;
             Vector2 dir = new Vector2(Mathf.Cos(outwardAngleRad), Mathf.Sin(outwardAngleRad));
             return dir * baseRadius * radiusMul;
@@ -259,8 +258,8 @@ namespace SRG.Ships.Movement
             else
             {
                 float tgtRadius = SRUnits.ToWorld(target.SystemSize) * SystemEdgeRadiusMul;
-                float arrR = UnityEngine.Random.Range(tgtRadius * 0.3f, tgtRadius * 0.8f);
-                float arrAng = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+                float arrR = GameRng.Range(tgtRadius * 0.3f, tgtRadius * 0.8f);
+                float arrAng = GameRng.Range(0f, Mathf.PI * 2f);
                 arrivalPos = new Vector2(Mathf.Cos(arrAng) * arrR, Mathf.Sin(arrAng) * arrR);
             }
             // Курс прибытия — от точки выхода к центру системы (чтобы корабль после fade-in

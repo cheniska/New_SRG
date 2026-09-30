@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Combat;
 using SRG.Config;
 using SRG.Equipment;
@@ -29,7 +28,7 @@ namespace SRG.Galaxy.Simulation
 
             int maxAsteroids = ResolveMaxAsteroids(star);
             if (star.Asteroids.Count >= maxAsteroids) return;
-            if (Random.value > cfg.SpawnChancePerTurn) return;
+            if (GameRng.Value > cfg.SpawnChancePerTurn) return;
 
             string typeId = cfg.RollRandomTypeId();
             if (typeId == null || !cfg.Types.TryGetValue(typeId, out var typeCfg)) return;
@@ -385,16 +384,16 @@ namespace SRG.Galaxy.Simulation
             // задаёт сам астероид — MineralDropMin/Max в AsteroidTypeConfig.
             void TryDropStack(string id, float chance)
             {
-                if (Random.value >= chance) return;
+                if (GameRng.Value >= chance) return;
                 int max = Mathf.Max(1, typeCfg.MineralDropMax);
                 int min = Mathf.Clamp(typeCfg.MineralDropMin, 1, max);
-                int amount = Random.Range(min, max + 1);
+                int amount = GameRng.Range(min, max + 1);
                 var stack = ItemGrantService.CreateStack(id, amount, ctx);
                 if (stack != null) { stack.NaturalOrigin = true; stacks.Add(stack); }
             }
             TryDropStack("Minerals", typeCfg.CommonMineralChance);
 
-            if (ctx.ItemsConfig != null && Random.value < typeCfg.EquipmentDropChance)
+            if (ctx.ItemsConfig != null && GameRng.Value < typeCfg.EquipmentDropChance)
             {
                 var picked = ctx.ItemsConfig.GetRandomItem();
                 if (picked.HasValue)
@@ -404,7 +403,7 @@ namespace SRG.Galaxy.Simulation
                     if (inst != null)
                     {
                         inst.Durability = Mathf.RoundToInt(
-                            inst.MaxDurability * Random.Range(0.3f, 0.8f));
+                            inst.MaxDurability * GameRng.Range(0.3f, 0.8f));
                         items.Add(inst);
                     }
                 }
@@ -419,19 +418,19 @@ namespace SRG.Galaxy.Simulation
             float systemRadius = SRUnits.ToWorld(star.SystemSize);
             float spawnRadius = systemRadius * 1.2f;
 
-            float spawnAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            float spawnAngle = GameRng.Range(0f, 360f) * Mathf.Deg2Rad;
             var spawnPos = new Vector2(
                 Mathf.Cos(spawnAngle) * spawnRadius,
                 Mathf.Sin(spawnAngle) * spawnRadius);
 
             Vector2 toCenter = -spawnPos.normalized;
-            float offsetAngle = Random.Range(-40f, 40f) * Mathf.Deg2Rad;
+            float offsetAngle = GameRng.Range(-40f, 40f) * Mathf.Deg2Rad;
             float cos = Mathf.Cos(offsetAngle), sin = Mathf.Sin(offsetAngle);
             var direction = new Vector2(
                 toCenter.x * cos - toCenter.y * sin,
                 toCenter.x * sin + toCenter.y * cos);
 
-            float speed = Random.Range(typeCfg.SpeedMin, typeCfg.SpeedMax);
+            float speed = GameRng.Range(typeCfg.SpeedMin, typeCfg.SpeedMax);
             string graphicPath = ResolveSheetFolderPath(typeCfg.GraphicPath);
 
             return new AsteroidData
@@ -440,14 +439,14 @@ namespace SRG.Galaxy.Simulation
                 Position = spawnPos,
                 PreviousPosition = spawnPos,
                 Velocity = direction * speed,
-                Mass = Random.Range(typeCfg.MassMin, typeCfg.MassMax),
+                Mass = GameRng.Range(typeCfg.MassMin, typeCfg.MassMax),
                 CollisionRadius = typeCfg.CollisionRadius,
                 GraphicPath = graphicPath,
                 ExplosionPath = typeCfg.ExplosionPath,
                 AnimFps = typeCfg.AnimFps,
-                SelfRotationSpeed = Random.Range(
+                SelfRotationSpeed = GameRng.Range(
                     typeCfg.SelfRotationSpeedMin, typeCfg.SelfRotationSpeedMax)
-                    * (Random.value > 0.5f ? 1f : -1f)
+                    * (GameRng.Value > 0.5f ? 1f : -1f)
             };
         }
 
@@ -513,7 +512,7 @@ namespace SRG.Galaxy.Simulation
             if (gm == null || string.IsNullOrEmpty(configPath)) return configPath;
             var variants = gm.EnumerateSheetPathsInFolder(configPath);
             if (variants.Length == 0) return configPath; // fallback: старое поведение
-            return variants[Random.Range(0, variants.Length)];
+            return variants[GameRng.Range(0, variants.Length)];
         }
     }
 

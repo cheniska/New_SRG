@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Economy;
 using SRG.Galaxy;
@@ -132,7 +131,7 @@ namespace SRG.Science
 
             int duration = -1;
             if (evtCfg.DurationMonths != null && evtCfg.DurationMonths.Length >= 2)
-                duration = UnityEngine.Random.Range(evtCfg.DurationMonths[0], evtCfg.DurationMonths[1] + 1);
+                duration = GameRng.Range(evtCfg.DurationMonths[0], evtCfg.DurationMonths[1] + 1);
 
             planet.Settlement.ActiveEvents.Add(new ActivePlanetEvent { EventId = eventId, RemainingMonths = duration });
 

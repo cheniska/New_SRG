@@ -1,5 +1,4 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using SRG.Config;
 using SRG.Galaxy;
@@ -106,7 +105,7 @@ namespace SRG.Economy
             {
                 string goodId = kv.Key;
                 int baseStock = GetBaseStock(site, goodId, cfg);
-                int stock = Random.Range(
+                int stock = GameRng.Range(
                     Mathf.RoundToInt(baseStock * 0.5f),
                     Mathf.RoundToInt(baseStock * 1.5f) + 1);
 
@@ -223,7 +222,7 @@ namespace SRG.Economy
                 string goodId = kv.Key;
                 if (planet.Settlement.Shop.Goods.ContainsKey(goodId)) continue;
                 int baseStock = GetBaseStock(planet, goodId, cfg);
-                int stock = UnityEngine.Random.Range(Mathf.RoundToInt(baseStock * 0.5f), Mathf.RoundToInt(baseStock * 1.5f) + 1);
+                int stock = GameRng.Range(Mathf.RoundToInt(baseStock * 0.5f), Mathf.RoundToInt(baseStock * 1.5f) + 1);
                 planet.Settlement.Shop.Goods[goodId] = new ShopGoodEntry
                 {
                     Stock = stock,

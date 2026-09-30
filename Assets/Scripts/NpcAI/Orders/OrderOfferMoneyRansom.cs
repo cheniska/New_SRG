@@ -1,9 +1,9 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Orders
 {
@@ -117,7 +117,7 @@ namespace SRG.NpcAI.Orders
             // Шанс: чем больше offer относительно threshold, тем выше.
             float ratio = (float)offer / threshold;
             float chance = Mathf.Clamp01(0.3f + ratio * 0.4f);
-            return UnityEngine.Random.value < chance;
+            return GameRng.Value < chance;
         }
 
         public override bool IsCompleted(ShipData ship, StarData star) => _done;

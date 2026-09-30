@@ -388,7 +388,7 @@ namespace SRG.Config
             foreach (var t in Types.Values) total += t.SpawnWeight;
             if (total <= 0) return null;
 
-            int roll = UnityEngine.Random.Range(0, total);
+            int roll = GameRng.Range(0, total);
             int sum = 0;
             foreach (var kv in Types)
             {
@@ -414,7 +414,7 @@ namespace SRG.Config
         [JsonProperty("CommonMineralChance")] public float CommonMineralChance { get; set; } = 0.9f;
         [JsonProperty("PreciousMineralChance")] public float PreciousMineralChance { get; set; } = 0.05f;
         /// <summary>Диапазон количества минералов в дропе одного астероида (натуральный вес стека).
-        /// Итоговое количество — Random.Range(MineralDropMin, MineralDropMax+1).</summary>
+        /// Итоговое количество — GameRng.Range(MineralDropMin, MineralDropMax+1).</summary>
         [JsonProperty("MineralDropMin")] public int MineralDropMin { get; set; } = 1;
         [JsonProperty("MineralDropMax")] public int MineralDropMax { get; set; } = 50;
         [JsonProperty("EquipmentDropChance")] public float EquipmentDropChance { get; set; } = 0.02f;
@@ -1025,7 +1025,7 @@ namespace SRG.Config
             var all = new List<(string cat, string id, ItemConfig cfg)>();
             foreach (var x in EnumerateAllItems()) all.Add(x);
             if (all.Count == 0) return null;
-            return all[UnityEngine.Random.Range(0, all.Count)];
+            return all[GameRng.Range(0, all.Count)];
         }
 
         public EmbedTierConfig GetTier(string tierId)

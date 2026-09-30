@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -12,7 +12,7 @@ namespace SRG.Galaxy.Generation
             int min = Mathf.Max(MinPlanetsPerStarHardMin, _ctx.ActiveGalaxyConfig.MinPlanetsPerStar);
             int typeMax = (starType != null && _ctx.SystemSizeRules.TryGetValue(starType, out var sizeRule))
                 ? sizeRule.MaxPlanets : _maxPlanetsPerStar;
-            int total = UnityEngine.Random.Range(min, typeMax + 1);
+            int total = GameRng.Range(min, typeMax + 1);
 
             var slots = new List<int>(total);
             for (int i = 1; i <= total; i++) slots.Add(i);
@@ -65,7 +65,7 @@ namespace SRG.Galaxy.Generation
             candidate.Race  = starRace;
             if (starOwner != GalaxyConstants.OWNER_NONE_KEY) candidate.Owner = starOwner;
             candidate.CurrentColor = GenerationHelpers.GetRaceColor(starRace, _ctx.AvailableRaces);
-            if (string.IsNullOrEmpty(candidate.OrbitalObjects) && UnityEngine.Random.value < GalaxyConstants.ORBITAL_OBJ_CHANCE)
+            if (string.IsNullOrEmpty(candidate.OrbitalObjects) && GameRng.Value < GalaxyConstants.ORBITAL_OBJ_CHANCE)
                 candidate.OrbitalObjects = GenerationHelpers.GetRandomOrbitalPath();
         }
 
@@ -133,9 +133,9 @@ namespace SRG.Galaxy.Generation
             for (int i = 0; i < sizes.Count; i++)
                 total += rules.TryGetValue(sizes[i], out var r) ? Mathf.Max(0, r.Weight) : 1;
 
-            if (total <= 0) return sizes[UnityEngine.Random.Range(0, sizes.Count)];
+            if (total <= 0) return sizes[GameRng.Range(0, sizes.Count)];
 
-            int roll = UnityEngine.Random.Range(0, total), sum = 0;
+            int roll = GameRng.Range(0, total), sum = 0;
             for (int i = 0; i < sizes.Count; i++)
             {
                 int w = rules.TryGetValue(sizes[i], out var r) ? Mathf.Max(0, r.Weight) : 1;
@@ -218,7 +218,7 @@ namespace SRG.Galaxy.Generation
             planet.Type = "None";
             planet.OrbitSpeed = 0f;
             planet.SatellitesCount = -1;
-            planet.AxialTilt = UnityEngine.Random.Range(0f, 90f);
+            planet.AxialTilt = GameRng.Range(0f, 90f);
         }
 
         private void FinalizePlanetVisuals(PlanetData planet, string size)
@@ -231,25 +231,25 @@ namespace SRG.Galaxy.Generation
             if (string.IsNullOrEmpty(planet.Atmosphere)) planet.Atmosphere = GenerationHelpers.GenerateAtmosphere(size, _ctx.PlanetSizeRules);
 
             if (Mathf.Abs(planet.OrbitSpeed) < NearZero)
-                planet.OrbitSpeed = UnityEngine.Random.Range(GalaxyConstants.PLANET_ORBIT_SPEED_MIN, GalaxyConstants.PLANET_ORBIT_SPEED_MAX)
-                    * (UnityEngine.Random.value > 0.5f ? 1f : -1f);
+                planet.OrbitSpeed = GameRng.Range(GalaxyConstants.PLANET_ORBIT_SPEED_MIN, GalaxyConstants.PLANET_ORBIT_SPEED_MAX)
+                    * (GameRng.Value > 0.5f ? 1f : -1f);
 
-            if (planet.DaySpeed <= 0) planet.DaySpeed = UnityEngine.Random.Range(GalaxyConstants.PLANET_DAY_SPEED_MIN, GalaxyConstants.PLANET_DAY_SPEED_MAX + 1);
+            if (planet.DaySpeed <= 0) planet.DaySpeed = GameRng.Range(GalaxyConstants.PLANET_DAY_SPEED_MIN, GalaxyConstants.PLANET_DAY_SPEED_MAX + 1);
             if (planet.CloudsSpeed <= 0) planet.CloudsSpeed = Mathf.RoundToInt(
-                planet.DaySpeed * UnityEngine.Random.Range(GalaxyConstants.CLOUD_SPEED_FACTOR_MIN, GalaxyConstants.CLOUD_SPEED_FACTOR_MAX));
+                planet.DaySpeed * GameRng.Range(GalaxyConstants.CLOUD_SPEED_FACTOR_MIN, GalaxyConstants.CLOUD_SPEED_FACTOR_MAX));
 
-            planet.InitialAngle = planet.CurrentAngle = UnityEngine.Random.Range(0f, 360f);
+            planet.InitialAngle = planet.CurrentAngle = GameRng.Range(0f, 360f);
 
             if (string.IsNullOrEmpty(planet.OrbitalObjects)
                 && planet.Race != GalaxyConstants.RACE_NONE_KEY
-                && UnityEngine.Random.value < GalaxyConstants.ORBITAL_OBJ_CHANCE)
+                && GameRng.Value < GalaxyConstants.ORBITAL_OBJ_CHANCE)
                 planet.OrbitalObjects = GenerationHelpers.GetRandomOrbitalPath();
 
             if (planet.SatellitesCount == -1) planet.SatellitesCount = GenerationHelpers.CalculateSatelliteCount(size, _ctx.PlanetSizeRules);
 
             var cfg = _ctx.Config.Planets;
-            planet.OrbitEccentricity = UnityEngine.Random.Range(cfg.EccentricityMin, cfg.EccentricityMax);
-            planet.OrbitTiltDeg = UnityEngine.Random.Range(0f, 360f);
+            planet.OrbitEccentricity = GameRng.Range(cfg.EccentricityMin, cfg.EccentricityMax);
+            planet.OrbitTiltDeg = GameRng.Range(0f, 360f);
 
             RollGravityDensity(planet, size);
         }
@@ -263,27 +263,27 @@ namespace SRG.Galaxy.Generation
             if (fixedGravity.HasValue)
                 planet.SurfaceGravity = fixedGravity.Value;
             else if (sizeData != null)
-                planet.SurfaceGravity = UnityEngine.Random.Range(sizeData.GravityMin, sizeData.GravityMax);
+                planet.SurfaceGravity = GameRng.Range(sizeData.GravityMin, sizeData.GravityMax);
 
             if (fixedDensity.HasValue)
                 planet.Density = fixedDensity.Value;
-            else if (UnityEngine.Random.value < GalaxyConstants.HIGH_DENSITY_CHANCE)
-                planet.Density = UnityEngine.Random.Range(1f, 2f);
+            else if (GameRng.Value < GalaxyConstants.HIGH_DENSITY_CHANCE)
+                planet.Density = GameRng.Range(1f, 2f);
             else if (sizeData != null)
-                planet.Density = UnityEngine.Random.Range(sizeData.DensityMin, sizeData.DensityMax);
+                planet.Density = GameRng.Range(sizeData.DensityMin, sizeData.DensityMax);
 
             if (fixedGeoActivity.HasValue)
                 planet.GeoActivity = Mathf.Clamp(fixedGeoActivity.Value, 0f, 1f);
             else if (sizeData != null)
             {
                 float geoBase = Mathf.Clamp(sizeData.GeoK * Mathf.Pow(planet.Density, 0.6f), 0f, 1f);
-                planet.GeoActivity = Mathf.Clamp(geoBase * UnityEngine.Random.Range(0.4f, 1.6f) + planet.SatellitesCount * 0.05f, 0f, 1f);
+                planet.GeoActivity = Mathf.Clamp(geoBase * GameRng.Range(0.4f, 1.6f) + planet.SatellitesCount * 0.05f, 0f, 1f);
             }
 
             if (fixedSurfaceArea.HasValue)
                 planet.TotalSurfaceArea = fixedSurfaceArea.Value;
             else if (sizeData != null)
-                planet.TotalSurfaceArea = UnityEngine.Random.Range(sizeData.SurfaceAreaMin, sizeData.SurfaceAreaMax);
+                planet.TotalSurfaceArea = GameRng.Range(sizeData.SurfaceAreaMin, sizeData.SurfaceAreaMax);
             else
                 planet.TotalSurfaceArea = 500f;
         }
@@ -297,7 +297,7 @@ namespace SRG.Galaxy.Generation
 
             foreach (var planet in list)
             {
-                planet.CurrentAngle = UnityEngine.Random.Range(0f, 360f);
+                planet.CurrentAngle = GameRng.Range(0f, 360f);
                 if (planet.OrbitIndex <= 0)
                     planet.OrbitIndex = freeSlots.Count > 0 ? PopRandom(freeSlots) : GalaxyConstants.ORBIT_FALLBACK;
 
@@ -325,10 +325,10 @@ namespace SRG.Galaxy.Generation
                 }
                 else
                 {
-                    float gap = UnityEngine.Random.Range(GalaxyConstants.ORBIT_GAP_MIN, GalaxyConstants.ORBIT_GAP_MAX) * _systemSizeMult;
+                    float gap = GameRng.Range(GalaxyConstants.ORBIT_GAP_MIN, GalaxyConstants.ORBIT_GAP_MAX) * _systemSizeMult;
                     float peri = prevApocenter + gap;
                     float minPeri = i == 0
-                        ? UnityEngine.Random.Range(_systemSizeMult * GalaxyConstants.FIRST_ORBIT_MIN, _systemSizeMult * GalaxyConstants.FIRST_ORBIT_MAX)
+                        ? GameRng.Range(_systemSizeMult * GalaxyConstants.FIRST_ORBIT_MIN, _systemSizeMult * GalaxyConstants.FIRST_ORBIT_MAX)
                         : peri;
                     peri = Mathf.Max(peri, minPeri);
                     planet.OrbitRadius = peri / Mathf.Max(1f - e, 0.01f);

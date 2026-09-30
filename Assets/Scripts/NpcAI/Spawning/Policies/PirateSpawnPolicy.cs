@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Spawning.Policies
 {
@@ -47,7 +47,7 @@ namespace SRG.NpcAI.Spawning.Policies
             if (candidates.Count == 0) return;
 
             // Свободно владеют пиратами — но раса корабля = раса родной планеты, чтобы AI/диалоги работали.
-            var (planet, star) = candidates[Random.Range(0, candidates.Count)];
+            var (planet, star) = candidates[GameRng.Range(0, candidates.Count)];
             string pirateOwner = "Pirates";
 
             SpawnSystem.SpawnShipAtPlanet(ShipTypeId, pirateOwner, planet.Race, planet, star, ctx.Gen,

@@ -140,7 +140,7 @@ namespace SRG.Galaxy
 
     [Serializable] public class AsteroidData
     {
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
         public string TypeId { get; set; }
         public Vector2 Position { get; set; }
         [JsonIgnore] public Vector2 PreviousPosition { get; set; }
@@ -455,7 +455,7 @@ namespace SRG.Galaxy
 
     public class SectorData
     {
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
         public string Name { get; set; }
         public Vector2 Center { get; set; }
         public List<StarData> Stars { get; set; } = new();
@@ -491,7 +491,7 @@ namespace SRG.Galaxy
 
     public class StarData : IGalaxyEntity
     {
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
         public string Name { get; set; }
         public string Type { get; set; }
         public string Color { get; set; }
@@ -717,7 +717,7 @@ namespace SRG.Galaxy
         Vector2 ILandingSite.CenterPosition => SRG.Utils.OrbitMath.GetPlanetWorldPosition(this);
         float ILandingSite.LandingRadius => SRG.Utils.PlanetGeometry.GetLandingRadius(this);
 
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
         public string Name { get; set; }
         public string Size { get; set; }
         public int OrbitIndex { get; set; }
@@ -827,7 +827,7 @@ namespace SRG.Galaxy
 
     public class SatelliteData : IGalaxyEntity
     {
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
         public string Name { get; set; }
         public string Size { get; set; } = "Mid";
 
@@ -881,7 +881,7 @@ namespace SRG.Galaxy
         Vector2 ILandingSite.CenterPosition => Position;
         float ILandingSite.LandingRadius => SRG.Ships.Services.ShipDockingService.GetDockRadius(this);
 
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
 
         public string ShipTypeId;
         public string Name;
@@ -1532,7 +1532,7 @@ namespace SRG.Galaxy
     [Serializable]
     public class ItemInstance
     {
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
         public string Category { get; set; }
         public string ItemId { get; set; }
 

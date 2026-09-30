@@ -155,7 +155,7 @@ namespace SRG.Combat
 
             var missile = new ActiveMissile
             {
-                Uid           = Guid.NewGuid().ToString(),
+                Uid           = GameRng.NewUid(),
                 AttackerUid   = attacker.Uid,
                 AttackerOwner = attacker.Owner,
                 AttackerRace  = attacker.Race,
@@ -464,7 +464,7 @@ namespace SRG.Combat
                     else if (lastDistSq >= 0f && distSq > lastDistSq && jitterCnt == 0)
                     {
                         // Только что начали отдаляться — запускаем промах.
-                        int seed = (missile.Uid?.GetHashCode() ?? 0) ^ s;
+                        int seed = StableHash.Of(missile.Uid) ^ s;
                         int range = jitterMax - jitterMin + 1;
                         jitterCnt = jitterMin + Mathf.Abs(seed) % range;
                         jitterActive = true;

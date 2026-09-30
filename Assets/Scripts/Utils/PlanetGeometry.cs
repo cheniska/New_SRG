@@ -1,6 +1,7 @@
 using UnityEngine;
 using SRG.Galaxy;
 using SRG.Simulation;
+using SRG.Utils;
 
 namespace SRG.Utils
 {
@@ -104,7 +105,7 @@ namespace SRG.Utils
                 ? Mathf.Atan2(fromPlanet.y, fromPlanet.x)
                 : 0f;
 
-            int seed = (ship.Uid?.GetHashCode() ?? 0) ^ (planet.Uid?.GetHashCode() ?? 0);
+            int seed = StableHash.Of(ship.Uid) ^ StableHash.Of(planet.Uid);
             float jitterDeg = ((seed & 0x7FFFFFFF) % 41) - 20;   // [-20, +20]
             approachAngle += jitterDeg * Mathf.Deg2Rad;
 

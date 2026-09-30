@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -299,7 +300,7 @@ namespace SRG.Equipment
             else if (paramKey == "MaxDurability") current = item.MaxDurability;
             else current = item.GetParam(paramKey, 0f);
 
-            float pct = basePct + Random.value * deltaPct;
+            float pct = basePct + GameRng.Value * deltaPct;
             float raw = current * pct + absBonus;
             return raw * factor;
         }

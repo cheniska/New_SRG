@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -12,12 +12,12 @@ namespace SRG.Galaxy.Generation
         private void FinalizeStarProps(StarData star)
         {
             if (star.Type == GalaxyConstants.VAL_UNKNOWN)
-                star.Type = _ctx.AvailableStarTypes[UnityEngine.Random.Range(0, _ctx.AvailableStarTypes.Count)];
+                star.Type = _ctx.AvailableStarTypes[GameRng.Range(0, _ctx.AvailableStarTypes.Count)];
             if (star.Color == GalaxyConstants.VAL_UNKNOWN) GenerationHelpers.ApplyWeightedStarColor(star, _ctx.Config);
             if (star.GraphVar == 0) star.GraphVar = GenerationHelpers.GetRandomColorVariant(star.Color, _ctx.Config);
 
             star.MapIcon = GenerationHelpers.BuildStarMapIcon(star.Color, star.GraphVar);
-            star.BackgroundSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            star.BackgroundSeed = GameRng.Range(int.MinValue, int.MaxValue);
 
             StarTypeData typeData = null;
             float hzSizeMult = 1f;

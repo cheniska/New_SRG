@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
@@ -100,7 +99,7 @@ namespace SRG.NpcAI
                     if (!seen.Add(key)) continue;
 
                     var strategy = ResolveStrategy(ctx, p.Owner, perRace ? p.Race : null, oc);
-                    int nextEval = galaxy.CurrentTurn + Random.Range(
+                    int nextEval = galaxy.CurrentTurn + GameRng.Range(
                         FactionHighCommand.EvaluationIntervalMin,
                         FactionHighCommand.EvaluationIntervalMax + 1);
                     var cmd = new FactionHighCommand(p.Owner, perRace ? p.Race : null, strategy, nextEval);

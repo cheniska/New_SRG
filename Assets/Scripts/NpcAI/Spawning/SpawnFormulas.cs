@@ -1,7 +1,7 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Spawning
 {
@@ -30,7 +30,7 @@ namespace SRG.NpcAI.Spawning
             float shortage = Shortage(count, target);
             if (shortage <= 0f) return false;
             float probability = baseChance * (1f + shortage);
-            return Random.value < probability;
+            return GameRng.Value < probability;
         }
 
         /// <summary>Проверка per-day-квоты спавнов: <see cref="StarData.SpawnsToday"/> &lt;

@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy.Generation;
 using SRG.Simulation;
@@ -253,7 +252,7 @@ namespace SRG.Galaxy
         {
             if (propDef.Values == null || propDef.Values.Count == 0)
                 return GalaxyConstants.VAL_UNKNOWN;
-            return propDef.Values[UnityEngine.Random.Range(0, propDef.Values.Count)];
+            return propDef.Values[GameRng.Range(0, propDef.Values.Count)];
         }
     }
 
@@ -573,25 +572,25 @@ namespace SRG.Galaxy
         {
             string p1 = $"{GalaxyConstants.PATH_PLANET_TEXTURES_BASE}/{size}";
             var names1 = GetResourceNames(p1);
-            if (names1.Length > 0) return $"{p1}/{names1[UnityEngine.Random.Range(0, names1.Length)]}";
+            if (names1.Length > 0) return $"{p1}/{names1[GameRng.Range(0, names1.Length)]}";
             var names2 = GetResourceNames(GalaxyConstants.PATH_COMMON_TEXTURES);
-            if (names2.Length > 0) return $"{GalaxyConstants.PATH_COMMON_TEXTURES}/{names2[UnityEngine.Random.Range(0, names2.Length)]}";
+            if (names2.Length > 0) return $"{GalaxyConstants.PATH_COMMON_TEXTURES}/{names2[GameRng.Range(0, names2.Length)]}";
             return GalaxyConstants.PATH_PLANET_FALLBACK;
         }
 
         public static string GetRandomSatelliteGraphic()
         {
             var names1 = GetResourceNames(GalaxyConstants.PATH_SAT_TEXTURES);
-            if (names1.Length > 0) return $"{GalaxyConstants.PATH_SAT_TEXTURES}/{names1[UnityEngine.Random.Range(0, names1.Length)]}";
+            if (names1.Length > 0) return $"{GalaxyConstants.PATH_SAT_TEXTURES}/{names1[GameRng.Range(0, names1.Length)]}";
             var names2 = GetResourceNames(GalaxyConstants.PATH_COMMON_TEXTURES);
-            if (names2.Length > 0) return $"{GalaxyConstants.PATH_COMMON_TEXTURES}/{names2[UnityEngine.Random.Range(0, names2.Length)]}";
+            if (names2.Length > 0) return $"{GalaxyConstants.PATH_COMMON_TEXTURES}/{names2[GameRng.Range(0, names2.Length)]}";
             return GalaxyConstants.PATH_SATELLITE_FALLBACK;
         }
 
         public static string GetRandomOrbitalPath()
         {
             var names = GetResourceNames(GalaxyConstants.PATH_ORBITAL);
-            return names.Length > 0 ? $"{GalaxyConstants.PATH_ORBITAL}/{names[UnityEngine.Random.Range(0, names.Length)]}" : null;
+            return names.Length > 0 ? $"{GalaxyConstants.PATH_ORBITAL}/{names[GameRng.Range(0, names.Length)]}" : null;
         }
 
         public static string BuildStarMapIcon(string color, int variant)
@@ -612,14 +611,14 @@ namespace SRG.Galaxy
             }
 
             int total = colors.Values.Sum(d => d?.VariantsCount ?? 1);
-            int roll = UnityEngine.Random.Range(0, total), sum = 0;
+            int roll = GameRng.Range(0, total), sum = 0;
 
             foreach (var (key, data) in colors)
             {
                 sum += data?.VariantsCount ?? 1;
                 if (roll >= sum) continue;
                 star.Color = key;
-                star.GraphVar = UnityEngine.Random.Range(1, (data?.VariantsCount ?? 1) + 1);
+                star.GraphVar = GameRng.Range(1, (data?.VariantsCount ?? 1) + 1);
                 return;
             }
         }
@@ -628,7 +627,7 @@ namespace SRG.Galaxy
         {
             var colors = config.Stars?.Colors;
             if (colors != null && colors.TryGetValue(color, out var d) && d != null)
-                return UnityEngine.Random.Range(1, Mathf.Max(1, d.VariantsCount) + 1);
+                return GameRng.Range(1, Mathf.Max(1, d.VariantsCount) + 1);
             return 1;
         }
 
@@ -636,8 +635,8 @@ namespace SRG.Galaxy
         {
             if (string.IsNullOrEmpty(size)) return null;
             if (sizeRules.TryGetValue(size, out var rule))
-                return UnityEngine.Random.Range(0, 100) < rule.AtmosphereChance
-                    ? $"{GalaxyConstants.PATH_CLOUDS}/{UnityEngine.Random.Range(1, GalaxyConstants.CLOUD_VARIANTS_COUNT + 1)}" : null;
+                return GameRng.Range(0, 100) < rule.AtmosphereChance
+                    ? $"{GalaxyConstants.PATH_CLOUDS}/{GameRng.Range(1, GalaxyConstants.CLOUD_VARIANTS_COUNT + 1)}" : null;
             Debug.LogWarning($"[GenerationHelpers] Planet size '{size}' not found in PlanetSizeRules — no atmosphere generated.");
             return null;
         }
@@ -652,7 +651,7 @@ namespace SRG.Galaxy
         {
             if (string.IsNullOrEmpty(size)) return 0;
             if (sizeRules.TryGetValue(size, out var rule))
-                return rule.MaxSatellites > 0 ? UnityEngine.Random.Range(0, rule.MaxSatellites + 1) : 0;
+                return rule.MaxSatellites > 0 ? GameRng.Range(0, rule.MaxSatellites + 1) : 0;
             Debug.LogWarning($"[GenerationHelpers] Planet size '{size}' not found in PlanetSizeRules — 0 satellites.");
             return 0;
         }
@@ -683,7 +682,7 @@ namespace SRG.Galaxy
             int count = pool.Count;
             while (count > 0)
             {
-                int idx = UnityEngine.Random.Range(0, count);
+                int idx = GameRng.Range(0, count);
                 string candidate = pool[idx];
                 pool[idx] = pool[count - 1];
                 pool.RemoveAt(count - 1);

@@ -76,7 +76,7 @@ namespace SRG.Equipment
             // Первый прошедший — дропается. Не даём одному NPC уронить сразу два ММ.
             foreach (var entry in pool)
             {
-                if (Random.value > entry.chance) continue;
+                if (GameRng.Value > entry.chance) continue;
                 var inst = ItemGrantService.CreateMicroModule(entry.id, ctx);
                 if (inst == null) continue;
                 // ММ — не стакабельный: выкидываем «свободным» предметом со своей иконкой,

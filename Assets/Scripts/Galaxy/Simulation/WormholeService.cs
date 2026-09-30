@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Utils;
 using SRG.Simulation;
 
@@ -130,8 +129,8 @@ namespace SRG.Galaxy.Simulation
             if (!crossGalaxy && !exitPos.HasValue)
             {
                 float tgtRadius = SRUnits.ToWorld(targetStar.SystemSize);
-                float arrR = Random.Range(tgtRadius * 0.3f, tgtRadius * 0.8f);
-                float arrAng = Random.Range(0f, Mathf.PI * 2f);
+                float arrR = GameRng.Range(tgtRadius * 0.3f, tgtRadius * 0.8f);
+                float arrAng = GameRng.Range(0f, Mathf.PI * 2f);
                 exitPos = new Vector2(Mathf.Cos(arrAng) * arrR, Mathf.Sin(arrAng) * arrR);
             }
 
@@ -302,7 +301,7 @@ namespace SRG.Galaxy.Simulation
         {
             int total = galaxy.StarsMap.Count;
             if (total == 0) return null;
-            int idx = Random.Range(0, total);
+            int idx = GameRng.Range(0, total);
             int i = 0;
             foreach (var star in galaxy.StarsMap.Values)
             {
@@ -325,7 +324,7 @@ namespace SRG.Galaxy.Simulation
             }
             return candidates == null || candidates.Count == 0
                 ? null
-                : candidates[Random.Range(0, candidates.Count)];
+                : candidates[GameRng.Range(0, candidates.Count)];
         }
     }
 }

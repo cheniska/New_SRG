@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Spawning
 {
@@ -33,7 +33,7 @@ namespace SRG.NpcAI.Spawning
             foreach (var w in weights.Values) total += w > 0 ? w : 0;
             if (total <= 0) return fallback;
 
-            int roll = Random.Range(0, total);
+            int roll = GameRng.Range(0, total);
             int acc = 0;
             foreach (var kv in weights)
             {

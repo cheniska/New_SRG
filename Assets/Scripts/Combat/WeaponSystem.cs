@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Equipment;
 using SRG.Galaxy;
@@ -89,7 +88,7 @@ namespace SRG.Combat
             if (shotParams == null) return result;
 
             result.Hit = true;
-            float baseDmg = Random.Range(shotParams.MinDmg, shotParams.MaxDmg);
+            float baseDmg = GameRng.Range(shotParams.MinDmg, shotParams.MaxDmg);
             baseDmg = ApplyExecuteBonus(baseDmg, target, attacker);
             var (hullDmg, shieldDmg) = CalculateDamage(
                 baseDmg, shotParams, target, attacker);
@@ -126,7 +125,7 @@ namespace SRG.Combat
                 }
             }
 
-            if (shotParams.EquipDamage > 0f && Random.value < shotParams.EquipHitChance)
+            if (shotParams.EquipDamage > 0f && GameRng.Value < shotParams.EquipHitChance)
             {
                 var equip = EquipmentSystem.GetRandomDamageableSlot(target, equipConfig);
                 if (equip.item != null)
@@ -356,7 +355,7 @@ namespace SRG.Combat
 
             foreach (var eff in shot.Effects)
             {
-                if (Random.value > eff.Chance) continue;
+                if (GameRng.Value > eff.Chance) continue;
 
                 bool isTactical = eff.Type == CombatEffectType.BlockWeapon ||
                                   eff.Type == CombatEffectType.BlockDroid;
@@ -520,7 +519,7 @@ namespace SRG.Combat
             };
 
             result.Hit = true;
-            float baseDmg = Random.Range(shot.MinDmg, shot.MaxDmg);
+            float baseDmg = GameRng.Range(shot.MinDmg, shot.MaxDmg);
             baseDmg = ApplyExecuteBonus(baseDmg, target, attacker);
             var (hullDmg, shieldDmg) = CalculateDamage(baseDmg, shot, target, attacker);
 
@@ -536,7 +535,7 @@ namespace SRG.Combat
 
             result.TargetDestroyed = target.CurrentHull <= 0;
 
-            if (shot.EquipDamage > 0f && Random.value < shot.EquipHitChance)
+            if (shot.EquipDamage > 0f && GameRng.Value < shot.EquipHitChance)
             {
                 var equip = EquipmentSystem.GetRandomDamageableSlot(target, equipConfig);
                 if (equip.item != null)

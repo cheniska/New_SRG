@@ -1,5 +1,4 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Linq;
 using SRG.Combat;
 using SRG.Config;
@@ -271,7 +270,7 @@ namespace SRG.Equipment
             {
                 var govKeys = new System.Collections.Generic.List<string>(planetCfg.GovernmentTypes.Keys);
                 planet.Settlement.Government = inhabited
-                    ? govKeys[UnityEngine.Random.Range(0, govKeys.Count)]
+                    ? govKeys[GameRng.Range(0, govKeys.Count)]
                     : govKeys[0];
             }
             else
@@ -286,7 +285,7 @@ namespace SRG.Equipment
                 ? new System.Collections.Generic.List<string>(planetCfg.EconomyTypes.Keys)
                 : null;
             planet.Settlement.EconomyType = econKeys != null
-                ? econKeys[UnityEngine.Random.Range(0, econKeys.Count)]
+                ? econKeys[GameRng.Range(0, econKeys.Count)]
                 : "Mixed";
 
             // --- Технический уровень ---
@@ -295,14 +294,14 @@ namespace SRG.Equipment
             if (planetCfg.EconomyTypes != null &&
                 planetCfg.EconomyTypes.TryGetValue(planet.Settlement.EconomyType, out var econCfg))
                 techCoef = econCfg.TechGrowthCoef;
-            int techBase = Mathf.RoundToInt(UnityEngine.Random.Range(1f, 5f) * techCoef);
+            int techBase = Mathf.RoundToInt(GameRng.Range(1f, 5f) * techCoef);
             planet.Settlement.TechLevel = Mathf.Clamp(techBase, 1, 8);
 
             // --- Население ---
             if (planetCfg.Sizes != null &&
                 planetCfg.Sizes.TryGetValue(planet.Size, out var sizeData) &&
                 sizeData.Population?.Length >= 2 && sizeData.Population[1] > 0)
-                planet.Settlement.Population = UnityEngine.Random.Range(sizeData.Population[0], sizeData.Population[1] + 1);
+                planet.Settlement.Population = GameRng.Range(sizeData.Population[0], sizeData.Population[1] + 1);
 
             // --- Магазин товаров (из GalaxyConfig.Goods с полным расчётом цен) ---
             if (galaxyConfig?.Goods != null)
@@ -314,7 +313,7 @@ namespace SRG.Equipment
                 {
                     int buy  = Mathf.RoundToInt(kv.Value.BasePrice * GetRacePriceCoef(planet, galaxyConfig));
                     int sell = Mathf.RoundToInt(buy * 0.7f);
-                    int stock = UnityEngine.Random.Range(50, 201);
+                    int stock = GameRng.Range(50, 201);
                     planet.Settlement.Shop.Goods[kv.Key] = new ShopGoodEntry
                         { Stock = stock, BuyPrice = buy, SellPrice = sell };
                 }

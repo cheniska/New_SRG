@@ -34,7 +34,7 @@ namespace SRG.Dialog.PlanetGreetings
             var rules = cfg?.Dialogs?.PlanetGreetings?.Rules;
             if (rules == null || rules.Count == 0) return null;
 
-            rng ??= new System.Random();
+            rng ??= GameRng.CreateSystemRandom();
 
             string playerStatus = PlayerGreetingProfile.ResolveStatus(player);
             string playerRank   = PlayerGreetingProfile.ResolveRank(player);

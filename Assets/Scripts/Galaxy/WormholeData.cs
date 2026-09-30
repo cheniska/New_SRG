@@ -1,6 +1,7 @@
 using System;
 using Newtonsoft.Json;
 using UnityEngine;
+using SRG.Simulation;
 
 namespace SRG.Galaxy
 {
@@ -25,7 +26,7 @@ namespace SRG.Galaxy
     [Serializable]
     public class WormholeData
     {
-        public string Uid { get; set; } = Guid.NewGuid().ToString();
+        public string Uid { get; set; } = GameRng.NewUid();
 
         /// <summary>Позиция червоточины в системе-источнике (мировые координаты).</summary>
         public Vector2 Position { get; set; }

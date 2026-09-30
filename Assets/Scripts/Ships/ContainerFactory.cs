@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Combat;
 using SRG.Config;
 using SRG.Equipment;
@@ -86,7 +85,7 @@ namespace SRG.Ships
             gfx = NormalizeContainerPath(fromCategory);
             if (gfx == null)
             {
-                int n = Random.Range(1, ContainerVariants + 1);
+                int n = GameRng.Range(1, ContainerVariants + 1);
                 gfx = $"{ContainersBasePath}/Container_{n}";
             }
 
@@ -226,7 +225,7 @@ namespace SRG.Ships
             }
 
             // 4. Фолбэк — случайный спрайт.
-            int n = Random.Range(1, ContainerVariants + 1);
+            int n = GameRng.Range(1, ContainerVariants + 1);
             return $"{ContainersBasePath}/Container_{n}";
         }
 

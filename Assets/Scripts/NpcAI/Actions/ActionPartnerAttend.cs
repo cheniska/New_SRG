@@ -1,5 +1,4 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;

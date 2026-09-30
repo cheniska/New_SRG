@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Spawning.Policies
 {
@@ -103,7 +103,7 @@ namespace SRG.NpcAI.Spawning.Policies
                 if (p == null) continue;
                 if (p.Owner == "Dominators") { anchor = p; break; }
             }
-            if (anchor == null && star.Planets.Count > 0) anchor = star.Planets[Random.Range(0, star.Planets.Count)];
+            if (anchor == null && star.Planets.Count > 0) anchor = star.Planets[GameRng.Range(0, star.Planets.Count)];
             if (anchor == null) return; // дегенеративная звезда без планет — пропускаем
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
