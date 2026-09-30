@@ -508,7 +508,7 @@ namespace SRG.UI.HUD
             {
                 var cfg = GalaxyManager.Instance?.Settings;
                 bool showTraj = !_pinnedInfo.Ship.IsPlayer && (cfg?.ShowNpcTrajectoryOnHover ?? true);
-                DrawShip(_pinnedInfo.Ship, _pinnedInfo.NpcController, showTraj);
+                DrawShip(_pinnedInfo.Ship, showTraj);
             }
             else if (_pinnedInfo.Asteroid != null) DrawAsteroid(_pinnedInfo.Asteroid);
 
@@ -600,7 +600,7 @@ namespace SRG.UI.HUD
 
         // ── Корабль ───────────────────────────────────────────────────────────────
 
-        private static void DrawShip(ShipData ship, NpcController npc, bool showTrajectory = false)
+        private static void DrawShip(ShipData ship, bool showTrajectory = false)
         {
             if (ship.IsItem)
             {
@@ -640,7 +640,7 @@ namespace SRG.UI.HUD
             }
             else
             {
-                string order = npc != null ? npc.CurrentOrder : "—";
+                string order = ship.Brain?.CurrentOrder ?? "—";
                 string activity = ship.Brain?.CurrentActivity?.DebugName ?? "—";
                 GUILayout.Label($"Приказ: {order}   Активность: {activity}");
                 DrawNpcTarget(ship);

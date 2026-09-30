@@ -3,13 +3,11 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Presentation.Common;
 using SRG.Utils;
-using SRG.Controllers;
 using SRG.Simulation;
 
 namespace SRG.Presentation.Map
@@ -173,9 +171,9 @@ namespace SRG.Presentation.Map
             }
 
             Vector2 playerWorldPos = Vector2.zero;
-            if (_playerIcon != null && PlayerShip.Instance != null)
+            if (_playerIcon != null && PresentationContext.Player != null)
             {
-                var pp = PlayerShip.Instance.transform.position;
+                var pp = PresentationContext.Player.Transform.position;
                 playerWorldPos = new Vector2(pp.x, pp.y);
                 Vector2 newMapPos = WorldToMapPos(pp);
                 if ((newMapPos - _playerIcon.anchoredPosition).sqrMagnitude > 0.0001f)
@@ -196,11 +194,11 @@ namespace SRG.Presentation.Map
                     _npcShipInRange[kv.Key] = inRange;
                 }
             }
-            var star = GalaxyManager.Instance?.CurrentStar;
+            var star = GameWorld.CurrentStar;
             if (star?.Asteroids != null)
             {
-                var svm = SystemViewManager.Instance;
-                bool isSimulating = GalaxyManager.Instance?.Phase == TurnPhase.Simulation;
+                var svm = PresentationContext.SystemView;
+                bool isSimulating = GameWorld.Phase == TurnPhase.Simulation;
 
                 foreach (var asteroid in star.Asteroids)
                 {
@@ -452,7 +450,7 @@ namespace SRG.Presentation.Map
 
         private void CreatePlanetIcon(PlanetData planet)
         {
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             Color col = ctx != null
                 ? OwnershipDisplayResolver.ResolvePlanetMinimapColor(planet, ctx)
                 : (ColorUtility.TryParseHtmlString(planet.CurrentColor, out Color fallback) ? fallback : Color.white);
@@ -488,7 +486,7 @@ namespace SRG.Presentation.Map
 
         private void CreateNpcShipIcon(ShipData ship)
         {
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             Color col = ctx != null
                 ? OwnershipDisplayResolver.ResolveShipMinimapColor(ship, ctx)
                 : Color.white;
@@ -510,8 +508,8 @@ namespace SRG.Presentation.Map
 
         private void CreatePlayerIcon()
         {
-            var ctx = GalaxyManager.Instance?.Context;
-            ShipData shipData = PlayerShip.Instance?.ShipData;
+            var ctx = GameWorld.Context;
+            ShipData shipData = PresentationContext.Player?.ShipData;
             string iconPath = shipData != null ? ResolveShipMinimapIconPath(shipData, ctx) : null;
 
             var go = new GameObject("Mini_Player");
@@ -642,7 +640,7 @@ namespace SRG.Presentation.Map
                 return;
             }
 
-            var star = GalaxyManager.Instance?.CurrentStar;
+            var star = GameWorld.CurrentStar;
             AsteroidData src = star?.Asteroids?.Find(a => a.Uid == _hoveredAsteroidUid);
             if (src == null || src.IsDestroyed)
             {
@@ -653,7 +651,7 @@ namespace SRG.Presentation.Map
             EnsureTrailDots();
             SetTrailVisible(true);
 
-            float gravityConst = GalaxyManager.Instance?.Context?.Config?.Asteroids?.GravityConst
+            float gravityConst = GameWorld.Context?.Config?.Asteroids?.GravityConst
                                  ?? GalaxyConstants.ASTEROID_GRAVITY_CONST;
 
             var pos = src.Position;
@@ -734,7 +732,7 @@ namespace SRG.Presentation.Map
 
         private float GetPlayerRadarWorldRadius()
         {
-            var ship = PlayerShip.Instance?.ShipData;
+            var ship = PresentationContext.Player?.ShipData;
             if (ship == null)
                 return 0f;
 

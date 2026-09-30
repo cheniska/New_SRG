@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Presentation.Common;
+using SRG.Simulation;
 
 namespace SRG.Presentation.World
 {
@@ -136,10 +136,10 @@ namespace SRG.Presentation.World
 
         public void Tick()
         {
-            var star = GalaxyManager.Instance?.CurrentStar;
+            var star = GameWorld.CurrentStar;
             if (star == null || _settings == null) { ClearAll(); return; }
 
-            int curTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int curTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             var alive = new HashSet<string>();
             if (star.Wormholes != null)
             {
@@ -168,7 +168,7 @@ namespace SRG.Presentation.World
                         col.isTrigger = true;
                         col.radius = 0.5f;
 
-                        var info = go.AddComponent<SRG.UI.Common.ClickableInfo>();
+                        var info = go.AddComponent<ClickableInfo>();
                         info.Wormhole = wh;
                         info.WormholeStar = star;
                         freshCreated = true;

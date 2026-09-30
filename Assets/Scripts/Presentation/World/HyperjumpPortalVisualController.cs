@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Presentation.Common;
 using SRG.Ships.Movement;
+using SRG.Simulation;
 
 namespace SRG.Presentation.World
 {
@@ -248,8 +248,8 @@ namespace SRG.Presentation.World
         /// <summary>Должен вызываться каждый OnTurnAnimate. Создаёт/удаляет порталы, обновляет позицию и фазу.</summary>
         public void Tick(float progress)
         {
-            var star = GalaxyManager.Instance?.CurrentStar;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var star = GameWorld.CurrentStar;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (star == null || galaxy == null) { ClearAll(); return; }
 
             var alive = new HashSet<string>();

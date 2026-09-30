@@ -1,0 +1,20 @@
+{
+    "name": "SRG.Presentation",
+    "rootNamespace": "SRG",
+    "references": [
+        "SRG.Simulation",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll",
+        "MoonSharp.Interpreter.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

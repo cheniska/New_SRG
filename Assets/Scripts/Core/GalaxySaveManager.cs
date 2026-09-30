@@ -25,7 +25,7 @@ namespace SRG.Core
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto,
-            SerializationBinder = new SRG.Utils.LegacyNamespaceBinder()
+            SerializationBinder = SRG.Utils.SaveTypeBinder.Instance
         };
 
         // ── Мультигалактика ───────────────────────────────────────────────────────

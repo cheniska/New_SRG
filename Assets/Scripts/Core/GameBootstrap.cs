@@ -1,8 +1,10 @@
 using UnityEngine;
 using SRG.Controllers;
+using SRG.Presentation.Common;
 using SRG.Presentation.World;
 using SRG.Scripting;
 using SRG.Simulation;
+using SRG.UI.Screens;
 
 namespace SRG.Core
 {
@@ -20,6 +22,9 @@ namespace SRG.Core
         {
             // Owner/Race-варианты графики корпуса (ShipData.RefreshSpritesheetPath).
             GameWorld.ShipSheetResolver = ShipGraphicsResolver.ResolveFromBase;
+
+            // Горячие клавиши камеры/оверлеев молчат, пока открыта консоль.
+            PresentationContext.IsTextInputActive = () => GameConsoleController.IsOpen;
 
             // Статические API верхнего слоя, доступные из Lua (консоль, моды).
             LuaHost.RegisterStaticApi(typeof(GalaxyManager));

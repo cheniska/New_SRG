@@ -1,9 +1,6 @@
-using SRG.Core;
 using SRG.Galaxy;
-using SRG.NpcAI;
-using SRG.Controllers;
 
-namespace SRG.UI.Common
+namespace SRG.Presentation.World
 {
     // Маркер кликабельного объекта сцены — хранит ссылку на данные объекта.
     // Добавляется ко всем спавн-объектам в SystemViewManager.
@@ -17,6 +14,5 @@ namespace SRG.UI.Common
         /// <summary>Родительская звезда червоточины (нужна для запроса прыжка через HyperjumpController).
         /// Заполняется вместе с полем <see cref="Wormhole"/>.</summary>
         public StarData     WormholeStar;
-        public NpcController NpcController; // для NPC-кораблей
     }
 }

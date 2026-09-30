@@ -9,10 +9,11 @@ using SRG.Presentation.World;
 using SRG.Ships.Movement;
 using SRG.Ships;
 using SRG.Simulation;
+using SRG.Presentation.Common;
 
 namespace SRG.Controllers
 {
-    public partial class PlayerShip : MonoBehaviour, ISkillsCarrier
+    public partial class PlayerShip : MonoBehaviour, ISkillsCarrier, IPlayerAvatar
     {
         public static PlayerShip Instance { get; private set; }
         public ShipData ShipData { get; private set; }
@@ -30,6 +31,7 @@ namespace SRG.Controllers
         public static event System.Action OnRouteAssigned;
         public bool IsMovingThisTurn { get; private set; }
         public bool IsWeaponModeActive => _weaponModeActive;
+        Transform IPlayerAvatar.Transform => transform;
         public bool IsDialogModeActive => _dialogModeActive;
 
         [SerializeField] private GameSettingsConfig _settings;
@@ -92,6 +94,7 @@ namespace SRG.Controllers
                 return;
             }
             Instance = this;
+            PresentationContext.Player = this;
 
             ShipData = shipData;
             _cam = cam;

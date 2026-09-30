@@ -34,7 +34,7 @@ namespace SRG.Ships.Services
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto,
-            SerializationBinder = new SRG.Utils.LegacyNamespaceBinder(),
+            SerializationBinder = SRG.Utils.SaveTypeBinder.Instance,
         };
 
         /// <summary>Разворачивает упакованный дрон-предмет в корабль. Возвращает spawned ShipData или null.</summary>

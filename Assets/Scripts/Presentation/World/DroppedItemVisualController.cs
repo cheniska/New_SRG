@@ -1,12 +1,10 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Presentation.Common;
-using SRG.Controllers;
 
 namespace SRG.Presentation.World
 {
@@ -137,9 +135,9 @@ namespace SRG.Presentation.World
             }
 
             // Авто-подбор при сближении с игроком
-            if (!_collected && PlayerShip.Instance != null)
+            if (!_collected && PresentationContext.Player != null)
             {
-                float dist = Vector2.Distance(transform.position, PlayerShip.Instance.transform.position);
+                float dist = Vector2.Distance(transform.position, PresentationContext.Player.Transform.position);
                 if (dist < PickupRadius)
                     Collect();
             }
@@ -155,7 +153,7 @@ namespace SRG.Presentation.World
         private void Collect()
         {
             _collected = true;
-            var ship = PlayerShip.Instance?.ShipData;
+            var ship = PresentationContext.Player?.ShipData;
             if (ship == null) { Destroy(gameObject); return; }
 
             if (_stack != null)

@@ -22,7 +22,7 @@ using SRG.Simulation;
 
 namespace SRG.Core
 {
-    public class SystemViewManager : MonoBehaviour, IViewHost
+    public class SystemViewManager : MonoBehaviour, IViewHost, ISystemViewQuery
     {
         public static SystemViewManager Instance { get; private set; }
 
@@ -66,6 +66,7 @@ namespace SRG.Core
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
             GameWorld.Attach(this);
+            PresentationContext.SystemView = this;
 
             // Инициализируем сервисные компоненты (если не добавлены в инспекторе)
             if (GetComponent<ObjectInfoPopup>() == null)
@@ -198,8 +199,6 @@ namespace SRG.Core
                 {
                     obj.name = $"Ship_{ship.Uid}";
                     NpcController.Attach(obj, ship, star);
-                    if (obj.TryGetComponent<ClickableInfo>(out var ci))
-                        ci.NpcController = obj.GetComponent<NpcController>();
                 }
             }
         }
@@ -914,8 +913,6 @@ namespace SRG.Core
             var obj = SpawnShip(ship);
             obj.name = $"Ship_{ship.Uid}";
             NpcController.Attach(obj, ship, star);
-            if (obj.TryGetComponent<ClickableInfo>(out var ci))
-                ci.NpcController = obj.GetComponent<NpcController>();
         }
 
         /// <summary>Возвращает менеджер порталов (создаётся лениво при первом обращении).</summary>

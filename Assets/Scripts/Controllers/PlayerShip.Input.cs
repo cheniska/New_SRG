@@ -9,6 +9,7 @@ using SRG.UI.HUD;
 using SRG.UI.Screens;
 using SRG.Utils;
 using SRG.Ships;
+using SRG.Presentation.World;
 
 namespace SRG.Controllers
 {
