@@ -170,9 +170,7 @@ namespace SRG.Simulation
         /// Рассчитать один день: GalaxyNextDay всех галактик (сначала активная — её данные
         /// анимации и возвращаются), миграции кораблей между звёздами, AI NPC активной галактики.
         /// </summary>
-        /// <param name="migrateShips">Применять ли межзвёздные миграции сразу (обычный ход).
-        /// Мгновенный ход на планете исторически их не применяет.</param>
-        public TurnAnimationData SimulateDay(bool migrateShips = true)
+        public TurnAnimationData SimulateDay()
         {
             var active = ActiveGalaxy;
             if (active == null) return null;
@@ -197,17 +195,14 @@ namespace SRG.Simulation
             swNext.Stop();
 
             var swMig = Stopwatch.StartNew();
-            if (migrateShips)
-            {
-                // Применяем "ожидающие" миграции (CurrentStarUid сменился в FinalizeTurn) СРАЗУ —
-                // чтобы NpcSystem.TickAllSystems увидел корабли в их новых системах и AI-приказ
-                // для следующего хода считался относительно правильной (целевой) звезды.
-                // Это критично для гиперперехода: корабль завершил HyperEnter (CurrentStarUid=dest),
-                // и его brain.Tick на этом же ходу должен принять решение в новой системе.
-                active.MigrateShipsBetweenStars();
-                foreach (var kv in Galaxies)
-                    if (kv.Key != ActiveGalaxyKey) kv.Value.MigrateShipsBetweenStars();
-            }
+            // Применяем "ожидающие" миграции (CurrentStarUid сменился в FinalizeTurn) СРАЗУ —
+            // чтобы NpcSystem.TickAllSystems увидел корабли в их новых системах и AI-приказ
+            // для следующего хода считался относительно правильной (целевой) звезды.
+            // Это критично для гиперперехода: корабль завершил HyperEnter (CurrentStarUid=dest),
+            // и его brain.Tick на этом же ходу должен принять решение в новой системе.
+            active.MigrateShipsBetweenStars();
+            foreach (var kv in Galaxies)
+                if (kv.Key != ActiveGalaxyKey) kv.Value.MigrateShipsBetweenStars();
             swMig.Stop();
 
             var swNpc = Stopwatch.StartNew();

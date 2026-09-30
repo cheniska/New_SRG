@@ -504,8 +504,10 @@ namespace SRG.Core
             ClearAllPlanning();
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            // Мгновенный ход (игрок на планете) исторически не применяет межзвёздные миграции сразу.
-            LastTurnData = _session.SimulateDay(migrateShips: false);
+            // Тот же расчёт, что и в обычном ходе: миграции между звёздами применяются сразу
+            // (раньше мгновенный ход их откладывал — корабли «висели» между системами, пока игрок
+            // сидел на планете), фазы гиперпрыжка финализируются после событий хода.
+            LastTurnData = _session.SimulateDay();
             sw.Stop();
             UnityEngine.Debug.Log($"[GalaxyManager] InstantTurn {GeneratedGalaxy.CurrentTurn}: {sw.ElapsedMilliseconds} ms");
 
@@ -517,6 +519,7 @@ namespace SRG.Core
             GameWorld.RaiseTurnCalculate(LastTurnData);
             SystemViewManager.Instance?.UpdatePlanetPositions();
             GameWorld.RaiseTurnComplete(LastTurnData);
+            _session.FinalizeHyperjumpPhases();
 
             // Остаёмся в Planning — повторный запуск хода только по кнопке
             Phase = TurnPhase.Planning;
