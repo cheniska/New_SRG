@@ -1,4 +1,9 @@
+using System.Collections.Generic;
+using System.Text;
 using NUnit.Framework;
+using UnityEngine;
+using SRG.Config;
+using SRG.Galaxy.Generation;
 using SRG.Galaxy;
 using SRG.Simulation;
 using SRG.UI.Logic;
@@ -176,6 +181,61 @@ namespace SRG.Tests
             StringAssert.Contains("Вес: 24", text);
             StringAssert.Contains("Цена: 2440 кр.", text);
             StringAssert.Contains("Прочность: без износа", text);
+        }
+
+        // ── Карта галактики ───────────────────────────────────────────────
+
+        /// <summary>Контекст с настоящими конфигами, у расы Peleng цвет подменён на красный.</summary>
+        private static GalaxyGenerationContext ContextWithRaces()
+        {
+            var ctx = SimulationSetup.CreateContext(TestWorld.LoadConfigs(), settings: null);
+            ctx.Config.Races["Peleng"] = new RaceConfig { Color = "255,0,0" };
+            return ctx;
+        }
+
+        [Test]
+        public void GalaxyMap_ParseColor_RgbCsvAndHtml()
+        {
+            Assert.AreEqual(new Color(1f, 0f, 0f), GalaxyMapPresenter.ParseColor("255, 0, 0"));
+            Assert.AreEqual(Color.white, GalaxyMapPresenter.ParseColor("не цвет"));
+        }
+
+        [Test]
+        public void GalaxyMap_StarColor_UnknownIsWhite()
+        {
+            Assert.AreEqual(Color.white, GalaxyMapPresenter.StarColor(null));
+            Assert.AreNotEqual(Color.white, GalaxyMapPresenter.StarColor("RED"));
+        }
+
+        [Test]
+        public void GalaxyMap_SectorFill_ByRaceOrNeutral()
+        {
+            var ctx = ContextWithRaces();
+            var sector = new SectorData { Race = "Peleng" };
+            Assert.AreEqual(new Color(1f, 0f, 0f), GalaxyMapPresenter.SectorFillColor(sector, ctx, byOwner: false));
+            Assert.AreEqual(GalaxyMapPresenter.NeutralFill, GalaxyMapPresenter.SectorFillColor(sector, ctx, byOwner: true),
+                "режим «по владельцу» без владельца с цветом — нейтральная заливка");
+            Assert.AreEqual(GalaxyMapPresenter.NeutralFill, GalaxyMapPresenter.SectorFillColor(null, ctx, byOwner: false));
+        }
+
+        [Test]
+        public void GalaxyMap_PlanetNameColor()
+        {
+            var ctx = ContextWithRaces();
+            Assert.AreEqual("FF0000", GalaxyMapPresenter.PlanetNameColorHex(new PlanetData { Race = "Peleng" }, ctx));
+            Assert.AreEqual("AAAAAA", GalaxyMapPresenter.PlanetNameColorHex(new PlanetData { Race = "Unknown" }, ctx));
+            Assert.AreEqual("7B7B7B", GalaxyMapPresenter.PlanetNameColorHex(new PlanetData(), ctx));
+        }
+
+        [Test]
+        public void GalaxyMap_ProlongerInfo_HiddenWithoutArtefact()
+        {
+            var star = new StarData();
+            star.Ships.Add(new ShipData { Owner = "Pirates", ShipTypeId = "Raider", CurrentHull = 10 });
+            var sb = new StringBuilder();
+            Assert.AreEqual(0, GalaxyMapPresenter.AppendProlongerShipsInfo(sb, star, player: null, galaxy: null));
+            Assert.AreEqual(0, GalaxyMapPresenter.AppendProlongerShipsInfo(sb, star, new ShipData(), galaxy: null));
+            Assert.AreEqual(0, sb.Length);
         }
     }
 }

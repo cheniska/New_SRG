@@ -9,6 +9,7 @@ using SRG.Galaxy.Generation;
 using SRG.Presentation.Common;
 using SRG.Presentation.Map;
 using SRG.Ships.Movement;
+using SRG.UI.Logic;
 
 namespace SRG.UI.Screens
 {
@@ -200,69 +201,11 @@ namespace SRG.UI.Screens
             return race;
         }
 
-        /// <summary>Цвет заливки ячейки Вороного для конкретной звезды.</summary>
         private Color StarFillColor(StarData star, GalaxyGenerationContext ctx)
-        {
-            if (star == null) return new Color(0.2f, 0.22f, 0.28f);
-
-            // 1. Owner с заданным Color (Пираты, Доминаторы)
-            if (!string.IsNullOrEmpty(star.ResolvedOwnerId)
-                && ctx?.Config?.Ships?.Owners?.TryGetValue(star.ResolvedOwnerId, out var owner) == true
-                && !string.IsNullOrEmpty(owner.Color))
-                return ParseColor(owner.Color);
-
-            // 2. Owner без цвета (Coalition) → цвет расы звезды
-            if (!string.IsNullOrEmpty(star.Race)
-                && star.Race != GalaxyConstants.RACE_NONE_KEY
-                && star.Race != GalaxyConstants.RACE_MIXED_KEY
-                && ctx?.Config?.Races?.TryGetValue(star.Race, out var race) == true
-                && !string.IsNullOrEmpty(race.Color))
-                return ParseColor(race.Color);
-
-            // 3. Mixed — доминирующая раса планет
-            if (star.Race == GalaxyConstants.RACE_MIXED_KEY && star.Planets?.Count > 0)
-            {
-                var raceCounts = new System.Collections.Generic.Dictionary<string, int>();
-                foreach (var p in star.Planets)
-                {
-                    if (string.IsNullOrEmpty(p.Race) || p.Race == GalaxyConstants.RACE_NONE_KEY) continue;
-                    raceCounts.TryGetValue(p.Race, out int cnt);
-                    raceCounts[p.Race] = cnt + 1;
-                }
-                string domRace = null; int maxCnt = 0;
-                foreach (var kv in raceCounts) if (kv.Value > maxCnt) { maxCnt = kv.Value; domRace = kv.Key; }
-                if (!string.IsNullOrEmpty(domRace)
-                    && ctx?.Config?.Races?.TryGetValue(domRace, out var dr) == true
-                    && !string.IsNullOrEmpty(dr.Color))
-                    return ParseColor(dr.Color);
-            }
-
-            // 4. Fallback на сектор
-            return SectorFillColor(star.ParentSector, ctx);
-        }
+            => GalaxyMapPresenter.StarFillColor(star, ctx, _colorMode == ColorMode.Owner);
 
         private Color SectorFillColor(SectorData sector, GalaxyGenerationContext ctx)
-        {
-            if (sector == null) return new Color(0.2f, 0.22f, 0.28f);
-
-            if (_colorMode == ColorMode.Owner)
-            {
-                string ownerId = sector.ResolvedOwnerId ?? sector.Owner;
-                if (!string.IsNullOrEmpty(ownerId) && ownerId != GalaxyConstants.OWNER_NONE_KEY
-                    && ctx?.Config?.Ships?.Owners?.TryGetValue(ownerId, out var ownerCfg) == true
-                    && !string.IsNullOrEmpty(ownerCfg.Color))
-                    return ParseColor(ownerCfg.Color);
-                return new Color(0.2f, 0.22f, 0.28f);
-            }
-
-            string raceId = sector.Race;
-            if (!string.IsNullOrEmpty(raceId) && raceId != GalaxyConstants.RACE_NONE_KEY
-                && ctx?.Config?.Races?.TryGetValue(raceId, out var raceC) == true
-                && !string.IsNullOrEmpty(raceC.Color))
-                return ParseColor(raceC.Color);
-
-            return new Color(0.2f, 0.22f, 0.28f);
-        }
+            => GalaxyMapPresenter.SectorFillColor(sector, ctx, _colorMode == ColorMode.Owner);
 
         private void SpawnStarIcons()
         {
@@ -390,38 +333,9 @@ namespace SRG.UI.Screens
             img.raycastTarget = false;
         }
 
-        private static Color StarNameColor(StarData star, GalaxyGenerationContext ctx)
-        {
-            if (ctx == null) return new Color(0.82f, 0.82f, 0.82f);
+        private static Color StarNameColor(StarData star, GalaxyGenerationContext ctx) => GalaxyMapPresenter.StarNameColor(star, ctx);
 
-            // Owner с цветом (Пираты, Доминаторы)
-            if (!string.IsNullOrEmpty(star.Owner)
-                && star.Owner != GalaxyConstants.OWNER_NONE_KEY
-                && ctx.Config.Ships?.Owners?.TryGetValue(star.Owner, out var ownerCfg) == true
-                && !string.IsNullOrEmpty(ownerCfg.Color))
-                return ParseColor(ownerCfg.Color);
-
-            // Race
-            if (!string.IsNullOrEmpty(star.Race)
-                && star.Race != GalaxyConstants.RACE_NONE_KEY
-                && star.Race != GalaxyConstants.RACE_MIXED_KEY
-                && ctx.Config.Races?.TryGetValue(star.Race, out var race) == true
-                && !string.IsNullOrEmpty(race.Color))
-                return ParseColor(race.Color);
-
-            return new Color(0.78f, 0.78f, 0.82f);
-        }
-
-        private static Color ParseColor(string csv)
-        {
-            var p = csv.Split(',');
-            if (p.Length >= 3
-                && float.TryParse(p[0].Trim(), out float r)
-                && float.TryParse(p[1].Trim(), out float g)
-                && float.TryParse(p[2].Trim(), out float b))
-                return new Color(r / 255f, g / 255f, b / 255f);
-            return ColorUtility.TryParseHtmlString(csv, out var c) ? c : Color.white;
-        }
+        private static Color ParseColor(string csv) => GalaxyMapPresenter.ParseColor(csv);
 
         private void UpdateStarPositions()
         {

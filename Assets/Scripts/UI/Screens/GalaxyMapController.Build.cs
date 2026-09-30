@@ -9,6 +9,7 @@ using SRG.Galaxy.Generation;
 using SRG.Presentation.Common;
 using SRG.Presentation.Map;
 using SRG.Ships.Movement;
+using SRG.UI.Logic;
 
 namespace SRG.UI.Screens
 {
@@ -265,56 +266,12 @@ namespace SRG.UI.Screens
             if (_starTooltipGO != null) _starTooltipGO.SetActive(false);
         }
 
-        /// <summary>Показывает сводку кораблей в системе <paramref name="star"/>, если игрок
-        /// находится в пределах Пролонгера (<c>Artefacts.GalaxyMapScope</c>) от неё. Возвращает
-        /// число дописанных строк (для расчёта высоты тултипа).</summary>
         private int AppendProlongerShipsInfo(System.Text.StringBuilder sb, StarData star)
-        {
-            if (star?.Ships == null || star.Ships.Count == 0) return 0;
-            var player = PlayerManager.Instance?.GetOrFindPlayerShip();
-            if (player == null) return 0;
-            float scope = StatBus.SumShipCategory(player, EquipmentCategory.Artefacts, "GalaxyMapScope");
-            if (scope <= 0f) return 0;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
-            if (galaxy == null || string.IsNullOrEmpty(player.CurrentStarUid)) return 0;
-            if (!galaxy.StarsMap.TryGetValue(player.CurrentStarUid, out var playerStar)) return 0;
-            if (HyperjumpController.CalcDistance(playerStar, star) > scope) return 0;
-
-            // Сводим корабли по (SideKey, TypeKey), пропуская контейнеры/предметы и погибших.
-            var groups = new Dictionary<string, int>();
-            foreach (var s in star.Ships)
-            {
-                if (s == null || s.IsItem) continue;
-                if (s.CurrentHull <= 0) continue;
-                string side = string.IsNullOrEmpty(s.Owner) ? "?" : s.Owner;
-                string type = string.IsNullOrEmpty(s.ShipTypeId) ? "?" : s.ShipTypeId;
-                string key = side + " · " + type;
-                groups.TryGetValue(key, out var c);
-                groups[key] = c + 1;
-            }
-            if (groups.Count == 0) return 0;
-
-            sb.AppendLine("<color=#8FD1FF>◈ обнаружено (Пролонгер):</color>");
-            int lines = 1;
-            foreach (var kv in groups)
-            {
-                sb.AppendLine($"<color=#B9C6D6>  {kv.Key}: {kv.Value}</color>");
-                lines++;
-                if (lines >= 8) { sb.AppendLine("<color=#B9C6D6>  …</color>"); lines++; break; }
-            }
-            return lines;
-        }
+            => GalaxyMapPresenter.AppendProlongerShipsInfo(sb, star,
+                   PlayerManager.Instance?.GetOrFindPlayerShip(), GalaxyManager.Instance?.GeneratedGalaxy);
 
         private static string GetPlanetNameColorHex(PlanetData planet, GalaxyGenerationContext ctx)
-        {
-            if (planet == null || string.IsNullOrEmpty(planet.Race) || planet.Race == GalaxyConstants.RACE_NONE_KEY)
-                return "7B7B7B";
-            if (ctx?.Config?.Races != null
-                && ctx.Config.Races.TryGetValue(planet.Race, out var rc)
-                && !string.IsNullOrEmpty(rc.Color))
-                return ColorUtility.ToHtmlStringRGB(ParseColor(rc.Color));
-            return "AAAAAA";
-        }
+            => GalaxyMapPresenter.PlanetNameColorHex(planet, ctx);
 
         private void BuildJumpButton(Transform parent)
         {
