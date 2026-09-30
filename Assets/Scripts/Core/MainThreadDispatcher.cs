@@ -27,11 +27,17 @@ namespace SRG.Core
 
         public bool IsMainThread => Thread.CurrentThread.ManagedThreadId == _mainThreadId;
 
+        /// <summary>Сколько Send-запросов выполнено с последнего <see cref="ResetStats"/>. Каждый
+        /// стоит потоку расчёта ожидания кадра — для perf_log.</summary>
+        public int SendCount { get; private set; }
+        public int PostCount { get; private set; }
+        public void ResetStats() { lock (_lock) { SendCount = 0; PostCount = 0; } }
+
         public void Post(Action action)
         {
             if (action == null) return;
             if (IsMainThread) { action(); return; }
-            lock (_lock) _posts.Enqueue(action);
+            lock (_lock) { _posts.Enqueue(action); PostCount++; }
         }
 
         public T Send<T>(Func<T> func)
@@ -42,12 +48,15 @@ namespace SRG.Core
             Exception error = null;
             using var done = new ManualResetEventSlim(false);
             lock (_lock)
+            {
                 _sends.Enqueue(() =>
                 {
                     try { result = func(); }
                     catch (Exception e) { error = e; }
                     finally { done.Set(); }
                 });
+                SendCount++;
+            }
             done.Wait();
             if (error != null)
                 throw new InvalidOperationException("Ошибка при выполнении вызова на главном потоке", error);

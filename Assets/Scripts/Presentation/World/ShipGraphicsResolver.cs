@@ -26,7 +26,7 @@ namespace SRG.Presentation.World
         /// <summary>Очистить кэш (например, при перезагрузке игры).</summary>
         public static void ClearCache()
         {
-            _fromBaseCache.Clear();
+            lock (_fromBaseCache) _fromBaseCache.Clear();
             _hasSpritesCache.Clear();
         }
 
@@ -50,13 +50,16 @@ namespace SRG.Presentation.World
         public static string ResolveFromBase(string basePath, string ownerId, string raceId)
         {
             if (string.IsNullOrEmpty(basePath)) return basePath;
-            // Resources и кэши — только с главного потока; из расчёта хода — через него.
-            if (!MainThread.IsCurrent) return MainThread.Send(() => ResolveFromBase(basePath, ownerId, raceId));
             var cacheKey = (basePath, ownerId ?? "", raceId ?? "");
-            if (_fromBaseCache.TryGetValue(cacheKey, out var cached)) return cached;
+            // Кэш — до обращения к главному потоку: из расчёта хода каждый Send стоит ожидания
+            // кадра, а резолвер зовётся на каждый спавн/смену корпуса.
+            lock (_fromBaseCache)
+                if (_fromBaseCache.TryGetValue(cacheKey, out var cached)) return cached;
+            // Resources — только с главного потока; из расчёта хода — через него.
+            if (!MainThread.IsCurrent) return MainThread.Send(() => ResolveFromBase(basePath, ownerId, raceId));
 
             string result = ResolveFromBaseInternal(basePath, ownerId, raceId);
-            _fromBaseCache[cacheKey] = result;
+            lock (_fromBaseCache) _fromBaseCache[cacheKey] = result;
             return result;
         }
 
