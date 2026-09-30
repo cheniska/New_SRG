@@ -34,8 +34,6 @@ namespace SRG.Galaxy.Generation
             else
                 star.StarRadius = 0.5f;
 
-            star.SystemSize = CalculateSystemSize(star.Planets);
-
             if (_ctx.Config?.Stars?.Colors != null &&
                 _ctx.Config.Stars.Colors.TryGetValue(star.Color, out var colorData))
             {
@@ -46,6 +44,9 @@ namespace SRG.Galaxy.Generation
                 star.FlareRisk = colorData.FlareRisk;
             }
 
+            if (!star.IsPremade) PlaceHabitableSlot(star, hzSizeMult);
+            star.SystemSize = CalculateSystemSize(star.Planets);
+
             foreach (var planet in star.Planets)
             {
                 RollStellarPhysics(planet, star);
@@ -53,6 +54,52 @@ namespace SRG.Galaxy.Generation
             }
 
             CustomPropertyResolver.ResolveAndApplyProperties(star, star.CustomProperties, "Stars", _ctx.Config);
+        }
+
+        /// <summary>
+        /// «Слот обитаемой зоны»: с шансом Planets.HabitableSlotChance ближайшая к обитаемой зоне каменная
+        /// планета заселяемого размера сдвигается на орбиту с целевой температурой из Planets.HabitableSlotTemp —
+        /// только в пределах зазоров с соседними орбитами, порядок планет не меняется.
+        /// </summary>
+        private void PlaceHabitableSlot(StarData star, float hzSizeMult)
+        {
+            var pc = _ctx.Config?.Planets;
+            if (pc == null || pc.HabitableSlotChance <= 0f || star.Planets == null || star.Planets.Count == 0) return;
+            if (UnityEngine.Random.value >= pc.HabitableSlotChance) return;
+
+            float lStar = Mathf.Pow(star.MassSolar, 1.267f) * star.RadiationMult;
+            if (lStar <= 0f) return;
+            float tMin = pc.HabitableSlotTemp?.Length > 0 ? pc.HabitableSlotTemp[0] : 250f;
+            float tMax = pc.HabitableSlotTemp?.Length > 1 ? pc.HabitableSlotTemp[1] : 315f;
+            // Целевая равновесная температура: минус типичный парниковый вклад (~8 K при ~1 атм).
+            float tEq = Mathf.Max(50f, UnityEngine.Random.Range(tMin, tMax) - 8f);
+            float target = StellarD0 * Mathf.Pow(278f * Mathf.Pow(lStar, 0.25f) / tEq, 2f);
+
+            var list = new List<PlanetData>(star.Planets);
+            list.Sort((a, b) => a.OrbitRadius.CompareTo(b.OrbitRadius));
+
+            int best = -1;
+            float bestDist = float.MaxValue;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var p = list[i];
+                if (p.HasFixedOrbitRadius || p.Density < 2f || !IsPopulatedSize(p)) continue;
+                float dist = Mathf.Abs(p.OrbitRadius - target);
+                if (dist < bestDist) { bestDist = dist; best = i; }
+            }
+            if (best < 0) return;
+
+            var planet = list[best];
+            float e = Mathf.Clamp(planet.OrbitEccentricity, 0f, 0.99f);
+            float margin = GalaxyConstants.ORBIT_GAP_MIN * 0.35f * hzSizeMult;
+            float lo = best > 0
+                ? (list[best - 1].OrbitRadius * (1f + Mathf.Clamp(list[best - 1].OrbitEccentricity, 0f, 0.99f)) + margin) / Mathf.Max(1f - e, 0.01f)
+                : GalaxyConstants.FIRST_ORBIT_MIN * 0.5f * hzSizeMult;
+            float hi = best + 1 < list.Count
+                ? (list[best + 1].OrbitRadius * (1f - Mathf.Clamp(list[best + 1].OrbitEccentricity, 0f, 0.99f)) - margin) / (1f + e)
+                : float.MaxValue;
+            if (lo > hi) return;
+            planet.OrbitRadius = Mathf.Clamp(target, lo, hi);
         }
 
         private static void RollStellarPhysics(PlanetData planet, StarData star)
@@ -69,39 +116,47 @@ namespace SRG.Galaxy.Generation
             float baseTemp = 278f * Mathf.Pow(lStar, 0.25f) / Mathf.Sqrt(dRatio);
             float g = planet.SurfaceGravity;
             float gRatio = g / 9.81f;
+            float geo = planet.GeoActivity;
+
+            // Магнитное поле: у каменных планет — динамо от геоактивности (geo^1.5; прежний geo³ давал почти
+            // нулевые поля и тянул за собой воду и кислород).
             if (planet.Density < 2f)
                 planet.MagneticField = Mathf.Clamp(Mathf.Pow(gRatio, 1.2f) / 1.4f, 0f, 3f);
             else if (planet.Density < 3f)
                 planet.MagneticField = Mathf.Clamp(
-                    Mathf.Sqrt(gRatio) * planet.GeoActivity * (1f + 0.2f * planet.SatellitesCount) / 0.77f,
+                    Mathf.Sqrt(gRatio) * geo * (1f + 0.2f * planet.SatellitesCount) / 0.77f,
                     0f, 3f);
             else
                 planet.MagneticField = Mathf.Clamp(
-                    Mathf.Sqrt(gRatio) * Mathf.Pow(planet.GeoActivity, 3f) * (1f + 0.15f * planet.SatellitesCount) / 1.15f,
+                    Mathf.Sqrt(gRatio) * Mathf.Pow(geo, 1.5f) * (1f + 0.15f * planet.SatellitesCount) / 0.5f,
                     0f, 3f);
+            float fieldShield = Mathf.Clamp01(planet.MagneticField);
 
+            // Давление: дегазация (geo) × удержание (гравитация, поле) / звёздный ветер, логнормальный разброс.
             if (planet.Density < 2f)
                 planet.AtmPressure = Mathf.Min(10f, Mathf.Pow(gRatio, 1.5f) * 5f);
-            else if (planet.Density < 3f)
-                planet.AtmPressure = Mathf.Clamp(Mathf.Pow(gRatio, 0.8f) * Mathf.Pow(1f / planet.SolarFlux, 0.3f) * 0.5f, 0f, 3f);
             else
-                planet.AtmPressure = gRatio * Mathf.Pow(planet.GeoActivity, 2f) * Mathf.Sqrt(1f + planet.MagneticField) / (Mathf.Sqrt(planet.SolarFlux) * 1.4142f);
+            {
+                float outgas   = 0.3f + 1.4f * geo;
+                float retained = 0.6f + 0.4f * fieldShield;
+                float pressure = Mathf.Pow(gRatio, 1.3f) * outgas * retained / Mathf.Sqrt(Mathf.Max(planet.SolarFlux, 0.05f));
+                planet.AtmPressure = Mathf.Min(90f, pressure * Mathf.Pow(10f, UnityEngine.Random.Range(-0.45f, 0.45f)));
+            }
 
             if (planet.AtmPressureFixed.HasValue)
                 planet.AtmPressure = planet.AtmPressureFixed.Value;
 
             planet.SurfaceRadiation = planet.SolarFlux * 1000f * 1.361f / ((1f + 0.36f * planet.AtmPressure) * (1f + 0.36f * planet.MagneticField));
 
+            // Вода: запас летучих при формировании × удержание (гравитация, поле) × потери от нагрева.
             if (planet.Density < 2f)
-            {
                 planet.WaterAbundance = 0f;
-            }
             else
             {
-                float satBonus = Mathf.Clamp(planet.SatellitesCount * 0.08f, 0f, 0.2f);
-                planet.WaterAbundance = Mathf.Clamp(
-                    (planet.GeoActivity + satBonus) * planet.MagneticField * (1f - planet.SolarFlux * 0.343f),
-                    0f, 1f);
+                float volatiles = Mathf.Pow(UnityEngine.Random.value, 0.8f);
+                float retention = Mathf.Clamp01(gRatio / 0.5f) * (0.55f + 0.45f * fieldShield);
+                float heatLoss  = 1f + Mathf.Max(0f, planet.SolarFlux - 1.25f) * 1.2f;
+                planet.WaterAbundance = Mathf.Clamp01(volatiles * retention / heatLoss);
             }
 
             if (planet.WaterAbundanceFixed.HasValue)
@@ -110,18 +165,17 @@ namespace SRG.Galaxy.Generation
             float greenhouseFactor = Mathf.Log(1f + planet.AtmPressure) * (1f + 0.5f * planet.WaterAbundance);
             planet.SurfaceTemp = baseTemp + 10f * greenhouseFactor;
 
+            // Кислород: свободный O₂ — признак фотосинтезирующей биосферы, которой нужна жидкая вода.
+            // Без биосферы — абиогенные следы (фотолиз).
             if (planet.OxygenPercentFixed.HasValue)
-            {
                 planet.OxygenPercent = planet.OxygenPercentFixed.Value;
-            }
             else
             {
-                float oxyBase      = planet.WaterAbundance
-                                   * Mathf.Clamp01(planet.MagneticField)
-                                   * Mathf.Clamp01(planet.AtmPressure);
-                float fluxFactor   = 1f / (1f + 0.6f * Mathf.Max(0f, planet.SolarFlux - 1f));
-                float geoFactor    = 1f / (1f + 0.8f * planet.GeoActivity * planet.GeoActivity);
-                planet.OxygenPercent = Mathf.Clamp(oxyBase * fluxFactor * geoFactor * 52f, 0f, 35f);
+                bool liquidWater = planet.Density >= 2f && planet.WaterAbundance >= 0.08f
+                                   && planet.SurfaceTemp >= 255f && planet.SurfaceTemp <= 335f
+                                   && planet.AtmPressure >= 0.2f;
+                bool biosphere = liquidWater && UnityEngine.Random.value < Mathf.Min(0.85f, 0.35f + planet.WaterAbundance);
+                planet.OxygenPercent = biosphere ? UnityEngine.Random.Range(12f, 30f) : UnityEngine.Random.Range(0f, 1.5f);
             }
 
             if (planet.SurfaceTempFixed.HasValue)
@@ -214,53 +268,21 @@ namespace SRG.Galaxy.Generation
             var cond = raceConfig.PlanetConditions;
             if (cond == null) return false;
 
-            float partialO2 = (planet.OxygenPercent / 100f) * planet.AtmPressure;
-
-            bool habitable = true;
-            if (cond.WaterAbundanceMin.HasValue   && planet.WaterAbundance     < cond.WaterAbundanceMin.Value)   habitable = false;
-            if (cond.WaterAbundanceMax.HasValue   && planet.WaterAbundance     > cond.WaterAbundanceMax.Value)   habitable = false;
-            if (cond.OxygenPartialMin.HasValue    && partialO2                 < cond.OxygenPartialMin.Value)    habitable = false;
-            if (cond.OxygenPartialMax.HasValue    && partialO2                 > cond.OxygenPartialMax.Value)    habitable = false;
-            if (cond.AtmPressureMin.HasValue      && planet.AtmPressure        < cond.AtmPressureMin.Value)      habitable = false;
-            if (cond.AtmPressureMax.HasValue      && planet.AtmPressure        > cond.AtmPressureMax.Value)      habitable = false;
-            if (cond.SurfaceRadiationMin.HasValue && planet.SurfaceRadiation   < cond.SurfaceRadiationMin.Value) habitable = false;
-            if (cond.SurfaceRadiationMax.HasValue && planet.SurfaceRadiation   > cond.SurfaceRadiationMax.Value) habitable = false;
-            if (cond.GMin.HasValue                && planet.SurfaceGravity     < cond.GMin.Value)                habitable = false;
-            if (cond.GMax.HasValue                && planet.SurfaceGravity     > cond.GMax.Value)                habitable = false;
-            if (cond.SurfaceTempMin.HasValue      && planet.SurfaceTemp        < cond.SurfaceTempMin.Value)      habitable = false;
-            if (cond.SurfaceTempMax.HasValue      && planet.SurfaceTemp        > cond.SurfaceTempMax.Value)      habitable = false;
-
-            if (habitable)
+            switch (RaceHabitability.Evaluate(planet, cond))
             {
-                planet.Race            = raceKey;
-                planet.CurrentColor    = GenerationHelpers.GetRaceColor(raceKey, _ctx.AvailableRaces);
-                planet.IsTerraformable = false;
-                planet.IsTerraformed   = false;
-                return true;
-            }
-
-            bool terraformable = true;
-            if (cond.WaterAbundanceTfMin.HasValue   && planet.WaterAbundance   < cond.WaterAbundanceTfMin.Value)   terraformable = false;
-            if (cond.WaterAbundanceTfMax.HasValue   && planet.WaterAbundance   > cond.WaterAbundanceTfMax.Value)   terraformable = false;
-            if (cond.OxygenPartialTfMin.HasValue    && partialO2               < cond.OxygenPartialTfMin.Value)    terraformable = false;
-            if (cond.OxygenPartialTfMax.HasValue    && partialO2               > cond.OxygenPartialTfMax.Value)    terraformable = false;
-            if (cond.AtmPressureTfMin.HasValue      && planet.AtmPressure      < cond.AtmPressureTfMin.Value)      terraformable = false;
-            if (cond.AtmPressureTfMax.HasValue      && planet.AtmPressure      > cond.AtmPressureTfMax.Value)      terraformable = false;
-            if (cond.SurfaceRadiationTfMin.HasValue && planet.SurfaceRadiation < cond.SurfaceRadiationTfMin.Value) terraformable = false;
-            if (cond.SurfaceRadiationTfMax.HasValue && planet.SurfaceRadiation > cond.SurfaceRadiationTfMax.Value) terraformable = false;
-            if (cond.GTfMin.HasValue                && planet.SurfaceGravity   < cond.GTfMin.Value)                terraformable = false;
-            if (cond.GTfMax.HasValue                && planet.SurfaceGravity   > cond.GTfMax.Value)                terraformable = false;
-            if (cond.SurfaceTempTfMin.HasValue      && planet.SurfaceTemp      < cond.SurfaceTempTfMin.Value)      terraformable = false;
-            if (cond.SurfaceTempTfMax.HasValue      && planet.SurfaceTemp      > cond.SurfaceTempTfMax.Value)      terraformable = false;
-
-            if (terraformable)
-            {
-                planet.Race            = raceKey;
-                planet.CurrentColor    = GenerationHelpers.GetRaceColor(raceKey, _ctx.AvailableRaces);
-                planet.IsTerraformable = false;
-                ExpansionApplyOptimal(planet, raceConfig);
-                planet.IsTerraformed   = true;
-                return true;
+                case HabitabilityLevel.Habitable:
+                    planet.Race            = raceKey;
+                    planet.CurrentColor    = GenerationHelpers.GetRaceColor(raceKey, _ctx.AvailableRaces);
+                    planet.IsTerraformable = false;
+                    planet.IsTerraformed   = false;
+                    return true;
+                case HabitabilityLevel.Terraformable:
+                    planet.Race            = raceKey;
+                    planet.CurrentColor    = GenerationHelpers.GetRaceColor(raceKey, _ctx.AvailableRaces);
+                    planet.IsTerraformable = false;
+                    ExpansionApplyOptimal(planet, raceConfig);
+                    planet.IsTerraformed   = true;
+                    return true;
             }
 
             return false;

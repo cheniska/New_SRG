@@ -201,7 +201,15 @@
 									"Type": "Rocky",
 									"Race": "Race5",
 									"CurOwner": "Pirates",
-									"OrbitIndex": 1
+									"OrbitIndex": 1,
+									"Size": "Normal",
+									"Density": 5.2,
+									"SurfaceGravity": 9.0,
+									"GeoActivity": 0.4,
+									"AtmPressure": 1.0,
+									"OxygenPercent": 20.0,
+									"WaterAbundance": 0.2,
+									"SurfaceTemp": 300.0
 								}
 							}
 						},
@@ -313,10 +321,10 @@
 									"SatellitesCount": 0,
 									"OrbitIndex": 4,
 									"Density": 4.0,
-									"SurfaceGravity": 5.5,
+									"SurfaceGravity": 6.0,
 									"GeoActivity": 0.20,
 									"AtmPressure": 0.8,
-									"OxygenPercent": 8.0,
+									"OxygenPercent": 11.0,
 									"WaterAbundance": 0.35
 								},
 								"TaronP5": {
@@ -361,12 +369,12 @@
 									"SatellitesCount": 0,
 									"OrbitIndex": 7,
 									"Density": 3.8,
-									"SurfaceGravity": 4.5,
+									"SurfaceGravity": 6.0,
 									"GeoActivity": 0.05,
-									"AtmPressure": 0.18,
-									"OxygenPercent": 9.0,
+									"AtmPressure": 0.45,
+									"OxygenPercent": 16.0,
 									"WaterAbundance": 0.12,
-									"SurfaceTemp": 188.0
+									"SurfaceTemp": 205.0
 								},
 								"TaronPampero": {
 									"Name": "Памперой",
@@ -382,10 +390,10 @@
 									"Density": 5.0,
 									"SurfaceGravity": 12.0,
 									"GeoActivity": 0.75,
-									"AtmPressure": 16.0,
-									"OxygenPercent": 1.5,
+									"AtmPressure": 3.5,
+									"OxygenPercent": 3.0,
 									"WaterAbundance": 0.08,
-									"SurfaceTemp": 355.0
+									"SurfaceTemp": 315.0
 								}
 							}
 						},
@@ -542,7 +550,7 @@
 									"AtmPressure": 2.0,
 									"OxygenPercent": 22.0,
 									"WaterAbundance": 0.40,
-									"SurfaceTemp": 340.0
+									"SurfaceTemp": 325.0
 								},
 								"PhedokSilits": {
 									"Name": "Силиц",
@@ -558,10 +566,10 @@
 									"Density": 4.2,
 									"SurfaceGravity": 7.0,
 									"GeoActivity": 0.10,
-									"AtmPressure": 0.25,
+									"AtmPressure": 0.5,
 									"OxygenPercent": 30.0,
 									"WaterAbundance": 0.85,
-									"SurfaceTemp": 225.0
+									"SurfaceTemp": 268.0
 								}
 							}
 						}
@@ -676,13 +684,13 @@
 									"AxialTilt": 3,
 									"SatellitesCount": 0,
 									"OrbitIndex": 6,
-									"Density": 1.8,
-									"SurfaceGravity": 1.0,
+									"Density": 3.0,
+									"SurfaceGravity": 4.0,
 									"GeoActivity": 0.0,
-									"AtmPressure": 0.05,
-									"OxygenPercent": 10.0,
+									"AtmPressure": 0.25,
+									"OxygenPercent": 30.0,
 									"WaterAbundance": 0.60,
-									"SurfaceTemp": 145.0
+									"SurfaceTemp": 250.0
 								},
 								"KraaBalda": {
 									"Name": "Баалда",
@@ -696,12 +704,12 @@
 									"SatellitesCount": 0,
 									"OrbitIndex": 7,
 									"Density": 5.8,
-									"SurfaceGravity": 40.0,
-									"GeoActivity": 1.50,
-									"AtmPressure": 30.0,
-									"OxygenPercent": 2.0,
+									"SurfaceGravity": 17.0,
+									"GeoActivity": 1.0,
+									"AtmPressure": 4.5,
+									"OxygenPercent": 5.0,
 									"WaterAbundance": 0.05,
-									"SurfaceTemp": 450.0
+									"SurfaceTemp": 350.0
 								}
 							}
 						}
@@ -788,7 +796,8 @@
 									"GeoActivity": 0.28,
 									"AtmPressure": 0.9,
 									"OxygenPercent": 20.0,
-									"WaterAbundance": 0.42
+									"WaterAbundance": 0.42,
+									"SurfaceTemp": 262.0
 								},
 								"AtlanP5": {
 									"Name": "AtlanP5",
@@ -819,10 +828,10 @@
 									"Density": 4.3,
 									"SurfaceGravity": 5.5,
 									"GeoActivity": 0.15,
-									"AtmPressure": 0.25,
+									"AtmPressure": 0.5,
 									"OxygenPercent": 28.0,
 									"WaterAbundance": 0.25,
-									"SurfaceTemp": 235.0
+									"SurfaceTemp": 258.0
 								},
 								"AtlanEylank": {
 									"Name": "Эйланк",
@@ -836,12 +845,12 @@
 									"SatellitesCount": 0,
 									"OrbitIndex": 7,
 									"Density": 5.5,
-									"SurfaceGravity": 20.0,
+									"SurfaceGravity": 15.0,
 									"GeoActivity": 0.90,
-									"AtmPressure": 7.5,
-									"OxygenPercent": 1.5,
+									"AtmPressure": 5.0,
+									"OxygenPercent": 4.0,
 									"WaterAbundance": 0.55,
-									"SurfaceTemp": 355.0
+									"SurfaceTemp": 330.0
 								}
 							}
 						}

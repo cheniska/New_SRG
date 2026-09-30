@@ -367,6 +367,15 @@ namespace SRG.Config
 
         public float EccentricityMin => OrbitsEccentricity?.Length > 0 ? OrbitsEccentricity[0] : 0f;
         public float EccentricityMax => OrbitsEccentricity?.Length > 1 ? OrbitsEccentricity[1] : 0f;
+
+        /// <summary>
+        /// Шанс, что у случайной (не premade) системы одна каменная планета заселяемого размера окажется
+        /// в обитаемой зоне: её орбита сдвигается (в пределах зазоров с соседями) туда, где температура
+        /// поверхности попадает в <see cref="HabitableSlotTemp"/>. Оценки η⊕ для звёзд типа Солнца — 0.3–0.6.
+        /// </summary>
+        [JsonProperty("HabitableSlotChance")] public float HabitableSlotChance { get; set; } = 0.5f;
+        /// <summary>Диапазон целевой температуры поверхности (K) для планеты обитаемой зоны.</summary>
+        [JsonProperty("HabitableSlotTemp")] public float[] HabitableSlotTemp { get; set; } = { 250f, 315f };
     }
 
     public class GovernmentTypeConfig
@@ -678,6 +687,12 @@ namespace SRG.Config
         [JsonProperty("Terraformable")] public float[] Terraformable { get; set; }
     }
 
+    /// <summary>
+    /// Условия обитаемости расы. Жёстко проверяются три оси (см. <see cref="SRG.Galaxy.RaceHabitability"/>):
+    /// температура, атмосфера (давление + pO₂) и гравитация. Вода и радиация — мягкие модификаторы
+    /// (комфорт → население), а не фильтры. Для терраформирования проверяются T, давление и g:
+    /// кислород и гидросферу терраформирование создаёт само.
+    /// </summary>
     public class RacePlanetConditionsConfig
     {
         [JsonProperty("WaterAbundance")]    public float[] WaterAbundance    { get; set; }

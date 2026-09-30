@@ -259,6 +259,85 @@ namespace SRG.Galaxy
 
     #endregion
 
+    #region Race Habitability
+
+    public enum HabitabilityLevel { None, Terraformable, Habitable }
+
+    /// <summary>
+    /// Единая оценка пригодности планеты для расы. Три жёсткие оси:
+    ///   • Температура (Acceptable / Terraformable);
+    ///   • Атмосфера: давление, а для естественной пригодности ещё и pO₂;
+    ///   • Гравитация.
+    /// Вода и поверхностная радиация — мягкие модификаторы <see cref="Comfort"/>.
+    /// </summary>
+    public static class RaceHabitability
+    {
+        public static float PartialO2(PlanetData p) => p.OxygenPercent / 100f * p.AtmPressure;
+
+        public static bool IsHabitable(PlanetData p, RacePlanetConditionsConfig c)
+        {
+            if (c == null) return true;
+            return In(p.SurfaceTemp,    c.SurfaceTempMin, c.SurfaceTempMax)
+                && In(p.AtmPressure,    c.AtmPressureMin, c.AtmPressureMax)
+                && In(PartialO2(p),     c.OxygenPartialMin, c.OxygenPartialMax)
+                && In(p.SurfaceGravity, c.GMin, c.GMax);
+        }
+
+        public static bool IsTerraformable(PlanetData p, RacePlanetConditionsConfig c)
+        {
+            if (c == null) return false;
+            return In(p.SurfaceTemp,    c.SurfaceTempTfMin, c.SurfaceTempTfMax)
+                && In(p.AtmPressure,    c.AtmPressureTfMin, c.AtmPressureTfMax)
+                && In(p.SurfaceGravity, c.GTfMin, c.GTfMax);
+        }
+
+        public static HabitabilityLevel Evaluate(PlanetData p, RacePlanetConditionsConfig c) =>
+            IsHabitable(p, c) ? HabitabilityLevel.Habitable
+            : IsTerraformable(p, c) ? HabitabilityLevel.Terraformable
+            : HabitabilityLevel.None;
+
+        /// <summary>
+        /// Комфорт 0.25..1 по мягким параметрам (вода, радиация): 1 внутри диапазона расы, линейно падает
+        /// до 0.5 на расстоянии ширины диапазона за его границей. Множитель к населению.
+        /// </summary>
+        public static float Comfort(PlanetData p, RacePlanetConditionsConfig c)
+        {
+            if (c == null) return 1f;
+            return Soft(p.WaterAbundance, c.WaterAbundanceMin, c.WaterAbundanceMax)
+                 * Soft(p.SurfaceRadiation, c.SurfaceRadiationMin, c.SurfaceRadiationMax);
+        }
+
+        /// <summary>Метки нарушенных осей для UI: жёсткие — «T↓», мягкие — «~Вода↑».</summary>
+        public static void CollectFailed(PlanetData p, RacePlanetConditionsConfig c, List<string> failed)
+        {
+            if (c == null) return;
+            Label(p.SurfaceTemp,      c.SurfaceTempMin,      c.SurfaceTempMax,      "T",     failed);
+            Label(p.AtmPressure,      c.AtmPressureMin,      c.AtmPressureMax,      "P",     failed);
+            Label(PartialO2(p),       c.OxygenPartialMin,    c.OxygenPartialMax,    "pO₂",   failed);
+            Label(p.SurfaceGravity,   c.GMin,                c.GMax,                "g",     failed);
+            Label(p.WaterAbundance,   c.WaterAbundanceMin,   c.WaterAbundanceMax,   "~Вода", failed);
+            Label(p.SurfaceRadiation, c.SurfaceRadiationMin, c.SurfaceRadiationMax, "~Rad",  failed);
+        }
+
+        private static bool In(float v, float? min, float? max) =>
+            (!min.HasValue || v >= min.Value) && (!max.HasValue || v <= max.Value);
+
+        private static float Soft(float v, float? min, float? max)
+        {
+            if (!min.HasValue || !max.HasValue || max.Value <= min.Value) return 1f;
+            float width = max.Value - min.Value;
+            float dist = v < min.Value ? min.Value - v : v > max.Value ? v - max.Value : 0f;
+            return Mathf.Lerp(1f, 0.5f, Mathf.Clamp01(dist / width));
+        }
+
+        private static void Label(float v, float? min, float? max, string label, List<string> failed)
+        {
+            if (min.HasValue && v < min.Value) { failed.Add(label + "↓"); return; }
+            if (max.HasValue && v > max.Value) failed.Add(label + "↑");
+        }
+    }
+
+    #endregion
     #region Logger
 
     public static class GalaxyLogger
@@ -519,30 +598,20 @@ namespace SRG.Galaxy
                 string color = ri?.Color ?? GalaxyConstants.DEFAULT_COLOR;
 
                 var failed = new List<string>();
-                float partialO2 = (planet.OxygenPercent / 100f) * planet.AtmPressure;
-                AppendConditionLabel(planet.WaterAbundance,   cond.WaterAbundanceMin,   cond.WaterAbundanceMax,   "Вода", failed);
-                AppendConditionLabel(partialO2,               cond.OxygenPartialMin,    cond.OxygenPartialMax,    "pO₂", failed);
-                AppendConditionLabel(planet.AtmPressure,      cond.AtmPressureMin,      cond.AtmPressureMax,      "P",   failed);
-                AppendConditionLabel(planet.SurfaceRadiation, cond.SurfaceRadiationMin, cond.SurfaceRadiationMax, "Rad", failed);
-                AppendConditionLabel(planet.SurfaceGravity,   cond.GMin,                cond.GMax,                "g",   failed);
-                AppendConditionLabel(planet.SurfaceTemp,      cond.SurfaceTempMin,      cond.SurfaceTempMax,      "T",   failed);
+                RaceHabitability.CollectFailed(planet, cond, failed);
 
-                bool fit = failed.Count == 0;
+                // Годность решают три жёсткие оси; мягкие (~Вода, ~Rad) только снижают комфорт.
+                bool fit = RaceHabitability.IsHabitable(planet, cond);
+                string soft = failed.Count > 0 ? $"({string.Join(",", failed)})" : string.Empty;
                 string entry = richText
-                    ? (fit ? $"<color={color}>{name} ✓</color>"
-                           : $"<color=red>{name} ✗({string.Join(",", failed)})</color>")
-                    : (fit ? $"{name} ✓" : $"{name} ✗({string.Join(",", failed)})");
+                    ? (fit ? $"<color={color}>{name} ✓{soft}</color>"
+                           : $"<color=red>{name} ✗{soft}</color>")
+                    : (fit ? $"{name} ✓{soft}" : $"{name} ✗{soft}");
                 string.Join("\r\n",entry);
                 parts.Add(entry);
             }
 
             return string.Join("\n", parts);
-        }
-
-        private static void AppendConditionLabel(float value, float? min, float? max, string label, List<string> failed)
-        {
-            if (min.HasValue && value < min.Value) { failed.Add(label + "↓"); return; }
-            if (max.HasValue && value > max.Value) { failed.Add(label + "↑"); }
         }
 
         private static string GetColoredName(string name, string owner, Dictionary<string, RaceInfo> races)

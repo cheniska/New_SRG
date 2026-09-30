@@ -359,15 +359,15 @@ namespace SRG.Galaxy.Generation
         }
 
         /// <summary>
-        /// Гарантия ниши: превращает свободную планету подходящего размера (температура в пределах
-        /// Terraformable расы) в родной мир расы. Предпочитает ближайшие к фронтиру и ещё незаселённые системы.
+        /// Гарантия ниши (крайняя мера, при текущей физике срабатывает редко): берёт свободную каменную планету
+        /// заселяемого размера, у которой температура и гравитация уже естественно подходят расе, и «достраивает»
+        /// только то, что определяется биосферой — атмосферу (давление, O₂) и гидросферу. Орбита, масса и
+        /// температура остаются физическими. Предпочитает ближайшие к фронтиру и ещё незаселённые системы.
         /// </summary>
         private StarData SeedNicheWorld(ExpansionRaceState st, GalaxyData galaxy, HashSet<string> premadeUids)
         {
             var c = st.Cfg?.PlanetConditions;
             if (c == null) return null;
-            float tMin = c.SurfaceTempTfMin ?? c.SurfaceTempMin ?? float.MinValue;
-            float tMax = c.SurfaceTempTfMax ?? c.SurfaceTempMax ?? float.MaxValue;
             float tOpt = c.SurfaceTemp?.Optimal?.Length >= 2
                 ? (c.SurfaceTemp.Optimal[0] + c.SurfaceTemp.Optimal[1]) * 0.5f
                 : (c.SurfaceTempMin.HasValue && c.SurfaceTempMax.HasValue ? (c.SurfaceTempMin.Value + c.SurfaceTempMax.Value) * 0.5f : 288f);
@@ -385,7 +385,11 @@ namespace SRG.Galaxy.Generation
                 foreach (var p in star.Planets)
                 {
                     if (p.Race != GalaxyConstants.RACE_NONE_KEY) { inhabited = true; continue; }
-                    if (!IsPopulatedSize(p) || p.SurfaceTemp < tMin || p.SurfaceTemp > tMax) continue;
+                    if (!IsPopulatedSize(p) || p.Density < 2f) continue;
+                    if (c.SurfaceTempMin.HasValue && p.SurfaceTemp < c.SurfaceTempMin.Value) continue;
+                    if (c.SurfaceTempMax.HasValue && p.SurfaceTemp > c.SurfaceTempMax.Value) continue;
+                    if (c.GMin.HasValue && p.SurfaceGravity < c.GMin.Value) continue;
+                    if (c.GMax.HasValue && p.SurfaceGravity > c.GMax.Value) continue;
                     float dt = Mathf.Abs(p.SurfaceTemp - tOpt);
                     if (dt < candDt) { candDt = dt; cand = p; }
                 }
@@ -400,27 +404,21 @@ namespace SRG.Galaxy.Generation
             return bestStar;
         }
 
-        /// <summary>Параметры «родного» мира: случайная точка в центральной части допустимых диапазонов расы.</summary>
+        /// <summary>Биосферные параметры «родного» мира: атмосфера и гидросфера в центральной части диапазонов расы.</summary>
         private static void ApplyNativeConditions(PlanetData p, RacePlanetConditionsConfig c)
         {
             static float Mid(float? min, float? max, float fallback) =>
                 min.HasValue && max.HasValue ? Mathf.Lerp(min.Value, max.Value, UnityEngine.Random.Range(0.3f, 0.7f)) : fallback;
 
-            if (c.SurfaceTemp?.Optimal?.Length >= 2)
-                p.SurfaceTemp = UnityEngine.Random.Range(c.SurfaceTemp.Optimal[0], c.SurfaceTemp.Optimal[1]);
-            else
-                p.SurfaceTemp = Mid(c.SurfaceTempMin, c.SurfaceTempMax, p.SurfaceTemp);
-
-            p.AtmPressure      = Mid(c.AtmPressureMin, c.AtmPressureMax, p.AtmPressure);
-            p.WaterAbundance   = Mid(c.WaterAbundanceMin, c.WaterAbundanceMax, p.WaterAbundance);
-            p.SurfaceRadiation = Mid(c.SurfaceRadiationMin, c.SurfaceRadiationMax, p.SurfaceRadiation);
-            if (c.GMin.HasValue) p.SurfaceGravity = Mathf.Max(p.SurfaceGravity, c.GMin.Value);
-            if (c.GMax.HasValue) p.SurfaceGravity = Mathf.Min(p.SurfaceGravity, c.GMax.Value);
+            p.AtmPressure    = Mid(c.AtmPressureMin, c.AtmPressureMax, p.AtmPressure);
+            p.WaterAbundance = Mid(c.WaterAbundanceMin, c.WaterAbundanceMax, p.WaterAbundance);
             if (p.AtmPressure > 0f && c.OxygenPartialMin.HasValue && c.OxygenPartialMax.HasValue)
             {
                 float o2 = Mid(c.OxygenPartialMin, c.OxygenPartialMax, 0.2f);
                 p.OxygenPercent = Mathf.Clamp(o2 / p.AtmPressure * 100f, 0f, 100f);
             }
+            // Радиация у поверхности зависит от толщины атмосферы — пересчитываем по той же формуле, что в физике.
+            p.SurfaceRadiation = p.SolarFlux * 1000f * 1.361f / ((1f + 0.36f * p.AtmPressure) * (1f + 0.36f * p.MagneticField));
 
             RecomputeHydrologyState(p);
             RollSurfaceTypes(p);
@@ -470,45 +468,11 @@ namespace SRG.Galaxy.Generation
             if (terraform) { ExpansionApplyOptimal(planet, raceCfg); planet.IsTerraformed = true; }
         }
 
-        private static bool ExpansionIsHabitable(PlanetData p, RaceConfig rc)
-        {
-            var c = rc?.PlanetConditions;
-            if (c == null) return true;
-            float o2 = p.OxygenPercent / 100f * p.AtmPressure;
-            if (c.WaterAbundanceMin.HasValue   && p.WaterAbundance   < c.WaterAbundanceMin.Value)   return false;
-            if (c.WaterAbundanceMax.HasValue   && p.WaterAbundance   > c.WaterAbundanceMax.Value)   return false;
-            if (c.OxygenPartialMin.HasValue    && o2                 < c.OxygenPartialMin.Value)    return false;
-            if (c.OxygenPartialMax.HasValue    && o2                 > c.OxygenPartialMax.Value)    return false;
-            if (c.AtmPressureMin.HasValue      && p.AtmPressure      < c.AtmPressureMin.Value)      return false;
-            if (c.AtmPressureMax.HasValue      && p.AtmPressure      > c.AtmPressureMax.Value)      return false;
-            if (c.SurfaceRadiationMin.HasValue && p.SurfaceRadiation < c.SurfaceRadiationMin.Value) return false;
-            if (c.SurfaceRadiationMax.HasValue && p.SurfaceRadiation > c.SurfaceRadiationMax.Value) return false;
-            if (c.GMin.HasValue                && p.SurfaceGravity   < c.GMin.Value)                return false;
-            if (c.GMax.HasValue                && p.SurfaceGravity   > c.GMax.Value)                return false;
-            if (c.SurfaceTempMin.HasValue      && p.SurfaceTemp      < c.SurfaceTempMin.Value)      return false;
-            if (c.SurfaceTempMax.HasValue      && p.SurfaceTemp      > c.SurfaceTempMax.Value)      return false;
-            return true;
-        }
+        private static bool ExpansionIsHabitable(PlanetData p, RaceConfig rc) =>
+            rc?.PlanetConditions == null || RaceHabitability.IsHabitable(p, rc.PlanetConditions);
 
-        private static bool ExpansionIsTerraformable(PlanetData p, RaceConfig rc)
-        {
-            var c = rc?.PlanetConditions;
-            if (c == null) return false;
-            float o2 = p.OxygenPercent / 100f * p.AtmPressure;
-            if (c.WaterAbundanceTfMin.HasValue   && p.WaterAbundance   < c.WaterAbundanceTfMin.Value)   return false;
-            if (c.WaterAbundanceTfMax.HasValue   && p.WaterAbundance   > c.WaterAbundanceTfMax.Value)   return false;
-            if (c.OxygenPartialTfMin.HasValue    && o2                 < c.OxygenPartialTfMin.Value)    return false;
-            if (c.OxygenPartialTfMax.HasValue    && o2                 > c.OxygenPartialTfMax.Value)    return false;
-            if (c.AtmPressureTfMin.HasValue      && p.AtmPressure      < c.AtmPressureTfMin.Value)      return false;
-            if (c.AtmPressureTfMax.HasValue      && p.AtmPressure      > c.AtmPressureTfMax.Value)      return false;
-            if (c.SurfaceRadiationTfMin.HasValue && p.SurfaceRadiation < c.SurfaceRadiationTfMin.Value) return false;
-            if (c.SurfaceRadiationTfMax.HasValue && p.SurfaceRadiation > c.SurfaceRadiationTfMax.Value) return false;
-            if (c.GTfMin.HasValue                && p.SurfaceGravity   < c.GTfMin.Value)                return false;
-            if (c.GTfMax.HasValue                && p.SurfaceGravity   > c.GTfMax.Value)                return false;
-            if (c.SurfaceTempTfMin.HasValue      && p.SurfaceTemp      < c.SurfaceTempTfMin.Value)      return false;
-            if (c.SurfaceTempTfMax.HasValue      && p.SurfaceTemp      > c.SurfaceTempTfMax.Value)      return false;
-            return true;
-        }
+        private static bool ExpansionIsTerraformable(PlanetData p, RaceConfig rc) =>
+            rc?.PlanetConditions != null && RaceHabitability.IsTerraformable(p, rc.PlanetConditions);
 
         private static void ExpansionApplyOptimal(PlanetData p, RaceConfig rc)
         {

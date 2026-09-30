@@ -866,7 +866,7 @@
 				"Jitter": 2
 			},
 			"RaceRoles": {
-				"Major": { "Races": ["Race1", "Race2", "Race3", "Race4", "Race5", "Race8"], "Colonize": true, "SystemsShare": 0.8, "Overlap": 1.3, "Jitter": 1, "GuaranteeNiche": true },
+				"Major": { "Races": ["Race1", "Race2", "Race3", "Race4", "Race5", "Race8"], "Colonize": true, "SystemsShare": 0.8, "Overlap": 1.5, "Jitter": 1, "GuaranteeNiche": true },
 				"Hostile": { "Races": ["RaceDominators1", "RaceDominators2", "RaceDominators3"], "Colonize": false }
 			}
 		},
@@ -910,7 +910,7 @@
 				"Jitter": 2
 			},
 			"RaceRoles": {
-				"Major": { "Races": ["Race6", "Race7"], "Colonize": true, "SystemsShare": 0.8, "Overlap": 1.3, "Jitter": 1, "GuaranteeNiche": true },
+				"Major": { "Races": ["Race6", "Race7"], "Colonize": true, "SystemsShare": 0.8, "Overlap": 1.5, "Jitter": 1, "GuaranteeNiche": true },
 				"Invader": { "Races": ["RaceThreat1"], "Colonize": false }
 			}
 		}
@@ -1016,6 +1016,8 @@
 	},
 	"Planets": {
 		"OrbitsEccentricity": [0.0, 0.05],
+		"HabitableSlotChance": 0.5,
+		"HabitableSlotTemp": [250.0, 315.0],
 		"Sizes": {
 			"Tiny":   { "BaseScale": 0.75,  "MaxSatellites": 0, "AtmosphereChance": 0,   "SatOrbitPixelRadius": 120, "Population": [0,    0],    "DensityRange": [1.5, 4.0], "GravityRange": [0.5,  2.5],  "GeoK": 0.069, "SurfaceArea": [270, 292], "Weight": 15 },
 			"Small":  { "BaseScale": 0.875, "MaxSatellites": 2, "AtmosphereChance": 30,  "SatOrbitPixelRadius": 140, "Population": [10,   200],  "DensityRange": [2.5, 6.0], "GravityRange": [2.0,  6.0],  "GeoK": 0.128, "SurfaceArea": [368, 398], "Weight": 25 },
