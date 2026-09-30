@@ -235,7 +235,10 @@ namespace SRG.Ships.Movement
                 float desiredA = Angles.Toward(cur, target, curA);
                 if (Mathf.Abs(Angles.WrapPi(desiredA - curA)) <= stepTurn)
                 {
-                    curA = desiredA;   // уже выровнялись — прямой шаг
+                    // Выровнялись на цель — дальше прямая: точки с постоянным шагом без
+                    // пересчёта угла на каждом шаге (раньше atan2+sin+cos на каждую из сотен точек).
+                    AppendStraight(cur, target, stepLen, MaxWaypointsPerSegment - i, output);
+                    return;
                 }
                 else
                 {
@@ -248,6 +251,21 @@ namespace SRG.Ships.Movement
 
                 cur += Angles.Dir(curA) * stepLen;
                 output.Add(cur);
+            }
+        }
+
+        /// <summary>Прямой отрезок cur → target шагами stepLen (не больше budget точек); последней
+        /// ставится сама цель, когда до неё остаётся не больше шага — как в общем цикле выше.</summary>
+        private static void AppendStraight(Vector2 cur, Vector2 target, float stepLen, int budget, List<Vector2> output)
+        {
+            Vector2 delta = target - cur;
+            float dist = delta.magnitude;
+            if (dist <= stepLen) { output.Add(target); return; }
+            Vector2 dir = delta / dist;
+            for (int k = 1; k <= budget; k++)
+            {
+                if (dist - (k - 1) * stepLen <= stepLen) { output.Add(target); return; }
+                output.Add(cur + dir * (k * stepLen));
             }
         }
 

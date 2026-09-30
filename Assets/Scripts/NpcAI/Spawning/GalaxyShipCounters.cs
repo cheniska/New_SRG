@@ -155,15 +155,35 @@ namespace SRG.NpcAI.Spawning
             }
         }
 
+        // Списки держатся отсортированными (корабли — по Uid, стороны — по имени): их перебирает
+        // ИИ, и порядок не должен зависеть от истории спавнов/миграций — иначе после загрузки
+        // сейва (полный пересчёт) игра шла бы иначе, чем без неё.
         private void AddToStarOwnerList(ShipData ship, string starUid, string side)
         {
             var key = (starUid, side);
             if (!ShipsAtStarByOwnerList.TryGetValue(key, out var list))
                 ShipsAtStarByOwnerList[key] = list = new List<ShipData>(4);
-            list.Add(ship);
+            list.Insert(UpperBound(list, ship.Uid), ship);
             if (!OwnersAtStar.TryGetValue(starUid, out var owners))
                 OwnersAtStar[starUid] = owners = new List<string>(4);
-            if (!owners.Contains(side)) owners.Add(side);
+            if (!owners.Contains(side))
+            {
+                int i = 0;
+                while (i < owners.Count && string.CompareOrdinal(owners[i], side) < 0) i++;
+                owners.Insert(i, side);
+            }
+        }
+
+        private static int UpperBound(List<ShipData> list, string uid)
+        {
+            int lo = 0, hi = list.Count;
+            while (lo < hi)
+            {
+                int mid = (lo + hi) >> 1;
+                if (string.CompareOrdinal(list[mid].Uid, uid) <= 0) lo = mid + 1;
+                else hi = mid;
+            }
+            return lo;
         }
 
         private void RemoveFromStarOwnerList(ShipData ship, string starUid, string side)
@@ -185,6 +205,36 @@ namespace SRG.NpcAI.Spawning
         // ──────────────────────────────────────────
         // Полный пересчёт O(N) — старт игры / load
         // ──────────────────────────────────────────
+
+        /// <summary>Ежедневный пересчёт того, что меняется без хуков: владельцы систем (оккупации)
+        /// и средний криминал. Корабельные счётчики ведутся инкрементально (OnShipSpawned/Died/
+        /// Migrated); их согласованность с полным пересчётом проверяет тест.</summary>
+        public void RecalculateDaily(GalaxyData galaxy)
+        {
+            SystemsBySide.Clear(); SystemsBySideAndRace.Clear(); SystemsByRace.Clear();
+            InhabitedSystemsCount = 0; NormalSystemsCount = 0;
+            if (galaxy == null) { AverageCrimeRating = 0f; return; }
+            foreach (var sector in galaxy.Sectors)
+            {
+                if (sector == null) continue;
+                foreach (var star in sector.Stars)
+                    if (star != null) CountSystem(star);
+            }
+            RecalculateCrime(galaxy);
+        }
+
+        private void CountSystem(StarData star)
+        {
+            string starOwner = star.Owner ?? "None";
+            string starRace  = star.Race  ?? "None";
+            bool inhabited = starOwner != "None" && starOwner != GalaxyConstants.OWNER_UNRESOLVED_KEY;
+            if (!inhabited) return;
+            InhabitedSystemsCount++;
+            if (starOwner == "Coalition") NormalSystemsCount++;
+            Inc(SystemsBySide, starOwner, +1);
+            Inc(SystemsByRace, starRace, +1);
+            Inc(SystemsBySideAndRace, (starOwner, starRace), +1);
+        }
 
         public void RecalculateFromScratch(GalaxyData galaxy)
         {
@@ -211,17 +261,7 @@ namespace SRG.NpcAI.Spawning
                     if (star.Uid != null) _sectorByStar[star.Uid] = sectorUid;
 
                     // Системные счётчики
-                    string starOwner = star.Owner ?? "None";
-                    string starRace  = star.Race  ?? "None";
-                    bool inhabited = starOwner != "None" && starOwner != GalaxyConstants.OWNER_UNRESOLVED_KEY;
-                    if (inhabited)
-                    {
-                        InhabitedSystemsCount++;
-                        if (starOwner == "Coalition") NormalSystemsCount++;
-                        Inc(SystemsBySide, starOwner, +1);
-                        Inc(SystemsByRace, starRace, +1);
-                        Inc(SystemsBySideAndRace, (starOwner, starRace), +1);
-                    }
+                    CountSystem(star);
 
                     // Корабли
                     foreach (var ship in star.Ships)

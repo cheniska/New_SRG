@@ -81,23 +81,71 @@ namespace SRG.Equipment
         /// </summary>
         public ItemConfig Resolve(string itemId, string sideOverride, GameRng.Stream rng = null)
         {
+            var bp = GetBlueprint(itemId, sideOverride);
+            if (bp == null) return null;
             rng ??= GameRng.StreamFor(Category + "|" + itemId + "|" + sideOverride);
+            return Build(bp, RollSize(bp, rng));
+        }
+
+        // ── Заготовка (blueprint) ────────────────────────────────────────────────────────────
+        // Всё, что зависит только от id: разбор id, линейка, тип корпуса, кластер, Params из
+        // GTL+Defaults, переменные подстановок, строки без размера, коэффициент цены корпуса.
+        // Строится один раз на (id, sideOverride); на экземпляр остаются бросок размера и то,
+        // что от него зависит (Weight/прочность/Capacity/цена и строки с <Weight>/<Capacity>).
+        // Порядок бросков тот же, что и до кэша, — мир не меняется.
+
+        private sealed class Blueprint
+        {
+            public string LineKey, RaceKey, HullTypeKey, SideKey;
+            public int Tier;
+            public HullTypeDef HullType;
+            public ItemConfig Proto;                      // без размера и без Params
+            public Dictionary<string, JToken> BaseParams; // GTL + Defaults (до BaseCapacity → Capacity)
+            public float BaseCapacity;
+            public bool HasBaseCapacity;
+            public Dictionary<string, string> Vars;       // без Weight
+            public string NameTpl, DescTpl, GraphicTpl, BodyTpl;
+            // Готовые строки для шаблонов без размерозависимых переменных; null — считать на экземпляр.
+            public string Name, Description, GraphicPath, BodyGraphicPath;
+            public bool NameBySize, DescBySize, GraphicBySize, BodyBySize;
+            public float HullV11;
+            public bool HullPrice;
+        }
+
+        private readonly Dictionary<(string id, string side), Blueprint> _blueprints = new();
+        private readonly object _blueprintLock = new();
+
+        private Blueprint GetBlueprint(string itemId, string sideOverride)
+        {
+            var key = (itemId ?? "", sideOverride);
+            lock (_blueprintLock)
+                if (_blueprints.TryGetValue(key, out var cached)) return cached;
+            var bp = BuildBlueprint(itemId, sideOverride);
+            lock (_blueprintLock) _blueprints[key] = bp;
+            return bp;
+        }
+
+        private Blueprint BuildBlueprint(string itemId, string sideOverride)
+        {
             var parts = ParseId(itemId);
             if (parts == null) return null;
 
             parts.TryGetValue("Line", out var lineKey);
             if (lineKey == null || GTL == null || !GTL.TryGetValue(lineKey, out var gtl)) return null;
 
-            int tier = TechLevelFromKey(lineKey);
+            var bp = new Blueprint { LineKey = lineKey, Tier = TechLevelFromKey(lineKey) };
+            int tier = bp.Tier;
 
-            parts.TryGetValue("Race", out var raceKey);
-            parts.TryGetValue("HullType", out var hullTypeKey);
-            parts.TryGetValue("Side", out var sideKey);
-            if (sideOverride != null) sideKey = sideOverride;
+            parts.TryGetValue("Race", out bp.RaceKey);
+            parts.TryGetValue("HullType", out bp.HullTypeKey);
+            parts.TryGetValue("Side", out bp.SideKey);
+            if (sideOverride != null) bp.SideKey = sideOverride;
+            string raceKey = bp.RaceKey, hullTypeKey = bp.HullTypeKey, sideKey = bp.SideKey;
 
             HullTypeDef hullType = null;
             if (HullTypes != null && hullTypeKey != null)
                 HullTypes.TryGetValue(hullTypeKey, out hullType);
+            bp.HullType = hullType;
 
             ClusterConfig cluster = OwnerConfig?.GetCluster(sideKey);
 
@@ -106,34 +154,7 @@ namespace SRG.Equipment
             if (cluster?.Lines != null && cluster.Lines.TryGetValue(lineKey, out var fromCluster) && fromCluster != null)
                 lineName = fromCluster;
 
-            // Размер: round(BaseWeight × RandRange(0.6, 2.0)).
-            // Корпус с HullType.CapacityMult считается отдельно:
-            // база = BaseWeight × RandRange(мин, макс) типа корпуса, к базе прибавляется 1–20% от неё,
-            // затем ГТУ-бонус: линейно от +0% на T1 до +50% итога на T10.
-            int size;
-            if (IsHullCategory && hullType != null && hullType.IsStation)
-            {
-                // Станционный корпус: своя формула размера (=вместимость=прочность) — 2000 + tier*250 ± 100.
-                size = Mathf.RoundToInt(2000f + tier * 250f + rng.Range(-100f, 101f));
-            }
-            else if (IsHullCategory && hullType?.CapacityMult != null && hullType.CapacityMult.Length >= 2)
-            {
-                float baseCap = BaseWeight * rng.Range(hullType.CapacityMult[0], hullType.CapacityMult[1]);
-                float cap = baseCap * (1f + rng.Range(0.01f, 0.20f));
-                cap *= 1f + 0.5f * (tier - 1) / 9f;
-                size = Mathf.RoundToInt(cap);
-            }
-            else
-            {
-                size = BaseWeight > 0
-                    ? Mathf.RoundToInt(BaseWeight * rng.Range(SizeMultMin[0], SizeMultMin[1]))
-                    : 0;
-            }
-
-            // Корпус: прочность = вместимость (Weight), см. BaseDesc "Стойкость корпуса <Weight>".
-            int durability = IsHullCategory ? size : BaseDurability;
-
-            var item = new ItemConfig
+            bp.Proto = new ItemConfig
             {
                 Kind = Category,
                 TechLevel = tier,
@@ -151,19 +172,16 @@ namespace SRG.Equipment
                 Manufacturer = new ManufacturerConfig { Race = raceKey, Side = sideKey },
                 WeaponPorts = hullType?.WeaponPorts,
                 Tails = hullType?.Tails,
-                Params = new Dictionary<string, JToken>(),
-                Weight = size,
-                Durability = durability,
-                MaxDurability = durability
             };
 
             // Перенос GTL-полей (кроме Adj) в Params
+            var baseParams = new Dictionary<string, JToken>();
             if (gtl.Extras != null)
             {
                 foreach (var kv in gtl.Extras)
                 {
                     if (kv.Key == "Adj") continue;
-                    item.Params[kv.Key] = kv.Value;
+                    baseParams[kv.Key] = kv.Value;
                 }
             }
 
@@ -181,18 +199,17 @@ namespace SRG.Equipment
                         || kv.Key == "IsImprovable" || kv.Key == "RequiresNodesToImprove"
                         || kv.Key == "GraphicByManufacturer"
                         || kv.Key == "StartGTL" || kv.Key == "EndGTL") continue;
-                    if (!item.Params.ContainsKey(kv.Key))
-                        item.Params[kv.Key] = kv.Value;
+                    if (!baseParams.ContainsKey(kv.Key))
+                        baseParams[kv.Key] = kv.Value;
                 }
             }
+            bp.BaseParams = baseParams;
 
-            // FuelTank: Capacity = BaseCapacity + Weight/2
-            if (item.Params.TryGetValue("BaseCapacity", out var baseCapTok))
+            // FuelTank: Capacity = BaseCapacity + Weight/2 (считается на экземпляр, см. Build)
+            if (baseParams.TryGetValue("BaseCapacity", out var baseCapTok))
             {
-                float baseCap = 0f;
-                try { baseCap = baseCapTok.Value<float>(); } catch { }
-                item.Params["Capacity"] = JToken.FromObject(Mathf.RoundToInt(baseCap + size / 2f));
-                item.Params.Remove("BaseCapacity");
+                bp.HasBaseCapacity = true;
+                try { bp.BaseCapacity = baseCapTok.Value<float>(); } catch { }
             }
 
             // Если у кластера флаг GraphicIgnoresTechLevel — графика общая на все техуровни:
@@ -201,8 +218,8 @@ namespace SRG.Equipment
                 ? (sideKey ?? tier.ToString())
                 : tier.ToString();
 
-            // Подстановки в имя/описание/графику
-            var vars = new Dictionary<string, string>(16)
+            // Подстановки в имя/описание/графику (Weight — на экземпляр)
+            bp.Vars = new Dictionary<string, string>(16)
             {
                 ["Side"] = sideKey ?? "",
                 ["Race"] = raceKey ?? "",
@@ -216,53 +233,125 @@ namespace SRG.Equipment
                 ["HullTypeCode"] = hullType?.Code ?? hullTypeKey ?? "",
                 ["LineAdj"] = gtl.Adj ?? "",
                 ["LineName"] = lineName,
-                ["Weight"] = size.ToString()
             };
-            // Параметры предмета тоже доступны как <Имя> и перекрывают одноимённые переменные выше.
-            // Строки из них делаются только для переменных, которые реально встречаются в шаблонах:
-            // раньше в строки переводились все Params каждого нового предмета.
-            var itemParams = item.Params;
-            string Lookup(string name)
-            {
-                if (name != "Effects" && name != "GTLDamageMultipliers"
-                    && itemParams.TryGetValue(name, out var tok))
-                {
-                    try { return tok.ToString(); } catch { }
-                }
-                return vars.TryGetValue(name, out var v) ? v : null;
-            }
 
-            item.Name = Substitute(NameTemplate, Lookup);
-            item.Description = Substitute(BaseDesc, Lookup);
+            bp.NameTpl = NameTemplate;
+            bp.DescTpl = BaseDesc;
             // Станционный (или иной специфичный) HullType может задать собственный шаблон иконки —
             // категорийный содержит <Race>, что не работает для расо-независимых корпусов.
-            item.GraphicPath = Substitute(
-                !string.IsNullOrEmpty(hullType?.GraphicTemplate) ? hullType.GraphicTemplate : GraphicTemplate,
-                Lookup);
+            bp.GraphicTpl = !string.IsNullOrEmpty(hullType?.GraphicTemplate) ? hullType.GraphicTemplate : GraphicTemplate;
             // Станционный корпус может переопределить путь к графике тела (Graphics/Items/Equipment/Hull/Stations/<Code>_c).
-            item.BodyGraphicPath = Substitute(
-                !string.IsNullOrEmpty(hullType?.BodyGraphicTemplate) ? hullType.BodyGraphicTemplate : GraphicCosmicTemplate,
-                Lookup);
+            bp.BodyTpl = !string.IsNullOrEmpty(hullType?.BodyGraphicTemplate) ? hullType.BodyGraphicTemplate : GraphicCosmicTemplate;
 
-            // HullType код в Params (для последующего поиска формы корпуса)
-            if (hullTypeKey != null)
-                item.Params["HullType"] = hullType?.Code ?? hullTypeKey;
-            item.Params["TechLevel"] = tier;
+            bp.NameBySize = DependsOnSize(bp.NameTpl, bp);
+            bp.DescBySize = DependsOnSize(bp.DescTpl, bp);
+            bp.GraphicBySize = DependsOnSize(bp.GraphicTpl, bp);
+            bp.BodyBySize = DependsOnSize(bp.BodyTpl, bp);
+            // Строки без размера: Lookup по базовым Params (размерозависимых там нет — их шаблоны
+            // помечены *BySize и считаются на экземпляр).
+            string Lookup(string name) => LookupVar(name, baseParams, bp.Vars, null);
+            if (!bp.NameBySize) bp.Name = Substitute(bp.NameTpl, Lookup);
+            if (!bp.DescBySize) bp.Description = Substitute(bp.DescTpl, Lookup);
+            if (!bp.GraphicBySize) bp.GraphicPath = Substitute(bp.GraphicTpl, Lookup);
+            if (!bp.BodyBySize) bp.BodyGraphicPath = Substitute(bp.BodyTpl, Lookup);
 
-            // Цена: для корпуса — формула v11+sizes; для прочих категорий — формула TL² (race mult в ItemFactory).
+            // Цена корпуса: коэффициент v11 от слотов не зависит от размера.
             if (IsHullCategory && hullType != null && OwnerConfig != null)
             {
                 var slots = GetEffectiveSlotsForCost(hullTypeKey, raceKey);
                 int weaponMax = OwnerConfig.GetCategoryCommon(EquipmentCategory.Weapons)?.MaxSlots ?? 5;
                 int artMax = OwnerConfig.GetCategoryCommon(EquipmentCategory.Artefacts)?.MaxSlots ?? 4;
-                float v11 = ComputeV11(hullType.CostCoef, slots, weaponMax, artMax);
-                item.Price = ComputeHullCost(tier, v11, size);
+                bp.HullV11 = ComputeV11(hullType.CostCoef, slots, weaponMax, artMax);
+                bp.HullPrice = true;
             }
-            else
+            return bp;
+        }
+
+        /// <summary>Шаблон ссылается на значения, зависящие от размера экземпляра:
+        /// &lt;Weight&gt; или &lt;Capacity&gt; (FuelTank: Capacity = BaseCapacity + Weight/2).</summary>
+        private static bool DependsOnSize(string template, Blueprint bp)
+        {
+            if (string.IsNullOrEmpty(template) || template.IndexOf('<') < 0) return false;
+            foreach (Match m in VarRegex.Matches(template))
             {
-                item.Price = ComputeNonHullCostBase(tier, size);
+                string name = m.Groups[1].Value;
+                if (name == "Weight" || name == "Capacity" || name == "BaseCapacity") return true;
+            }
+            return false;
+        }
+
+        /// <summary>Параметры предмета доступны как &lt;Имя&gt; и перекрывают одноимённые переменные.</summary>
+        private static string LookupVar(string name, Dictionary<string, JToken> itemParams,
+            Dictionary<string, string> vars, string weight)
+        {
+            if (name != "Effects" && name != "GTLDamageMultipliers"
+                && itemParams.TryGetValue(name, out var tok))
+            {
+                try { return tok.ToString(); } catch { }
+            }
+            if (weight != null && name == "Weight") return weight;
+            return vars.TryGetValue(name, out var v) ? v : null;
+        }
+
+        // Размер: round(BaseWeight × RandRange(0.6, 2.0)).
+        // Корпус с HullType.CapacityMult считается отдельно:
+        // база = BaseWeight × RandRange(мин, макс) типа корпуса, к базе прибавляется 1–20% от неё,
+        // затем ГТУ-бонус: линейно от +0% на T1 до +50% итога на T10.
+        private int RollSize(Blueprint bp, GameRng.Stream rng)
+        {
+            var hullType = bp.HullType;
+            int tier = bp.Tier;
+            if (IsHullCategory && hullType != null && hullType.IsStation)
+            {
+                // Станционный корпус: своя формула размера (=вместимость=прочность) — 2000 + tier*250 ± 100.
+                return Mathf.RoundToInt(2000f + tier * 250f + rng.Range(-100f, 101f));
+            }
+            if (IsHullCategory && hullType?.CapacityMult != null && hullType.CapacityMult.Length >= 2)
+            {
+                float baseCap = BaseWeight * rng.Range(hullType.CapacityMult[0], hullType.CapacityMult[1]);
+                float cap = baseCap * (1f + rng.Range(0.01f, 0.20f));
+                cap *= 1f + 0.5f * (tier - 1) / 9f;
+                return Mathf.RoundToInt(cap);
+            }
+            return BaseWeight > 0
+                ? Mathf.RoundToInt(BaseWeight * rng.Range(SizeMultMin[0], SizeMultMin[1]))
+                : 0;
+        }
+
+        private ItemConfig Build(Blueprint bp, int size)
+        {
+            // Корпус: прочность = вместимость (Weight), см. BaseDesc "Стойкость корпуса <Weight>".
+            int durability = IsHullCategory ? size : BaseDurability;
+
+            var item = bp.Proto.CloneShallow();
+            item.Params = new Dictionary<string, JToken>(bp.BaseParams);
+            item.Weight = size;
+            item.Durability = durability;
+            item.MaxDurability = durability;
+
+            if (bp.HasBaseCapacity)
+            {
+                item.Params["Capacity"] = JToken.FromObject(Mathf.RoundToInt(bp.BaseCapacity + size / 2f));
+                item.Params.Remove("BaseCapacity");
             }
 
+            string weight = size.ToString();
+            var itemParams = item.Params;
+            string Lookup(string name) => LookupVar(name, itemParams, bp.Vars, weight);
+            item.Name = bp.NameBySize ? Substitute(bp.NameTpl, Lookup) : bp.Name;
+            item.Description = bp.DescBySize ? Substitute(bp.DescTpl, Lookup) : bp.Description;
+            item.GraphicPath = bp.GraphicBySize ? Substitute(bp.GraphicTpl, Lookup) : bp.GraphicPath;
+            item.BodyGraphicPath = bp.BodyBySize ? Substitute(bp.BodyTpl, Lookup) : bp.BodyGraphicPath;
+
+            // HullType код в Params (для последующего поиска формы корпуса)
+            if (bp.HullTypeKey != null)
+                item.Params["HullType"] = bp.HullType?.Code ?? bp.HullTypeKey;
+            item.Params["TechLevel"] = bp.Tier;
+
+            // Цена: для корпуса — формула v11+sizes; для прочих категорий — формула TL² (race mult в ItemFactory).
+            item.Price = bp.HullPrice
+                ? ComputeHullCost(bp.Tier, bp.HullV11, size)
+                : ComputeNonHullCostBase(bp.Tier, size);
             return item;
         }
 

@@ -82,9 +82,10 @@ namespace SRG.NpcAI.Spawning
             foreach (var star in galaxy.StarsMap.Values)
                 star.SpawnsToday = 0;
 
-            // 2) Пересчёт состояния (полный O(N) — на текущий масштаб ~5к кораблей пренебрежимо дёшево)
+            // 2) Пересчёт состояния: системы и криминал. Корабельные счётчики ведутся по хукам
+            //    спавна/смерти/миграции (полный пересчёт — только при генерации/загрузке).
             var counters = galaxy.ShipCounters;
-            counters.RecalculateFromScratch(galaxy);
+            counters.RecalculateDaily(galaxy);
             galaxy.Domination = DominationCalculator.Recalculate(counters, ctx.Config);
 
             // 3) Прогон политик

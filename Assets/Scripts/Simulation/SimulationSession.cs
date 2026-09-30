@@ -84,6 +84,10 @@ namespace SRG.Simulation
                 : galaxyCfgs.Keys.First();
             ApplyActiveGalaxyConfig();
             ResetTransientState();
+            // Счётчики спавна дальше ведутся по хукам; стартовое население (станции и т.п.)
+            // создаётся генератором мимо них — считаем один раз полностью, как после загрузки.
+            foreach (var g in Galaxies.Values)
+                SpawnSystem.RecountFromGalaxy(g, Context?.Config);
             return true;
         }
 

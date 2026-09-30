@@ -33,6 +33,8 @@ namespace SRG.Bench
             var times = new List<double>(days);
             long alloc0 = GC.GetTotalAllocatedBytes(true);
             int gc0 = GC.CollectionCount(0), gc1 = GC.CollectionCount(1), gc2 = GC.CollectionCount(2);
+            var proc = Process.GetCurrentProcess();
+            var cpu0 = proc.TotalProcessorTime;
             var total = Stopwatch.StartNew();
             var sw = new Stopwatch();
             for (int i = 0; i < days; i++)
@@ -43,6 +45,8 @@ namespace SRG.Bench
                 times.Add(sw.Elapsed.TotalMilliseconds);
             }
             total.Stop();
+            proc.Refresh();
+            double cpuPerTurn = (proc.TotalProcessorTime - cpu0).TotalMilliseconds / days;
             long alloc = GC.GetTotalAllocatedBytes(true) - alloc0;
 
             ships = 0;
@@ -53,6 +57,9 @@ namespace SRG.Bench
             double P(double q) => times[Math.Min(times.Count - 1, (int)(q * times.Count))];
             Console.WriteLine($"days={days} total={total.ElapsedMilliseconds} ms  ships(end)={ships}");
             Console.WriteLine($"turn ms: mean={times.Average():F1} p50={P(0.5):F1} p95={P(0.95):F1} max={times[^1]:F1}");
+            // Процессорное время процесса (все потоки, включая GC/JIT): меньше зависит от соседей
+            // по машине, чем настенное время, — удобнее для сравнения до/после.
+            Console.WriteLine($"cpu/turn: {cpuPerTurn:F1} ms");
             Console.WriteLine($"alloc/turn: {alloc / days / 1024.0 / 1024.0:F2} MB  " +
                               $"GC gen0={GC.CollectionCount(0) - gc0} gen1={GC.CollectionCount(1) - gc1} gen2={GC.CollectionCount(2) - gc2}");
             Console.WriteLine($"state hash: {w.StateHash()[..16]}");

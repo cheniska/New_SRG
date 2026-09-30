@@ -410,6 +410,11 @@ namespace SRG.Config
 
     public class ItemConfig
     {
+        /// <summary>Поверхностная копия: ссылки на коллекции/вложенные объекты общие.
+        /// Для экземпляров из заготовки шаблона (<see cref="SRG.Equipment.EquipmentTemplate"/>),
+        /// которые получают свой Params.</summary>
+        public ItemConfig CloneShallow() => (ItemConfig)MemberwiseClone();
+
         /// <summary>Тип предмета (Weapons/Artefacts/Hull/…/MicroModules/Goods/Useless). Совпадает
         /// со слоточной категорией для оборудования. См. <see cref="ItemKind"/>. В JSON НЕ хранится —
         /// проставляется из ключа <c>Items[kind]</c> при загрузке (см. <see cref="ItemsConfig.EnsureItemsCache"/>).</summary>
