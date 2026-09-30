@@ -5,9 +5,10 @@ using SRG.Dialog;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Presentation;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Ships.Services;
 using SRG.UI.Screens;
+using SRG.Simulation;
 
 namespace SRG.UI.HUD
 {

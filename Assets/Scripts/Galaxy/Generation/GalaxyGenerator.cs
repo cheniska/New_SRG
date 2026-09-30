@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -41,7 +41,7 @@ namespace SRG.Galaxy.Generation
             for (long attempt = 0; attempt < MaxPlacementAttempts; attempt++)
             {
                 long actualSeed = attempt == 0 ? seed : (seed ^ (attempt * 0x9E3779B9));
-                UnityEngine.Random.InitState((int)(actualSeed ^ (actualSeed >> 32)));
+                GameRng.InitState((int)(actualSeed ^ (actualSeed >> 32)));
                 // Активная галактика ставится ДО Reset, чтобы RebuildNamePools подхватил
                 // per-galaxy пул из TextConfig.Galaxies[galaxyKey].
                 _ctx.ActiveGalaxyConfig = galaxyCfg;
@@ -157,10 +157,10 @@ namespace SRG.Galaxy.Generation
         {
             if (center.HasValue && radius > 0)
             {
-                Vector2 p = center.Value + UnityEngine.Random.insideUnitCircle * radius;
+                Vector2 p = center.Value + GameRng.InsideUnitCircle * radius;
                 return new Vector2(Mathf.Clamp(p.x, 0, w), Mathf.Clamp(p.y, 0, h));
             }
-            return new Vector2(UnityEngine.Random.Range(0f, w), UnityEngine.Random.Range(0f, h));
+            return new Vector2(GameRng.Range(0f, w), GameRng.Range(0f, h));
         }
 
         private string ResolveDefaultOwner()
@@ -173,7 +173,7 @@ namespace SRG.Galaxy.Generation
         private T PopRandom<T>(List<T> list)
         {
             if (list.Count == 0) return default;
-            int i = UnityEngine.Random.Range(0, list.Count);
+            int i = GameRng.Range(0, list.Count);
             T val = list[i]; list.RemoveAt(i);
             return val;
         }
@@ -189,7 +189,7 @@ namespace SRG.Galaxy.Generation
         private string ResolveValidSize(string candidate, List<string> valid, string fallback)
         {
             if (!string.IsNullOrEmpty(candidate) && valid.Contains(candidate)) return candidate;
-            return valid.Count > 0 ? valid[UnityEngine.Random.Range(0, valid.Count)] : fallback;
+            return valid.Count > 0 ? valid[GameRng.Range(0, valid.Count)] : fallback;
         }
 
         private int GetSectorCapacity(SectorData c, GalaxyConfigData cfg) =>
@@ -199,7 +199,7 @@ namespace SRG.Galaxy.Generation
             GenerationHelpers.CalculateSystemSize(planets, _systemSizeMult);
 
         private static int CalculateNoneCount(int total) =>
-            Mathf.RoundToInt(total * UnityEngine.Random.Range(0f, GalaxyConstants.NONE_ORBIT_MAX_FRACTION));
+            Mathf.RoundToInt(total * GameRng.Range(0f, GalaxyConstants.NONE_ORBIT_MAX_FRACTION));
 
         private int ParseNoneCount(string planetsNone, int total)
         {
@@ -212,7 +212,7 @@ namespace SRG.Galaxy.Generation
         private int ResolveTargetPlanetCount(FixedStarData fs, int alreadyCreated)
         {
             int min = Mathf.Max(MinPlanetsPerStarHardMin, _ctx.ActiveGalaxyConfig.MinPlanetsPerStar);
-            int fromConfig = fs.PlanetsCount ?? UnityEngine.Random.Range(min, _ctx.ActiveGalaxyConfig.MaxPlanetsPerStar + 1);
+            int fromConfig = fs.PlanetsCount ?? GameRng.Range(min, _ctx.ActiveGalaxyConfig.MaxPlanetsPerStar + 1);
             return Mathf.Max(fromConfig, alreadyCreated);
         }
 
@@ -234,7 +234,7 @@ namespace SRG.Galaxy.Generation
                 if (_planetaryRaces.Count == 0)
                     UnityEngine.Debug.LogWarning("[GalaxyGenerator] ResolveRandomRace: no planetary races available — returning RACE_NONE_KEY.");
             }
-            return _planetaryRaces.Count > 0 ? _planetaryRaces[UnityEngine.Random.Range(0, _planetaryRaces.Count)] : GalaxyConstants.RACE_NONE_KEY;
+            return _planetaryRaces.Count > 0 ? _planetaryRaces[GameRng.Range(0, _planetaryRaces.Count)] : GalaxyConstants.RACE_NONE_KEY;
         }
 
         /// <summary>Расы, «принадлежащие» текущей галактике: GalaxyConfig.Races ∪ расы из RaceRoles.

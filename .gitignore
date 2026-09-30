@@ -44,6 +44,8 @@
 ExportedObj/
 .consulo/
 *.csproj
+# Проект headless-тестов пишется руками (не генерируется Unity) — нужен CI.
+!/tools/headless-tests/*.csproj
 *.unityproj
 *.sln
 *.slnx
@@ -107,3 +109,7 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# tools/headless-tests (dotnet)
+tools/**/bin/
+tools/**/obj/

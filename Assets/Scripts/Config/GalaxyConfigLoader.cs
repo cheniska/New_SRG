@@ -15,13 +15,25 @@ namespace SRG.Config
             out TextConfig textConfig,
             out PremadeConfig premadeConfig,
             out ItemsConfig itemsConfig)
+            => TryLoadConfigs(
+                gJson ? gJson.text : null, tJson ? tJson.text : null,
+                pJson ? pJson.text : null, iJson ? iJson.text : null,
+                out config, out textConfig, out premadeConfig, out itemsConfig);
+
+        /// <summary>То же по сырому JSON — без TextAsset (тесты, headless-прогон).</summary>
+        public static bool TryLoadConfigs(
+            string gJson, string tJson, string pJson, string iJson,
+            out GalaxyConfig config,
+            out TextConfig textConfig,
+            out PremadeConfig premadeConfig,
+            out ItemsConfig itemsConfig)
         {
             config = null;
             textConfig = null;
             premadeConfig = null;
             itemsConfig = null;
 
-            if (!gJson || !tJson || !pJson)
+            if (gJson == null || tJson == null || pJson == null)
             {
                 Debug.LogError("[GalaxyConfigLoader] One or more config assets are missing.");
                 return false;
@@ -29,12 +41,12 @@ namespace SRG.Config
 
             try
             {
-                config = JsonConvert.DeserializeObject<GalaxyConfig>(gJson.text);
-                textConfig = JsonConvert.DeserializeObject<TextConfig>(tJson.text);
-                premadeConfig = JsonConvert.DeserializeObject<PremadeConfig>(pJson.text);
+                config = JsonConvert.DeserializeObject<GalaxyConfig>(gJson);
+                textConfig = JsonConvert.DeserializeObject<TextConfig>(tJson);
+                premadeConfig = JsonConvert.DeserializeObject<PremadeConfig>(pJson);
 
                 if (iJson != null)
-                    itemsConfig = JsonConvert.DeserializeObject<ItemsConfig>(iJson.text);
+                    itemsConfig = JsonConvert.DeserializeObject<ItemsConfig>(iJson);
                 else
                     Debug.LogWarning("[GalaxyConfigLoader] ItemsConfig asset is not assigned. Equipment and items will be empty.");
 

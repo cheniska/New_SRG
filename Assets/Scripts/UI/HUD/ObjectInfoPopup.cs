@@ -11,11 +11,13 @@ using SRG.NpcAI.Actions;
 using SRG.Presentation.Map;
 using SRG.Ships;
 using SRG.Ships.Movement;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.UI.Common;
 using SRG.Utils;
 using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
+using SRG.Presentation.World;
 
 namespace SRG.UI.HUD
 {
@@ -367,7 +369,7 @@ namespace SRG.UI.HUD
                     if (GUILayout.Button("  Прекратить абордаж"))
                     {
                         BoardingSystem.EndBoarding(player, target);
-                        GameConsoleController.AddEntry($"[Абордаж] {target.Name} отпущен.");
+                        GameLog.Add($"[Абордаж] {target.Name} отпущен.");
                         _showContextMenu = false;
                     }
                 }
@@ -376,7 +378,7 @@ namespace SRG.UI.HUD
                     if (GUILayout.Button("  Абордаж"))
                     {
                         if (BoardingSystem.TryBoard(player, target, equipCfg))
-                            GameConsoleController.AddEntry($"[Абордаж] {target.Name} взят на абордаж.");
+                            GameLog.Add($"[Абордаж] {target.Name} взят на абордаж.");
                         _showContextMenu = false;
                     }
                 }
@@ -406,7 +408,7 @@ namespace SRG.UI.HUD
                             foreach (var s in star.Ships) lookup[s.Uid] = s;
                         }
                         TowSystem.ReleaseTow(player, target, lookup, equipCfg);
-                        GameConsoleController.AddEntry($"[Буксир] {target.Name} отпущен.");
+                        GameLog.Add($"[Буксир] {target.Name} отпущен.");
                         _showContextMenu = false;
                     }
                     // Блокировка пушек теперь автоматическая: см. правило в CombatSubTurn —
@@ -417,7 +419,7 @@ namespace SRG.UI.HUD
                     if (GUILayout.Button("  Прекратить притягивание"))
                     {
                         PickupSystem.EndPull(player, target);
-                        GameConsoleController.AddEntry($"[Буксир] Притягивание {target.Name} прекращено.");
+                        GameLog.Add($"[Буксир] Притягивание {target.Name} прекращено.");
                         _showContextMenu = false;
                     }
                 }
@@ -437,9 +439,9 @@ namespace SRG.UI.HUD
                         if (TowSystem.TryTow(player, target, equipCfg, lookup))
                         {
                             if (target.TowedByUid == player.Uid)
-                                GameConsoleController.AddEntry($"[Буксир] {target.Name} прицеплен.");
+                                GameLog.Add($"[Буксир] {target.Name} прицеплен.");
                             else if (target.PulledByUid == player.Uid)
-                                GameConsoleController.AddEntry($"[Буксир] {target.Name} притягивается…");
+                                GameLog.Add($"[Буксир] {target.Name} притягивается…");
                         }
                         _showContextMenu = false;
                     }
@@ -461,7 +463,7 @@ namespace SRG.UI.HUD
                     if (GUILayout.Button("  Убрать из очереди захвата"))
                     {
                         player.PulledQueue.Remove(target.Uid);
-                        GameConsoleController.AddEntry("[Захват] Цель удалена из очереди.");
+                        GameLog.Add("[Захват] Цель удалена из очереди.");
                         _showContextMenu = false;
                     }
                 }
@@ -506,7 +508,7 @@ namespace SRG.UI.HUD
             {
                 var cfg = GalaxyManager.Instance?.Settings;
                 bool showTraj = !_pinnedInfo.Ship.IsPlayer && (cfg?.ShowNpcTrajectoryOnHover ?? true);
-                DrawShip(_pinnedInfo.Ship, _pinnedInfo.NpcController, showTraj);
+                DrawShip(_pinnedInfo.Ship, showTraj);
             }
             else if (_pinnedInfo.Asteroid != null) DrawAsteroid(_pinnedInfo.Asteroid);
 
@@ -598,7 +600,7 @@ namespace SRG.UI.HUD
 
         // ── Корабль ───────────────────────────────────────────────────────────────
 
-        private static void DrawShip(ShipData ship, NpcController npc, bool showTrajectory = false)
+        private static void DrawShip(ShipData ship, bool showTrajectory = false)
         {
             if (ship.IsItem)
             {
@@ -638,7 +640,7 @@ namespace SRG.UI.HUD
             }
             else
             {
-                string order = npc != null ? npc.CurrentOrder : "—";
+                string order = ship.Brain?.CurrentOrder ?? "—";
                 string activity = ship.Brain?.CurrentActivity?.DebugName ?? "—";
                 GUILayout.Label($"Приказ: {order}   Активность: {activity}");
                 DrawNpcTarget(ship);

@@ -1,5 +1,4 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Simulation;
 

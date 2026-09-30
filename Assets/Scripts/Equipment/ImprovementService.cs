@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -301,7 +302,7 @@ namespace SRG.Equipment
             else current = item.GetParam(paramKey, 0f);
 
             // Среднее двух равномерных — «колокол» с пиком в 1: крайние результаты редки.
-            float roll = 0.75f + 0.25f * (Random.value + Random.value);
+            float roll = 0.75f + 0.25f * (GameRng.Value + GameRng.Value);
             float delta = Mathf.Max(Mathf.Abs(current) * pct * roll, minStep);
             return delta * factor;
         }

@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using SRG.Config;
-using SRG.Ships.Player;
-using SRG.UI.Screens;
+using SRG.Presentation.Common;
 
 namespace SRG.Presentation
 {
@@ -140,7 +139,7 @@ namespace SRG.Presentation
 
         private void HandleHotkeys()
         {
-            if (GameConsoleController.IsOpen) return;
+            if (PresentationContext.IsTextInputActive()) return;
             if (Input.GetKeyDown(settings.ResetCameraKey)) ResetCamera();
             if (Input.GetKeyDown(settings.CenterCameraKey)) StartCenterOnPlayer();
         }
@@ -154,7 +153,7 @@ namespace SRG.Presentation
 
         public void StartCenterOnPlayer()
         {
-            if (PlayerShip.Instance == null) return;
+            if (PresentationContext.Player == null) return;
             _centerFrom = _transform.position;
             _centerTimer = 0f;
             _isCentering = true;
@@ -163,13 +162,13 @@ namespace SRG.Presentation
         private void TickCentering()
         {
             if (!_isCentering) return;
-            if (PlayerShip.Instance == null) { _isCentering = false; return; }
+            if (PresentationContext.Player == null) { _isCentering = false; return; }
 
             _centerTimer += Time.deltaTime;
             float t = Mathf.Clamp01(_centerTimer / CenterDuration);
             t = t * t * (3f - 2f * t); // smoothstep
 
-            var pp = PlayerShip.Instance.transform.position;
+            var pp = PresentationContext.Player.Transform.position;
             _transform.position = Vector3.Lerp(_centerFrom,
                 new Vector3(pp.x, pp.y, _transform.position.z), t);
 

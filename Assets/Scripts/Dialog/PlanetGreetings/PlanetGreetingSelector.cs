@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI.Spawning;
 using SRG.Ships;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Dialog.PlanetGreetings
 {
@@ -34,7 +34,7 @@ namespace SRG.Dialog.PlanetGreetings
             var rules = cfg?.Dialogs?.PlanetGreetings?.Rules;
             if (rules == null || rules.Count == 0) return null;
 
-            rng ??= new System.Random();
+            rng ??= GameRng.CreateSystemRandom();
 
             string playerStatus = PlayerGreetingProfile.ResolveStatus(player);
             string playerRank   = PlayerGreetingProfile.ResolveRank(player);
@@ -442,7 +442,7 @@ namespace SRG.Dialog.PlanetGreetings
             if (sector == null) return null;
             var set = new HashSet<string>();
             foreach (var s in sector.Stars) if (s != null) set.Add(s.Uid);
-            var mgr = GalaxyManager.Instance?.GeneratedGalaxy;
+            var mgr = GameWorld.GeneratedGalaxy;
             if (mgr != null && sector.VoronoiEdgeNeighbors != null)
                 foreach (var neighbourUid in sector.VoronoiEdgeNeighbors)
                 {
@@ -597,10 +597,13 @@ namespace SRG.Dialog.PlanetGreetings
         // Per-turn кэш StarInBattle: (starUid, turn) → результат. Инвалидируется автоматически по ходу.
         private static readonly Dictionary<string, (int turn, bool value)> _starInBattleCache = new();
 
+        /// <summary>Сбросить кэш (новая игра/загрузка: номера ходов начинаются заново).</summary>
+        public static void ResetCache() => _starInBattleCache.Clear();
+
         public static bool StarInBattle(StarData star)
         {
             if (star?.Ships == null || string.IsNullOrEmpty(star.Uid)) return false;
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             if (_starInBattleCache.TryGetValue(star.Uid, out var cached) && cached.turn == turn)
                 return cached.value;
 
@@ -666,7 +669,7 @@ namespace SRG.Dialog.PlanetGreetings
 
         public static string QuantOfShipCount(int n)
         {
-            int many = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning?.ShipCountMany ?? 10;
+            int many = GameWorld.Context?.Config?.Dialogs?.Tuning?.ShipCountMany ?? 10;
             if (n <= 0) return "0";
             if (n >= many) return "Many";
             return n.ToString();
@@ -674,7 +677,7 @@ namespace SRG.Dialog.PlanetGreetings
 
         public static string QuantOfStock(int n)
         {
-            var q = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning?.StockQuants;
+            var q = GameWorld.Context?.Config?.Dialogs?.Tuning?.StockQuants;
             int mini = q?.Mini ?? 50, small = q?.Small ?? 200, avg = q?.Average ?? 500, big = q?.Big ?? 1000;
             if (n <= 0)     return "Zero";
             if (n < mini)   return "Mini";
@@ -688,7 +691,7 @@ namespace SRG.Dialog.PlanetGreetings
         {
             if (price <= 0) return "Zero";
             if (basePrice <= 0) return "Average";
-            var q = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning?.PriceQuants;
+            var q = GameWorld.Context?.Config?.Dialogs?.Tuning?.PriceQuants;
             float mini = q?.Mini ?? 0.6f, small = q?.Small ?? 0.9f, avg = q?.Average ?? 1.3f, big = q?.Big ?? 2.0f;
             float ratio = price / (float)basePrice;
             if (ratio < mini)  return "Mini";
@@ -701,7 +704,7 @@ namespace SRG.Dialog.PlanetGreetings
         /// <summary>Квантование населения планеты (Mini/Small/Average/Big/Huge).</summary>
         public static string QuantOfPopulation(int n)
         {
-            var q = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning?.PopulationQuants;
+            var q = GameWorld.Context?.Config?.Dialogs?.Tuning?.PopulationQuants;
             int mini = q?.Mini ?? 1_000_000,
                 small = q?.Small ?? 100_000_000,
                 avg = q?.Average ?? 1_000_000_000,
@@ -716,7 +719,7 @@ namespace SRG.Dialog.PlanetGreetings
         /// <summary>Квантование денег игрока (Mini/Small/Average/Big/Huge).</summary>
         public static string QuantOfMoney(int m)
         {
-            var q = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning?.MoneyQuants;
+            var q = GameWorld.Context?.Config?.Dialogs?.Tuning?.MoneyQuants;
             int mini = q?.Mini ?? 1_000,
                 small = q?.Small ?? 10_000,
                 avg = q?.Average ?? 100_000,

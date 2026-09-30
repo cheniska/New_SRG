@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
-using SRG.Core;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Simulation
 {
@@ -66,13 +65,13 @@ namespace SRG.Galaxy.Simulation
             WormholeGraphics graphics = null,
             string targetGalaxyId = null)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy == null)
             {
                 Debug.LogWarning("[WormholeService] Spawn: нет активной галактики.");
                 return null;
             }
-            var settings = GalaxyManager.Instance?.Settings;
+            var settings = GameWorld.Settings;
             if (settings == null)
             {
                 Debug.LogWarning("[WormholeService] Spawn: нет GameSettings.");
@@ -130,8 +129,8 @@ namespace SRG.Galaxy.Simulation
             if (!crossGalaxy && !exitPos.HasValue)
             {
                 float tgtRadius = SRUnits.ToWorld(targetStar.SystemSize);
-                float arrR = Random.Range(tgtRadius * 0.3f, tgtRadius * 0.8f);
-                float arrAng = Random.Range(0f, Mathf.PI * 2f);
+                float arrR = GameRng.Range(tgtRadius * 0.3f, tgtRadius * 0.8f);
+                float arrAng = GameRng.Range(0f, Mathf.PI * 2f);
                 exitPos = new Vector2(Mathf.Cos(arrAng) * arrR, Mathf.Sin(arrAng) * arrR);
             }
 
@@ -222,12 +221,12 @@ namespace SRG.Galaxy.Simulation
 
         /// <summary>Найти по UID в текущей галактике (без out-параметров).</summary>
         public static WormholeData Find(string uid)
-            => TryFind(GalaxyManager.Instance?.GeneratedGalaxy, uid, out var wh, out _) ? wh : null;
+            => TryFind(GameWorld.GeneratedGalaxy, uid, out var wh, out _) ? wh : null;
 
         /// <summary>Все активные червоточины текущей галактики (плоский список).</summary>
         public static IEnumerable<(WormholeData wh, StarData sourceStar)> All()
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy == null) yield break;
             foreach (var star in galaxy.StarsMap.Values)
             {
@@ -276,13 +275,13 @@ namespace SRG.Galaxy.Simulation
 
         /// <summary>Форсированное закрытие по UID в текущей галактике.</summary>
         public static bool ForceClose(string uid)
-            => TryFind(GalaxyManager.Instance?.GeneratedGalaxy, uid, out var wh, out _) && ForceClose(wh);
+            => TryFind(GameWorld.GeneratedGalaxy, uid, out var wh, out _) && ForceClose(wh);
 
         /// <summary>Немедленное удаление без анимации (для отладки). Парная червоточина
         /// удаляется вместе — иначе в целевой системе останется «сирота-выход».</summary>
         public static bool Destroy(string uid)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (!TryFind(galaxy, uid, out var wh, out var star)) return false;
             string pairedUid = wh.PairedWormholeUid;
             star.Wormholes.Remove(wh);
@@ -302,7 +301,7 @@ namespace SRG.Galaxy.Simulation
         {
             int total = galaxy.StarsMap.Count;
             if (total == 0) return null;
-            int idx = Random.Range(0, total);
+            int idx = GameRng.Range(0, total);
             int i = 0;
             foreach (var star in galaxy.StarsMap.Values)
             {
@@ -325,7 +324,7 @@ namespace SRG.Galaxy.Simulation
             }
             return candidates == null || candidates.Count == 0
                 ? null
-                : candidates[Random.Range(0, candidates.Count)];
+                : candidates[GameRng.Range(0, candidates.Count)];
         }
     }
 }

@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
@@ -11,6 +10,7 @@ using SRG.NpcAI.Actions;
 using SRG.Ships;
 using SRG.Ships.Services;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -34,7 +34,15 @@ namespace SRG.NpcAI
             public override int GetHashCode() => ((int)Kind * 397) ^ (TargetUid?.GetHashCode() ?? 0);
         }
 
-        public ShipPersonality Personality { get; private set; }
+        // Тот же объект, что ship.Personality: сохраняется у корабля, после загрузки связывается заново.
+        [field: System.NonSerialized] public ShipPersonality Personality { get; private set; }
+
+        /// <summary>После загрузки сейва: вернуть общую ссылку на характер корабля.</summary>
+        public void RestoreAfterLoad(ShipData ship)
+        {
+            if (ship.Personality != null) Personality = ship.Personality;
+            else ship.Personality = Personality ??= ShipPersonality.Generate(PersonalityRange.ForShipType(ship.ShipTypeId));
+        }
         public CombatClass CombatClass { get; private set; }
         public string CurrentOrder =>
             _directiveActivity != null ? _directiveName
@@ -69,8 +77,8 @@ namespace SRG.NpcAI
 
         public NpcBrain(ShipData ship, StarData star)
         {
-            var range = PersonalityRange.ForShipType(ship.ShipTypeId);
-            Personality = ShipPersonality.Generate(range);
+            // После загрузки сейва характер уже есть — не перегенерируем его.
+            Personality = ship.Personality ?? ShipPersonality.Generate(PersonalityRange.ForShipType(ship.ShipTypeId));
             // Дублируем на ShipData: Directive.ShouldObey и переговоры (Ceasefire/Ransom)
             // читают ship.Personality. Раньше это делал только NpcSpawner.Attach — корабли
             // без визуала (вся галактика вне системы игрока) оставались с null и молча
@@ -189,7 +197,7 @@ namespace SRG.NpcAI
 
             // Early-out через PowerCache: нет враждебной силы во всей звезде — fear не считаем.
             // Это освобождает мирные системы (большинство ходов у большинства кораблей).
-            star.RebuildPowerCache(GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0);
+            star.RebuildPowerCache(GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0);
             if (star.GetHostilePower(ship.Owner, ship.Race) <= 0f) return;
 
             // Hard trigger #1: безоружен + враг в звезде → гарантированный fear.
@@ -448,7 +456,7 @@ namespace SRG.NpcAI
         /// достаточно частый, чтобы отвечать на новую волну атак, но не спамить каждый ход.</summary>
         private static bool CanRequestHelp(ShipData ship)
         {
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             int cooldown = UnityEngine.Mathf.Max(3, NpcBalance.LastAttackerMemoryTurns / 2);
             return ship.LastHelpCallTurn < 0
                 || currentTurn - ship.LastHelpCallTurn >= cooldown;
@@ -457,7 +465,7 @@ namespace SRG.NpcAI
         private static string GetRecentAttackerUid(ShipData ship)
         {
             if (string.IsNullOrEmpty(ship.LastAttackerUid)) return null;
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             if (currentTurn - ship.LastAttackerTurn > NpcBalance.LastAttackerMemoryTurns)
             {
                 ship.LastAttackerUid = null;
@@ -935,7 +943,7 @@ namespace SRG.NpcAI
         /// Нет конфига/типа или нераспознанное имя → Mercenary.</summary>
         public static CombatClass ResolveCombatClass(string shipTypeId)
         {
-            var types = GalaxyManager.Instance?.Context?.Config?.Ships?.ShipTypes;
+            var types = GameWorld.Context?.Config?.Ships?.ShipTypes;
             if (types != null && !string.IsNullOrEmpty(shipTypeId)
                 && types.TryGetValue(shipTypeId, out var cfg)
                 && System.Enum.TryParse<CombatClass>(cfg.CombatClass, ignoreCase: true, out var cls))

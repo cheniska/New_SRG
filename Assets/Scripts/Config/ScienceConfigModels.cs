@@ -6,7 +6,7 @@ using SRG.Galaxy;
 namespace SRG.Config
 {
     // ──────────────────────────────────────────────
-    // Конфигурация научной системы (диздок: docs/planetary_science_system.md).
+    // Конфигурация научной системы (диздок: docs/design/planetary_science_system.md).
     // ──────────────────────────────────────────────
 
     /// <summary>

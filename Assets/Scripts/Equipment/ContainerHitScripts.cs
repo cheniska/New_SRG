@@ -1,9 +1,9 @@
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -47,7 +47,7 @@ namespace SRG.Equipment
                     if (victim.CurrentHull <= 0) continue;
                     if ((victim.Position - center).sqrMagnitude > r2) continue;
 
-                    float baseDmg = Random.Range(minDmg, maxDmg);
+                    float baseDmg = GameRng.Range(minDmg, maxDmg);
                     var shot = new WeaponShotParams
                     {
                         AttackerUid      = killer?.Uid,

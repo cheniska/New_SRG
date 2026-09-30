@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy.Simulation;
 using SRG.NpcAI;
 using SRG.Science;
-using SRG.UI.Screens;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Politics
 {
@@ -84,9 +83,7 @@ namespace SRG.Galaxy.Politics
         /// Вне тика fallback на GeneratedGalaxy (для UI-триггеров типа RemoveById).</summary>
         private static GalaxyData Target()
         {
-            var gm = GalaxyManager.Instance;
-            if (gm == null) return null;
-            return gm.CurrentTickingGalaxy ?? gm.GeneratedGalaxy;
+            return GameWorld.TargetGalaxy;
         }
 
         /// <summary>Убрать одну запись по Id. Возвращает true если что-то удалено.</summary>
@@ -128,6 +125,20 @@ namespace SRG.Galaxy.Politics
             }
         }
 
+        /// <summary>Выставить счётчик Id новостей после генерации/загрузки: следующий Id больше всех
+        /// уже существующих во всех галактиках — иначе после перезапуска игры Id начинались бы с 1
+        /// и совпадали со старыми (RemoveById удалял бы не ту запись).</summary>
+        public static void SyncNextId(IEnumerable<GalaxyData> galaxies)
+        {
+            int max = 0;
+            if (galaxies != null)
+                foreach (var g in galaxies)
+                    if (g?.News != null)
+                        foreach (var n in g.News)
+                            if (n != null && n.Id > max) max = n.Id;
+            _nextId = max + 1;
+        }
+
         public static void Initialize()
         {
             if (_initialized) return;
@@ -145,7 +156,7 @@ namespace SRG.Galaxy.Politics
         {
             get
             {
-                var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+                var galaxy = GameWorld.GeneratedGalaxy;
                 return galaxy?.News;
             }
         }
@@ -156,7 +167,7 @@ namespace SRG.Galaxy.Politics
             var galaxy = Target();
             if (galaxy == null || string.IsNullOrEmpty(text)) return;
 
-            int cap = GalaxyManager.Instance?.Settings?.NewsMaxCount ?? 100;
+            int cap = GameWorld.Settings?.NewsMaxCount ?? 100;
             var list = galaxy.News ??= new List<GalaxyNewsEntry>();
 
             var entry = new GalaxyNewsEntry
@@ -192,7 +203,7 @@ namespace SRG.Galaxy.Politics
                 return;
             }
 
-            string playerSide = PlayerManager.Instance?.GetOrFindPlayerShip()?.Owner;
+            string playerSide = GameWorld.PlayerShip?.Owner;
             if (string.IsNullOrEmpty(playerSide))
             {
                 NewsLog.Decision(turn, "POST", category, playerSide, sideA, sideB, "no_player", text);
@@ -217,7 +228,7 @@ namespace SRG.Galaxy.Politics
         /// <summary>Проверка «дружественности» стороны игроку (для варьирования текста новостей).</summary>
         public static bool IsFriendlyToPlayer(string owner)
         {
-            var player = PlayerManager.Instance?.GetOrFindPlayerShip();
+            var player = GameWorld.PlayerShip;
             if (player == null || string.IsNullOrEmpty(player.Owner)) return true;
             return IsFriendlyForPlayer(owner, player.Owner);
         }
@@ -274,7 +285,7 @@ namespace SRG.Galaxy.Politics
             string text = NewsTexts.Format(friendly ? "faction_defeat.ally" : "faction_defeat.enemy",
                 ("ownerId", ownerId));
             int turn = Target()?.CurrentTurn ?? 0;
-            string playerSide = PlayerManager.Instance?.GetOrFindPlayerShip()?.Owner;
+            string playerSide = GameWorld.PlayerShip?.Owner;
             NewsLog.Decision(turn, "VARIANT", CAT_DEFEAT, playerSide, ownerId, null,
                 friendly ? "ally_defeated" : "enemy_defeated", text);
             Post(CAT_DEFEAT, text);
@@ -312,7 +323,7 @@ namespace SRG.Galaxy.Politics
             if (planet == null || shooter == null) return; // без угрозы планете новостей нет
             if (!shooter.IsPlayer) return; // сейчас механика награды — только для игрока
 
-            var settings = GalaxyManager.Instance?.Settings;
+            var settings = GameWorld.Settings;
             int baseReward = settings?.AsteroidRewardBase ?? 100;
             int reward = UnityEngine.Mathf.Max(baseReward, UnityEngine.Mathf.RoundToInt(baseReward * UnityEngine.Mathf.Max(1f, asteroid.Mass)));
             shooter.Money += reward;
@@ -338,7 +349,7 @@ namespace SRG.Galaxy.Politics
         private static void OnShipDestroyed(ShipData victim, ShipData killer, string cause)
         {
             if (victim == null || victim.IsPlayer) return;
-            var player = PlayerManager.Instance?.PlayerShipData;
+            var player = GameWorld.Player?.PlayerShipData;
             if (player == null) return;
             bool isPartner = victim.PartnerLeaderUid == player.Uid || player.PartnerLeaderUid == victim.Uid;
             if (!isPartner) return;

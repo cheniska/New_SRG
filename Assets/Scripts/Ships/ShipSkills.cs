@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Ships
 {
@@ -227,7 +227,7 @@ namespace SRG.Ships
             center = Mathf.Clamp(center, min, max);
             float d = Mathf.Min(center - min, max - center);
             if (d <= 0f) return center;
-            return Random.Range(center - d, center + d);
+            return GameRng.Range(center - d, center + d);
         }
     }
 

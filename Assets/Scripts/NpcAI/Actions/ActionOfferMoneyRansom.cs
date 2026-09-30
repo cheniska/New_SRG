@@ -3,6 +3,7 @@ using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.NpcAI.Orders;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -32,7 +33,7 @@ namespace SRG.NpcAI.Actions
                 {
                     _incomingRequested = true;
                     var did = SRG.Dialog.DialogService.ResolveIncomingDialogId(ship, "offer_money");
-                    var ui  = SRG.Dialog.DialogUIController.Instance;
+                    var ui  = GameWorld.Dialogs;
                     if (!string.IsNullOrEmpty(did) && ui != null && ui.OpenIncomingSpaceDialog(did, ship))
                         return false;
                     IsCompleted = true;

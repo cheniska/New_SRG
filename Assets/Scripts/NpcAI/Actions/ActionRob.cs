@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI.Orders;
 using SRG.Ships.Services;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -91,7 +91,7 @@ namespace SRG.NpcAI.Actions
                 {
                     _incomingRequested = true;
                     var did = SRG.Dialog.DialogService.ResolveIncomingDialogId(ship, "rob");
-                    var ui  = SRG.Dialog.DialogUIController.Instance;
+                    var ui  = GameWorld.Dialogs;
                     if (!string.IsNullOrEmpty(did) && ui != null && ui.OpenIncomingSpaceDialog(did, ship))
                         return false; // ждём выбора игрока
                     // Не удалось открыть (планета/диалог занят/конфига нет) —
@@ -112,7 +112,7 @@ namespace SRG.NpcAI.Actions
             if (result.Accepted)
             {
                 _myContainerUids = result.ContainerUids ?? new List<string>();
-                _lootStartTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+                _lootStartTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
                 _phase = Phase.Loot;
                 Debug.Log($"[ActionRob] {ship.Name} → {target.Name}: сброшено {result.Containers} контейнер(ов) ({result.Weight} вес). CrimeRating={ship.CrimeRating:F0}");
                 string tType = NpcConversationLog.PoolTypeOf(target);
@@ -143,7 +143,7 @@ namespace SRG.NpcAI.Actions
 
         private bool TickLoot(ShipData ship, StarData star, GalaxyGenerationContext ctx)
         {
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? _lootStartTurn;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? _lootStartTurn;
             if (currentTurn - _lootStartTurn >= LootTimeoutTurns) { IsCompleted = true; return true; }
             if (_myContainerUids == null || _myContainerUids.Count == 0) { IsCompleted = true; return true; }
             if (star == null) { IsCompleted = true; return true; }

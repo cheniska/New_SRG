@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using Newtonsoft.Json;
 using SRG.Config;
-using SRG.Core;
 using SRG.NpcAI;
+using SRG.Simulation;
 
 namespace SRG.Ships
 {
@@ -43,12 +42,12 @@ namespace SRG.Ships
         {
             return new ShipPersonality
             {
-                Aggression  = Random.Range(range.AggressionMin,  range.AggressionMax),
-                Caution     = Random.Range(range.CautionMin,     range.CautionMax),
-                Greed       = Random.Range(range.GreedMin,       range.GreedMax),
-                Discipline  = Random.Range(range.DisciplineMin,  range.DisciplineMax),
-                Tribalism   = Random.Range(range.TribalismMin,   range.TribalismMax),
-                Vendetta    = Random.Range(range.VendettaMin,    range.VendettaMax),
+                Aggression  = GameRng.Range(range.AggressionMin,  range.AggressionMax),
+                Caution     = GameRng.Range(range.CautionMin,     range.CautionMax),
+                Greed       = GameRng.Range(range.GreedMin,       range.GreedMax),
+                Discipline  = GameRng.Range(range.DisciplineMin,  range.DisciplineMax),
+                Tribalism   = GameRng.Range(range.TribalismMin,   range.TribalismMax),
+                Vendetta    = GameRng.Range(range.VendettaMin,    range.VendettaMax),
             };
         }
 
@@ -144,7 +143,7 @@ namespace SRG.Ships
         /// (конфиг ещё не загружен / секции нет) — вызывающие обязаны иметь фолбэк.</summary>
         public static PersonalityProfileConfig ProfileForShipType(string shipTypeId)
         {
-            var ships = GalaxyManager.Instance?.Context?.Config?.Ships;
+            var ships = GameWorld.Context?.Config?.Ships;
             var profiles = ships?.PersonalityProfiles;
             if (profiles == null || profiles.Count == 0) return null;
 

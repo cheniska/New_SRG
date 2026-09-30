@@ -23,6 +23,23 @@ Dialog: `DialogUIController`, `DialogService`, `DialogActions`, `DialogConfigMod
 GameObject'ов и цветовую палитру; `PlanetUIController` мигрирован на них в этапе B5 через
 wrapper-делегаты.
 
+### Презентеры (`SRG.UI.Logic`)
+
+Сборка `UI/Logic` содержит логику экранов без MonoBehaviour и UGUI: что показать в строках,
+какие цены и лимиты, можно ли выполнить действие и какое сообщение написать. Контроллер экрана
+строит виджеты по моделям строк и применяет `UiActionResult` (успех + сообщения для лога).
+
+| Презентер | Экран | Что внутри |
+|---|---|---|
+| `GoodsShopPresenter` | `PlanetUIController.GoodsShop` | строки товаров (контрабанда — красным), диалоги количества (`QuantityPrompt`), покупка/продажа |
+| `EquipmentShopPresenter` | `PlanetUIController.EquipmentShop` | строки покупки/продажи, продажа за 50 %, запрет продажи установленного |
+| `HangarPresenter` | `PlanetUIController.Hangar` | подписи кнопок с ценами, заправка/ремонт/зарядка, сводка корабля, пришвартованные корабли |
+| `ItemDescription` | `ShipFormView` и все тултипы предметов | текст описания предмета |
+| `GalaxyMapPresenter` | `GalaxyMapController` | цвета звёзд/секторов/названий по владельцу и расе, цвета планет, сводка «Пролонгера» |
+
+Остальные экраны пока держат логику в контроллерах; при правке экрана логику стоит переносить
+сюда и покрывать тестом в `UiPresenterTests`.
+
 ---
 
 ## Публичный интерфейс
@@ -165,7 +182,7 @@ ShipFormView
    ├─► ContainerFactory.SpawnContainerWithItem / SpawnContainerWithStack
    ├─► ShipFactory.RecalculateSpriteWorldSize (после PlaceHull)
    ├─► SystemViewManager.EnsureShipVisual
-   └─► GameConsoleController.AddEntry
+   └─► GameLog.Add
 
 PlanetUIController
    ├─► ShopService (этап C4 — Buy/Sell)
@@ -188,7 +205,7 @@ DialogUIController
 
 HUDController
    ├─► PlayerShip.Instance
-   ├─► GalaxyManager.OnTurnCalculate/OnTurnComplete
+   ├─► GameWorld.OnTurnCalculate/OnTurnComplete
    └─► PlayerManager.OnPlayerDeath*
 ```
 

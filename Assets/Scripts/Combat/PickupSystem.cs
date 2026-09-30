@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Ships;
 using SRG.Ships.Services;
-using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Combat
 {
@@ -233,17 +232,17 @@ namespace SRG.Combat
                 ClearPullState(target);
                 if (moved > 0)
                 {
-                    GameConsoleController.AddEntry($"[Подбор] {target.Name} → {tug.Name} ({moved} предмет(ов)).");
+                    GameLog.Add($"[Подбор] {target.Name} → {tug.Name} ({moved} предмет(ов)).");
                     if (!tug.IsPlayer)
                     {
                         // Надеть подобранное оборудование NPC сможет только на СЛЕДУЮЩИЙ ход
                         // (ShipLoadoutService.TickTurn), а перегруз проверяется сразу после подбора.
-                        tug.PendingAutoEquipTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+                        tug.PendingAutoEquipTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
                         ShipLoadoutService.ResolveOverload(tug, tug.CurrentStar);
                     }
                     else if (ShipLoadoutService.IsOverloaded(tug))
                     {
-                        GameConsoleController.AddEntry($"[Перегруз] {tug.Name}: корабль перегружен и не может двигаться.");
+                        GameLog.Add($"[Перегруз] {tug.Name}: корабль перегружен и не может двигаться.");
                     }
                 }
                 return;
@@ -255,7 +254,7 @@ namespace SRG.Combat
             if (grabberPower > 0f && weight > grabberPower)
             {
                 ClearPullState(target);
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Подбор] Груз ({weight}) тяжелее силы захвата ({grabberPower:F0}).");
                 return;
             }
@@ -338,7 +337,7 @@ namespace SRG.Combat
                 string targetName = target.Name;
                 string label = target.PullMode == PullKind.Tow ? "Буксир" : "Подбор";
                 ClearPullState(target);
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[{label}] Связь с {targetName} оборвана — дистанция растёт два хода подряд.");
                 return true;
             }

@@ -1,0 +1,19 @@
+{
+    "name": "SRG.UI.Logic",
+    "rootNamespace": "SRG.UI.Logic",
+    "references": [
+        "SRG.Simulation"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll",
+        "MoonSharp.Interpreter.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

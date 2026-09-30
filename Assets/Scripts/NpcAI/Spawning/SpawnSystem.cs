@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
@@ -11,6 +9,7 @@ using SRG.NpcAI.Spawning.Policies;
 using SRG.Utils;
 using SRG.Ships;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Spawning
 {
@@ -27,8 +26,19 @@ namespace SRG.NpcAI.Spawning
     /// </summary>
     public static class SpawnSystem
     {
-        public static GalaxyShipCounters Counters { get; private set; } = new();
-        public static DominationFlags Domination { get; private set; } = new();
+        // Счётчики и доминация — у каждой галактики свои (GalaxyData.ShipCounters/Domination).
+        // Раньше это была одна статическая пара на все галактики: после тика фоновых галактик
+        // ИИ, генштабы и директивы активной галактики читали счётчики чужой галактики.
+        private static readonly GalaxyShipCounters NoGalaxyCounters = new();
+        private static readonly DominationFlags NoGalaxyDomination = new();
+
+        /// <summary>Счётчики галактики, которая сейчас тикает (вне тика — активной).</summary>
+        public static GalaxyShipCounters Counters => CountersFor(GameWorld.TargetGalaxy);
+        /// <summary>Флаги доминации галактики, которая сейчас тикает (вне тика — активной).</summary>
+        public static DominationFlags Domination => GameWorld.TargetGalaxy?.Domination ?? NoGalaxyDomination;
+
+        /// <summary>Счётчики конкретной галактики (без галактики — пустой «сток», например при генерации).</summary>
+        public static GalaxyShipCounters CountersFor(GalaxyData galaxy) => galaxy?.ShipCounters ?? NoGalaxyCounters;
 
         private static readonly List<ISpawnPolicy> _policies = new();
 
@@ -58,8 +68,9 @@ namespace SRG.NpcAI.Spawning
         /// <summary>Полный пересчёт счётчиков из текущей галактики — после загрузки или генерации.</summary>
         public static void RecountFromGalaxy(GalaxyData galaxy, GalaxyConfig cfg)
         {
-            Counters.RecalculateFromScratch(galaxy);
-            Domination = DominationCalculator.Recalculate(Counters, cfg);
+            if (galaxy == null) return;
+            galaxy.ShipCounters.RecalculateFromScratch(galaxy);
+            galaxy.Domination = DominationCalculator.Recalculate(galaxy.ShipCounters, cfg);
         }
 
         /// <summary>Главный тик. Вызывается из GalaxyData.GalaxyNextDay один раз в день.</summary>
@@ -72,8 +83,9 @@ namespace SRG.NpcAI.Spawning
                 star.SpawnsToday = 0;
 
             // 2) Пересчёт состояния (полный O(N) — на текущий масштаб ~5к кораблей пренебрежимо дёшево)
-            Counters.RecalculateFromScratch(galaxy);
-            Domination = DominationCalculator.Recalculate(Counters, ctx.Config);
+            var counters = galaxy.ShipCounters;
+            counters.RecalculateFromScratch(galaxy);
+            galaxy.Domination = DominationCalculator.Recalculate(counters, ctx.Config);
 
             // 3) Прогон политик
             var tickCtx = new SpawnTickContext
@@ -81,9 +93,9 @@ namespace SRG.NpcAI.Spawning
                 Galaxy = galaxy,
                 Gen = ctx,
                 Config = ctx.Config,
-                Settings = GalaxyManager.Instance?.Settings,
-                Counters = Counters,
-                Domination = Domination,
+                Settings = GameWorld.Settings,
+                Counters = counters,
+                Domination = galaxy.Domination,
                 CurrentTurn = galaxy.CurrentTurn
             };
             var sb = new System.Text.StringBuilder("[SpawnSystem] Turn ").Append(galaxy.CurrentTurn).Append(':');
@@ -195,7 +207,7 @@ namespace SRG.NpcAI.Spawning
             int baseMoney = policy?.StartingMoney ?? 0;
             if (baseMoney <= 0) return;
 
-            float inflation = GalaxyManager.Instance?.GeneratedGalaxy?.InflationFactor ?? 1f;
+            float inflation = GameWorld.GeneratedGalaxy?.InflationFactor ?? 1f;
             ship.Money = Mathf.RoundToInt(baseMoney * inflation);
         }
 
@@ -215,10 +227,10 @@ namespace SRG.NpcAI.Spawning
             foreach (var sector in galaxy.Sectors)
             {
                 if (sector?.Stars == null || sector.Stars.Count == 0) continue;
-                int count = Random.Range(0, 4); // 0..3
+                int count = GameRng.Range(0, 4); // 0..3
                 for (int i = 0; i < count; i++)
                 {
-                    var star = sector.Stars[Random.Range(0, sector.Stars.Count)];
+                    var star = sector.Stars[GameRng.Range(0, sector.Stars.Count)];
                     if (SpawnStationInStar(star, ctx) != null) total++;
                 }
             }
@@ -238,7 +250,7 @@ namespace SRG.NpcAI.Spawning
             if (string.IsNullOrEmpty(code))
             {
                 var pool = dominator ? DominatorStationCodes : CoalitionStationCodes;
-                code = pool[Random.Range(0, pool.Length)];
+                code = pool[GameRng.Range(0, pool.Length)];
             }
             string shipTypeId = "Station_" + code;
 
@@ -253,7 +265,7 @@ namespace SRG.NpcAI.Spawning
             ship.TurnSpeedDeg = 0f;
 
             float radiusUnits = ChooseStationOrbitRadius(star);
-            float ang = Random.Range(0f, Mathf.PI * 2f);
+            float ang = GameRng.Range(0f, Mathf.PI * 2f);
             Vector2 pos = Angles.Dir(ang) * SRUnits.ToWorld(radiusUnits);
             ship.Position         = pos;
             ship.PreviousPosition = pos;
@@ -285,7 +297,7 @@ namespace SRG.NpcAI.Spawning
             const float Margin = 300f;
             var planets = star.Planets;
             if (planets == null || planets.Count == 0)
-                return 2000f + Random.Range(-500f, 500f);
+                return 2000f + GameRng.Range(-500f, 500f);
 
             // Занятые кольца [lo, hi] с учётом эксцентриситета и запаса.
             var bands = new List<(float lo, float hi)>(planets.Count);
@@ -307,11 +319,11 @@ namespace SRG.NpcAI.Spawning
                 float gapLo = bands[i].hi;
                 float gapHi = bands[i + 1].lo;
                 if (gapHi - gapLo > 100f)
-                    candidates.Add(Random.Range(gapLo, gapHi));
+                    candidates.Add(GameRng.Range(gapLo, gapHi));
             }
-            candidates.Add(outer + Random.Range(200f, 700f)); // всегда валиден: дальше всех орбит
+            candidates.Add(outer + GameRng.Range(200f, 700f)); // всегда валиден: дальше всех орбит
 
-            return candidates[Random.Range(0, candidates.Count)];
+            return candidates[GameRng.Range(0, candidates.Count)];
         }
 
         /// <summary>Инициализирует инфраструктуру станции. Станции — НЕ поселения: у них нет населения,
@@ -354,7 +366,7 @@ namespace SRG.NpcAI.Spawning
                 if (v != null && v.Contains("<GTU>")) { hasPlaceholder = true; break; }
             if (!hasPlaceholder) return kit;
 
-            int gtu = Mathf.Clamp(GalaxyManager.Instance?.GeneratedGalaxy?.GtuLevel ?? 1, 1, 10);
+            int gtu = Mathf.Clamp(GameWorld.GeneratedGalaxy?.GtuLevel ?? 1, 1, 10);
             string suffix = gtu.ToString();
             var copy = new System.Collections.Generic.Dictionary<string, string>(kit.Count);
             foreach (var kv in kit)
@@ -370,7 +382,7 @@ namespace SRG.NpcAI.Spawning
             if (cfg == null || cfg.NpcSpawnChance <= 0f) return;
             if (ship?.Equipment?.Slots == null) return;
 
-            var rng = new System.Random(ship.Uid?.GetHashCode() ?? System.Environment.TickCount);
+            var rng = ship.Uid != null ? new System.Random(StableHash.Of(ship.Uid)) : GameRng.CreateSystemRandom();
             foreach (var kv in ship.Equipment.Slots)
             {
                 if (kv.Value == null) continue;

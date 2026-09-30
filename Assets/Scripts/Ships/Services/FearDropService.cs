@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI;
 using SRG.NpcAI.Actions;
-using SRG.UI.Screens;
+using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -95,9 +95,9 @@ namespace SRG.Ships.Services
             if (!string.IsNullOrEmpty(say))
             {
                 say = say.Replace("<FullShipBad>", threatName).Replace("<ShipBad>", threatName);
-                GameConsoleController.AddEntry($"[Связь] {ship.Name}: {say}");
+                GameLog.Add($"[Связь] {ship.Name}: {say}");
             }
-            GameConsoleController.AddEntry(
+            GameLog.Add(
                 $"[Связь] {ship.Name} сбрасывает {chunk.TotalWeight} ед. \"{cargoName}\" в пользу {threatName}.");
         }
 
@@ -109,17 +109,12 @@ namespace SRG.Ships.Services
             return uid;
         }
 
-        // «Последний ход сброса» держим в самом ShipData через lightweight dict-хак: пусть будет
-        // хранение в приватном extension через словарь по Uid (JsonIgnore — не сериализуется).
-        private static readonly Dictionary<string, int> _lastDropTurnByUid = new();
+        // «Последний ход сброса» хранится в ShipData — переживает сохранение/загрузку.
+        private static int ReadLastDropTurn(ShipData ship) => ship.LastFearDropTurn;
 
-        private static int ReadLastDropTurn(ShipData ship) =>
-            _lastDropTurnByUid.TryGetValue(ship.Uid, out var t) ? t : -9999;
-
-        private static void WriteLastDropTurn(ShipData ship, int turn) =>
-            _lastDropTurnByUid[ship.Uid] = turn;
+        private static void WriteLastDropTurn(ShipData ship, int turn) => ship.LastFearDropTurn = turn;
 
         private static DialogTuning GetTuning() =>
-            GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning;
+            GameWorld.Context?.Config?.Dialogs?.Tuning;
     }
 }

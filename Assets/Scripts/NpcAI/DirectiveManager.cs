@@ -1,15 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI.Actions;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
-    public class DirectiveManager : MonoBehaviour
+    /// <summary>
+    /// Директивы фракций (атака/оборона/подавление пиратства). Обычный объект симуляции:
+    /// создаётся на сессию в <see cref="SimulationSetup"/> и тикает по событию хода.
+    /// </summary>
+    public class DirectiveManager
     {
         public static DirectiveManager Instance { get; private set; }
 
@@ -28,23 +32,16 @@ namespace SRG.NpcAI
         // и не пересоздавал под-действие каждый ход.
         private readonly Dictionary<string, ActionPartnerAttend> _partnerActions = new();
 
-        private void Awake()
+        /// <summary>Создать менеджер (и реестр генштабов) для новой сессии симуляции.
+        /// Предыдущий экземпляр отписывается от событий хода.</summary>
+        public static DirectiveManager CreateForSession()
         {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            // Автосоздание HighCommandRegistry — избавляет от необходимости класть его в сцену вручную.
-            if (HighCommandRegistry.Instance == null)
-            {
-                var go = new GameObject("HighCommandRegistry");
-                go.AddComponent<HighCommandRegistry>();
-                DontDestroyOnLoad(go);
-            }
+            if (Instance != null) GameWorld.OnTurnCalculate -= Instance.OnTurnCalculate;
+            Instance = new DirectiveManager();
+            GameWorld.OnTurnCalculate += Instance.OnTurnCalculate;
+            HighCommandRegistry.CreateForSession();
+            return Instance;
         }
-
-        private void OnEnable()  { GalaxyManager.OnTurnCalculate += OnTurnCalculate; }
-        private void OnDisable() { GalaxyManager.OnTurnCalculate -= OnTurnCalculate; }
 
         public void Issue(OwnerDirective directive)
         {
@@ -72,8 +69,7 @@ namespace SRG.NpcAI
             // Во время GalaxyNextDay неактивной галактики (иerarchical events →
             // OccupationAutoRule.Tick / HighCommand.Tick могут выдавать директивы) CurrentTickingGalaxy
             // указывает на неё — persistence не должна попасть в активную. Вне тика fallback на активную.
-            var gm = GalaxyManager.Instance;
-            var galaxy = gm?.CurrentTickingGalaxy ?? gm?.GeneratedGalaxy;
+            var galaxy = GameWorld.TargetGalaxy;
             if (galaxy == null) return;
             galaxy.Directives ??= new List<Directive>();
             if (!galaxy.Directives.Contains(d)) galaxy.Directives.Add(d);
@@ -159,7 +155,7 @@ namespace SRG.NpcAI
 
         private void OnTurnCalculate(TurnAnimationData _)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy == null) return;
             EnsureIndexedFor(galaxy);
 
@@ -261,8 +257,7 @@ namespace SRG.NpcAI
         // Публикуется один раз при выдаче директивы (в т.ч. авто-суперрессия пиратов).
         private static void PostDirectiveNews(OwnerDirective d)
         {
-            var gm = GalaxyManager.Instance;
-            var galaxy = gm?.CurrentTickingGalaxy ?? gm?.GeneratedGalaxy;
+            var galaxy = GameWorld.TargetGalaxy;
             if (galaxy == null) return;
 
             switch (d)

@@ -8,7 +8,7 @@ namespace SRG.NpcAI.Orders
     public class OrderRequestCeasefire : NpcOrder
     {
         private readonly string _aggressorUid;
-        private ShipData _aggressor;        // прямая ссылка
+        [System.NonSerialized] private ShipData _aggressor;        // прямая ссылка
         private bool _done;
         private bool _accepted;
         // NegotiateRange/OfferFraction вынесены в NpcBalance.NegotiateRange / NpcBalance.CeasefireOfferFraction.

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -210,7 +210,7 @@ namespace SRG.Galaxy.Generation
         {
             if (range == null || range.Length == 0) return fallback;
             if (range.Length == 1) return range[0];
-            return UnityEngine.Random.Range(Mathf.Min(range[0], range[1]), Mathf.Max(range[0], range[1]));
+            return GameRng.Range(Mathf.Min(range[0], range[1]), Mathf.Max(range[0], range[1]));
         }
 
         /// <summary>Сдвиги рас 0..spread: по весам роли, а если весов нет или они равны — случайно.</summary>
@@ -225,7 +225,7 @@ namespace SRG.Galaxy.Generation
             foreach (var v in raw) { min = Mathf.Min(min, v); max = Mathf.Max(max, v); }
             if (max - min < 1e-4f)
             {
-                for (int i = 0; i < raw.Length; i++) raw[i] = UnityEngine.Random.value;
+                for (int i = 0; i < raw.Length; i++) raw[i] = GameRng.Value;
                 min = float.MaxValue; max = float.MinValue;
                 foreach (var v in raw) { min = Mathf.Min(min, v); max = Mathf.Max(max, v); }
             }
@@ -284,7 +284,7 @@ namespace SRG.Galaxy.Generation
                     float share = Mathf.Clamp01(st.Role.SystemsShare);
                     int baseVal = Mathf.RoundToInt(starsCount * share * Mathf.Max(1f, st.Role.Overlap) / count);
                     int jitter  = Mathf.Max(0, st.Role.Jitter);
-                    st.Target = Mathf.Max(0, baseVal + UnityEngine.Random.Range(-jitter, jitter + 1));
+                    st.Target = Mathf.Max(0, baseVal + GameRng.Range(-jitter, jitter + 1));
                 }
                 else
                     st.Target = ComputeTargetSystems(starsCount, states.Count);
@@ -305,9 +305,9 @@ namespace SRG.Galaxy.Generation
             float mult    = cfg?.Multiplier      ?? 2.0f;
             int   jitter  = cfg?.Jitter          ?? 2;
 
-            float fraction = UnityEngine.Random.Range(fracMin, fracMax);
+            float fraction = GameRng.Range(fracMin, fracMax);
             int   baseVal  = Mathf.RoundToInt(starsCount * fraction * mult / raceCount);
-            int   target   = baseVal + UnityEngine.Random.Range(-jitter, jitter + 1);
+            int   target   = baseVal + GameRng.Range(-jitter, jitter + 1);
             return Mathf.Max(0, target);
         }
 
@@ -540,7 +540,7 @@ namespace SRG.Galaxy.Generation
         private static void ApplyNativeConditions(PlanetData p, RacePlanetConditionsConfig c)
         {
             static float Mid(float? min, float? max, float fallback) =>
-                min.HasValue && max.HasValue ? Mathf.Lerp(min.Value, max.Value, UnityEngine.Random.Range(0.3f, 0.7f)) : fallback;
+                min.HasValue && max.HasValue ? Mathf.Lerp(min.Value, max.Value, GameRng.Range(0.3f, 0.7f)) : fallback;
 
             p.AtmPressure    = Mid(c.AtmPressureMin, c.AtmPressureMax, p.AtmPressure);
             p.WaterAbundance = Mid(c.WaterAbundanceMin, c.WaterAbundanceMax, p.WaterAbundance);

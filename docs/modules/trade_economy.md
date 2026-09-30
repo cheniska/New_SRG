@@ -3,10 +3,10 @@
 Модули: `Systems/TradeSystem.cs`, `Systems/InflationSystem.cs`, `Systems/EquipmentShopSystem.cs`,
 `Systems/PlanetaryEventSystem.cs`, `Systems/PlanetaryTechSystem.cs`, `Systems/GovernmentChangeService.cs`,
 `Systems/EconomicLog.cs`, `Systems/ShopService.cs` (фасад UI/AI),
-`Generation/GalaxyDataModels.cs` (`PlanetShop`, `ShopGoodEntry`, `PlanetEquipmentShop`).
+`Galaxy/Models/*.cs` (`PlanetShop`, `ShopGoodEntry`, `PlanetEquipmentShop`).
 
-Связанные документы: [`economy_implementation_plan.md`](../economy_implementation_plan.md) (что сделано / отложено),
-[`planet_formulas.md`](../planet_formulas.md), [`planetary_science_system.md`](../planetary_science_system.md).
+Связанные документы: [`economy_implementation_plan.md`](../design/economy_implementation_plan.md) (что сделано / отложено),
+[`planet_formulas.md`](../design/planet_formulas.md), [`planetary_science_system.md`](../design/planetary_science_system.md).
 
 ---
 

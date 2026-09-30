@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.Combat
 {
@@ -42,8 +41,7 @@ namespace SRG.Combat
             if (target == null) return true;
             if (target.IsPlayer)
             {
-                bool died = PlayerManager.Instance != null
-                    && PlayerManager.Instance.KillPlayer(cause, killerName, killerOwner);
+                bool died = GameWorld.Player != null && GameWorld.Player.KillPlayer(cause, killerName, killerOwner);
                 if (died && !(anim?.DeathUids.Contains(target.Uid) ?? false))
                     anim?.DeathUids.Add(target.Uid);
                 if (died) EmitShipDeath(target, killer, cause);
@@ -90,7 +88,7 @@ namespace SRG.Combat
             if (shotParams == null) return result;
 
             result.Hit = true;
-            float baseDmg = Random.Range(shotParams.MinDmg, shotParams.MaxDmg);
+            float baseDmg = GameRng.Range(shotParams.MinDmg, shotParams.MaxDmg);
             baseDmg = ApplyExecuteBonus(baseDmg, target, attacker);
             var (hullDmg, shieldDmg) = CalculateDamage(
                 baseDmg, shotParams, target, attacker);
@@ -127,7 +125,7 @@ namespace SRG.Combat
                 }
             }
 
-            if (shotParams.EquipDamage > 0f && Random.value < shotParams.EquipHitChance)
+            if (shotParams.EquipDamage > 0f && GameRng.Value < shotParams.EquipHitChance)
             {
                 var equip = EquipmentSystem.GetRandomDamageableSlot(target, equipConfig);
                 if (equip.item != null)
@@ -357,7 +355,7 @@ namespace SRG.Combat
 
             foreach (var eff in shot.Effects)
             {
-                if (Random.value > eff.Chance) continue;
+                if (GameRng.Value > eff.Chance) continue;
 
                 bool isTactical = eff.Type == CombatEffectType.BlockWeapon ||
                                   eff.Type == CombatEffectType.BlockDroid;
@@ -521,7 +519,7 @@ namespace SRG.Combat
             };
 
             result.Hit = true;
-            float baseDmg = Random.Range(shot.MinDmg, shot.MaxDmg);
+            float baseDmg = GameRng.Range(shot.MinDmg, shot.MaxDmg);
             baseDmg = ApplyExecuteBonus(baseDmg, target, attacker);
             var (hullDmg, shieldDmg) = CalculateDamage(baseDmg, shot, target, attacker);
 
@@ -537,7 +535,7 @@ namespace SRG.Combat
 
             result.TargetDestroyed = target.CurrentHull <= 0;
 
-            if (shot.EquipDamage > 0f && Random.value < shot.EquipHitChance)
+            if (shot.EquipDamage > 0f && GameRng.Value < shot.EquipHitChance)
             {
                 var equip = EquipmentSystem.GetRandomDamageableSlot(target, equipConfig);
                 if (equip.item != null)
@@ -592,7 +590,7 @@ namespace SRG.Combat
         {
             if (attacker == null || target == null) return;
 
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             target.LastAttackerUid = attacker.Uid;
             target.LastAttackerTurn = currentTurn;
 
@@ -606,7 +604,7 @@ namespace SRG.Combat
             var rel = OwnerRaceRelationsManager.Instance;
             var star = target.CurrentStar;
             if (star == null && !string.IsNullOrEmpty(target.CurrentStarUid))
-                GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap.TryGetValue(target.CurrentStarUid, out star);
+                GameWorld.GeneratedGalaxy?.StarsMap.TryGetValue(target.CurrentStarUid, out star);
             if (rel != null && star != null && !string.IsNullOrEmpty(attacker.Owner))
             {
                 _uniqueOwnersBuf.Clear();

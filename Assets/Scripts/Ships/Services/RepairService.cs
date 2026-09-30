@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.NpcAI;
 using SRG.NpcAI.Actions;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -108,7 +108,7 @@ namespace SRG.Ships.Services
             int cost = restore * perPoint;
             ship.Money -= cost;
 
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "REPAIR_HULL",
                 $"site={EconomicLog.Safe(site.Name)} hull_pts={restore} spent={cost} money_after={ship.Money}");
             return restore;
@@ -176,7 +176,7 @@ namespace SRG.Ships.Services
 
             if (spent > 0)
             {
-                int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+                int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
                 EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "REPAIR",
                     $"site={EconomicLog.Safe(site.Name)} hull_pts={hullRestored} equip_pts={equipmentRestored} " +
                     $"items={equipmentItemsTouched} spent={spent} money_after={ship.Money}");
@@ -196,7 +196,7 @@ namespace SRG.Ships.Services
 
         public static ShipTypeConfig ResolveShipType(ShipData ship)
         {
-            var types = GalaxyManager.Instance?.Context?.Config?.Ships?.ShipTypes;
+            var types = GameWorld.Context?.Config?.Ships?.ShipTypes;
             if (types == null || string.IsNullOrEmpty(ship?.ShipTypeId)) return null;
             return types.TryGetValue(ship.ShipTypeId, out var t) ? t : null;
         }

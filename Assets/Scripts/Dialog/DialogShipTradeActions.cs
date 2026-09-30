@@ -1,7 +1,7 @@
 using System.Globalization;
-using SRG.Core;
 using SRG.Ships;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -96,7 +96,7 @@ namespace SRG.Dialog
             ctx.WriteInt(TOTAL_KEY, res.Total);
             if (!string.IsNullOrEmpty(res.GoodId))
             {
-                var cfg = GalaxyManager.Instance?.Context?.Config;
+                var cfg = GameWorld.Context?.Config;
                 ctx.Data[NAME_KEY] = SRG.Economy.TradeSystem.GetDisplayName(res.GoodId, cfg) ?? res.GoodId;
             }
         }

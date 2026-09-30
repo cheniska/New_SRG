@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.NpcAI.Actions;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -267,7 +267,7 @@ namespace SRG.NpcAI
 
             TradeSystem.RecalculatePrices(planet, cfg);
 
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "BUY",
                 $"planet={EconomicLog.Safe(planet.Name)} good={goodId} amount={take} unit_price={unit} " +
                 $"total={totalCost} money_after={ship.Money} planet_stock_after={entry.Stock}");
@@ -305,7 +305,7 @@ namespace SRG.NpcAI
 
             TradeSystem.RecalculatePrices(planet, cfg);
 
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "SELL",
                 $"planet={EconomicLog.Safe(planet.Name)} good={goodId} amount={weight} " +
                 $"unit_price={sellUnit} buy_was={buyUnit} payout={payout} profit_gross={profit} " +

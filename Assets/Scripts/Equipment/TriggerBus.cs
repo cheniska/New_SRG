@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -32,6 +33,11 @@ namespace SRG.Equipment
             RegisterOp(TriggerOps.PreserveLoot,    ApplyPreserveLoot);
             RegisterOp(TriggerOps.AddWeaponEffect, ApplyAddWeaponEffect);
         }
+
+        /// <summary>Гарантирует, что встроенные операции зарегистрированы (запускает статический
+        /// конструктор). Вызывать до валидации конфигов: иначе EmbedConfigValidator не видит
+        /// встроенных операций и выдаёт ложные «неизвестная операция».</summary>
+        public static void EnsureBuiltinsRegistered() { }
 
         /// <summary>Зарегистрировать обработчик операции. Одновременно фиксирует имя в
         /// <see cref="EmbedRegistry"/> — валидатор перестаёт ругаться.</summary>
@@ -82,7 +88,7 @@ namespace SRG.Equipment
             }
 
             float chance = trig.Chance <= 0f ? 1f : trig.Chance;
-            if (chance < 1f && UnityEngine.Random.value > chance) return;
+            if (chance < 1f && GameRng.Value > chance) return;
 
             if (trig.Effects != null)
                 foreach (var op in trig.Effects)

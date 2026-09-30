@@ -1,7 +1,6 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
-using SRG.Core;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Utils
 {
@@ -26,7 +25,7 @@ namespace SRG.Utils
 
     /// <summary>
     /// Общие функции сэмплирования позиций в мировом пространстве системы. Единая реализация
-    /// «случайная точка около X» — заменяет разбросанные inline <c>Random.insideUnitCircle * r</c>
+    /// «случайная точка около X» — заменяет разбросанные inline <c>GameRng.InsideUnitCircle * r</c>
     /// и <c>(Cos ang, Sin ang) * r</c>. Работает во всех подсистемах (спавн NPC, дроны, контейнеры,
     /// патрули, червоточины и т.д.).
     ///
@@ -42,20 +41,20 @@ namespace SRG.Utils
 
         /// <summary>Случайная точка внутри диска [0, radius] (равномерно).</summary>
         public static Vector2 RandomInCircle(float radius)
-            => radius > 0f ? Random.insideUnitCircle * radius : Vector2.zero;
+            => radius > 0f ? GameRng.InsideUnitCircle * radius : Vector2.zero;
 
         /// <summary>Случайная точка в кольце [rMin, rMax] (в мировых единицах).</summary>
         public static Vector2 RandomInRing(float rMin, float rMax)
         {
-            float r = Random.Range(rMin, rMax);
-            float ang = Random.Range(0f, Mathf.PI * 2f);
+            float r = GameRng.Range(rMin, rMax);
+            float ang = GameRng.Range(0f, Mathf.PI * 2f);
             return new Vector2(Mathf.Cos(ang) * r, Mathf.Sin(ang) * r);
         }
 
         /// <summary>Случайная точка НА окружности радиуса <paramref name="radius"/> (равномерно по углу).</summary>
         public static Vector2 RandomOnCircle(float radius)
         {
-            float ang = Random.Range(0f, Mathf.PI * 2f);
+            float ang = GameRng.Range(0f, Mathf.PI * 2f);
             return new Vector2(Mathf.Cos(ang) * radius, Mathf.Sin(ang) * radius);
         }
 
@@ -88,7 +87,7 @@ namespace SRG.Utils
             if (ship == null) return default;
             var star = ship.CurrentStar;
             if (star == null && !string.IsNullOrEmpty(ship.CurrentStarUid))
-                GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
+                GameWorld.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
             return new Point(star, ClampToSystem(ship.Position + RandomInCircle(radius), star));
         }
 
@@ -132,7 +131,7 @@ namespace SRG.Utils
             if (ship == null) return default;
             var star = ship.CurrentStar;
             if (star == null && !string.IsNullOrEmpty(ship.CurrentStarUid))
-                GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
+                GameWorld.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
             return new Point(star, ship.Position);
         }
 

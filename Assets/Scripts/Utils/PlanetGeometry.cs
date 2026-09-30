@@ -1,6 +1,7 @@
 using UnityEngine;
 using SRG.Galaxy;
-using SRG.Presentation.Common;
+using SRG.Simulation;
+using SRG.Utils;
 
 namespace SRG.Utils
 {
@@ -24,7 +25,7 @@ namespace SRG.Utils
         public static float GetVisualRadius(PlanetData planet)
         {
             if (planet == null) return DefaultVisualRadius;
-            var cfg = GraphicsManager.Instance != null ? GraphicsManager.Instance.GetConfig() : null;
+            var cfg = GameWorld.Context?.Config;
             if (cfg?.Planets?.Sizes != null
                 && !string.IsNullOrEmpty(planet.Size)
                 && cfg.Planets.Sizes.TryGetValue(planet.Size, out var sizeData)
@@ -96,7 +97,7 @@ namespace SRG.Utils
             Vector2 shipPos = ship.Position;
             Vector2 future = OrbitMath.PredictPlanetCatchUpPosition(planet, shipPos, SRUnits.ToWorld(ship.ActualSpeed));
 
-            uint hash = unchecked((uint)((ship.Uid?.GetHashCode() ?? 0) * 31 + (planet.Uid?.GetHashCode() ?? 0)));
+            uint hash = unchecked((uint)(StableHash.Of(ship.Uid) * 31 + StableHash.Of(planet.Uid)));
             float laneWidth = Angles.TwoPi / NpcApproachLanes;
             float bearing = Angles.Toward(OrbitMath.GetPlanetWorldPosition(planet), shipPos);
             int lane = Mathf.RoundToInt(bearing / laneWidth) + (int)(hash % 3) - 1;   // свой или соседний

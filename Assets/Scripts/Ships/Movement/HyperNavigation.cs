@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.NpcAI;
 using SRG.NpcAI.Actions;
+using SRG.Simulation;
 
 namespace SRG.Ships.Movement
 {
@@ -66,7 +66,7 @@ namespace SRG.Ships.Movement
         /// достижимой системы ближе к цели), корабль остаётся при своей обычной жизни.</summary>
         public static NpcAction ActionToward(ShipData ship, StarData currentStar, string destStarUid)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.StarsMap == null) return null;
             if (!galaxy.StarsMap.TryGetValue(destStarUid, out var destStar)) return null;
             var nextHop = PickNextHopToward(ship, currentStar, destStar, galaxy);

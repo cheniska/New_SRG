@@ -8,7 +8,7 @@ namespace SRG.NpcAI.Orders
     public class OrderFollow : NpcOrder
     {
         private readonly string _targetUid;
-        private ShipData _target;           // прямая ссылка, инициализируется лениво
+        [System.NonSerialized] private ShipData _target;           // прямая ссылка, инициализируется лениво
         // FollowDistance вынесен в NpcBalance.FollowDistance.
 
         public OrderFollow(string targetUid) => _targetUid = targetUid;
@@ -33,7 +33,7 @@ namespace SRG.NpcAI.Orders
         /// с разносом вбок, растущим с номером ряда.</summary>
         private static Vector2 FormationSlot(string uid, float leaderHeading)
         {
-            uint hash = unchecked((uint)(uid?.GetHashCode() ?? 0));
+            uint hash = unchecked((uint)StableHash.Of(uid));
             int row  = 1 + (int)(hash % 3);
             int side = ((hash >> 2) & 1) == 0 ? 1 : -1;
             Vector2 back = -Angles.Dir(leaderHeading);

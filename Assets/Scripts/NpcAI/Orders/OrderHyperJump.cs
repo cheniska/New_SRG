@@ -1,8 +1,8 @@
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships.Movement;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Orders
 {
@@ -24,7 +24,7 @@ namespace SRG.NpcAI.Orders
 
             if (!_requested && ship.HyperjumpPhase == HyperjumpPhase.None)
             {
-                var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+                var galaxy = GameWorld.GeneratedGalaxy;
                 if (galaxy != null && galaxy.StarsMap.TryGetValue(_targetStarUid, out var target))
                     _requested = HyperjumpController.RequestJump(ship, target, galaxy);
             }

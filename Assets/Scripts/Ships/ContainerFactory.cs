@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships
 {
@@ -81,12 +80,12 @@ namespace SRG.Ships
 
             // Графика — категорийная (если есть в Defaults) или случайный фолбэк.
             string gfx = null;
-            var equip = GalaxyManager.Instance?.Context?.ItemsConfig;
+            var equip = GameWorld.Context?.ItemsConfig;
             string fromCategory = equip?.GetCategoryCommon(stack.Category)?.ContainerGraphic;
             gfx = NormalizeContainerPath(fromCategory);
             if (gfx == null)
             {
-                int n = Random.Range(1, ContainerVariants + 1);
+                int n = GameRng.Range(1, ContainerVariants + 1);
                 gfx = $"{ContainersBasePath}/Container_{n}";
             }
 
@@ -209,7 +208,7 @@ namespace SRG.Ships
 
             if (item != null && !string.IsNullOrEmpty(item.Category))
             {
-                var ctx = GalaxyManager.Instance?.Context;
+                var ctx = GameWorld.Context;
 
                 // 2. Микромодули не живут в ItemsConfig — свой конфиг с ContainerGraphic.
                 if (item.Category == MicroModuleFactory.CategoryKey)
@@ -226,7 +225,7 @@ namespace SRG.Ships
             }
 
             // 4. Фолбэк — случайный спрайт.
-            int n = Random.Range(1, ContainerVariants + 1);
+            int n = GameRng.Range(1, ContainerVariants + 1);
             return $"{ContainersBasePath}/Container_{n}";
         }
 

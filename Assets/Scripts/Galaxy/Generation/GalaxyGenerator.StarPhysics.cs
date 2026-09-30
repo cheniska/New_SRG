@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -12,12 +12,12 @@ namespace SRG.Galaxy.Generation
         private void FinalizeStarProps(StarData star)
         {
             if (star.Type == GalaxyConstants.VAL_UNKNOWN)
-                star.Type = _ctx.AvailableStarTypes[UnityEngine.Random.Range(0, _ctx.AvailableStarTypes.Count)];
+                star.Type = _ctx.AvailableStarTypes[GameRng.Range(0, _ctx.AvailableStarTypes.Count)];
             if (star.Color == GalaxyConstants.VAL_UNKNOWN) GenerationHelpers.ApplyWeightedStarColor(star, _ctx.Config);
             if (star.GraphVar == 0) star.GraphVar = GenerationHelpers.GetRandomColorVariant(star.Color, _ctx.Config);
 
             star.MapIcon = GenerationHelpers.BuildStarMapIcon(star.Color, star.GraphVar);
-            star.BackgroundSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            star.BackgroundSeed = GameRng.Range(int.MinValue, int.MaxValue);
 
             StarTypeData typeData = null;
             float hzSizeMult = 1f;
@@ -67,14 +67,14 @@ namespace SRG.Galaxy.Generation
         {
             var pc = _ctx.Config?.Planets;
             if (pc == null || pc.HabitableSlotChance <= 0f || star.Planets == null || star.Planets.Count == 0) return;
-            if (UnityEngine.Random.value >= pc.HabitableSlotChance) return;
+            if (GameRng.Value >= pc.HabitableSlotChance) return;
 
             float lStar = Mathf.Pow(star.MassSolar, 1.267f) * star.RadiationMult;
             if (lStar <= 0f) return;
             float tMin = pc.HabitableSlotTemp?.Length > 0 ? pc.HabitableSlotTemp[0] : 250f;
             float tMax = pc.HabitableSlotTemp?.Length > 1 ? pc.HabitableSlotTemp[1] : 315f;
             // Целевая равновесная температура: минус типичный парниковый вклад (~8 K при ~1 атм).
-            float tEq = Mathf.Max(50f, UnityEngine.Random.Range(tMin, tMax) - 8f);
+            float tEq = Mathf.Max(50f, GameRng.Range(tMin, tMax) - 8f);
             float target = StellarD0 * Mathf.Pow(278f * Mathf.Pow(lStar, 0.25f) / tEq, 2f);
 
             PlanetData chosen = null;
@@ -138,7 +138,7 @@ namespace SRG.Galaxy.Generation
                 float outgas   = 0.3f + 1.4f * geo;
                 float retained = 0.6f + 0.4f * fieldShield;
                 float pressure = Mathf.Pow(gRatio, 1.3f) * outgas * retained / Mathf.Sqrt(Mathf.Max(planet.SolarFlux, 0.05f));
-                planet.AtmPressure = Mathf.Min(90f, pressure * Mathf.Pow(10f, UnityEngine.Random.Range(-0.45f, 0.45f)));
+                planet.AtmPressure = Mathf.Min(90f, pressure * Mathf.Pow(10f, GameRng.Range(-0.45f, 0.45f)));
             }
 
             if (planet.AtmPressureFixed.HasValue)
@@ -151,7 +151,7 @@ namespace SRG.Galaxy.Generation
                 planet.WaterAbundance = 0f;
             else
             {
-                float volatiles = Mathf.Pow(UnityEngine.Random.value, 0.8f);
+                float volatiles = Mathf.Pow(GameRng.Value, 0.8f);
                 float retention = Mathf.Clamp01(gRatio / 0.5f) * (0.55f + 0.45f * fieldShield);
                 float heatLoss  = 1f + Mathf.Max(0f, planet.SolarFlux - 1.25f) * 1.2f;
                 planet.WaterAbundance = Mathf.Clamp01(volatiles * retention / heatLoss);
@@ -172,8 +172,8 @@ namespace SRG.Galaxy.Generation
                 bool liquidWater = planet.Density >= 2f && planet.WaterAbundance >= 0.08f
                                    && planet.SurfaceTemp >= 255f && planet.SurfaceTemp <= 335f
                                    && planet.AtmPressure >= 0.2f;
-                bool biosphere = liquidWater && UnityEngine.Random.value < Mathf.Min(0.85f, 0.35f + planet.WaterAbundance);
-                planet.OxygenPercent = biosphere ? UnityEngine.Random.Range(12f, 30f) : UnityEngine.Random.Range(0f, 1.5f);
+                bool biosphere = liquidWater && GameRng.Value < Mathf.Min(0.85f, 0.35f + planet.WaterAbundance);
+                planet.OxygenPercent = biosphere ? GameRng.Range(12f, 30f) : GameRng.Range(0f, 1.5f);
             }
 
             if (planet.SurfaceTempFixed.HasValue)

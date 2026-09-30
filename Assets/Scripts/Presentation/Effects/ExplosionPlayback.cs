@@ -1,8 +1,8 @@
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Presentation.Common;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Presentation.Effects
 {
@@ -57,7 +57,7 @@ namespace SRG.Presentation.Effects
 
         private void Begin(string explosionPath)
         {
-            var settings = GalaxyManager.Instance?.Settings;
+            var settings = GameWorld.Settings;
             string path = !string.IsNullOrEmpty(explosionPath)
                 ? explosionPath
                 : (settings != null && !string.IsNullOrEmpty(settings.ExplosionSpritePath))

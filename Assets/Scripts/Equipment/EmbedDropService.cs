@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -31,14 +31,14 @@ namespace SRG.Equipment
             if (victim == null || victim.IsItem || victim.IsPlayer) return;
             if (cause == ShipDeathBus.CAUSE_COLLISION || cause == ShipDeathBus.CAUSE_ASTEROID) return;
 
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             var itemsConfig = ctx?.ItemsConfig;
             if (itemsConfig == null) return;
 
             var star = victim.CurrentStar;
             if (star == null) return;
 
-            int gtl = GalaxyManager.Instance?.GeneratedGalaxy?.GtuLevel ?? 5;
+            int gtl = GameWorld.GeneratedGalaxy?.GtuLevel ?? 5;
 
             // Каждый ММ отдельно катит свой шанс (side + race); прошедшие попадают в пул,
             // из которого берём один — взвешенно по близости приоритета к «желательному».
@@ -64,7 +64,7 @@ namespace SRG.Equipment
                 float sideCh = LookupChance(drop.SideChance, victim.Owner);
                 float raceCh = LookupChance(drop.RaceChance, victim.Race);
                 float chance = Mathf.Clamp01(sideCh + raceCh);
-                if (chance <= 0f || Random.value > chance) continue;
+                if (chance <= 0f || GameRng.Value > chance) continue;
 
                 float weight = PriorityWeight(cfg.Embed?.Priority ?? 0, preferred);
                 if (weight <= 0f) continue;
@@ -74,7 +74,7 @@ namespace SRG.Equipment
             if (pool == null) return;
 
             // Один предмет на смерть — чтобы один NPC не ронял сразу несколько ММ.
-            float roll = Random.value * totalWeight;
+            float roll = GameRng.Value * totalWeight;
             foreach (var (id, weight) in pool)
             {
                 roll -= weight;

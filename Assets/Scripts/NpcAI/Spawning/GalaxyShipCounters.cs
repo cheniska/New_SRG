@@ -44,6 +44,10 @@ namespace SRG.NpcAI.Spawning
         /// <summary>(sectorUid, shipTypeId) → число живых кораблей данного типа в секторе.</summary>
         public readonly Dictionary<(string sectorUid, string shipTypeId), int> ShipsBySectorAndType = new();
 
+        /// <summary>starUid → sectorUid (звёзды не меняют сектор). Строится в RecalculateFromScratch;
+        /// нужен, чтобы инкрементально вести <see cref="ShipsBySectorAndType"/> при спавне/смерти/миграции.</summary>
+        private readonly Dictionary<string, string> _sectorByStar = new();
+
         // ──────────────────────────────────────────
         // Материализованные списки — для ShipQuery / горячих сканеров NpcBrain / ActionEscort.
         // Ключ = (starUid, ownerId). Обновляется теми же хуками OnShipSpawned/OnShipDied и
@@ -117,7 +121,13 @@ namespace SRG.NpcAI.Spawning
                 else           RemoveFromStarOwnerList(ship, ship.CurrentStarUid, side);
             }
             if (!string.IsNullOrEmpty(ship.HomePlanetUid)) Inc(ShipsByPlanetAndType, (ship.HomePlanetUid, type), delta);
-            // sector inferred при пересчёте; для inc нужен SectorUid у корабля либо lookup
+            IncSector(ship.CurrentStarUid, type, delta);
+        }
+
+        private void IncSector(string starUid, string type, int delta)
+        {
+            if (!string.IsNullOrEmpty(starUid) && _sectorByStar.TryGetValue(starUid, out var sectorUid))
+                Inc(ShipsBySectorAndType, (sectorUid, type), delta);
         }
 
         /// <summary>Обновление материализованных списков при миграции корабля между звёздами
@@ -134,12 +144,14 @@ namespace SRG.NpcAI.Spawning
                 Inc(ShipsByStarAndType, (oldStarUid, type), -1);
                 Inc(ShipsByStarAndSide, (oldStarUid, side), -1);
                 RemoveFromStarOwnerList(ship, oldStarUid, side);
+                IncSector(oldStarUid, type, -1);
             }
             if (!string.IsNullOrEmpty(newStarUid))
             {
                 Inc(ShipsByStarAndType, (newStarUid, type), +1);
                 Inc(ShipsByStarAndSide, (newStarUid, side), +1);
                 AddToStarOwnerList(ship, newStarUid, side);
+                IncSector(newStarUid, type, +1);
             }
         }
 
@@ -178,7 +190,7 @@ namespace SRG.NpcAI.Spawning
         {
             ShipsByType.Clear(); ShipsBySide.Clear(); ShipsByRace.Clear();
             ShipsByStarAndType.Clear(); ShipsByStarAndSide.Clear();
-            ShipsByPlanetAndType.Clear(); ShipsBySectorAndType.Clear();
+            ShipsByPlanetAndType.Clear(); ShipsBySectorAndType.Clear(); _sectorByStar.Clear();
             ShipsAtStarByOwnerList.Clear(); OwnersAtStar.Clear();
             SystemsBySide.Clear(); SystemsBySideAndRace.Clear(); SystemsByRace.Clear();
             InhabitedSystemsCount = 0; NormalSystemsCount = 0; AverageCrimeRating = 0f;
@@ -196,6 +208,7 @@ namespace SRG.NpcAI.Spawning
                 foreach (var star in sector.Stars)
                 {
                     if (star == null) continue;
+                    if (star.Uid != null) _sectorByStar[star.Uid] = sectorUid;
 
                     // Системные счётчики
                     string starOwner = star.Owner ?? "None";

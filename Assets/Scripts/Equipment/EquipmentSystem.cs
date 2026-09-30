@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -305,7 +305,7 @@ namespace SRG.Equipment
         private static ShipData FindShipByUid(string uid, string preferStarUid)
         {
             if (string.IsNullOrEmpty(uid)) return null;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.StarsMap == null) return null;
 
             if (!string.IsNullOrEmpty(preferStarUid)

@@ -1,11 +1,11 @@
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -163,7 +163,7 @@ namespace SRG.Equipment
             if (ship == null)                   return Fail("Ship == null.");
             if (string.IsNullOrEmpty(spec))     return Fail("Пустой id.");
 
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             if (ctx == null)                    return Fail("GalaxyContext не готов.");
 
             // Явные псевдо-категории стеков.

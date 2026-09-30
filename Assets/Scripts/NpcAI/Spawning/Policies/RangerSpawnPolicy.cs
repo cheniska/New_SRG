@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Spawning.Policies
 {
@@ -37,7 +37,7 @@ namespace SRG.NpcAI.Spawning.Policies
         {
             var candidates = CollectCandidates(ctx);
             if (candidates.Count == 0) return;
-            var (planet, star) = candidates[Random.Range(0, candidates.Count)];
+            var (planet, star) = candidates[GameRng.Range(0, candidates.Count)];
             SpawnSystem.SpawnShipAtPlanet(ShipTypeId, planet.Owner, planet.Race, planet, star, ctx.Gen,
                 reason: $"target={target} count={count}");
         }

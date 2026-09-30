@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -50,7 +50,7 @@ namespace SRG.Equipment
             if (victim == null || !victim.IsItem) return;
             if (victim.Inventory?.Items == null || victim.Inventory.Items.Count == 0) return;
 
-            var eq = GalaxyManager.Instance?.Context?.ItemsConfig;
+            var eq = GameWorld.Context?.ItemsConfig;
             if (eq == null) return;
 
             for (int i = 0; i < victim.Inventory.Items.Count; i++)

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
-using SRG.UI.Screens;
+using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Science
 {
@@ -43,7 +43,7 @@ namespace SRG.Science
                 foreach (var planet in star.Planets)
                 {
                     if (!IsInhabited(planet)) continue;
-                    int offset = planet.Uid != null ? (planet.Uid.GetHashCode() & 0x7fffffff) % stride : 0;
+                    int offset = planet.Uid != null ? (StableHash.Of(planet.Uid) & 0x7fffffff) % stride : 0;
                     if ((turn - offset) % stride != 0) continue;
                     _diagPlanetsTicked++;
                     TickPlanet(planet, galaxy, ctx.Config);
@@ -94,7 +94,7 @@ namespace SRG.Science
                     && evtCfg.ChainOnExpire != null
                     && !string.IsNullOrEmpty(evtCfg.ChainOnExpire.EventId)
                     && evtCfg.ChainOnExpire.Chance > 0f
-                    && Random.value <= evtCfg.ChainOnExpire.Chance)
+                    && GameRng.Value <= evtCfg.ChainOnExpire.Chance)
                 {
                     string nextId = evtCfg.ChainOnExpire.EventId;
                     if (cfg.Events.TryGetValue(nextId, out var nextCfg)
@@ -131,7 +131,7 @@ namespace SRG.Science
                 string resolved = evtCfg.NewsMessage
                     .Replace("{planet}", planetName)
                     .Replace("{star}",   starName);
-                GameConsoleController.AddEntry($"[Событие] {planetName}: {resolved}");
+                GameLog.Add($"[Событие] {planetName}: {resolved}");
                 string ctrl = OccupationService.GetControllingOwner(planet);
                 GalaxyNewsService.PostForSide(GalaxyNewsService.CAT_PLANET, resolved, ctrl);
             }
@@ -168,7 +168,7 @@ namespace SRG.Science
                 }
 
                 case "AddNotification":
-                    GameConsoleController.AddEntry($"[Событие] {planet.Name}: {action.Message ?? "-"}");
+                    GameLog.Add($"[Событие] {planet.Name}: {action.Message ?? "-"}");
                     break;
             }
         }
@@ -255,7 +255,7 @@ namespace SRG.Science
                 case "RandomChance":
                 {
                     float p = t.ChancePerDay * chanceMultiplier;
-                    return p > 0f && Random.value <= p;
+                    return p > 0f && GameRng.Value <= p;
                 }
             }
             return false;

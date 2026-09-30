@@ -1,6 +1,4 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
@@ -8,6 +6,7 @@ using SRG.NpcAI.Orders;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -102,7 +101,7 @@ namespace SRG.NpcAI.Actions
 
         private static bool IsDrone(ShipData ship)
         {
-            var types = GalaxyManager.Instance?.Context?.Config?.Ships?.ShipTypes;
+            var types = GameWorld.Context?.Config?.Ships?.ShipTypes;
             return types != null
                 && !string.IsNullOrEmpty(ship.ShipTypeId)
                 && types.TryGetValue(ship.ShipTypeId, out var t)

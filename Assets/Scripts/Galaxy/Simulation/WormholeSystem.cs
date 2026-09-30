@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Simulation
 {
@@ -18,7 +17,7 @@ namespace SRG.Galaxy.Simulation
         public static void DailyTick(GalaxyData galaxy, GalaxyGenerationContext ctx)
         {
             if (galaxy == null) return;
-            var settings = GalaxyManager.Instance?.Settings;
+            var settings = GameWorld.Settings;
             if (settings == null) return;
 
             TickExisting(galaxy, settings);
@@ -100,7 +99,7 @@ namespace SRG.Galaxy.Simulation
             if (WormholeService.CountActive(galaxy) / 2 >= settings.Wormhole_MaxActive) return;
 
             // 1/interval вероятность в день = средний интервал ~interval ходов между спавнами.
-            if (Random.Range(0, interval) != 0) return;
+            if (GameRng.Range(0, interval) != 0) return;
 
             WormholeService.Spawn();
         }

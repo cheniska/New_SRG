@@ -1,9 +1,9 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships.Services;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Orders
 {
@@ -47,7 +47,7 @@ namespace SRG.NpcAI.Orders
 
             // Фаза 2 (финализация): PrepareForTurn прошлого хода поставил Fading,
             // либо мы прибыли в чужой звезде без визуального слоя.
-            bool playerStar = star == GalaxyManager.Instance?.CurrentStar;
+            bool playerStar = star == GameWorld.CurrentStar;
             bool offscreenArrival = !playerStar && site.IsWithinLandingRange(ship.Position);
 
             if (ship.LandingPhase == LandingPhase.Fading || offscreenArrival)

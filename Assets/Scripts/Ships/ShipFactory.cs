@@ -1,11 +1,10 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using System.Linq;
 using SRG.Config;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
-using SRG.Presentation.Common;
+using SRG.Simulation;
 
 namespace SRG.Ships
 {
@@ -95,7 +94,7 @@ namespace SRG.Ships
         {
             if (string.IsNullOrEmpty(spritePath)) return 1.0f;
 
-            var frames = GraphicsManager.Instance?.GetSpriteSheet(spritePath);
+            var frames = GameWorld.Graphics?.GetSpriteSheet(spritePath);
             Sprite first = frames != null && frames.Length > 0 ? frames[0] : null;
             if (first == null) return 1.0f;
 
@@ -111,13 +110,13 @@ namespace SRG.Ships
             if (!string.IsNullOrEmpty(ownerId)
                 && ownerLineups.TryGetValue(ownerId, out var lineup)
                 && lineup.Count > 0)
-                return lineup[UnityEngine.Random.Range(0, lineup.Count)];
+                return lineup[GameRng.Range(0, lineup.Count)];
 
             if (availableShipTypeKeys != null && availableShipTypeKeys.Count > 0)
-                return availableShipTypeKeys[UnityEngine.Random.Range(0, availableShipTypeKeys.Count)];
+                return availableShipTypeKeys[GameRng.Range(0, availableShipTypeKeys.Count)];
 
             int count = availableShipTypes.Count;
-            return count > 0 ? availableShipTypes.Keys.ElementAt(UnityEngine.Random.Range(0, count)) : null;
+            return count > 0 ? availableShipTypes.Keys.ElementAt(GameRng.Range(0, count)) : null;
         }
     }
 }

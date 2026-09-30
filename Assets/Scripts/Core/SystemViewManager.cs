@@ -12,16 +12,17 @@ using SRG.Presentation.Effects;
 using SRG.Presentation.Map;
 using SRG.Presentation.World;
 using SRG.Ships;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Utils;
 using SRG.UI.Common;
 using SRG.UI.HUD;
 using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Core
 {
-    public class SystemViewManager : MonoBehaviour
+    public class SystemViewManager : MonoBehaviour, IViewHost, ISystemViewQuery
     {
         public static SystemViewManager Instance { get; private set; }
 
@@ -64,6 +65,8 @@ namespace SRG.Core
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+            GameWorld.Attach(this);
+            PresentationContext.SystemView = this;
 
             // Инициализируем сервисные компоненты (если не добавлены в инспекторе)
             if (GetComponent<ObjectInfoPopup>() == null)
@@ -195,9 +198,7 @@ namespace SRG.Core
                 else
                 {
                     obj.name = $"Ship_{ship.Uid}";
-                    NpcSpawner.Attach(obj, ship, star);
-                    if (obj.TryGetComponent<ClickableInfo>(out var ci))
-                        ci.NpcController = obj.GetComponent<NpcController>();
+                    NpcController.Attach(obj, ship, star);
                 }
             }
         }
@@ -787,6 +788,7 @@ namespace SRG.Core
         private void OnDestroy()
         {
             if (_missileDot != null) { Destroy(_missileDot.texture); Destroy(_missileDot); }
+            if (Instance == this) { GameWorld.Detach(this); Instance = null; }
         }
 
         private void SpawnMissiles(StarData star)
@@ -910,9 +912,7 @@ namespace SRG.Core
 
             var obj = SpawnShip(ship);
             obj.name = $"Ship_{ship.Uid}";
-            NpcSpawner.Attach(obj, ship, star);
-            if (obj.TryGetComponent<ClickableInfo>(out var ci))
-                ci.NpcController = obj.GetComponent<NpcController>();
+            NpcController.Attach(obj, ship, star);
         }
 
         /// <summary>Возвращает менеджер порталов (создаётся лениво при первом обращении).</summary>

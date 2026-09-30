@@ -1,5 +1,6 @@
 using UnityEngine;
 using SRG.Ships;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -38,7 +39,7 @@ namespace SRG.NpcAI
                     // Совместимо с прежним RollObeyOrder.
                     if (discipline >= 60f) return true;
                     float chance = Mathf.Clamp01(discipline / 100f);
-                    return Random.value < chance;
+                    return GameRng.Value < chance;
 
                 default:
                     return false;

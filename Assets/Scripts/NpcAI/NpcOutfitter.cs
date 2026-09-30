@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.NpcAI.Actions;
 using SRG.Ships.Services;
-using SRG.UI.Screens;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -144,7 +143,10 @@ namespace SRG.NpcAI
                     if (candScore <= currentScore) continue;
 
                     float delta = candScore - currentScore;
-                    if (!haveBest || delta > best.Delta)
+                    // При равной выгоде — стабильный выбор по UID/слоту: порядок обхода словарей
+                    // магазина и слотов не переживает сохранение/загрузку.
+                    if (!haveBest || delta > best.Delta
+                        || (delta == best.Delta && IsTieBreakBefore(candidate.Uid, slot.slotKey, best)))
                     {
                         best = new Upgrade(slot.slotKey, slot.category, candidate.Uid, currentScore, candScore, delta);
                         haveBest = true;
@@ -187,6 +189,12 @@ namespace SRG.NpcAI
             }
         }
 
+        private static bool IsTieBreakBefore(string candidateUid, string slotKey, Upgrade best)
+        {
+            int c = string.CompareOrdinal(candidateUid, best.CandidateUid);
+            return c != 0 ? c < 0 : string.CompareOrdinal(slotKey, best.SlotKey) < 0;
+        }
+
         private static bool PerformUpgrade(
             ShipData ship, PlanetData planet, GalaxyGenerationContext ctx, Upgrade up)
         {
@@ -219,7 +227,7 @@ namespace SRG.NpcAI
             if (removed != null)
                 SellItemToShop(ship, planet, removed);
 
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "UPGRADE",
                 $"planet={EconomicLog.Safe(planet.Name)} slot={up.SlotKey} category={up.Category} " +
                 $"score={up.FromScore:F1}->{up.ToScore:F1} paid={candidate.Price} money_after={ship.Money}");

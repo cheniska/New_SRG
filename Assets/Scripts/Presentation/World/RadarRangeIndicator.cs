@@ -1,11 +1,11 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Presentation.Map;
 using SRG.Ships.Movement;
-using SRG.Ships.Player;
 using SRG.Utils;
+using SRG.Simulation;
+using SRG.Presentation.Common;
 
 namespace SRG.Presentation.World
 {
@@ -55,13 +55,13 @@ namespace SRG.Presentation.World
 
         private void Update()
         {
-            if (GalaxyManager.Instance?.Phase == TurnPhase.Simulation)
+            if (GameWorld.Phase == TurnPhase.Simulation)
             {
                 SetVisible(false);
                 return;
             }
 
-            var ship = PlayerShip.Instance?.ShipData;
+            var ship = PresentationContext.Player?.ShipData;
             if (ship == null) { SetVisible(false); return; }
 
             float radarRange = EquipmentSystem.GetRadarRange(ship);
@@ -80,7 +80,7 @@ namespace SRG.Presentation.World
                 return;
             }
 
-            Vector2 center = PlayerShip.Instance.transform.position;
+            Vector2 center = PresentationContext.Player.Transform.position;
             ShowRing(center, radarRange);
         }
 

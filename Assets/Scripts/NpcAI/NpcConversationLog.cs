@@ -1,6 +1,7 @@
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -29,7 +30,7 @@ namespace SRG.NpcAI
         {
             if (initiator == null || recipient == null) return;
             if (initiator.IsPlayer || recipient.IsPlayer) return;
-            var playerStar = SRG.Core.GalaxyManager.Instance?.CurrentStar;
+            var playerStar = GameWorld.CurrentStar;
             if (playerStar == null) return;
             if (initiator.CurrentStarUid != playerStar.Uid
                 && recipient.CurrentStarUid != playerStar.Uid) return;

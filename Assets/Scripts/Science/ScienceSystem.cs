@@ -9,7 +9,7 @@ using SRG.Galaxy.Politics;
 namespace SRG.Science
 {
     /// <summary>
-    /// Симуляция научного развития галактики (диздок: docs/planetary_science_system.md).
+    /// Симуляция научного развития галактики (диздок: docs/design/planetary_science_system.md).
     ///
     /// Каждый ход обитаемые планеты копят поинты по 7 категориям и социальный капитал;
     /// раз в DistributeStrideTurns ходов поинты распределяются по активным изобретениям,

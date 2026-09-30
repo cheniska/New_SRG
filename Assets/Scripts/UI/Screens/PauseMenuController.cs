@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using SRG.Config;
 using SRG.Core;
-using SRG.Ships.Player;
+using SRG.Controllers;
 
 namespace SRG.UI.Screens
 {

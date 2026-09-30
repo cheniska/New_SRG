@@ -4,8 +4,9 @@ using System.Text;
 using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.UI.Screens;
+using SRG.Simulation;
 
 namespace SRG.UI.HUD
 {
@@ -37,8 +38,8 @@ namespace SRG.UI.HUD
             _panel.SetActive(false);
         }
 
-        private void OnEnable()  => GalaxyManager.OnTurnCalculate += OnTurnCalculate;
-        private void OnDisable() => GalaxyManager.OnTurnCalculate -= OnTurnCalculate;
+        private void OnEnable()  => GameWorld.OnTurnCalculate += OnTurnCalculate;
+        private void OnDisable() => GameWorld.OnTurnCalculate -= OnTurnCalculate;
 
         private void OnTurnCalculate(TurnAnimationData _)
         {

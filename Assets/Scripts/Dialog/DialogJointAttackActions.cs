@@ -1,5 +1,4 @@
 using System.Text;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships.Services;
 

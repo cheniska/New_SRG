@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
@@ -9,6 +8,7 @@ using SRG.Galaxy.Politics;
 using SRG.NpcAI.Orders;
 using SRG.Ships.Services;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -191,7 +191,7 @@ namespace SRG.NpcAI.Actions
 
             if (totalIncome > 0)
             {
-                int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+                int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
                 EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "SELL_SURPLUS",
                     $"planet={EconomicLog.Safe(planet.Name)} total={totalIncome} money_after={ship.Money}");
             }

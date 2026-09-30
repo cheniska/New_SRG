@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Economy;
-using SRG.UI.Screens;
+using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Politics
 {
@@ -35,7 +35,7 @@ namespace SRG.Galaxy.Politics
                 var keys = new List<string>(govs.Keys);
                 keys.Remove(oldGov);
                 if (keys.Count == 0) return false;
-                newGov = keys[Random.Range(0, keys.Count)];
+                newGov = keys[GameRng.Range(0, keys.Count)];
             }
 
             if (string.IsNullOrEmpty(newGov) || newGov == oldGov) return false;
@@ -45,7 +45,7 @@ namespace SRG.Galaxy.Politics
 
             EconomicLog.Custom(turn, "EVENT", EconomicLog.Safe(planet.Name), "GOVERNMENT_CHANGED",
                 $"from={oldGov} to={newGov} mode={(weighted ? "Weighted" : "Random")}");
-            GameConsoleController.AddEntry($"[Власть] {planet.Name}: новый строй — {newGov} (был {oldGov}).");
+            GameLog.Add($"[Власть] {planet.Name}: новый строй — {newGov} (был {oldGov}).");
 
             string starName = planet.ParentStar?.Name ?? "?";
             string ctrl = OccupationService.GetControllingOwner(planet);
@@ -85,7 +85,7 @@ namespace SRG.Galaxy.Politics
             }
             if (total <= 0f) return null;
 
-            float roll = Random.value * total;
+            float roll = GameRng.Value * total;
             float cum = 0f;
             foreach (var kv in weights)
             {

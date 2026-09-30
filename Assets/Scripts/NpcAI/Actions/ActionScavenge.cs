@@ -1,9 +1,9 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships.Movement;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -16,7 +16,7 @@ namespace SRG.NpcAI.Actions
         {
             if (_targetPos == null || (ship.Position - _targetPos.Value).magnitude < 0.5f)
             {
-                float r = Positions.SystemRadius(star) * Random.Range(0.2f, 0.7f);
+                float r = Positions.SystemRadius(star) * GameRng.Range(0.2f, 0.7f);
                 _targetPos = Positions.RandomInCircle(r);
                 _idleTurns = 0;
             }

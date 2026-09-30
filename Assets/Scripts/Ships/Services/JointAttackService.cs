@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI;
 using SRG.NpcAI.Orders;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -117,7 +117,7 @@ namespace SRG.Ships.Services
                 // Иначе — сделаем цель врагом союзника: понижаем отношения до Hostile,
                 // а свежая «обида» через LastAttackerUid подтолкнёт NpcBrain выбрать её как цель.
                 Relations.LowerToLevel(ally, target, RelationLevel.Hostile);
-                int now = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+                int now = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
                 ally.LastAttackerUid = target.Uid;
                 ally.LastAttackerTurn = now;
             }
@@ -152,6 +152,6 @@ namespace SRG.Ships.Services
         }
 
         private static DialogTuning GetTuning() =>
-            GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning;
+            GameWorld.Context?.Config?.Dialogs?.Tuning;
     }
 }

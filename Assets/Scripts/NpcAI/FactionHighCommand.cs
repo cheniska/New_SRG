@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.Ships;
 using SRG.Ships.Movement;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -86,7 +86,7 @@ namespace SRG.NpcAI
             if (galaxy == null) return;
             if (galaxy.CurrentTurn < NextEvaluationTurn) return;
             Evaluate(galaxy);
-            NextEvaluationTurn = galaxy.CurrentTurn + Random.Range(EvaluationIntervalMin, EvaluationIntervalMax + 1);
+            NextEvaluationTurn = galaxy.CurrentTurn + GameRng.Range(EvaluationIntervalMin, EvaluationIntervalMax + 1);
         }
 
         private void Evaluate(GalaxyData galaxy)

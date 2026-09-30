@@ -1,8 +1,8 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.NpcAI.Orders;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -23,7 +23,7 @@ namespace SRG.NpcAI.Actions
 
             if (!_mining)
             {
-                Vector2 asteroidPos = FindNearestAsteroid(star) ?? (_zone + Random.insideUnitCircle * 1f);
+                Vector2 asteroidPos = FindNearestAsteroid(star) ?? (_zone + GameRng.InsideUnitCircle * 1f);
                 if (_moveOrder == null) _moveOrder = new OrderMoveTo(asteroidPos);
                 bool arrived = _moveOrder.Execute(ship, star, ctx);
                 if (arrived) { _mining = true; _mineIdle = new OrderIdle(NpcBalance.MineTurns); }

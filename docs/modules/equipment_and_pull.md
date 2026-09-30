@@ -3,7 +3,7 @@
 Модули: `Equipment/EquipmentSystem.cs`, `Equipment/InventoryService.cs`, `Equipment/ItemFactory.cs`,
 `Equipment/EquipmentTemplate.cs`, `Equipment/EquipmentSlotKeys.cs`, `Equipment/ItemsConfigModels.cs`,
 `Systems/ShopService.cs`, `Systems/PickupSystem.cs`, `Systems/TowSystem.cs`, `Systems/BoardingSystem.cs`,
-`Systems/HullAnchorMath.cs`, `Systems/PullKind.cs`, `Systems/HyperjumpController.cs`,
+`Combat/HullAnchorMath.cs`, `Combat/PullKind.cs`, `Ships/Movement/HyperjumpController.cs`,
 `Systems/FuelService.cs`, `Ships/ShipFactory.cs`, `Ships/ContainerFactory.cs`,
 `Ships/CargoUtils.cs`.
 
@@ -246,7 +246,7 @@ PickupSystem
    ├─► EquipmentSystem.FindEquipmentByCategory (CargoGrabber)
    ├─► ContainerFactory.UnloadContainerInto
    ├─► ShipData.FreezeRoute
-   └─► GameConsoleController.AddEntry
+   └─► GameLog.Add
 
 TowSystem
    ├─► EquipmentSystem.FindEquipmentByCategory (TowingRig)
@@ -496,7 +496,7 @@ return true
 
 ## Внутренняя структура данных
 
-### `ItemInstance` (в `ItemFactory` / `GalaxyDataModels`)
+### `ItemInstance` (в `ItemFactory` / `Galaxy/Models/ItemInstance.cs`)
 
 ```
 Uid : string

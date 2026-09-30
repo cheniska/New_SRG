@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -164,7 +164,7 @@ namespace SRG.Ships.Services
             hirer.Money -= result.Fee;
             target.Money += result.Fee;
 
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             int endTurn = typeCfg.ContractTermYears > 0
                 ? currentTurn + typeCfg.ContractTermYears * Mathf.Max(1, cfg.Global.TurnsPerYear)
                 : -1;
@@ -216,7 +216,7 @@ namespace SRG.Ships.Services
             {
                 // В пулах игрок адресуется как <Player>, лидер партнёра — это он и есть.
                 line = line.Replace("<Player>", leaderName).Replace("<Ranger>", leaderName);
-                SRG.UI.Screens.GameConsoleController.AddEntry($"[Связь] {followerName}: {line}");
+                GameLog.Add($"[Связь] {followerName}: {line}");
             }
         }
 
@@ -324,7 +324,7 @@ namespace SRG.Ships.Services
         public static ShipData FindShipInGalaxy(string uid)
         {
             if (string.IsNullOrEmpty(uid)) return null;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy == null) return null;
             foreach (var sector in galaxy.Sectors)
                 foreach (var star in sector.Stars)
@@ -334,17 +334,17 @@ namespace SRG.Ships.Services
         }
 
         private static PartnersConfig GetConfig()
-            => GalaxyManager.Instance?.Context?.Config?.Partners;
+            => GameWorld.Context?.Config?.Partners;
 
         private static int GetLeadership(ShipData ship)
         {
-            var cfg = GalaxyManager.Instance?.Context?.Config?.Skills;
+            var cfg = GameWorld.Context?.Config?.Skills;
             return ship?.Skills?.GetEffective(SkillType.Leadership, cfg) ?? 0;
         }
 
         private static int GetCharm(ShipData ship)
         {
-            var cfg = GalaxyManager.Instance?.Context?.Config?.Skills;
+            var cfg = GameWorld.Context?.Config?.Skills;
             return ship?.Skills?.GetEffective(SkillType.Charm, cfg) ?? 0;
         }
     }

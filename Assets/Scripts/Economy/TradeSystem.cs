@@ -1,9 +1,8 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Economy
 {
@@ -34,7 +33,7 @@ namespace SRG.Economy
         /// <summary>Цена покупки (игрок платит носителю). Пересчитывается по текущему стоку.</summary>
         public static int CalculateBuyPrice(ILandingSite site, string goodId, int currentStock, GalaxyConfig cfg)
         {
-            float price = ComputeBasePrice(site, goodId, currentStock, cfg, InflationSystem.GetFactor(GalaxyManager.Instance?.GeneratedGalaxy));
+            float price = ComputeBasePrice(site, goodId, currentStock, cfg, InflationSystem.GetFactor(GameWorld.GeneratedGalaxy));
             if (!IsLegal(site, goodId, cfg))
                 price *= cfg.Trade?.ContrabandPriceMultiplier ?? 3f;
             return Mathf.Max(1, Mathf.RoundToInt(price));
@@ -43,7 +42,7 @@ namespace SRG.Economy
         /// <summary>Цена продажи (носитель платит игроку). ~70% от цены покупки.</summary>
         public static int CalculateSellPrice(ILandingSite site, string goodId, int currentStock, GalaxyConfig cfg)
         {
-            float price = ComputeBasePrice(site, goodId, currentStock, cfg, InflationSystem.GetFactor(GalaxyManager.Instance?.GeneratedGalaxy)) * 0.7f;
+            float price = ComputeBasePrice(site, goodId, currentStock, cfg, InflationSystem.GetFactor(GameWorld.GeneratedGalaxy)) * 0.7f;
             if (!IsLegal(site, goodId, cfg))
                 price *= cfg.Trade?.ContrabandPriceMultiplier ?? 3f;
             return Mathf.Max(1, Mathf.RoundToInt(price));
@@ -106,7 +105,7 @@ namespace SRG.Economy
             {
                 string goodId = kv.Key;
                 int baseStock = GetBaseStock(site, goodId, cfg);
-                int stock = Random.Range(
+                int stock = GameRng.Range(
                     Mathf.RoundToInt(baseStock * 0.5f),
                     Mathf.RoundToInt(baseStock * 1.5f) + 1);
 
@@ -125,7 +124,7 @@ namespace SRG.Economy
         public static void RecalculatePrices(ILandingSite site, GalaxyConfig cfg)
         {
             if (cfg?.Goods == null || site?.Settlement?.Shop?.Goods == null) return;
-            float inflation = InflationSystem.GetFactor(GalaxyManager.Instance?.GeneratedGalaxy);
+            float inflation = InflationSystem.GetFactor(GameWorld.GeneratedGalaxy);
             float contrabandMul = cfg.Trade?.ContrabandPriceMultiplier ?? 3f;
             foreach (var kv in site.Settlement.Shop.Goods)
             {
@@ -169,7 +168,7 @@ namespace SRG.Economy
 
             float popScale = ComputePopulationScale(planet.Settlement.Population);
             float maxMul = cfg.Trade?.MaxStockMultiplier ?? 5f;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             int turn = galaxy?.CurrentTurn ?? 0;
             var research = galaxy?.ResearchState;
             // Тик идёт раз в TickStrideTurns ходов → дельта производства умножается на stride,
@@ -223,7 +222,7 @@ namespace SRG.Economy
                 string goodId = kv.Key;
                 if (planet.Settlement.Shop.Goods.ContainsKey(goodId)) continue;
                 int baseStock = GetBaseStock(planet, goodId, cfg);
-                int stock = UnityEngine.Random.Range(Mathf.RoundToInt(baseStock * 0.5f), Mathf.RoundToInt(baseStock * 1.5f) + 1);
+                int stock = GameRng.Range(Mathf.RoundToInt(baseStock * 0.5f), Mathf.RoundToInt(baseStock * 1.5f) + 1);
                 planet.Settlement.Shop.Goods[goodId] = new ShopGoodEntry
                 {
                     Stock = stock,
@@ -375,7 +374,7 @@ namespace SRG.Economy
             float clamped = Mathf.Clamp(price, minP, maxP);
 
             // Глобальный множитель цены из научных эффектов (UnlockEffects.ModifyGoodPrice).
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.ResearchState != null)
                 clamped *= galaxy.ResearchState.GetGoodPriceMultiplier(goodId);
 

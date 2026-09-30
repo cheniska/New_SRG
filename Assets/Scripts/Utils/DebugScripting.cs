@@ -1,7 +1,6 @@
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Simulation;
-using SRG.Ships.Player;
+using SRG.Simulation;
 
 namespace SRG.Utils
 {
@@ -14,11 +13,11 @@ namespace SRG.Utils
     public static class DebugScripting
     {
         /// <summary>Корабль игрока. null если игрок ещё не заспавнен (главное меню).</summary>
-        public static ShipData Player() => PlayerShip.Instance?.ShipData;
+        public static ShipData Player() => GameWorld.PlayerShip;
 
         /// <summary>Текущая (активно загруженная) галактика. Эквивалент
         /// <c>StarGalaxy(CurStar(Player()))</c> в single-galaxy runtime.</summary>
-        public static GalaxyData Galaxy() => GalaxyManager.Instance?.GeneratedGalaxy;
+        public static GalaxyData Galaxy() => GameWorld.GeneratedGalaxy;
 
         /// <summary>
         /// Текущая звезда для любого объекта. Поддерживает:
@@ -30,7 +29,7 @@ namespace SRG.Utils
         public static StarData CurStar(object obj)
         {
             if (obj == null) return null;
-            var g = GalaxyManager.Instance?.GeneratedGalaxy;
+            var g = GameWorld.GeneratedGalaxy;
             switch (obj)
             {
                 case StarData s:
@@ -63,7 +62,7 @@ namespace SRG.Utils
         /// </summary>
         public static GalaxyData StarGalaxy(StarData star)
         {
-            var g = GalaxyManager.Instance?.GeneratedGalaxy;
+            var g = GameWorld.GeneratedGalaxy;
             if (star == null) return g;
             if (g == null) return null;
             return g.StarsMap.ContainsKey(star.Uid) ? g : null;

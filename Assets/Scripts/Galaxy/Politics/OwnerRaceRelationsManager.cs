@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Politics
 {
@@ -18,7 +18,11 @@ namespace SRG.Galaxy.Politics
         Best = 4
     }
 
-    public class OwnerRaceRelationsManager : MonoBehaviour
+    /// <summary>
+    /// Отношения фракций и рас (враждебность, персональные дельты). Обычный объект симуляции:
+    /// создаётся на сессию в <see cref="SRG.Simulation.SimulationSetup"/>.
+    /// </summary>
+    public class OwnerRaceRelationsManager
     {
         public static OwnerRaceRelationsManager Instance { get; private set; }
 
@@ -49,12 +53,8 @@ namespace SRG.Galaxy.Politics
 
         private bool _initialized = false;
 
-        private void Awake()
-        {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        /// <summary>Создать менеджер для новой сессии симуляции.</summary>
+        public static OwnerRaceRelationsManager CreateForSession() => Instance = new OwnerRaceRelationsManager();
 
         public void Initialize(GalaxyConfig cfg)
         {
@@ -336,7 +336,7 @@ namespace SRG.Galaxy.Politics
 
         private Dictionary<string, int> GetPersonalStore()
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             return galaxy != null ? galaxy.PersonalRelations : _personalRelationsFallback;
         }
 

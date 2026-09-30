@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Ships.Disguise
 {
@@ -116,7 +116,7 @@ namespace SRG.Ships.Disguise
             {
                 var star = ship.CurrentStar;
                 if (star == null && !string.IsNullOrEmpty(ship.CurrentStarUid))
-                    GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
+                    GameWorld.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
                 if (star != null)
                 {
                     var ships = star.Ships;

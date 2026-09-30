@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Core;
-using SRG.Ships.Player;
+using SRG.Controllers;
+using SRG.Utils;
 
 namespace SRG.UI.Common
 {
@@ -191,7 +192,7 @@ namespace SRG.UI.Common
                 _statusText.text = "Ошибка: " + result.Message;
                 return;
             }
-            SRG.UI.Screens.GameConsoleController.AddEntry("[Наукобаза] " + result.Message);
+            GameLog.Add("[Наукобаза] " + result.Message);
             RefreshMainList();
         }
 

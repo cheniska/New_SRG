@@ -1,31 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
     /// <summary>
-    /// Реестр генштабов фракций. Один MonoBehaviour-синглтон, тикающий все
+    /// Реестр генштабов фракций. Один объект на сессию симуляции, тикающий все
     /// <see cref="FactionHighCommand"/>. Синхронизируется с <see cref="GalaxyData.HighCommandStates"/>
     /// (сохранение/загрузка). Строит ГШ на новой галактике или восстанавливает из сейва.
     /// </summary>
-    public class HighCommandRegistry : MonoBehaviour
+    public class HighCommandRegistry
     {
         public static HighCommandRegistry Instance { get; private set; }
 
         private readonly Dictionary<string, FactionHighCommand> _commands = new();
         private GalaxyData _indexedGalaxy;
 
-        private void Awake()
-        {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        /// <summary>Создаётся вместе с <see cref="DirectiveManager.CreateForSession"/>.</summary>
+        public static HighCommandRegistry CreateForSession() => Instance = new HighCommandRegistry();
 
         /// <summary>Вызывается из DirectiveManager после AutoIssueReactiveDirectives.</summary>
         public void Tick(GalaxyData galaxy)
@@ -79,7 +74,7 @@ namespace SRG.NpcAI
 
         private void BootstrapFromGalaxy(GalaxyData galaxy)
         {
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             if (ctx?.AvailableOwners == null) return;
 
             // Собираем множество (Owner, Race?) присутствующих в галактике.
@@ -100,7 +95,7 @@ namespace SRG.NpcAI
                     if (!seen.Add(key)) continue;
 
                     var strategy = ResolveStrategy(ctx, p.Owner, perRace ? p.Race : null, oc);
-                    int nextEval = galaxy.CurrentTurn + Random.Range(
+                    int nextEval = galaxy.CurrentTurn + GameRng.Range(
                         FactionHighCommand.EvaluationIntervalMin,
                         FactionHighCommand.EvaluationIntervalMax + 1);
                     var cmd = new FactionHighCommand(p.Owner, perRace ? p.Race : null, strategy, nextEval);

@@ -1,8 +1,8 @@
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -37,8 +37,8 @@ namespace SRG.NpcAI
         {
             ResetTelemetry();
             // Loyalty-check партнёров — один батч на всю галактику, а не per-ship в TickStar.
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
-            var loyaltyCfg = GalaxyManager.Instance?.Context?.Config?.Partners?.Global;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
+            var loyaltyCfg = GameWorld.Context?.Config?.Partners?.Global;
             int loyaltyPeriod = loyaltyCfg?.LoyaltyCheckPeriodTurns ?? 5;
             if (loyaltyPeriod > 0 && turn % loyaltyPeriod == 0)
             {
@@ -53,7 +53,7 @@ namespace SRG.NpcAI
 
         private static void TickStar(StarData star, GalaxyGenerationContext ctx)
         {
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
 
             var ships = star.Ships;
             for (int i = 0; i < ships.Count; i++)

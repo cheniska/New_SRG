@@ -1,5 +1,4 @@
 using SRG.NpcAI;
-using SRG.Ships.Player;
 
 namespace SRG.Ships
 {

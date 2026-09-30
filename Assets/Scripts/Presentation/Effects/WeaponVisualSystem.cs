@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Presentation.Common;
-using SRG.Ships.Player;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Presentation.Effects
 {
@@ -203,7 +202,7 @@ namespace SRG.Presentation.Effects
 
         HashSet<string> BuildLocalShipUidSet()
         {
-            var star = GalaxyManager.Instance?.CurrentStar;
+            var star = GameWorld.CurrentStar;
             if (star?.Ships == null) return null;
             var set = new HashSet<string>(star.Ships.Count);
             foreach (var s in star.Ships)
@@ -257,8 +256,8 @@ namespace SRG.Presentation.Effects
             if (uid == null) return Vector2.zero;
             if (anim.ShipFrames.TryGetValue(uid, out var f)) return f.SubTurns[frame];
             if (anim.MissileFrames.TryGetValue(uid, out var mf)) return mf.SubTurns[frame];
-            if (PlayerShip.Instance?.ShipData?.Uid == uid &&
-                GalaxyManager.Instance?.LastTurnData?.ShipFrames.TryGetValue(uid, out var pf) == true)
+            if (PresentationContext.Player?.ShipData?.Uid == uid &&
+                GameWorld.LastTurnData?.ShipFrames.TryGetValue(uid, out var pf) == true)
                 return pf.SubTurns[frame];
             return Vector2.zero;
         }

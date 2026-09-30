@@ -8,7 +8,7 @@ namespace SRG.NpcAI.Orders
     public class OrderAttack : NpcOrder
     {
         private readonly string _targetUid;
-        private ShipData _target;           // прямая ссылка
+        [System.NonSerialized] private ShipData _target;           // прямая ссылка
         // ChaseRadius вынесен в NpcBalance.ChaseRadius.
 
         public OrderAttack(string targetUid) => _targetUid = targetUid;

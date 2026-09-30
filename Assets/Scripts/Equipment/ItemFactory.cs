@@ -1,13 +1,12 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using System.Linq;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -21,7 +20,8 @@ namespace SRG.Equipment
             int? gtlOverride = null,
             string overrideRace = null)
         {
-            var cfg = equipConfig?.GetItem(category, itemId);
+            // Новый экземпляр: разброс характеристик шаблонных предметов — из общего потока симуляции.
+            var cfg = equipConfig?.GetItemForNewInstance(category, itemId);
             if (cfg == null)
             {
                 UnityEngine.Debug.LogError($"[ItemFactory] Item '{category}/{itemId}' not found in ItemsConfig.");
@@ -66,7 +66,7 @@ namespace SRG.Equipment
 
             // Глобальная инфляция фиксируется в цене предмета на момент создания.
             // Старые предметы сохраняют старую цену, новые получают актуальный фактор.
-            priceMult *= InflationSystem.GetFactor(GalaxyManager.Instance?.GeneratedGalaxy);
+            priceMult *= InflationSystem.GetFactor(GameWorld.GeneratedGalaxy);
 
             var inst = ItemInstance.FromConfig(category, itemId, cfg, equipConfig, priceMult, durMult, gtlOverride);
             // У Hull раса закодирована в id и должна соответствовать графике — overrideRace не трогает её.
@@ -271,7 +271,7 @@ namespace SRG.Equipment
             {
                 var govKeys = new System.Collections.Generic.List<string>(planetCfg.GovernmentTypes.Keys);
                 planet.Settlement.Government = inhabited
-                    ? govKeys[UnityEngine.Random.Range(0, govKeys.Count)]
+                    ? govKeys[GameRng.Range(0, govKeys.Count)]
                     : govKeys[0];
             }
             else
@@ -286,7 +286,7 @@ namespace SRG.Equipment
                 ? new System.Collections.Generic.List<string>(planetCfg.EconomyTypes.Keys)
                 : null;
             planet.Settlement.EconomyType = econKeys != null
-                ? econKeys[UnityEngine.Random.Range(0, econKeys.Count)]
+                ? econKeys[GameRng.Range(0, econKeys.Count)]
                 : "Mixed";
 
             // --- Технический уровень ---
@@ -295,14 +295,14 @@ namespace SRG.Equipment
             if (planetCfg.EconomyTypes != null &&
                 planetCfg.EconomyTypes.TryGetValue(planet.Settlement.EconomyType, out var econCfg))
                 techCoef = econCfg.TechGrowthCoef;
-            int techBase = Mathf.RoundToInt(UnityEngine.Random.Range(1f, 5f) * techCoef);
+            int techBase = Mathf.RoundToInt(GameRng.Range(1f, 5f) * techCoef);
             planet.Settlement.TechLevel = Mathf.Clamp(techBase, 1, 8);
 
             // --- Население ---
             if (planetCfg.Sizes != null &&
                 planetCfg.Sizes.TryGetValue(planet.Size, out var sizeData) &&
                 sizeData.Population?.Length >= 2 && sizeData.Population[1] > 0)
-                planet.Settlement.Population = UnityEngine.Random.Range(sizeData.Population[0], sizeData.Population[1] + 1);
+                planet.Settlement.Population = GameRng.Range(sizeData.Population[0], sizeData.Population[1] + 1);
 
             // Мягкие условия расы (вода, радиация) не запрещают колонию, но снижают население (комфорт 0.25..1).
             if (planet.Settlement.Population > 0 && planet.Race != null && galaxyConfig?.Races != null &&
@@ -320,7 +320,7 @@ namespace SRG.Equipment
                 {
                     int buy  = Mathf.RoundToInt(kv.Value.BasePrice * GetRacePriceCoef(planet, galaxyConfig));
                     int sell = Mathf.RoundToInt(buy * 0.7f);
-                    int stock = UnityEngine.Random.Range(50, 201);
+                    int stock = GameRng.Range(50, 201);
                     planet.Settlement.Shop.Goods[kv.Key] = new ShopGoodEntry
                         { Stock = stock, BuyPrice = buy, SellPrice = sell };
                 }

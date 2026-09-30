@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Politics
 {
@@ -119,7 +119,7 @@ namespace SRG.Galaxy.Politics
         /// изменении состава планет.</summary>
         private static bool FactionHasAnySystem(string ownerId)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.StarsMap == null || string.IsNullOrEmpty(ownerId)) return true;
             foreach (var s in galaxy.StarsMap.Values)
                 if (s.CurrentSystemController == ownerId) return true;
@@ -130,7 +130,7 @@ namespace SRG.Galaxy.Politics
         public static string GetOccupationMode(string ownerId)
         {
             if (string.IsNullOrEmpty(ownerId)) return "Partial";
-            var owners = GalaxyManager.Instance?.Context?.AvailableOwners;
+            var owners = GameWorld.Context?.AvailableOwners;
             if (owners != null && owners.TryGetValue(ownerId, out var oc) && !string.IsNullOrEmpty(oc.OccupationMode))
                 return oc.OccupationMode;
             return "Partial";
@@ -138,7 +138,7 @@ namespace SRG.Galaxy.Politics
 
         private static StarData FindStar(PlanetData planet)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.StarsMap == null) return null;
             foreach (var star in galaxy.StarsMap.Values)
                 for (int i = 0; i < star.Planets.Count; i++)

@@ -1,4 +1,5 @@
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -42,7 +43,7 @@ namespace SRG.NpcAI
 
             if (includeJump)
             {
-                var galaxy = SRG.Core.GalaxyManager.Instance?.GeneratedGalaxy;
+                var galaxy = GameWorld.GeneratedGalaxy;
                 var friendlyStar = NpcTargeting.FindNearestFriendlyStar(star, ship, galaxy);
                 if (friendlyStar != null) return new ShelterResult(ShelterKind.FriendlyStar, friendlyStar);
             }

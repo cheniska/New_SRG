@@ -1,6 +1,5 @@
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;

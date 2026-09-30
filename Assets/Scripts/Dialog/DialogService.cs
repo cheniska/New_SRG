@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Scripting;
-using SRG.Ships.Player;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -304,7 +303,7 @@ namespace SRG.Dialog
             string dialogId, DialogScope scope, ShipData playerShip,
             PlanetData planet = null, ShipData targetShip = null)
         {
-            var cfg = GalaxyManager.Instance?.Context?.Config?.Dialogs;
+            var cfg = GameWorld.Context?.Config?.Dialogs;
             if (cfg?.Dialogs == null || !cfg.Dialogs.TryGetValue(dialogId, out var tree))
             {
                 Debug.LogWarning($"[DialogService] Диалог '{dialogId}' не найден в конфиге.");
@@ -382,7 +381,7 @@ namespace SRG.Dialog
             string dialogId, DialogScope? scope = null,
             ShipData playerShip = null, PlanetData planet = null, ShipData targetShip = null)
         {
-            var cfg = GalaxyManager.Instance?.Context?.Config?.Dialogs;
+            var cfg = GameWorld.Context?.Config?.Dialogs;
             if (cfg?.Dialogs == null || !cfg.Dialogs.TryGetValue(dialogId, out var tree))
             {
                 Debug.LogWarning($"[DialogService] Push('{dialogId}') — диалог не найден.");
@@ -432,7 +431,7 @@ namespace SRG.Dialog
         /// scope-специфичного ключа используется общий "_default".</summary>
         public static string ResolveShipDialogId(ShipData ship, DialogScope scope)
         {
-            var dialogs = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Dialogs;
+            var dialogs = GameWorld.Context?.Config?.Dialogs?.Dialogs;
             if (dialogs == null || dialogs.Count == 0 || ship == null) return null;
             if (ship.IsStation) return ResolveStationDialogId(ship, scope);
 
@@ -474,7 +473,7 @@ namespace SRG.Dialog
         public static string ResolveDialogCluster(string owner)
         {
             if (string.IsNullOrEmpty(owner)) return null;
-            var owners = GalaxyManager.Instance?.Context?.Config?.Ships?.Owners;
+            var owners = GameWorld.Context?.Config?.Ships?.Owners;
             if (owners != null && owners.TryGetValue(owner, out var oc)
                 && !string.IsNullOrEmpty(oc?.DialogCluster))
                 return oc.DialogCluster;
@@ -497,7 +496,7 @@ namespace SRG.Dialog
         public static string PickFromPool(string poolKey)
         {
             if (string.IsNullOrEmpty(poolKey)) return null;
-            var pools = GalaxyManager.Instance?.Context?.Config?.Dialogs?.StringPools;
+            var pools = GameWorld.Context?.Config?.Dialogs?.StringPools;
             if (pools == null || !pools.TryGetValue(poolKey, out var list) || list == null || list.Count == 0)
                 return null;
             return list[_stringPoolRng.Next(list.Count)];
@@ -511,7 +510,7 @@ namespace SRG.Dialog
         /// null (AI-инициатор должен отказаться от диалога и перейти к обычной механике).</summary>
         public static string ResolveIncomingDialogId(ShipData initiator, string kind)
         {
-            var dialogs = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Dialogs;
+            var dialogs = GameWorld.Context?.Config?.Dialogs?.Dialogs;
             if (dialogs == null || dialogs.Count == 0 || initiator == null || string.IsNullOrEmpty(kind)) return null;
             string suffix = "_incoming_" + kind;
             string cluster = ResolveDialogCluster(initiator.Owner);
@@ -537,7 +536,7 @@ namespace SRG.Dialog
         /// → "_gov" (командование станции).</summary>
         public static string ResolveStationDialogId(ShipData station, DialogScope scope)
         {
-            var dialogs = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Dialogs;
+            var dialogs = GameWorld.Context?.Config?.Dialogs?.Dialogs;
             if (dialogs == null || dialogs.Count == 0 || station == null) return null;
 
             string hullType = station.GetHullItem()?.GetParamString("HullType");
@@ -584,7 +583,7 @@ namespace SRG.Dialog
         /// Planet_{EconomyType}_default → Planet_{Race}_default → Planet_default.</summary>
         public static string ResolvePlanetDialogId(PlanetData planet)
         {
-            var dialogs = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Dialogs;
+            var dialogs = GameWorld.Context?.Config?.Dialogs?.Dialogs;
             if (dialogs == null || dialogs.Count == 0 || planet == null) return null;
             string gov = planet.Settlement?.Government;
             string econ = planet.Settlement?.EconomyType;

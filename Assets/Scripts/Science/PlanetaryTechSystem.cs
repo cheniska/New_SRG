@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.Science
 {
@@ -44,7 +43,7 @@ namespace SRG.Science
             if (newPtu == planet.Settlement.TechLevel) return;
 
             planet.Settlement.TechLevel = newPtu;
-            EconomicLog.Custom(GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0,
+            EconomicLog.Custom(GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0,
                 "SCIENCE", EconomicLog.Safe(planet.Name), "PTU_CHANGED",
                 $"ptu={newPtu} credits={planet.Settlement.InventionCredits} per_level={perLevel}");
         }
@@ -132,7 +131,7 @@ namespace SRG.Science
 
             int duration = -1;
             if (evtCfg.DurationMonths != null && evtCfg.DurationMonths.Length >= 2)
-                duration = UnityEngine.Random.Range(evtCfg.DurationMonths[0], evtCfg.DurationMonths[1] + 1);
+                duration = GameRng.Range(evtCfg.DurationMonths[0], evtCfg.DurationMonths[1] + 1);
 
             planet.Settlement.ActiveEvents.Add(new ActivePlanetEvent { EventId = eventId, RemainingMonths = duration });
 

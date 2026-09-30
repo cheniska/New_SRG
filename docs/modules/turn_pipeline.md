@@ -1,8 +1,14 @@
 # Turn Pipeline
 
-Модули: `Core/GalaxyManager.cs`, `Core/SystemViewManager.cs`, `Core/PlayerManager.cs`,
-`Systems/HyperjumpController.cs`, `Generation/GalaxyDataModels.cs` (часть `GalaxyData.GalaxyNextDay`,
-`StarData.StarNextDay`, `TurnAnimationData`).
+Модули: `Simulation/SimulationSession.cs` (состояние мира и расчёт дня), `Simulation/GameWorld.cs`
+(события хода, доступ симуляции к хостам), `Core/GalaxyManager.cs` (фазы, тайминг, визуал),
+`Core/SystemViewManager.cs`, `Core/PlayerManager.cs`, `Ships/Movement/HyperjumpController.cs`,
+`Galaxy/Simulation/GalaxySimulator.cs` и `StarSimulator.cs` (день галактики/звезды),
+`Galaxy/Models/TurnAnimationData.cs`.
+
+> С сентября 2026 расчёт хода не зависит от сцены: `SimulationSession.SimulateDay()` вызывается
+> и `GalaxyManager`, и `HeadlessWorldHost` (тесты). События `OnTurnCalculate/OnTurnAnimate/OnTurnComplete`
+> живут в `GameWorld`; `GalaxyManager` поднимает их через `GameWorld.Raise*`. См. [architecture.md](architecture.md).
 
 ---
 
@@ -39,7 +45,7 @@ SimulationDuration секунд проигрываются анимации, з�
 | `SignalRouteComplete()` | Сообщить, что маршрут отыгран — поставить `RouteCompleted` после анимации. |
 | `CalcDistanceParsecs(a, b)` | Расстояние между двумя звёздами в единицах сетки. |
 
-### События (`static event`)
+### События (`static event` в `GameWorld`, кроме событий `PlayerManager`)
 
 | Событие | Когда | Подписчики |
 |---|---|---|
@@ -195,7 +201,7 @@ AI-приказ (`ActionHyperJumpTo`) для NPC ставится в `JumpToStar
 
 ## Внутренняя структура данных
 
-### `TurnAnimationData` (Generation/GalaxyDataModels.cs)
+### `TurnAnimationData` (Galaxy/Models/*.cs)
 
 Аккумулятор данных «как анимировать ход». Заполняется в `StarNextDay`/`CombatSubTurn`, читается
 `SystemViewManager.AnimateSystem`. Ключевые поля:

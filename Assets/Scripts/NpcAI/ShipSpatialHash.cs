@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
     /// <summary>
     /// Ленивая сетка кораблей в звезде для radius-queries (fear/escort/attack-nearest).
     /// Строится раз в ход при первом обращении и кэшируется до конца хода
-    /// (детектируется по <see cref="SRG.Core.GalaxyManager.Instance.GeneratedGalaxy.CurrentTurn"/>).
+    /// (детектируется по <see cref="GameWorld.GeneratedGalaxy.CurrentTurn"/>).
     ///
     /// Клетка = <c>SystemSizeWorld / GridSize</c>. Query возвращает корабли 3×3 клеток вокруг
     /// точки — с ложноположительными на границе, вызывающий фильтрует по sqrMagnitude.
@@ -51,7 +52,7 @@ namespace SRG.NpcAI
                 yield break;
             }
 
-            int turn = SRG.Core.GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             var grid = EnsureGrid(star, turn);
             if (grid == null)
             {

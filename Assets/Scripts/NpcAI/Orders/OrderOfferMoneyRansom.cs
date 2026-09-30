@@ -1,10 +1,9 @@
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships;
-using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Orders
 {
@@ -20,7 +19,7 @@ namespace SRG.NpcAI.Orders
     {
         private readonly string _receiverUid;
         private readonly int _offerAmount;
-        private ShipData _receiver;
+        [System.NonSerialized] private ShipData _receiver;
         private bool _done;
         private bool _accepted;
         // NegotiateRange вынесен в NpcBalance.NegotiateRange (общий с OrderRequestCeasefire).
@@ -61,7 +60,7 @@ namespace SRG.NpcAI.Orders
                 // в NpcConversationLog (одна запись в панели вместо двух console-строк).
                 if (ship.IsPlayer || _receiver.IsPlayer)
                 {
-                    GameConsoleController.AddEntry(
+                    GameLog.Add(
                         $"[Выкуп] {_receiver.Name} принял {actualOffer} от {ship.Name} — перемирие.");
                 }
                 else
@@ -77,7 +76,7 @@ namespace SRG.NpcAI.Orders
             {
                 if (ship.IsPlayer || _receiver.IsPlayer)
                 {
-                    GameConsoleController.AddEntry(
+                    GameLog.Add(
                         $"[Выкуп] {_receiver.Name} отверг предложение {actualOffer} от {ship.Name}.");
                 }
                 else
@@ -118,7 +117,7 @@ namespace SRG.NpcAI.Orders
             // Шанс: чем больше offer относительно threshold, тем выше.
             float ratio = (float)offer / threshold;
             float chance = Mathf.Clamp01(0.3f + ratio * 0.4f);
-            return UnityEngine.Random.value < chance;
+            return GameRng.Value < chance;
         }
 
         public override bool IsCompleted(ShipData ship, StarData star) => _done;

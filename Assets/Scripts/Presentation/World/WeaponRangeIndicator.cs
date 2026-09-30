@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
-using SRG.Ships.Player;
 using SRG.Utils;
+using SRG.Simulation;
+using SRG.Presentation.Common;
 
 namespace SRG.Presentation.World
 {
@@ -47,13 +47,13 @@ namespace SRG.Presentation.World
 
         private void Update()
         {
-            if (GalaxyManager.Instance?.Phase == TurnPhase.Simulation)
+            if (GameWorld.Phase == TurnPhase.Simulation)
             {
                 HideAll();
                 return;
             }
 
-            var ship = PlayerShip.Instance;
+            var ship = PresentationContext.Player;
             if (ship == null || !ship.IsWeaponModeActive)
             {
                 HideAll();
@@ -61,7 +61,7 @@ namespace SRG.Presentation.World
             }
 
             var ranges = CollectWeaponRanges(ship.ShipData);
-            Vector2 center = ship.transform.position;
+            Vector2 center = ship.Transform.position;
 
             while (_rings.Count < ranges.Count)
                 _rings.Add(CreatePool());

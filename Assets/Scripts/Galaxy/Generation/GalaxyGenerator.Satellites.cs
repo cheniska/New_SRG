@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SRG.Config;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Generation
 {
@@ -67,14 +67,14 @@ namespace SRG.Galaxy.Generation
             if (sat.OrbitRadius <= 0f) sat.OrbitRadius = baseR + index * GalaxyConstants.SAT_ORBIT_SPACING;
 
             if (Mathf.Abs(sat.OrbitSpeed) < NearZero)
-                sat.OrbitSpeed = UnityEngine.Random.Range(GalaxyConstants.SAT_ORBIT_SPEED_MIN, GalaxyConstants.SAT_ORBIT_SPEED_MAX)
-                    * (UnityEngine.Random.value > 0.5f ? 1f : -1f);
+                sat.OrbitSpeed = GameRng.Range(GalaxyConstants.SAT_ORBIT_SPEED_MIN, GalaxyConstants.SAT_ORBIT_SPEED_MAX)
+                    * (GameRng.Value > 0.5f ? 1f : -1f);
 
-            if (sat.DaySpeed <= 0) sat.DaySpeed = UnityEngine.Random.Range(GalaxyConstants.SAT_DAY_SPEED_MIN, GalaxyConstants.SAT_DAY_SPEED_MAX + 1);
+            if (sat.DaySpeed <= 0) sat.DaySpeed = GameRng.Range(GalaxyConstants.SAT_DAY_SPEED_MIN, GalaxyConstants.SAT_DAY_SPEED_MAX + 1);
             if (sat.CloudsSpeed <= 0) sat.CloudsSpeed = Mathf.RoundToInt(sat.DaySpeed * GalaxyConstants.SAT_CLOUD_SPEED_FACTOR);
 
-            sat.CurrentAngle = UnityEngine.Random.Range(0f, 360f);
-            sat.CurrentRotationAngle = UnityEngine.Random.Range(0f, 360f);
+            sat.CurrentAngle = GameRng.Range(0f, 360f);
+            sat.CurrentRotationAngle = GameRng.Range(0f, 360f);
         }
     }
 }
