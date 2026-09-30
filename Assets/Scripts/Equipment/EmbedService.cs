@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -187,7 +187,7 @@ namespace SRG.Equipment
             float priceMulVis = 1f, sizeMulVis = 1f, durMulVis = 1f;
 
             // 1. IntrinsicEmbed — из конфига (equipConfig может быть null в изолированных вызовах).
-            equipConfig ??= GalaxyManager.Instance?.Context?.ItemsConfig;
+            equipConfig ??= GameWorld.Context?.ItemsConfig;
             var cfg = equipConfig?.GetItem(carrier.Category, carrier.ItemId);
             ApplyBonusSource(carrier.Category, cfg?.IntrinsicEmbed, paramsAll, paramsVisible,
                 ref priceMul, ref sizeMul, ref durMul,
@@ -350,7 +350,7 @@ namespace SRG.Equipment
         public static IEnumerable<EffectConfig> EnumerateBonusSources(ItemInstance item)
         {
             if (item == null) yield break;
-            var eq = GalaxyManager.Instance?.Context?.ItemsConfig;
+            var eq = GameWorld.Context?.ItemsConfig;
             var cfg = eq?.GetItem(item.Category, item.ItemId);
 
             if (cfg?.IntrinsicEmbed != null) yield return cfg.IntrinsicEmbed;

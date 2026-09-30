@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -31,14 +31,14 @@ namespace SRG.Equipment
             if (victim == null || victim.IsItem || victim.IsPlayer) return;
             if (cause == ShipDeathBus.CAUSE_COLLISION || cause == ShipDeathBus.CAUSE_ASTEROID) return;
 
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             var itemsConfig = ctx?.ItemsConfig;
             if (itemsConfig == null) return;
 
             var star = victim.CurrentStar;
             if (star == null) return;
 
-            int gtl = GalaxyManager.Instance?.GeneratedGalaxy?.GtuLevel ?? 5;
+            int gtl = GameWorld.GeneratedGalaxy?.GtuLevel ?? 5;
 
             // Собираем пул: каждый ММ отдельно катит свой шанс (side + race), плюс проверка
             // приоритетного окна (SR2HD-формула, вычисленная от текущего ГТУ).

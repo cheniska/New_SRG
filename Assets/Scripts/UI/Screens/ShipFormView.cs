@@ -10,9 +10,10 @@ using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Presentation.Common;
 using SRG.Ships;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.UI.Common;
 using SRG.UI.HUD;
+using SRG.Utils;
 
 namespace SRG.UI.Screens
 {
@@ -772,7 +773,7 @@ namespace SRG.UI.Screens
             }
 
             InventoryService.AddToInventory(recipient, item);
-            GameConsoleController.AddEntry($"[Абордаж] {item.Name} → инвентарь {recipient.Name}.");
+            GameLog.Add($"[Абордаж] {item.Name} → инвентарь {recipient.Name}.");
             return true;
         }
 
@@ -902,7 +903,7 @@ namespace SRG.UI.Screens
             var star = ResolveCurrentStar();
             if (star == null)
             {
-                GameConsoleController.AddEntry("[Выбросить] Нет звёздной системы для спавна контейнера.");
+                GameLog.Add("[Выбросить] Нет звёздной системы для спавна контейнера.");
                 return;
             }
 
@@ -912,7 +913,7 @@ namespace SRG.UI.Screens
             {
                 if (item.Weight <= 0)
                 {
-                    GameConsoleController.AddEntry("[Выбросить] Стек груза пуст.");
+                    GameLog.Add("[Выбросить] Стек груза пуст.");
                     ClearHand();
                     return;
                 }
@@ -935,7 +936,7 @@ namespace SRG.UI.Screens
             {
                 // Контейнер должен появиться визуально немедленно — без ожидания следующего хода симуляции.
                 SystemViewManager.Instance?.EnsureShipVisual(container);
-                GameConsoleController.AddEntry($"[Выбросить] {item.Name} → контейнер в космосе.");
+                GameLog.Add($"[Выбросить] {item.Name} → контейнер в космосе.");
             }
 
             ClearHand();
@@ -967,7 +968,7 @@ namespace SRG.UI.Screens
             var star = ResolveCurrentStar();
             if (star == null)
             {
-                GameConsoleController.AddEntry("[Выбросить] Нет звёздной системы для спавна контейнера.");
+                GameLog.Add("[Выбросить] Нет звёздной системы для спавна контейнера.");
                 CancelHand();
                 return;
             }
@@ -976,7 +977,7 @@ namespace SRG.UI.Screens
             var taken = _ship.Inventory?.TakeStack(goodId, amount);
             if (taken == null || taken.TotalWeight <= 0)
             {
-                GameConsoleController.AddEntry("[Выбросить] Стек груза пуст.");
+                GameLog.Add("[Выбросить] Стек груза пуст.");
                 ClearHand();
                 Refresh();
                 return;
@@ -986,7 +987,7 @@ namespace SRG.UI.Screens
             if (goodsContainer != null)
             {
                 SystemViewManager.Instance?.EnsureShipVisual(goodsContainer);
-                GameConsoleController.AddEntry($"[Выбросить] {taken.Name} x{taken.TotalWeight} → контейнер в космосе.");
+                GameLog.Add($"[Выбросить] {taken.Name} x{taken.TotalWeight} → контейнер в космосе.");
             }
 
             var rest = _ship.Inventory?.GetByUid(ShipInventory.StackItemUidPrefix + goodId);

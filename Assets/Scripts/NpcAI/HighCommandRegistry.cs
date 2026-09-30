@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -79,7 +79,7 @@ namespace SRG.NpcAI
 
         private void BootstrapFromGalaxy(GalaxyData galaxy)
         {
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             if (ctx?.AvailableOwners == null) return;
 
             // Собираем множество (Owner, Race?) присутствующих в галактике.

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -71,7 +71,7 @@ namespace SRG.Dialog
             {
                 ClearSlots(ctx, KEY_STAR_UID, KEY_STAR_NAME, KEY_STAR_DIST);
                 var star = ctx?.PlayerShip?.CurrentStar;
-                var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+                var galaxy = GameWorld.GeneratedGalaxy;
                 if (star == null || galaxy?.StarsMap == null) return;
 
                 // Ближайшие MAX_SLOTS звёзд по галакарте (без учёта прыжковой сетки — для UI
@@ -240,7 +240,7 @@ namespace SRG.Dialog
 
         private static bool CanBeLandedOnShip(ShipData ship)
         {
-            var types = GalaxyManager.Instance?.Context?.Config?.Ships?.ShipTypes;
+            var types = GameWorld.Context?.Config?.Ships?.ShipTypes;
             if (types == null || string.IsNullOrEmpty(ship.ShipTypeId)) return false;
             return types.TryGetValue(ship.ShipTypeId, out var cfg) && cfg.CanBeLandedOn;
         }

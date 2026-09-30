@@ -1,8 +1,8 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -61,7 +61,7 @@ namespace SRG.Ships.Services
         public static bool IsRescueRewardPending(ShipData victim)
         {
             if (victim == null || victim.RescuedByPlayerTurn < 0) return false;
-            int now = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int now = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             return now - victim.RescuedByPlayerTurn <= RewardMemoryTurns;
         }
 
@@ -111,7 +111,7 @@ namespace SRG.Ships.Services
             Relations.RaiseToLevel(aggressor, victim, RelationLevel.Normal);
             Relations.RaiseToLevel(victim, player, RelationLevel.Good);
 
-            int now = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int now = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             victim.RescuedByPlayerTurn = now;
 
             return pv;
@@ -140,7 +140,7 @@ namespace SRG.Ships.Services
             if (stacksWeight > 0)
             {
                 var star = victim.CurrentStar
-                          ?? GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap[victim.CurrentStarUid];
+                          ?? GameWorld.GeneratedGalaxy?.StarsMap[victim.CurrentStarUid];
                 float frac = Mathf.Clamp(tuning?.ProtectRewardGoodsRatio ?? 0.25f, 0.05f, 1f);
                 int totalDropped = 0;
                 var ids = new System.Collections.Generic.List<string>(victim.Inventory.Stacks.Keys);
@@ -186,6 +186,6 @@ namespace SRG.Ships.Services
         }
 
         private static DialogTuning GetTuning() =>
-            GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning;
+            GameWorld.Context?.Config?.Dialogs?.Tuning;
     }
 }

@@ -9,8 +9,8 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.Galaxy
 {
@@ -814,7 +814,7 @@ namespace SRG.Galaxy
             return ParseRgbString(settings?.DefaultStarNameColor, new Color(0.78f, 0.78f, 0.78f));
         }
 
-        private static GameSettingsConfig GetSettings() => GalaxyManager.Instance?.Settings;
+        private static GameSettingsConfig GetSettings() => GameWorld.Settings;
 
         private static bool TryGetOwnerColor(string ownerId, ShipConfigSection ships,
             Color fallback, out Color color)

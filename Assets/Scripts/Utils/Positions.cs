@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
-using SRG.Core;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Utils
 {
@@ -88,7 +88,7 @@ namespace SRG.Utils
             if (ship == null) return default;
             var star = ship.CurrentStar;
             if (star == null && !string.IsNullOrEmpty(ship.CurrentStarUid))
-                GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
+                GameWorld.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
             return new Point(star, ClampToSystem(ship.Position + RandomInCircle(radius), star));
         }
 
@@ -132,7 +132,7 @@ namespace SRG.Utils
             if (ship == null) return default;
             var star = ship.CurrentStar;
             if (star == null && !string.IsNullOrEmpty(ship.CurrentStarUid))
-                GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
+                GameWorld.GeneratedGalaxy?.StarsMap.TryGetValue(ship.CurrentStarUid, out star);
             return new Point(star, ship.Position);
         }
 

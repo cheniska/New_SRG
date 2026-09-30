@@ -4,8 +4,9 @@ using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Presentation.Map;
 using SRG.Ships.Movement;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Presentation.World
 {

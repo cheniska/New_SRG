@@ -3,14 +3,13 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.Galaxy.Simulation;
 using SRG.NpcAI;
 using SRG.Ships.Disguise;
-using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -443,7 +442,7 @@ namespace SRG.Equipment
         public static List<AttackDirectiveInfo> AttackDirectivesNear(ShipData ship, float scopePc)
         {
             var list = new List<AttackDirectiveInfo>();
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (ship == null || galaxy?.Directives == null) return list;
             if (string.IsNullOrEmpty(ship.CurrentStarUid)) return list;
             if (!galaxy.StarsMap.TryGetValue(ship.CurrentStarUid, out var here) || here == null) return list;
@@ -474,20 +473,20 @@ namespace SRG.Equipment
 
         /// <summary>Текущий номер хода галактики. 0 если нет активной игры.</summary>
         public static int CurrentTurn()
-            => GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            => GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
 
         /// <summary>Сколько сабтёрнов в ходу (константа <see cref="GalaxyData.SubTurnsPerTurn"/>).</summary>
         public static int SubTurnsPerTurn => GalaxyData.SubTurnsPerTurn;
 
         /// <summary>true, если сейчас фаза планирования (пользователь может активировать вещи).</summary>
         public static bool IsPlanning()
-            => GalaxyManager.Instance != null && GalaxyManager.Instance.Phase == TurnPhase.Planning;
+            => GameWorld.IsAttached && GameWorld.Phase == TurnPhase.Planning;
 
         /// <summary>true, если идёт анимация хода.</summary>
         public static bool IsSimulation()
-            => GalaxyManager.Instance != null && GalaxyManager.Instance.Phase == TurnPhase.Simulation;
+            => GameWorld.IsAttached && GameWorld.Phase == TurnPhase.Simulation;
 
         /// <summary>Логировать сообщение в игровую консоль (алиас Log() в глобалах).</summary>
-        public static void Console(string msg) => SRG.UI.Screens.GameConsoleController.AddEntry(msg ?? "nil");
+        public static void Console(string msg) => GameLog.Add(msg ?? "nil");
     }
 }

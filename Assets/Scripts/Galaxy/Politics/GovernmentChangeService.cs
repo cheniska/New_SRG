@@ -3,7 +3,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
 using SRG.Economy;
-using SRG.UI.Screens;
+using SRG.Utils;
 
 namespace SRG.Galaxy.Politics
 {
@@ -45,7 +45,7 @@ namespace SRG.Galaxy.Politics
 
             EconomicLog.Custom(turn, "EVENT", EconomicLog.Safe(planet.Name), "GOVERNMENT_CHANGED",
                 $"from={oldGov} to={newGov} mode={(weighted ? "Weighted" : "Random")}");
-            GameConsoleController.AddEntry($"[Власть] {planet.Name}: новый строй — {newGov} (был {oldGov}).");
+            GameLog.Add($"[Власть] {planet.Name}: новый строй — {newGov} (был {oldGov}).");
 
             string starName = planet.ParentStar?.Name ?? "?";
             string ctrl = OccupationService.GetControllingOwner(planet);

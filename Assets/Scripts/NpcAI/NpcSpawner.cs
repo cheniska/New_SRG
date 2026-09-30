@@ -13,24 +13,6 @@ using SRG.Utils;
 
 namespace SRG.NpcAI
 {
-    public static class NpcSpawner
-    {
-        public static void Attach(GameObject obj, ShipData ship, StarData star)
-        {
-            if (obj == null || ship == null || star == null) return;
-
-            var ctrl = obj.GetComponent<NpcController>() ?? obj.AddComponent<NpcController>();
-            ctrl.Init(ship, star); // lazy-создаёт Brain; ship.Personality проставляет конструктор NpcBrain
-
-            Debug.Log($"[NpcSpawner] Attached AI to '{ship.Name}' ({ship.ShipTypeId}) " +
-                      $"CombatClass={ship.Brain.CombatClass} " +
-                      $"Aggr={ship.Brain.Personality.Aggression:F0} " +
-                      $"Caution={ship.Brain.Personality.Caution:F0} " +
-                      $"Greed={ship.Brain.Personality.Greed:F0} " +
-                      $"Disc={ship.Brain.Personality.Discipline:F0}");
-        }
-    }
-
     /// <summary>
     /// Стартовая раздача NPC при генерации галактики.
     ///   • <see cref="PopulateStarWithNpcs"/> — спавн per-planet и per-system типов из InitialDistribution.

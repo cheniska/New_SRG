@@ -1,14 +1,13 @@
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.NpcAI.Orders;
-using SRG.Presentation.World;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -24,7 +23,7 @@ namespace SRG.NpcAI.Actions
 
         public override bool Tick(ShipData ship, StarData star, GalaxyGenerationContext ctx)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             var cfg = ctx?.Config;
             if (galaxy == null || cfg == null) return false;
 

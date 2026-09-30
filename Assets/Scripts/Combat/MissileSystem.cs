@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.Ships.Movement;
-using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Combat
 {
@@ -258,7 +257,7 @@ namespace SRG.Combat
                         target = attacker;
                         targetAlive = true;
                         if (frames != null) PlanFrames(missile, target.Position, subTurn - 1, frames);
-                        GameConsoleController.AddEntry(
+                        GameLog.Add(
                             $"[Торпеда] Цель уничтожена — торпеда возвращается к {attacker.Name}.");
                     }
                     else
@@ -292,7 +291,7 @@ namespace SRG.Combat
                         float turnsNeeded = distToTarget / effSpeed;
                         if (turnsNeeded > missile.DaysLeft * missile.MaxRangeFactor)
                         {
-                            GameConsoleController.AddEntry(
+                            GameLog.Add(
                                 $"[Ракета] Цель слишком далеко — снаряд самоликвидируется.");
                             ExplodeMissile(missile, subTurn, equipConfig, anim);
                             star.ActiveMissiles.RemoveAt(i);
@@ -573,7 +572,7 @@ namespace SRG.Combat
             {
                 // Торпеда вернулась к стрелявшему — возвращаем боезапас, без урона.
                 RestoreAmmo(attacker, missile.WeaponSlotKey);
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Торпеда] Возвращена в {attacker.Name} — боезапас восстановлен.");
                 FreezeFramesAfter(frames, subTurn, newPos);
                 if (anim != null)
@@ -589,7 +588,7 @@ namespace SRG.Combat
                 // Атакующий уже погиб к моменту impact'а — некому считать боевые эффекты
                 // (scanner dominance, drain, артефакты и т.п.). Ракета теряет «голову»
                 // и взрывается в пустоте без урона; визуально — обычный AoE-взрыв.
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Ракета] Стрелявший погиб — снаряд взорвался без эффекта.");
                 FreezeFramesAfter(frames, subTurn, newPos);
                 ExplodeMissile(missile, subTurn, equipConfig, anim);
@@ -655,7 +654,7 @@ namespace SRG.Combat
             if (anim != null && anim.MissileFrames.TryGetValue(missile.Uid, out var frames))
                 FreezeFramesAfter(frames, subTurn, frames.SubTurns[subTurn]);
 
-            GameConsoleController.AddEntry($"[Ракета] Цель уничтожена — снаряд взорвался в пустоте.");
+            GameLog.Add($"[Ракета] Цель уничтожена — снаряд взорвался в пустоте.");
             if (anim != null) anim.MissileDeathUids[missile.Uid] = subTurn;
         }
 
@@ -729,7 +728,7 @@ namespace SRG.Combat
 
                 if (missile.DaysLeft <= 0)
                 {
-                    GameConsoleController.AddEntry(
+                    GameLog.Add(
                         $"[Ракета] Ракета не достигла цели и взорвалась в космосе.");
                     // Срок жизни истёк в конце хода — сабтёрн смерти = последний.
                     if (anim != null) anim.MissileDeathUids[missile.Uid] = GalaxyData.SubTurnsPerTurn;

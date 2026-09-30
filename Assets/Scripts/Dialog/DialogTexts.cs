@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SRG.Config;
 using SRG.Dialog.PlanetGreetings;
 using UnityEngine;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -191,7 +192,7 @@ namespace SRG.Dialog
             if (string.IsNullOrEmpty(id) || _cfg.Speakers == null) return null;
             if (_cfg.Speakers.TryGetValue(id, out var direct)) return direct;
 
-            var dialogs = SRG.Core.GalaxyManager.Instance?.Context?.Config?.Dialogs?.Dialogs;
+            var dialogs = GameWorld.Context?.Config?.Dialogs?.Dialogs;
             if (dialogs != null && dialogs.TryGetValue(id, out var tree) && !string.IsNullOrEmpty(tree?.AliasOf)
                 && _cfg.Speakers.TryGetValue(tree.AliasOf, out var viaAlias))
                 return viaAlias;

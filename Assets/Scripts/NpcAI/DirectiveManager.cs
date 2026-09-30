@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI.Actions;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -43,8 +43,8 @@ namespace SRG.NpcAI
             }
         }
 
-        private void OnEnable()  { GalaxyManager.OnTurnCalculate += OnTurnCalculate; }
-        private void OnDisable() { GalaxyManager.OnTurnCalculate -= OnTurnCalculate; }
+        private void OnEnable()  { GameWorld.OnTurnCalculate += OnTurnCalculate; }
+        private void OnDisable() { GameWorld.OnTurnCalculate -= OnTurnCalculate; }
 
         public void Issue(OwnerDirective directive)
         {
@@ -72,8 +72,7 @@ namespace SRG.NpcAI
             // Во время GalaxyNextDay неактивной галактики (иerarchical events →
             // OccupationAutoRule.Tick / HighCommand.Tick могут выдавать директивы) CurrentTickingGalaxy
             // указывает на неё — persistence не должна попасть в активную. Вне тика fallback на активную.
-            var gm = GalaxyManager.Instance;
-            var galaxy = gm?.CurrentTickingGalaxy ?? gm?.GeneratedGalaxy;
+            var galaxy = GameWorld.TargetGalaxy;
             if (galaxy == null) return;
             galaxy.Directives ??= new List<Directive>();
             if (!galaxy.Directives.Contains(d)) galaxy.Directives.Add(d);
@@ -159,7 +158,7 @@ namespace SRG.NpcAI
 
         private void OnTurnCalculate(TurnAnimationData _)
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy == null) return;
             EnsureIndexedFor(galaxy);
 
@@ -261,8 +260,7 @@ namespace SRG.NpcAI
         // Публикуется один раз при выдаче директивы (в т.ч. авто-суперрессия пиратов).
         private static void PostDirectiveNews(OwnerDirective d)
         {
-            var gm = GalaxyManager.Instance;
-            var galaxy = gm?.CurrentTickingGalaxy ?? gm?.GeneratedGalaxy;
+            var galaxy = GameWorld.TargetGalaxy;
             if (galaxy == null) return;
 
             switch (d)

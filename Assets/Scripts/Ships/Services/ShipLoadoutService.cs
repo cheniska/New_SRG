@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
-using SRG.UI.Screens;
+using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -103,7 +103,7 @@ namespace SRG.Ships.Services
                 var res = EquipmentSystem.Install(ship, slotKey, item.Uid, equipConfig, allowInSpace: true);
                 if (!res.Success) continue;
                 equipped++;
-                GameConsoleController.AddEntry($"[Экипировка] {ship.Name} устанавливает {item.Name}.");
+                GameLog.Add($"[Экипировка] {ship.Name} устанавливает {item.Name}.");
             }
             return equipped;
         }
@@ -166,7 +166,7 @@ namespace SRG.Ships.Services
                 ship.Inventory.Remove(embed.Uid);
                 ship.AllItems.Remove(embed.Uid);
                 installed++;
-                GameConsoleController.AddEntry($"[Встраивание] {ship.Name} встраивает {embed.Name} в {target.Name}.");
+                GameLog.Add($"[Встраивание] {ship.Name} встраивает {embed.Name} в {target.Name}.");
             }
             if (installed > 0) ShipBonusService.RecomputeShipEquipment(ship);
             return installed;
@@ -233,7 +233,7 @@ namespace SRG.Ships.Services
                     if (taken == null || taken.TotalWeight <= 0) continue;
                     ContainerFactory.SpawnContainerWithStack(ship, taken, star);
                     dropped++;
-                    GameConsoleController.AddEntry(
+                    GameLog.Add(
                         $"[Перегруз] {ship.Name} выбрасывает {taken.Name ?? taken.ItemId} ({taken.TotalWeight} ед.).");
                 }
             }
@@ -256,7 +256,7 @@ namespace SRG.Ships.Services
                     InventoryService.RemoveCompletely(ship, it);
                     ContainerFactory.SpawnContainerWithItem(ship, it, star);
                     dropped++;
-                    GameConsoleController.AddEntry($"[Перегруз] {ship.Name} выбрасывает {it.Name}.");
+                    GameLog.Add($"[Перегруз] {ship.Name} выбрасывает {it.Name}.");
                 }
             }
 
@@ -285,7 +285,7 @@ namespace SRG.Ships.Services
                     if (removed == null) continue;
                     ContainerFactory.SpawnContainerWithItem(ship, removed, star);
                     dropped++;
-                    GameConsoleController.AddEntry($"[Перегруз] {ship.Name} снимает и выбрасывает {removed.Name}.");
+                    GameLog.Add($"[Перегруз] {ship.Name} снимает и выбрасывает {removed.Name}.");
                 }
             }
             return dropped;
@@ -297,7 +297,7 @@ namespace SRG.Ships.Services
         private static StarData FindStar(string starUid)
         {
             if (string.IsNullOrEmpty(starUid)) return null;
-            var map = GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap;
+            var map = GameWorld.GeneratedGalaxy?.StarsMap;
             return map != null && map.TryGetValue(starUid, out var star) ? star : null;
         }
     }

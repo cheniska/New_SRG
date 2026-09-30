@@ -1,8 +1,8 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -101,7 +101,7 @@ namespace SRG.Ships.Services
             if (loaded <= 0) return 0;
 
             ship.Money -= spent;
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "REARM",
                 $"site={EconomicLog.Safe(site.Name)} rounds={loaded} spent={spent} money_after={ship.Money}");
             return loaded;

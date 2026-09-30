@@ -1,5 +1,4 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
@@ -7,6 +6,7 @@ using SRG.NpcAI.Actions;
 using SRG.Ships;
 using SRG.Ships.Movement;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI
 {
@@ -95,7 +95,7 @@ namespace SRG.NpcAI
         {
             if (string.IsNullOrEmpty(StagingStarUid)) return true;
             if (RequiredStagingPower <= 0f) return true;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.StarsMap == null) return true;
             if (!galaxy.StarsMap.TryGetValue(StagingStarUid, out var s)) return true;
             return s.GetFriendlyPower(OwnerId, RaceId, combatOnly: true) >= RequiredStagingPower;

@@ -19,21 +19,20 @@ using SRG.Presentation.Common;
 using SRG.Presentation.Effects;
 using SRG.Presentation.World;
 using SRG.Ships.Movement;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Ships.Services;
 using SRG.UI.Screens;
+using SRG.Simulation;
 
 namespace SRG.Core
 {
     // Центральный менеджер пошаговой симуляции.
     // Цикл хода: Planning → (StartTurn) → Simulation (анимация) → Planning.
-    // События: OnTurnCalculate (симуляция), OnTurnAnimate (каждый кадр), OnTurnComplete.
-    public class GalaxyManager : MonoBehaviour
+    // События хода поднимаются через GameWorld: OnTurnCalculate (симуляция), OnTurnAnimate (каждый кадр), OnTurnComplete.
+    // Симуляция видит менеджер только как IWorldHost (см. SRG.Simulation.GameWorld).
+    public class GalaxyManager : MonoBehaviour, IWorldHost
     {
         public static GalaxyManager Instance { get; private set; }
-        public static event Action<TurnAnimationData> OnTurnCalculate;
-        public static event Action<float, int> OnTurnAnimate;
-        public static event Action<TurnAnimationData> OnTurnComplete;
 
         [Header("Configuration JSONs")]
         [SerializeField] private TextAsset galaxyConfigJson;
@@ -82,10 +81,18 @@ namespace SRG.Core
 
         private float SimulationDuration => settings != null ? settings.TurnDuration : 2.0f;
 
+        private void OnDestroy()
+        {
+            if (Instance != this) return;
+            GameWorld.Detach(this);
+            Instance = null;
+        }
+
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+            GameWorld.Attach(this);
             DontDestroyOnLoad(gameObject);
 
             // DirectiveManager — MonoBehaviour-синглтон верхнего слоя ИИ фракций (директивы, ГШ).
@@ -248,7 +255,7 @@ namespace SRG.Core
                 RequestPlanning(reason);
 
             SystemViewManager.Instance?.BeginTurnAnimation(LastTurnData);
-            OnTurnCalculate?.Invoke(LastTurnData);
+            GameWorld.RaiseTurnCalculate(LastTurnData);
             Phase = TurnPhase.Simulation;
             _simulationTimer = 0f;
             _currentSubTurn = 0;
@@ -264,7 +271,7 @@ namespace SRG.Core
             _currentSubTurn = newSubTurn;
 
             SystemViewManager.Instance?.AnimateSystem(progress, _currentSubTurn, LastTurnData);
-            OnTurnAnimate?.Invoke(progress, _currentSubTurn);
+            GameWorld.RaiseTurnAnimate(progress, _currentSubTurn);
 
             // Loading screen скрывается ровно на первом тике arrival-симуляции
             // (когда игрок уже в новой системе и фаза HyperArrive — этот ход показывает открытие портала).
@@ -281,7 +288,7 @@ namespace SRG.Core
         private void CompleteCurrentTurn()
         {
             SystemViewManager.Instance?.UpdatePlanetPositions();
-            OnTurnComplete?.Invoke(LastTurnData);
+            GameWorld.RaiseTurnComplete(LastTurnData);
 
             if (_simulationInterrupt)
             {
@@ -800,9 +807,9 @@ namespace SRG.Core
                 RequestPlanning(reason);
 
             // Оповещаем подписчиков, минуя анимационную фазу
-            OnTurnCalculate?.Invoke(LastTurnData);
+            GameWorld.RaiseTurnCalculate(LastTurnData);
             SystemViewManager.Instance?.UpdatePlanetPositions();
-            OnTurnComplete?.Invoke(LastTurnData);
+            GameWorld.RaiseTurnComplete(LastTurnData);
 
             // Остаёмся в Planning — повторный запуск хода только по кнопке
             Phase = TurnPhase.Planning;
@@ -901,11 +908,5 @@ namespace SRG.Core
             // Должно идти ДО первого хода: скрипты нужны как в симуляции, так и в UI-активациях.
             SRG.Equipment.LuaArtefactScripts.CompileAndRegisterAll(itemsCfg);
         }
-    }
-
-    public enum TurnPhase
-    {
-        Planning,
-        Simulation,
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SRG.Config;
-using SRG.Core;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Politics
 {
@@ -56,6 +56,6 @@ namespace SRG.Galaxy.Politics
         }
 
         private static NewsTextsConfig TryGetConfig() =>
-            GalaxyManager.Instance?.Context?.TextConfig?.News;
+            GameWorld.Context?.TextConfig?.News;
     }
 }

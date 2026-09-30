@@ -1,12 +1,12 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 using Newtonsoft.Json;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.NpcAI;
 using SRG.NpcAI.Actions;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -67,7 +67,7 @@ namespace SRG.Ships.Services
             drone.Owner = host.Owner;
             drone.PartnerLeaderUid = host.Uid;
             drone.PartnerContractEndTurn = -1;
-            drone.PartnerHiredOnTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            drone.PartnerHiredOnTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             // Дефолтный приказ для дрона — «за мной». Явный приказ отображается в HUD
             // и не даёт дрону, попавшему в другую звезду, застрять в None-логике.
             drone.PartnerOrder = PartnerOrderKind.FlyToMe;
@@ -84,7 +84,7 @@ namespace SRG.Ships.Services
             host.Inventory?.Remove(packedItem.Uid);
             // Создаём GameObject/визуал/NpcController — иначе дрон не будет тикать AI и не отреагирует
             // на приказы. Копирует Brain.Personality в ship.Personality.
-            SystemViewManager.Instance?.EnsureShipVisual(drone);
+            GameWorld.View?.EnsureShipVisual(drone);
 
             Debug.Log($"[DroneService] Deploy {SpriteUtility.ShortId(drone.Uid)} у {SpriteUtility.ShortId(host.Uid)}");
             return drone;

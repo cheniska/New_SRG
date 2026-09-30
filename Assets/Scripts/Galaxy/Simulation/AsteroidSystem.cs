@@ -4,12 +4,11 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
-using SRG.Presentation.Common;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Simulation
 {
@@ -344,7 +343,7 @@ namespace SRG.Galaxy.Simulation
         private static void UpdatePredictedDanger(AsteroidData asteroid, StarData star)
         {
             if (asteroid == null || star == null) { return; }
-            var settings = GalaxyManager.Instance?.Settings;
+            var settings = GameWorld.Settings;
             float dangerR = settings?.AsteroidDangerCloseRadius ?? 5.0f;
             float dangerRSq = dangerR * dangerR;
 
@@ -502,7 +501,7 @@ namespace SRG.Galaxy.Simulation
         /// <summary>Все конкретные атласы астероидов данного типа (для прогрева на старте).</summary>
         public static IEnumerable<string> EnumerateVariantSheetPaths(string configPath)
         {
-            var gm = GraphicsManager.Instance;
+            var gm = GameWorld.Graphics;
             if (gm == null || string.IsNullOrEmpty(configPath)) yield break;
             foreach (var path in gm.EnumerateSheetPathsInFolder(configPath))
                 yield return path;
@@ -510,7 +509,7 @@ namespace SRG.Galaxy.Simulation
 
         private static string ResolveSheetFolderPath(string configPath)
         {
-            var gm = GraphicsManager.Instance;
+            var gm = GameWorld.Graphics;
             if (gm == null || string.IsNullOrEmpty(configPath)) return configPath;
             var variants = gm.EnumerateSheetPathsInFolder(configPath);
             if (variants.Length == 0) return configPath; // fallback: старое поведение

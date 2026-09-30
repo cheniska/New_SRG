@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI;
 using SRG.Ships;
-using SRG.Ships.Player;
+using SRG.Simulation;
 
 namespace SRG.Dialog.PlanetGreetings
 {
@@ -353,9 +352,8 @@ namespace SRG.Dialog.PlanetGreetings
 
             if (!string.IsNullOrEmpty(r.PlayerFlyToShip))
             {
-                var pShip = PlayerShip.Instance;
-                bool flying = pShip != null && ship != null &&
-                              !string.IsNullOrEmpty(pShip.FollowShipUid) && pShip.FollowShipUid == ship.Uid;
+                string followUid = GameWorld.Player?.FollowShipUid;
+                bool flying = ship != null && !string.IsNullOrEmpty(followUid) && followUid == ship.Uid;
                 if (!PlanetGreetingSelector.YesNoAnyMatches(r.PlayerFlyToShip, flying)) return false;
             }
 
@@ -674,7 +672,7 @@ namespace SRG.Dialog.PlanetGreetings
             bool hit = false;
             if (ship != null && player != null && star != null)
             {
-                string targetUid = PlayerShip.Instance?.FollowShipUid ?? player.ManualShootTargetUid;
+                string targetUid = GameWorld.Player?.FollowShipUid ?? player.ManualShootTargetUid;
                 if (!string.IsNullOrEmpty(targetUid))
                 {
                     var target = star.FindShip(targetUid, aliveOnly: true);

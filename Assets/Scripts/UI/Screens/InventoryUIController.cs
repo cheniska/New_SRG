@@ -5,8 +5,9 @@ using SRG.Config;
 using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.UI.HUD;
+using SRG.Simulation;
 
 namespace SRG.UI.Screens
 {
@@ -38,12 +39,12 @@ namespace SRG.UI.Screens
 
         private void OnEnable()
         {
-            GalaxyManager.OnTurnCalculate += OnTurnCalculate;
+            GameWorld.OnTurnCalculate += OnTurnCalculate;
         }
 
         private void OnDisable()
         {
-            GalaxyManager.OnTurnCalculate -= OnTurnCalculate;
+            GameWorld.OnTurnCalculate -= OnTurnCalculate;
         }
 
         private void OnTurnCalculate(TurnAnimationData _)

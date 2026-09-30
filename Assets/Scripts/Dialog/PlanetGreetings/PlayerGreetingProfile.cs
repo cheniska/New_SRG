@@ -1,7 +1,7 @@
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Dialog.PlanetGreetings
 {
@@ -106,6 +106,6 @@ namespace SRG.Dialog.PlanetGreetings
         }
 
         private static DialogTuning GetTuning()
-            => GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning;
+            => GameWorld.Context?.Config?.Dialogs?.Tuning;
     }
 }

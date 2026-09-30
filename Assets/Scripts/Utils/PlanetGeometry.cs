@@ -1,6 +1,6 @@
 using UnityEngine;
 using SRG.Galaxy;
-using SRG.Presentation.Common;
+using SRG.Simulation;
 
 namespace SRG.Utils
 {
@@ -24,7 +24,7 @@ namespace SRG.Utils
         public static float GetVisualRadius(PlanetData planet)
         {
             if (planet == null) return DefaultVisualRadius;
-            var cfg = GraphicsManager.Instance != null ? GraphicsManager.Instance.GetConfig() : null;
+            var cfg = GameWorld.Context?.Config;
             if (cfg?.Planets?.Sizes != null
                 && !string.IsNullOrEmpty(planet.Size)
                 && cfg.Planets.Sizes.TryGetValue(planet.Size, out var sizeData)

@@ -6,7 +6,7 @@ using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Presentation.Common;
-using SRG.Ships.Player;
+using SRG.Controllers;
 
 namespace SRG.Presentation.World
 {

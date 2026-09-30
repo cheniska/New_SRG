@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using System;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy.Generation;
@@ -13,11 +12,11 @@ using SRG.Galaxy.Simulation;
 using SRG.NpcAI;
 using SRG.NpcAI.Actions;
 using SRG.NpcAI.Spawning;
-using SRG.Presentation.World;
 using SRG.Science;
 using SRG.Ships;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Galaxy
 {
@@ -243,7 +242,7 @@ namespace SRG.Galaxy
         public HashSet<string> VisitedStarUids { get; set; } = new HashSet<string>();
 
         /// <summary>Uid планет, на которые игрок хоть раз садился.
-        /// Заполняется <see cref="Ships.Player.PlayerShip"/> при завершении посадки;
+        /// Заполняется <see cref="SRG.Controllers.PlayerShip"/> при завершении посадки;
         /// используется в приветствиях планет (CurPlanetVisited).</summary>
         public HashSet<string> VisitedPlanetUids { get; set; } = new HashSet<string>();
 
@@ -1293,7 +1292,9 @@ namespace SRG.Galaxy
                 // вне зависимости от того, кто сейчас на нём летает.
                 string ownerForGfx = hullItem.GraphicByManufacturer ? hullItem.ManufacturerSide : Owner;
                 string raceForGfx  = hullItem.GraphicByManufacturer ? hullItem.ManufacturerRace : Race;
-                SpritesheetPath = ShipGraphicsResolver.ResolveFromBase(hullItem.BodyGraphicPath, ownerForGfx, raceForGfx);
+                SpritesheetPath = GameWorld.ShipSheetResolver != null
+                    ? GameWorld.ShipSheetResolver(hullItem.BodyGraphicPath, ownerForGfx, raceForGfx)
+                    : hullItem.BodyGraphicPath;
                 return;
             }
 
@@ -1415,7 +1416,7 @@ namespace SRG.Galaxy
         {
             if (CurrentStar != null) return CurrentStar;
             if (string.IsNullOrEmpty(CurrentStarUid)) return null;
-            var map = GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap;
+            var map = GameWorld.GeneratedGalaxy?.StarsMap;
             if (map == null) return null;
             map.TryGetValue(CurrentStarUid, out var star);
             return star;
@@ -1465,7 +1466,7 @@ namespace SRG.Galaxy
             if (subTurn == GalaxyData.SubTurnsPerTurn)
             {
                 bool movedThisTurn = (Position - PreviousPosition).sqrMagnitude > 0.0001f;
-                var equipConfig = GalaxyManager.Instance?.Context?.ItemsConfig;
+                var equipConfig = GameWorld.Context?.ItemsConfig;
                 EquipmentSystem.ApplyTurnEffects(this, equipConfig, movedThisTurn);
             }
 

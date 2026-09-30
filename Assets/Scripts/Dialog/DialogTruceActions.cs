@@ -1,5 +1,5 @@
-using SRG.Core;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -51,7 +51,7 @@ namespace SRG.Dialog
                     return preview.Fee > 0
                         ? preview.Fee
                         : TruceService.CalcMinFee(target,
-                            GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning);
+                            GameWorld.Context?.Config?.Dialogs?.Tuning);
                 },
 
                 // NotEnoughMoney (у игрока нет столько) — не предмет разговора с целью: она видит

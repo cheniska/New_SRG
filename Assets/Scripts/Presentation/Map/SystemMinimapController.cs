@@ -9,7 +9,8 @@ using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Presentation.Common;
 using SRG.Utils;
-using SRG.Ships.Player;
+using SRG.Controllers;
+using SRG.Simulation;
 
 namespace SRG.Presentation.Map
 {
@@ -142,12 +143,12 @@ namespace SRG.Presentation.Map
 
         private void OnEnable()
         {
-            GalaxyManager.OnTurnComplete += OnTurnComplete;
+            GameWorld.OnTurnComplete += OnTurnComplete;
         }
 
         private void OnDisable()
         {
-            GalaxyManager.OnTurnComplete -= OnTurnComplete;
+            GameWorld.OnTurnComplete -= OnTurnComplete;
         }
 
         private void OnTurnComplete(TurnAnimationData anim)

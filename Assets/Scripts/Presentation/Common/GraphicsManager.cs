@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using SRG.Config;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.Presentation.Common
 {
@@ -32,7 +33,7 @@ namespace SRG.Presentation.Common
         public static readonly SheetHandle Empty = new(null, 0f);
     }
 
-    public class GraphicsManager : MonoBehaviour
+    public class GraphicsManager : MonoBehaviour, IGraphicsQuery
     {
         public static GraphicsManager Instance;
 
@@ -53,7 +54,15 @@ namespace SRG.Presentation.Common
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+            GameWorld.Attach(this);
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance != this) return;
+            GameWorld.Detach(this);
+            Instance = null;
         }
 
         public void Init(GalaxyGenerationContext context)

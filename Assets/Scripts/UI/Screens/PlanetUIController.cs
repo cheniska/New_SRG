@@ -9,10 +9,11 @@ using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Presentation.Common;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Ships.Services;
 using SRG.UI.Common;
 using SRG.UI.HUD;
+using SRG.Utils;
 
 namespace SRG.UI.Screens
 {
@@ -417,7 +418,7 @@ namespace SRG.UI.Screens
             var dialogs = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Dialogs;
             if (dialogs == null || dialogs.Count == 0)
             {
-                GameConsoleController.AddEntry("[Связь] Диалоги не настроены.");
+                GameLog.Add("[Связь] Диалоги не настроены.");
                 return;
             }
 
@@ -428,7 +429,7 @@ namespace SRG.UI.Screens
                     : SRG.Dialog.DialogService.ResolveShipDialogId(carrier,    SRG.Dialog.DialogScope.Gov);
                 if (!string.IsNullOrEmpty(govDlg) &&
                     DialogUIController.Instance.OpenBridgeDialog(govDlg, carrier)) return;
-                GameConsoleController.AddEntry($"[Связь] {carrier.Name} не отвечает.");
+                GameLog.Add($"[Связь] {carrier.Name} не отвечает.");
                 return;
             }
 
@@ -437,7 +438,7 @@ namespace SRG.UI.Screens
             if (!string.IsNullOrEmpty(id) &&
                 DialogUIController.Instance.OpenPlanetDialog(id, _planet)) return;
 
-            GameConsoleController.AddEntry($"[Связь] На {_planet.Name} нет ответа.");
+            GameLog.Add($"[Связь] На {_planet.Name} нет ответа.");
         }
 
         private void UpdateMoneyDisplay()
@@ -721,12 +722,12 @@ namespace SRG.UI.Screens
             if (ship == null || _site == null) return;
 
             int missing = EquipmentSystem.GetFuelCapacity(ship) - EquipmentSystem.GetCurrentFuel(ship);
-            if (missing <= 0) { GameConsoleController.AddEntry("[Ангар] Бак уже полон."); return; }
+            if (missing <= 0) { GameLog.Add("[Ангар] Бак уже полон."); return; }
 
             int filled = FuelService.RefillToFull(ship, _site);
-            if (filled <= 0) { GameConsoleController.AddEntry("[Ангар] Недостаточно кредитов для дозаправки."); return; }
+            if (filled <= 0) { GameLog.Add("[Ангар] Недостаточно кредитов для дозаправки."); return; }
 
-            GameConsoleController.AddEntry(
+            GameLog.Add(
                 $"[Ангар] Дозаправка: +{filled} ед. за {filled * FuelService.FuelCostPerUnit} кр.");
             UpdateMoneyDisplay();
             RefreshHangar();
@@ -737,12 +738,12 @@ namespace SRG.UI.Screens
             var ship = PlayerShip.Instance?.ShipData;
             if (ship == null || _site == null) return;
 
-            if (ship.CurrentHull >= ship.MaxHull) { GameConsoleController.AddEntry("[Ангар] Корпус цел."); return; }
+            if (ship.CurrentHull >= ship.MaxHull) { GameLog.Add("[Ангар] Корпус цел."); return; }
 
             int restored = RepairService.RepairHullOnly(ship, _site);
-            if (restored <= 0) { GameConsoleController.AddEntry("[Ангар] Недостаточно кредитов для ремонта."); return; }
+            if (restored <= 0) { GameLog.Add("[Ангар] Недостаточно кредитов для ремонта."); return; }
 
-            GameConsoleController.AddEntry($"[Ангар] Ремонт корпуса: +{restored} HP.");
+            GameLog.Add($"[Ангар] Ремонт корпуса: +{restored} HP.");
             UpdateMoneyDisplay();
             RefreshHangar();
         }
@@ -753,14 +754,14 @@ namespace SRG.UI.Screens
             if (ship == null || _site == null) return;
 
             if (!AmmoService.HasReloadableWeapons(ship))
-            { GameConsoleController.AddEntry("[Ангар] Ракетного оружия нет."); return; }
+            { GameLog.Add("[Ангар] Ракетного оружия нет."); return; }
             if (AmmoService.EstimateReloadCost(ship) <= 0)
-            { GameConsoleController.AddEntry("[Ангар] Боезапас полон."); return; }
+            { GameLog.Add("[Ангар] Боезапас полон."); return; }
 
             int loaded = AmmoService.ReloadAllAmmo(ship, _site);
-            if (loaded <= 0) { GameConsoleController.AddEntry("[Ангар] Недостаточно кредитов для зарядки."); return; }
+            if (loaded <= 0) { GameLog.Add("[Ангар] Недостаточно кредитов для зарядки."); return; }
 
-            GameConsoleController.AddEntry($"[Ангар] Заряжено снарядов: {loaded}.");
+            GameLog.Add($"[Ангар] Заряжено снарядов: {loaded}.");
             UpdateMoneyDisplay();
             RefreshHangar();
         }
@@ -977,14 +978,14 @@ namespace SRG.UI.Screens
 
             if (entry.Stock <= 0)
             {
-                GameConsoleController.AddEntry("[Магазин] Товара нет в наличии.");
+                GameLog.Add("[Магазин] Товара нет в наличии.");
                 return;
             }
             int affordable = entry.BuyPrice > 0 ? ship.Money / entry.BuyPrice : entry.Stock;
             int max = Mathf.Min(entry.Stock, affordable);
             if (max <= 0)
             {
-                GameConsoleController.AddEntry("[Магазин] Недостаточно кредитов.");
+                GameLog.Add("[Магазин] Недостаточно кредитов.");
                 return;
             }
 
@@ -1006,7 +1007,7 @@ namespace SRG.UI.Screens
 
             if (!ship.Inventory.Stacks.TryGetValue(goodId, out var stack) || stack.TotalWeight <= 0)
             {
-                GameConsoleController.AddEntry("[Магазин] Нет такого товара в трюме.");
+                GameLog.Add("[Магазин] Нет такого товара в трюме.");
                 return;
             }
 
@@ -1030,7 +1031,7 @@ namespace SRG.UI.Screens
             if (galaxyCfg != null && !TradeSystem.IsLegal(_site, goodId, galaxyCfg))
             {
                 int penalty = galaxyCfg.Trade?.ContrabandRelationPenalty ?? -20;
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Магазин] {TradeSystem.GetDisplayName(goodId, galaxyCfg)} — контрабанда. Отношения: {penalty}.");
             }
 
@@ -1041,12 +1042,12 @@ namespace SRG.UI.Screens
                 int desired = Mathf.Min(amount, entry.Stock);
                 if (desired <= 0) return;
                 if (ship.Money < desired * entry.BuyPrice)
-                    GameConsoleController.AddEntry("[Магазин] Недостаточно кредитов.");
+                    GameLog.Add("[Магазин] Недостаточно кредитов.");
                 return;
             }
 
             string displayName = TradeSystem.GetDisplayName(goodId, galaxyCfg);
-            GameConsoleController.AddEntry($"[Магазин] Куплено: {displayName} x{actualAmount} за {totalCost} кр.");
+            GameLog.Add($"[Магазин] Куплено: {displayName} x{actualAmount} за {totalCost} кр.");
             UpdateMoneyDisplay();
             RefreshGoodsShop();
             RefreshHangar();
@@ -1061,11 +1062,11 @@ namespace SRG.UI.Screens
             var taken = ShopService.TrySell(ship, _site, goodId, amount, galaxyCfg, out int income);
             if (taken == null || taken.TotalWeight == 0)
             {
-                GameConsoleController.AddEntry("[Магазин] Нет такого товара в трюме.");
+                GameLog.Add("[Магазин] Нет такого товара в трюме.");
                 return;
             }
 
-            GameConsoleController.AddEntry($"[Магазин] Продано: {taken.Name} x{taken.TotalWeight} за {income} кр.");
+            GameLog.Add($"[Магазин] Продано: {taken.Name} x{taken.TotalWeight} за {income} кр.");
             UpdateMoneyDisplay();
             RefreshGoodsShop();
             RefreshHangar();
@@ -1132,7 +1133,7 @@ namespace SRG.UI.Screens
 
             if (ship.Money < item.Price)
             {
-                GameConsoleController.AddEntry("[Магазин] Недостаточно кредитов.");
+                GameLog.Add("[Магазин] Недостаточно кредитов.");
                 return;
             }
 
@@ -1140,7 +1141,7 @@ namespace SRG.UI.Screens
             InventoryService.PutItem(ship, item);
             _site.Settlement.EquipmentShop.Items.Remove(itemUid);
 
-            GameConsoleController.AddEntry($"[Магазин] Куплено оборудование: {item.Name} за {item.Price} кр.");
+            GameLog.Add($"[Магазин] Куплено оборудование: {item.Name} за {item.Price} кр.");
             UpdateMoneyDisplay();
             RefreshEquipShop();
             RefreshHangar();
@@ -1158,7 +1159,7 @@ namespace SRG.UI.Screens
 
             _site.Settlement.EquipmentShop.Items[item.Uid] = item;
 
-            GameConsoleController.AddEntry($"[Магазин] Продано: {item.Name} за {price} кр.");
+            GameLog.Add($"[Магазин] Продано: {item.Name} за {price} кр.");
             UpdateMoneyDisplay();
             RefreshEquipShop();
             RefreshHangar();

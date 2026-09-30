@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
@@ -10,8 +9,8 @@ using SRG.NpcAI;
 using SRG.NpcAI.Spawning;
 using SRG.Ships.Movement;
 using SRG.Ships.Services;
-using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Simulation
 {
@@ -197,7 +196,7 @@ namespace SRG.Galaxy.Simulation
 
             MissileSystem.InitMissileFrames(star, anim);
 
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             _swSection.Restart();
             star.RebuildPowerCache(currentTurn);
             _tPower += _swSection.ElapsedMilliseconds;
@@ -208,7 +207,7 @@ namespace SRG.Galaxy.Simulation
             shipsByUid.Clear();
             foreach (var s in star.Ships) shipsByUid[s.Uid] = s;
             // Task 8: ItemsConfig берём один раз на весь ход; равно доступен для tow/missile/artefact.
-            var equipConfig = GalaxyManager.Instance?.Context?.ItemsConfig;
+            var equipConfig = GameWorld.Context?.ItemsConfig;
 
             // Task 5+7: precomputed hostile pairs. Одновременно даёт early-out для боя, когда
             // ни у кого нет враждебных целей (типичный случай пустой/дружественной системы).
@@ -478,7 +477,7 @@ namespace SRG.Galaxy.Simulation
                 if (dockCarrier != null && dockCarrier.CurrentHull > 0) continue;
                 ShipDockingService.Undock(ship, dockCarrier);
                 if (ship.IsPlayer)
-                    GameConsoleController.AddEntry("[Стыковка] Носитель потерян — корабль в свободном полёте.");
+                    GameLog.Add("[Стыковка] Носитель потерян — корабль в свободном полёте.");
             }
 
             // ВНИМАНИЕ: HyperjumpController.FinalizeTurn вызывается НЕ здесь, а в
@@ -689,9 +688,9 @@ namespace SRG.Galaxy.Simulation
             if (subTurn != 1) return;
             var asteroid = star.Asteroids?.Find(a => a.Uid == targetUid && !a.IsDestroyed);
             if (asteroid == null) return;
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             AsteroidSystem.PlayerShootAsteroid(playerShip, asteroid, anim, 1, ctx);
-            GameConsoleController.AddEntry(
+            GameLog.Add(
                 $"[Стрельба] Астероид {SpriteUtility.ShortId(targetUid)} уничтожен.");
         }
 
@@ -754,7 +753,7 @@ namespace SRG.Galaxy.Simulation
                 if (pattern == HitPattern.Homing)
                 {
                     MissileSystem.LaunchSalvo(playerShip, target, slotKey, weapon, star, equipConfig, anim, firingSubTurn);
-                    GameConsoleController.AddEntry(
+                    GameLog.Add(
                         $"[Ракета] {playerShip.Name} → {target.Name}: ракета запущена.");
                 }
                 else
@@ -763,7 +762,7 @@ namespace SRG.Galaxy.Simulation
                     if (result.Hit)
                     {
                         string destroyed = result.TargetDestroyed ? " — УНИЧТОЖЕН" : "";
-                        GameConsoleController.AddEntry(
+                        GameLog.Add(
                             $"[Стрельба] {playerShip.Name} → {target.Name}: " +
                             $"{result.HullDamage:F0} урона корпусу{destroyed}.");
                     }
@@ -771,7 +770,7 @@ namespace SRG.Galaxy.Simulation
             }
             else if (firingSubTurn == 1 && !isAutoFollow)
             {
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Стрельба] Нет оружия в радиусе поражения цели {target.Name}.");
             }
         }

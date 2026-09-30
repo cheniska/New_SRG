@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using SRG.Core;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -47,7 +47,7 @@ namespace SRG.Equipment
         private static (List<StackGraphicStep> steps, string icon) FindConfig(string itemId)
         {
             if (string.IsNullOrEmpty(itemId)) return (null, null);
-            var cfg = GalaxyManager.Instance?.Context?.ItemsConfig;
+            var cfg = GameWorld.Context?.ItemsConfig;
             if (cfg == null) return (null, null);
 
             var item = cfg.GetItem(itemId);

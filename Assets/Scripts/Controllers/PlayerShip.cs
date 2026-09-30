@@ -7,8 +7,10 @@ using SRG.Core;
 using SRG.Galaxy;
 using SRG.Presentation.World;
 using SRG.Ships.Movement;
+using SRG.Ships;
+using SRG.Simulation;
 
-namespace SRG.Ships.Player
+namespace SRG.Controllers
 {
     public partial class PlayerShip : MonoBehaviour, ISkillsCarrier
     {
@@ -111,17 +113,17 @@ namespace SRG.Ships.Player
 
         private void OnEnable()
         {
-            GalaxyManager.OnTurnCalculate += OnTurnCalculate;
-            GalaxyManager.OnTurnAnimate += OnTurnAnimate;
-            GalaxyManager.OnTurnComplete += OnTurnComplete;
+            GameWorld.OnTurnCalculate += OnTurnCalculate;
+            GameWorld.OnTurnAnimate += OnTurnAnimate;
+            GameWorld.OnTurnComplete += OnTurnComplete;
             PlayerManager.OnLeft += OnLeavePlanet;
         }
 
         private void OnDisable()
         {
-            GalaxyManager.OnTurnCalculate -= OnTurnCalculate;
-            GalaxyManager.OnTurnAnimate -= OnTurnAnimate;
-            GalaxyManager.OnTurnComplete -= OnTurnComplete;
+            GameWorld.OnTurnCalculate -= OnTurnCalculate;
+            GameWorld.OnTurnAnimate -= OnTurnAnimate;
+            GameWorld.OnTurnComplete -= OnTurnComplete;
             PlayerManager.OnLeft -= OnLeavePlanet;
         }
 

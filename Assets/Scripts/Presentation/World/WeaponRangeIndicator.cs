@@ -3,8 +3,9 @@ using UnityEngine;
 using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Presentation.World
 {

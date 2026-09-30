@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI.Orders;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -84,7 +84,7 @@ namespace SRG.Ships.Services
             var tuning = DialogTuning.Current;
             float frac = Mathf.Clamp(tuning?.CargoRobFraction ?? 0.5f, 0.05f, 1f);
             var star = target.CurrentStar
-                       ?? GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap[target.CurrentStarUid];
+                       ?? GameWorld.GeneratedGalaxy?.StarsMap[target.CurrentStarUid];
             if (star == null) return CargoRobResult.Refuse(CargoRobRefusalReason.NoCargo);
 
             // Собираем списки, которые жертва «выкинет»: единичные предметы и id стеков.
@@ -114,7 +114,7 @@ namespace SRG.Ships.Services
 
             // Один тик: жертва скидывает.
             var order = new OrderTransfer(robber.Uid, itemUids, stackIds, frac);
-            order.Execute(target, star, GalaxyManager.Instance?.Context);
+            order.Execute(target, star, GameWorld.Context);
             var containerUids = order.LastSpawnedContainerUids ?? new List<string>();
 
             if (containerUids.Count == 0)

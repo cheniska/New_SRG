@@ -6,8 +6,10 @@ using SRG.Ships.Movement;
 using SRG.Ships.Services;
 using SRG.UI.HUD;
 using SRG.UI.Screens;
+using SRG.Utils;
+using SRG.Ships;
 
-namespace SRG.Ships.Player
+namespace SRG.Controllers
 {
     // PlayerShip — Turn lifecycle (этап T2 рефакторинга, июнь 2026). См. PlayerShip.cs.
     public partial class PlayerShip
@@ -165,7 +167,7 @@ namespace SRG.Ships.Player
                 PlayerManager.Instance?.DockOnShip(carrier);
 
                 string tag = carrier.IsStation ? "Станция" : "Стыковка";
-                GameConsoleController.AddEntry($"[{tag}] {(carrier.IsStation ? "Стыковка со станцией" : "Посадка на")} {carrier.Name}.");
+                GameLog.Add($"[{tag}] {(carrier.IsStation ? "Стыковка со станцией" : "Посадка на")} {carrier.Name}.");
                 HudMessageController.Show($"{tag}: {carrier.Name}");
                 return true;
             }

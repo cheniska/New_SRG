@@ -1,5 +1,5 @@
 using UnityEngine;
-using SRG.Core;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Politics
 {
@@ -119,6 +119,6 @@ namespace SRG.Galaxy.Politics
             SetByUids(uidA, ownerA, raceA, uidB, ownerB, raceB, maxValue);
         }
 
-        private static ShipData FindPlayer() => PlayerManager.Instance?.GetOrFindPlayerShip();
+        private static ShipData FindPlayer() => GameWorld.PlayerShip;
     }
 }

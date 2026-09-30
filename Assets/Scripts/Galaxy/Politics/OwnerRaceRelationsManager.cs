@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using SRG.Config;
-using SRG.Core;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Politics
 {
@@ -336,7 +336,7 @@ namespace SRG.Galaxy.Politics
 
         private Dictionary<string, int> GetPersonalStore()
         {
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             return galaxy != null ? galaxy.PersonalRelations : _personalRelationsFallback;
         }
 

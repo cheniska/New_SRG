@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Dialog.PlanetGreetings;
 using SRG.Economy;
 using SRG.Scripting;
 using SRG.Ships;
-using SRG.Ships.Player;
-using SRG.UI.Screens;
+using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -33,7 +32,7 @@ namespace SRG.Dialog
             DialogService.RegisterAction("Log", (ctx, args) =>
             {
                 if (args == null || args.Count == 0) return;
-                GameConsoleController.AddEntry(string.Join(" ", args));
+                GameLog.Add(string.Join(" ", args));
             });
 
             // Деньги
@@ -77,13 +76,13 @@ namespace SRG.Dialog
             DialogService.RegisterAction("LeavePlanet", (ctx, args) =>
             {
                 ctx.ShouldClose = true;
-                PlayerManager.Instance?.LeavePlanet();
+                GameWorld.Player?.LeavePlanet();
             });
 
             // Мгновенный ход (полезно для квестов на планете, ускоряющих время)
             DialogService.RegisterAction("SkipTurn", (ctx, args) =>
             {
-                GalaxyManager.Instance?.ExecuteInstantTurn();
+                GameWorld.ExecuteInstantTurn();
             });
 
             // ── Навигация между диалогами ──────────────────────────────────
@@ -229,8 +228,8 @@ namespace SRG.Dialog
             DialogService.RegisterTag("player_star",   ctx => StarName(ctx?.PlayerShip?.CurrentStarUid));
 
             // ── Глобальный контекст ────────────────────────────────────────
-            DialogService.RegisterTag("turn", _ => GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn.ToString());
-            DialogService.RegisterTag("date", _ => GalaxyManager.Instance?.GeneratedGalaxy?.GetCurrentDate());
+            DialogService.RegisterTag("turn", _ => GameWorld.GeneratedGalaxy?.CurrentTurn.ToString());
+            DialogService.RegisterTag("date", _ => GameWorld.GeneratedGalaxy?.GetCurrentDate());
 
             // Контекст «где идёт разговор» — фильтруют реплики через Condition:
             //   "scope == \"Gov\""    — только правительство/мостик/командование
@@ -261,7 +260,7 @@ namespace SRG.Dialog
                 if (ctx.Data.TryGetValue(key, out var cached)) return cached;
                 var text = PlanetGreetingRenderer.Render(
                     ctx.PlayerShip, ctx.TargetPlanet, GetCfg(),
-                    GalaxyManager.Instance?.GeneratedGalaxy);
+                    GameWorld.GeneratedGalaxy);
                 ctx.Data[key] = text ?? string.Empty;
                 return text;
             });
@@ -274,7 +273,7 @@ namespace SRG.Dialog
                 if (ctx.Data.TryGetValue(key, out var cached)) return cached;
                 var text = PlanetGreetingRenderer.RenderShip(
                     ctx.PlayerShip, ctx.TargetShip, GetCfg(),
-                    GalaxyManager.Instance?.GeneratedGalaxy);
+                    GameWorld.GeneratedGalaxy);
                 ctx.Data[key] = text ?? string.Empty;
                 return text;
             });
@@ -496,7 +495,7 @@ namespace SRG.Dialog
         private static string PlanetName(string uid)
         {
             if (string.IsNullOrEmpty(uid)) return null;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.PlanetsMap != null && galaxy.PlanetsMap.TryGetValue(uid, out var p) && p != null)
                 return p.Name ?? uid;
             return uid;
@@ -505,12 +504,12 @@ namespace SRG.Dialog
         private static string StarName(string uid)
         {
             if (string.IsNullOrEmpty(uid)) return null;
-            var galaxy = GalaxyManager.Instance?.GeneratedGalaxy;
+            var galaxy = GameWorld.GeneratedGalaxy;
             if (galaxy?.StarsMap != null && galaxy.StarsMap.TryGetValue(uid, out var s) && s != null)
                 return s.Name ?? uid;
             return uid;
         }
 
-        private static GalaxyConfig GetCfg() => GalaxyManager.Instance?.Context?.Config;
+        private static GalaxyConfig GetCfg() => GameWorld.Context?.Config;
     }
 }

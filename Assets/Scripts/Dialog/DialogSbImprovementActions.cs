@@ -1,5 +1,5 @@
 using UnityEngine;
-using SRG.UI.Common;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -19,7 +19,7 @@ namespace SRG.Dialog
             DialogService.RegisterAction("OpenImprovement", (ctx, _) =>
             {
                 if (ctx?.PlayerShip == null) return;
-                ImprovementDialog.Show(ctx.PlayerShip);
+                GameWorld.Dialogs?.ShowImprovementDialog(ctx.PlayerShip);
                 ctx.ShouldClose = true; // закрываем разговор, чтобы модалка не перекрывалась им
             });
 

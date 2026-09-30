@@ -1,8 +1,8 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -39,7 +39,7 @@ namespace SRG.Ships.Services
             int cost = filled * FuelCostPerUnit;
             ship.Money -= cost;
 
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             EconomicLog.Trade(turn, EconomicLog.Safe(ship.Name), "REFUEL",
                 $"site={EconomicLog.Safe(site.Name)} units={filled} unit_cost={FuelCostPerUnit} " +
                 $"total={cost} money_after={ship.Money} fuel_after={cur + filled}/{cap}");

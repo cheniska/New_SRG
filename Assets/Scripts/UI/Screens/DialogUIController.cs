@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using SRG.Core;
 using SRG.Galaxy;
-using SRG.Ships.Player;
+using SRG.Controllers;
+using SRG.Dialog;
+using SRG.Simulation;
 
-namespace SRG.Dialog
+namespace SRG.UI.Screens
 {
     // Визуальный контроллер диалогов. Singleton.
     // Два режима компоновки:
@@ -17,7 +19,7 @@ namespace SRG.Dialog
     // API:
     //   DialogUIController.Instance.OpenSpaceDialog(dialogId, targetShip = null)
     //   DialogUIController.Instance.OpenPlanetDialog(dialogId, planet)
-    public class DialogUIController : MonoBehaviour
+    public class DialogUIController : MonoBehaviour, IDialogPresenter
     {
         public static DialogUIController Instance { get; private set; }
         public bool IsOpen => _panel != null && _panel.activeSelf;
@@ -58,6 +60,7 @@ namespace SRG.Dialog
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+            GameWorld.Attach(this);
             LoadPaletteAndFont();
             // Список модулей живёт в DialogModules — там же, где флаг «уже поставлено»
             // и переустановка после DialogService.Reset().
@@ -112,7 +115,17 @@ namespace SRG.Dialog
             DialogService.OnDialogEnded       -= HandleEnd;
         }
 
+        private void OnDestroy()
+        {
+            if (Instance != this) return;
+            GameWorld.Detach(this);
+            Instance = null;
+        }
+
         // ───── Public API ────────────────────────────────────────────────
+
+        /// <summary>Окно улучшения оборудования (научная база) — вызывается диалоговым действием.</summary>
+        public void ShowImprovementDialog(ShipData player) => SRG.UI.Common.ImprovementDialog.Show(player);
 
         public bool OpenSpaceDialog(string dialogId, ShipData targetShip = null)
         {

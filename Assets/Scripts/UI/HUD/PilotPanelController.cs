@@ -7,6 +7,7 @@ using SRG.Galaxy;
 using SRG.Presentation.Common;
 using SRG.Ships;
 using SRG.UI.Screens;
+using SRG.Utils;
 
 namespace SRG.UI.HUD
 {
@@ -265,14 +266,14 @@ namespace SRG.UI.HUD
             int costBefore = _ship.Skills.GetUpgradeCost(skill, cfg);
 
             if (_ship.Skills.TryUpgrade(skill, cfg))
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"+{skill.DisplayNameRu()}: {_ship.Skills.GetBase(skill)} (потрачено {costBefore})");
             else
             {
                 string reason = costBefore == int.MaxValue
                     ? "уже потолок прокачки"
                     : $"нужно {costBefore}, есть {_ship.Skills.FreePoints}";
-                GameConsoleController.AddEntry($"Не могу прокачать {skill.DisplayNameRu()}: {reason}");
+                GameLog.Add($"Не могу прокачать {skill.DisplayNameRu()}: {reason}");
             }
 
             Refresh();

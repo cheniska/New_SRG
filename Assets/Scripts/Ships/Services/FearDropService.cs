@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.NpcAI;
 using SRG.NpcAI.Actions;
-using SRG.UI.Screens;
+using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -95,9 +95,9 @@ namespace SRG.Ships.Services
             if (!string.IsNullOrEmpty(say))
             {
                 say = say.Replace("<FullShipBad>", threatName).Replace("<ShipBad>", threatName);
-                GameConsoleController.AddEntry($"[Связь] {ship.Name}: {say}");
+                GameLog.Add($"[Связь] {ship.Name}: {say}");
             }
-            GameConsoleController.AddEntry(
+            GameLog.Add(
                 $"[Связь] {ship.Name} сбрасывает {chunk.TotalWeight} ед. \"{cargoName}\" в пользу {threatName}.");
         }
 
@@ -120,6 +120,6 @@ namespace SRG.Ships.Services
             _lastDropTurnByUid[ship.Uid] = turn;
 
         private static DialogTuning GetTuning() =>
-            GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning;
+            GameWorld.Context?.Config?.Dialogs?.Tuning;
     }
 }

@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.Economy
 {
@@ -87,7 +87,7 @@ namespace SRG.Economy
 
             // Планета ориентируется на свой ПТУ; станция ПТУ не имеет — берёт галактический ГТУ.
             int techBase = site.Kind == LandingSiteKind.Station
-                ? (GalaxyManager.Instance?.GeneratedGalaxy?.GtuLevel ?? 5)
+                ? (GameWorld.GeneratedGalaxy?.GtuLevel ?? 5)
                 : settlement.TechLevel;
             int ptu = Mathf.Clamp(techBase, 1, 10);
             int minTL = Mathf.Max(1, ptu - 3);
@@ -125,7 +125,7 @@ namespace SRG.Economy
 
             _diagItemsAdded += added;
             _diagItemsRemoved += removed;
-            int turn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             EconomicLog.Shop(turn, EconomicLog.Safe(site.Name), "REFRESH",
                 $"ptu={ptu} eco={settlement.EconomyType} gov={settlement.Government} " +
                 $"added={added} removed={removed} total={settlement.EquipmentShop.Items.Count}");
@@ -249,7 +249,7 @@ namespace SRG.Economy
             var candidates = GetCandidates(ctx.ItemsConfig, category, minTL, maxTL);
             if (candidates.Count == 0) return;
 
-            var research = GalaxyManager.Instance?.GeneratedGalaxy?.ResearchState;
+            var research = GameWorld.GeneratedGalaxy?.ResearchState;
 
             for (int i = 0; i < count; i++)
             {

@@ -1,10 +1,11 @@
 using UnityEngine;
-using SRG.Core;
+using SRG.NpcAI;
+using SRG.Simulation;
 using SRG.Galaxy;
 using SRG.Presentation.World;
 using SRG.UI.Common;
 
-namespace SRG.NpcAI
+namespace SRG.Controllers
 {
     /// <summary>
     /// MonoBehaviour-обёртка для NPC корабля: владеет ShipData/Brain, по событию OnTurnCalculate
@@ -24,6 +25,22 @@ namespace SRG.NpcAI
 
         private ShipVisualController _visual;
 
+        /// <summary>Повесить AI-контроллер на GameObject корабля (вызывается SystemViewManager при создании визуала).</summary>
+        public static void Attach(GameObject obj, ShipData ship, StarData star)
+        {
+            if (obj == null || ship == null || star == null) return;
+
+            var ctrl = obj.GetComponent<NpcController>() ?? obj.AddComponent<NpcController>();
+            ctrl.Init(ship, star); // lazy-создаёт Brain; ship.Personality проставляет конструктор NpcBrain
+
+            Debug.Log($"[NpcController] Attached AI to '{ship.Name}' ({ship.ShipTypeId}) " +
+                      $"CombatClass={ship.Brain.CombatClass} " +
+                      $"Aggr={ship.Brain.Personality.Aggression:F0} " +
+                      $"Caution={ship.Brain.Personality.Caution:F0} " +
+                      $"Greed={ship.Brain.Personality.Greed:F0} " +
+                      $"Disc={ship.Brain.Personality.Discipline:F0}");
+        }
+
         public void Init(ShipData ship, StarData star)
         {
             ShipData = ship;
@@ -33,8 +50,8 @@ namespace SRG.NpcAI
             ship.Brain ??= new NpcBrain(ship, star);
         }
 
-        private void OnEnable()  => GalaxyManager.OnTurnCalculate += OnTurnDone;
-        private void OnDisable() => GalaxyManager.OnTurnCalculate -= OnTurnDone;
+        private void OnEnable()  => GameWorld.OnTurnCalculate += OnTurnDone;
+        private void OnDisable() => GameWorld.OnTurnCalculate -= OnTurnDone;
 
         private void OnTurnDone(TurnAnimationData _) => UpdateVisual();
 

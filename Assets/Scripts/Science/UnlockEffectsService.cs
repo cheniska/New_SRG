@@ -4,7 +4,7 @@ using SRG.Config;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
-using SRG.UI.Screens;
+using SRG.Utils;
 
 namespace SRG.Science
 {
@@ -98,7 +98,7 @@ namespace SRG.Science
             string msg = string.IsNullOrEmpty(contributor)
                 ? $"[Наука] Завершено изобретение: {display}."
                 : $"[Наука] {contributor}: завершено изобретение {display}.";
-            GameConsoleController.AddEntry(msg);
+            GameLog.Add(msg);
         }
 
         private static void NewsEffect(GalaxyData galaxy, InventionNodeConfig invCfg, InventionProgress progress, UnlockEffectConfig effect)
@@ -110,7 +110,7 @@ namespace SRG.Science
                     ? $"[Наука] Завершено изобретение: {display}."
                     : $"[Наука] {contributor}: завершено изобретение {display}.");
             template = template.Replace("{planet}", contributor ?? "-").Replace("{name}", display);
-            GameConsoleController.AddEntry(template);
+            GameLog.Add(template);
         }
 
         private static void AddGood(GalaxyGenerationContext ctx, GalacticResearchState state, UnlockEffectConfig effect)

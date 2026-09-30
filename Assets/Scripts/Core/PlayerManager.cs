@@ -8,15 +8,16 @@ using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
 using SRG.Galaxy.Simulation;
 using SRG.Ships;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Core
 {
     // Управляет состоянием игрока: корабль, посадка, взлёт, спавн.
     // Должен быть на том же GameObject, что и GalaxyManager (DontDestroyOnLoad).
-    public class PlayerManager : MonoBehaviour
+    public class PlayerManager : MonoBehaviour, IPlayerHost
     {
         public static PlayerManager Instance { get; private set; }
 
@@ -74,7 +75,18 @@ namespace SRG.Core
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+            GameWorld.Attach(this);
         }
+
+        private void OnDestroy()
+        {
+            if (Instance != this) return;
+            GameWorld.Detach(this);
+            Instance = null;
+        }
+
+        /// <summary>UID корабля, за которым летит игрок (режим «следовать»), либо null.</summary>
+        public string FollowShipUid => PlayerShip.Instance != null ? PlayerShip.Instance.FollowShipUid : null;
 
         public void ClearPlayerShip()
         {
@@ -325,29 +337,5 @@ namespace SRG.Core
                     anim.PlanningReasons.Add(PlanningReason.LowHull);
             }
         }
-    }
-
-    public enum PlayerDeathCause
-    {
-        Unknown,
-        Weapon,    // обычный выстрел
-        Missile,   // ракета
-        Asteroid,  // столкновение с астероидом
-    }
-
-    /// <summary>
-    /// Контекст смерти игрока. Передаётся в OnPlayerDeathAttempt (где Cancelled можно
-    /// поставить true для предотвращения смерти) и в OnPlayerDeathConfirmed.
-    /// </summary>
-    public class PlayerDeathInfo
-    {
-        public PlayerDeathCause Cause;
-        public string KillerName;
-        public string KillerOwner;
-        public string StarName;
-        public Vector2 Position;
-
-        /// <summary>Если перехватчик ставит true — игрок выживает (HP восстанавливается до 1).</summary>
-        public bool Cancelled;
     }
 }

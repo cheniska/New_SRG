@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using SRG.Config;
 using SRG.Dialog.PlanetGreetings;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -84,7 +85,7 @@ namespace SRG.Dialog
     {
         /// <summary>Актуальный тюнинг из GalaxyConfig.Dialogs. Может быть null до Awake/загрузки конфига.</summary>
         public static DialogTuning Current =>
-            SRG.Core.GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning;
+            GameWorld.Context?.Config?.Dialogs?.Tuning;
 
 
         /// <summary>Owner-id, при котором игрок всегда считается «Pirate». По умолчанию "Pirates".</summary>

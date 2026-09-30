@@ -6,7 +6,7 @@ using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.UI.Screens;
 
 namespace SRG.UI.HUD

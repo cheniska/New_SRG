@@ -1,4 +1,5 @@
 using UnityEngine;
+using SRG.Simulation;
 
 namespace SRG.Config
 {
@@ -114,7 +115,7 @@ namespace SRG.Config
         public static string SHADER_STAR_ADDITIVE  = "Shaders/StarAdditive";
         public static string SHADER_STAR_LARGE     = "Shaders/StarLarge";
         // Дублируются в GameSettingsConfig.Wormhole_*Path, но зеркалируются сюда для
-        // единообразия доступа и снятия null-цепочек GalaxyManager.Instance?.Settings?.
+        // единообразия доступа и снятия null-цепочек GameWorld.Settings?.
         public static string WORMHOLE_OPENING_PATH = "Graphics/Effects/Wormhole/open";
         public static string WORMHOLE_CYCLE_PATH   = "Graphics/Effects/Wormhole/cycle";
         public static string WORMHOLE_CLOSING_PATH = "Graphics/Effects/Wormhole/close";

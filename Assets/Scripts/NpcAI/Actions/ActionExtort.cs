@@ -4,6 +4,7 @@ using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
 using SRG.Ships.Services;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -62,7 +63,7 @@ namespace SRG.NpcAI.Actions
                 {
                     _incomingRequested = true;
                     var did = SRG.Dialog.DialogService.ResolveIncomingDialogId(robber, "extort");
-                    var ui  = SRG.Dialog.DialogUIController.Instance;
+                    var ui  = GameWorld.Dialogs;
                     if (!string.IsNullOrEmpty(did) && ui != null && ui.OpenIncomingSpaceDialog(did, robber))
                         return false;
                     // Fallback: диалог открыть нельзя — сразу атака.

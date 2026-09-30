@@ -1,12 +1,12 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Simulation;
 using SRG.NpcAI;
 using SRG.NpcAI.Actions;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships.Movement
 {
@@ -113,7 +113,7 @@ namespace SRG.Ships.Movement
         /// <summary>Расход топлива на прыжок (по той же формуле, что использовал старый JumpToStar).</summary>
         public static int CalcFuelCost(StarData from, StarData to)
         {
-            var cfgSettings = GalaxyManager.Instance?.Context?.Config?.Settings;
+            var cfgSettings = GameWorld.Context?.Config?.Settings;
             float costPerPc = cfgSettings != null ? cfgSettings.JumpFuelCostPerUnit : 1f;
             float distPc = CalcDistance(from, to);
             return Mathf.Max(1, Mathf.RoundToInt(distPc * costPerPc));
@@ -126,7 +126,7 @@ namespace SRG.Ships.Movement
         public static int CalcHyperArriveTurns(ShipData ship, StarData from, StarData to)
         {
             if (!string.IsNullOrEmpty(ship?.HyperjumpViaWormholeUid)) return 1;
-            var cfgSettings = GalaxyManager.Instance?.Context?.Config?.Settings;
+            var cfgSettings = GameWorld.Context?.Config?.Settings;
             float perTurn = cfgSettings != null ? cfgSettings.HyperCrossPerTurnDistance : 30f;
             if (perTurn <= 0f) return 1;
             float dist = CalcDistance(from, to);
@@ -467,7 +467,7 @@ namespace SRG.Ships.Movement
                         && galaxy.StarsMap.TryGetValue(ship.CurrentStarUid, out var arriveStar))
                     {
                         ship.Brain.ResetActivity();
-                        var ctx = GalaxyManager.Instance?.Context;
+                        var ctx = GameWorld.Context;
                         ship.Brain.Tick(ship, arriveStar, ctx);
                     }
                     Debug.Log($"[Hyperjump] {ship.Name}: HyperArrive → HyperExit.");

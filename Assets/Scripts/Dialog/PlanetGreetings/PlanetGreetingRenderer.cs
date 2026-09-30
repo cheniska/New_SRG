@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Ships;

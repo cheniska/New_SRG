@@ -1,9 +1,8 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships.Services;
-using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -20,14 +19,14 @@ namespace SRG.Equipment
             if (ship == null || item == null || !item.Activatable) return false;
             if (!item.IsWorking)
             {
-                GameConsoleController.AddEntry($"[Активация] {item.Name}: предмет повреждён, активация невозможна.");
+                GameLog.Add($"[Активация] {item.Name}: предмет повреждён, активация невозможна.");
                 return false;
             }
 
             // Сначала — UseCode из конфига. Если задан и обработчик зарегистрирован — его результат
             // определяет исход активации; consume удаляет предмет из инвентаря, wear списывает
             // прочность. Легаси-switch срабатывает только если UseCode не задан.
-            var equipCfg = GalaxyManager.Instance?.Context?.ItemsConfig;
+            var equipCfg = GameWorld.Context?.ItemsConfig;
             var itemCfg = equipCfg?.GetItem(item.Category, item.ItemId);
             if (itemCfg != null && !string.IsNullOrEmpty(itemCfg.UseCode))
             {
@@ -36,7 +35,7 @@ namespace SRG.Equipment
                 {
                     var res = script.TryUse(ship, item, equipCfg);
                     if (!string.IsNullOrEmpty(res.Message))
-                        GameConsoleController.AddEntry(res.Message);
+                        GameLog.Add(res.Message);
                     if (!res.Success) return false;
                     if (res.WearApplied > 0)
                         item.Durability = Mathf.Max(0, item.Durability - res.WearApplied);
@@ -47,7 +46,7 @@ namespace SRG.Equipment
                     }
                     return true;
                 }
-                GameConsoleController.AddEntry($"[Активация] {item.Name}: UseCode '{itemCfg.UseCode}' не зарегистрирован.");
+                GameLog.Add($"[Активация] {item.Name}: UseCode '{itemCfg.UseCode}' не зарегистрирован.");
                 return false;
             }
 
@@ -56,11 +55,11 @@ namespace SRG.Equipment
                 case EquipmentCategory.Forsage:
                     if (!CanActivateForsage(ship, out string reason))
                     {
-                        GameConsoleController.AddEntry($"[Форсаж] Активация невозможна: {reason}.");
+                        GameLog.Add($"[Форсаж] Активация невозможна: {reason}.");
                         return false;
                     }
                     ship.ForsageActive = true;
-                    GameConsoleController.AddEntry($"[Активация] Форсаж включён: {item.Name}.");
+                    GameLog.Add($"[Активация] Форсаж включён: {item.Name}.");
                     return true;
 
                 case EquipmentCategory.CompanionDrone:
@@ -68,15 +67,15 @@ namespace SRG.Equipment
                     var drone = DroneService.Deploy(ship, item);
                     if (drone == null)
                     {
-                        GameConsoleController.AddEntry($"[Дрон] Развёртывание {item.Name} не удалось.");
+                        GameLog.Add($"[Дрон] Развёртывание {item.Name} не удалось.");
                         return false;
                     }
-                    GameConsoleController.AddEntry($"[Дрон] Развёрнут: {drone.Name}.");
+                    GameLog.Add($"[Дрон] Развёрнут: {drone.Name}.");
                     return true;
                 }
 
                 default:
-                    GameConsoleController.AddEntry($"[Активация] {item.Name}: активация для этой категории ещё не реализована.");
+                    GameLog.Add($"[Активация] {item.Name}: активация для этой категории ещё не реализована.");
                     return false;
             }
         }
@@ -112,7 +111,7 @@ namespace SRG.Equipment
         public static bool IsLandingThisTurn(ShipData ship)
         {
             if (ship == null || string.IsNullOrEmpty(ship.LandingPlanetUid)) return false;
-            var star = GalaxyManager.Instance?.CurrentStar;
+            var star = GameWorld.CurrentStar;
             var planet = star?.Planets?.Find(p => p.Uid == ship.LandingPlanetUid);
             if (planet == null) return false;
 

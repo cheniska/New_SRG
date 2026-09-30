@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SRG.Galaxy;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -107,7 +108,7 @@ namespace SRG.Equipment
             // ScriptParams.RemoteArtefactor { MaxCount, Scale }, то первые MaxCount совместимых
             // предметов из трюма (Params["RemoteCompatible"]=1 или ScriptParams.RemoteCompatible=true)
             // отдают свой SlotCode в бонусы кораблю, все числовые значения масштабируются на Scale.
-            var equipConfig = SRG.Core.GalaxyManager.Instance?.Context?.ItemsConfig;
+            var equipConfig = GameWorld.Context?.ItemsConfig;
             if (equipConfig != null && ship.Inventory != null && ship.Inventory.Items != null)
             {
                 foreach (var hub in installed)

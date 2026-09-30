@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
-using SRG.UI.Screens;
+using SRG.Utils;
 
 namespace SRG.Scripting
 {
@@ -59,6 +59,17 @@ namespace SRG.Scripting
             _bootstrapped = false;
         }
 
+        /// <summary>
+        /// Сделать статический API доступным из Lua под именем типа (например <c>GalaxyManager</c>).
+        /// Для слоёв выше симуляции; уже созданные скрипты (Core и моды) получают его сразу.
+        /// </summary>
+        public static void RegisterStaticApi(Type t)
+        {
+            if (!LuaBindings.AddStaticApi(t) || !_bootstrapped) return;
+            LuaBindings.BindStaticApi(_core, t);
+            foreach (var mod in _mods.Values) LuaBindings.BindStaticApi(mod, t);
+        }
+
         private static void EnsureBootstrapped()
         {
             if (_bootstrapped) return;
@@ -70,7 +81,7 @@ namespace SRG.Scripting
         private static Script NewScript(bool trusted)
         {
             var s = new Script(CoreModules.Preset_HardSandbox);
-            s.Options.DebugPrint = msg => GameConsoleController.AddEntry(msg);
+            s.Options.DebugPrint = msg => GameLog.Add(msg);
             // В MoonSharp 2.0.0.0 нет native instruction-limit; для модов throttling делается
             // через coroutine-yield-counter при исполнении их хуков — см. LuaHost.CallMod().
             LuaBindings.BindGlobals(s);

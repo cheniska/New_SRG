@@ -5,7 +5,7 @@ using System.Linq;
 using SRG.Config;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
-using SRG.Presentation.Common;
+using SRG.Simulation;
 
 namespace SRG.Ships
 {
@@ -95,7 +95,7 @@ namespace SRG.Ships
         {
             if (string.IsNullOrEmpty(spritePath)) return 1.0f;
 
-            var frames = GraphicsManager.Instance?.GetSpriteSheet(spritePath);
+            var frames = GameWorld.Graphics?.GetSpriteSheet(spritePath);
             Sprite first = frames != null && frames.Length > 0 ? frames[0] : null;
             if (first == null) return 1.0f;
 

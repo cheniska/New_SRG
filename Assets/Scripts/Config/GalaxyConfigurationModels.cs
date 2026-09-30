@@ -3,7 +3,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SRG.Combat;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Dialog.PlanetGreetings;
 using SRG.Economy;
@@ -15,6 +14,7 @@ using SRG.NpcAI.Spawning;
 using SRG.Science;
 using SRG.Ships;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Config
 {

@@ -3,8 +3,8 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using Newtonsoft.Json;
 using SRG.Config;
-using SRG.Core;
 using SRG.NpcAI;
+using SRG.Simulation;
 
 namespace SRG.Ships
 {
@@ -144,7 +144,7 @@ namespace SRG.Ships
         /// (конфиг ещё не загружен / секции нет) — вызывающие обязаны иметь фолбэк.</summary>
         public static PersonalityProfileConfig ProfileForShipType(string shipTypeId)
         {
-            var ships = GalaxyManager.Instance?.Context?.Config?.Ships;
+            var ships = GameWorld.Context?.Config?.Ships;
             var profiles = ships?.PersonalityProfiles;
             if (profiles == null || profiles.Count == 0) return null;
 

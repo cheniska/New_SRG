@@ -2,12 +2,11 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.NpcAI;
-using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -46,7 +45,7 @@ namespace SRG.Ships.Services
             drone.CurrentStarUid = host.CurrentStarUid;
             drone.CurrentStar    = star;
             drone.PartnerLeaderUid = host.Uid;
-            drone.PartnerHiredOnTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            drone.PartnerHiredOnTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             drone.PartnerContractEndTurn = -1;
             drone.PartnerOrder = PartnerOrderKind.FlyToMe;
             drone.PartnerOrderTargetUid = null;
@@ -56,7 +55,7 @@ namespace SRG.Ships.Services
             host.PartnerFollowerUids.Add(drone.Uid);
 
             // GameObject/визуал/NpcController — иначе дрон не тикает AI и не отреагирует на приказы.
-            SystemViewManager.Instance?.EnsureShipVisual(drone);
+            GameWorld.View?.EnsureShipVisual(drone);
 
             return drone;
         }
@@ -122,8 +121,8 @@ namespace SRG.Ships.Services
                 return false;
             }
 
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
-            int turnsPerYear = GalaxyManager.Instance?.Context?.Config?.Partners?.Global?.TurnsPerYear ?? 365;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turnsPerYear = GameWorld.Context?.Config?.Partners?.Global?.TurnsPerYear ?? 365;
             int endTurn = contractYears > 0 ? currentTurn + contractYears * turnsPerYear : -1;
 
             PartnerService.SetPartner(target, leader, currentTurn, endTurn);
@@ -145,7 +144,7 @@ namespace SRG.Ships.Services
         /// к звезде и не устанавливает партнёрство.</summary>
         private static ShipData BuildDroneShip(string manufacturerRace, string shipTypeId, string owner)
         {
-            var ctx = GalaxyManager.Instance?.Context;
+            var ctx = GameWorld.Context;
             if (ctx == null) { Debug.LogError("[PartnerScriptApi] Context не готов."); return null; }
             if (ctx.AvailableShipTypes == null) { Debug.LogError("[PartnerScriptApi] AvailableShipTypes пусты."); return null; }
 

@@ -3,7 +3,6 @@ using Random = UnityEngine.Random;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships;
-using SRG.UI.Screens;
 using SRG.Utils;
 
 namespace SRG.NpcAI.Orders
@@ -61,7 +60,7 @@ namespace SRG.NpcAI.Orders
                 // в NpcConversationLog (одна запись в панели вместо двух console-строк).
                 if (ship.IsPlayer || _receiver.IsPlayer)
                 {
-                    GameConsoleController.AddEntry(
+                    GameLog.Add(
                         $"[Выкуп] {_receiver.Name} принял {actualOffer} от {ship.Name} — перемирие.");
                 }
                 else
@@ -77,7 +76,7 @@ namespace SRG.NpcAI.Orders
             {
                 if (ship.IsPlayer || _receiver.IsPlayer)
                 {
-                    GameConsoleController.AddEntry(
+                    GameLog.Add(
                         $"[Выкуп] {_receiver.Name} отверг предложение {actualOffer} от {ship.Name}.");
                 }
                 else

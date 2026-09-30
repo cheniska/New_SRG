@@ -6,7 +6,7 @@ using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
-using SRG.UI.Screens;
+using SRG.Utils;
 
 namespace SRG.Science
 {
@@ -131,7 +131,7 @@ namespace SRG.Science
                 string resolved = evtCfg.NewsMessage
                     .Replace("{planet}", planetName)
                     .Replace("{star}",   starName);
-                GameConsoleController.AddEntry($"[Событие] {planetName}: {resolved}");
+                GameLog.Add($"[Событие] {planetName}: {resolved}");
                 string ctrl = OccupationService.GetControllingOwner(planet);
                 GalaxyNewsService.PostForSide(GalaxyNewsService.CAT_PLANET, resolved, ctrl);
             }
@@ -168,7 +168,7 @@ namespace SRG.Science
                 }
 
                 case "AddNotification":
-                    GameConsoleController.AddEntry($"[Событие] {planet.Name}: {action.Message ?? "-"}");
+                    GameLog.Add($"[Событие] {planet.Name}: {action.Message ?? "-"}");
                     break;
             }
         }

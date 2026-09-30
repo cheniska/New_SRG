@@ -11,8 +11,9 @@ using SRG.Ships.Services;
 using SRG.UI.HUD;
 using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Ships;
 
-namespace SRG.Ships.Player
+namespace SRG.Controllers
 {
     // PlayerShip — Маршрут / Follow / Pickup / Landing (этап T2 рефакторинга, июнь 2026). См. PlayerShip.cs.
     public partial class PlayerShip
@@ -78,7 +79,7 @@ namespace SRG.Ships.Player
             RedrawPath();
             OnRouteAssigned?.Invoke();
 
-            GameConsoleController.AddEntry(
+            GameLog.Add(
                 $"[Следование] {targetShip.Name}: {GetFollowModeName(_followMode)}.");
         }
 
@@ -225,7 +226,7 @@ namespace SRG.Ships.Player
             bool ok = PickupSystem.EnqueuePull(ShipData, targetUid);
             if (ok)
             {
-                GameConsoleController.AddEntry("[Захват] Цель добавлена в очередь.");
+                GameLog.Add("[Захват] Цель добавлена в очередь.");
                 RefreshRouteForPickup();
             }
             return ok;
@@ -240,7 +241,7 @@ namespace SRG.Ships.Player
             if (star == null) return 0;
             ShipData.AutoPullActive = true;
             int n = PickupSystem.EnqueueAllItemsInRadius(ShipData, star.Ships);
-            GameConsoleController.AddEntry($"[Захват] В очередь (радиус): {n} цел(ей).");
+            GameLog.Add($"[Захват] В очередь (радиус): {n} цел(ей).");
             if (n > 0) RefreshRouteForPickup();
             return n;
         }
@@ -254,7 +255,7 @@ namespace SRG.Ships.Player
             if (star == null) return 0;
             ShipData.AutoPullActive = true;
             int n = PickupSystem.EnqueueAllItemsInSystem(ShipData, star.Ships);
-            GameConsoleController.AddEntry($"[Захват] В очередь (система): {n} цел(ей).");
+            GameLog.Add($"[Захват] В очередь (система): {n} цел(ей).");
             if (n > 0) RefreshRouteForPickup();
             return n;
         }
@@ -267,7 +268,7 @@ namespace SRG.Ships.Player
             ShipData.AutoPullActive = false;
             ShipData.AutoPullSuspendedPath?.Clear();
             ShipData.AutoPullSuspendedTarget = null;
-            GameConsoleController.AddEntry("[Захват] Очередь очищена.");
+            GameLog.Add("[Захват] Очередь очищена.");
             RefreshRouteForPickup();
         }
 
@@ -335,7 +336,7 @@ namespace SRG.Ships.Player
             var target = FindFollowTarget();
             if (target == null)
             {
-                GameConsoleController.AddEntry("[Следование] Цель утрачена.");
+                GameLog.Add("[Следование] Цель утрачена.");
                 ClearFollow();
                 return;
             }
@@ -394,7 +395,7 @@ namespace SRG.Ships.Player
                 {
                     if (BoardingSystem.TryBoard(ShipData, target, equipCfg))
                     {
-                        GameConsoleController.AddEntry($"[Абордаж] {target.Name} взят на абордаж.");
+                        GameLog.Add($"[Абордаж] {target.Name} взят на абордаж.");
                         ClearFollow();
                     }
                 }
@@ -406,9 +407,9 @@ namespace SRG.Ships.Player
                     if (TowSystem.TryTow(ShipData, target, equipCfg, BuildShipLookup()))
                     {
                         if (target.TowedByUid == ShipData.Uid)
-                            GameConsoleController.AddEntry($"[Буксир] {target.Name} прицеплен.");
+                            GameLog.Add($"[Буксир] {target.Name} прицеплен.");
                         else if (target.PulledByUid == ShipData.Uid)
-                            GameConsoleController.AddEntry($"[Буксир] {target.Name} притягивается…");
+                            GameLog.Add($"[Буксир] {target.Name} притягивается…");
                         ClearFollow();
                     }
                 }
@@ -424,7 +425,7 @@ namespace SRG.Ships.Player
         {
             if (!ShipDockingService.CanLandOn(ShipData, carrier, out string reason))
             {
-                GameConsoleController.AddEntry($"[Стыковка] Посадка невозможна: {reason}.");
+                GameLog.Add($"[Стыковка] Посадка невозможна: {reason}.");
                 ClearFollow();
                 return;
             }
@@ -440,7 +441,7 @@ namespace SRG.Ships.Player
             var carrier = star?.Ships?.Find(s => s.Uid == ShipData.LandedOnShipUid);
             ShipDockingService.Undock(ShipData, carrier);
             BeginTakeoffRoute();
-            GameConsoleController.AddEntry($"[Стыковка] Взлёт с {carrier?.Name ?? "носителя"}.");
+            GameLog.Add($"[Стыковка] Взлёт с {carrier?.Name ?? "носителя"}.");
         }
 
         /// <summary>Общая часть взлёта с любой посадочной цели: сброс follow/tracked,
@@ -531,7 +532,7 @@ namespace SRG.Ships.Player
                 string ctrl = OccupationService.GetControllingOwner(planet);
                 if (ShipData.Owner != ctrl)
                 {
-                    GameConsoleController.AddEntry($"[Навигация] Посадка запрещена: {planet.Name} закрыта для внешних кораблей.");
+                    GameLog.Add($"[Навигация] Посадка запрещена: {planet.Name} закрыта для внешних кораблей.");
                     return;
                 }
             }
@@ -551,7 +552,7 @@ namespace SRG.Ships.Player
             ApplyTargetsToShipData();
             RedrawPath();
             OnRouteAssigned?.Invoke();
-            GameConsoleController.AddEntry($"[Навигация] Курс на посадку: {planet.Name}.");
+            GameLog.Add($"[Навигация] Курс на посадку: {planet.Name}.");
         }
 
         // SR2HD §5.2.B: catch-up upreждение + парковка ВНЕ R_land на дальнем подлёте.
@@ -572,13 +573,13 @@ namespace SRG.Ships.Player
 
             if (wormhole.Phase != WormholePhase.Open)
             {
-                GameConsoleController.AddEntry("[Червоточина] Не пройти — червоточина ещё не стабилизировалась.");
+                GameLog.Add("[Червоточина] Не пройти — червоточина ещё не стабилизировалась.");
                 return;
             }
 
             if (!HyperjumpController.RequestJumpViaWormhole(ShipData, wormhole, sourceStar, galaxy))
             {
-                GameConsoleController.AddEntry("[Червоточина] Не удалось войти (проверьте состояние корабля).");
+                GameLog.Add("[Червоточина] Не удалось войти (проверьте состояние корабля).");
                 return;
             }
 
@@ -590,7 +591,7 @@ namespace SRG.Ships.Player
 
             string targetName = galaxy.StarsMap.TryGetValue(wormhole.TargetStarUid, out var target)
                 ? target.Name : "?";
-            GameConsoleController.AddEntry($"[Червоточина] Курс на червоточину → {targetName}.");
+            GameLog.Add($"[Червоточина] Курс на червоточину → {targetName}.");
         }
 
         private void RedrawPath()

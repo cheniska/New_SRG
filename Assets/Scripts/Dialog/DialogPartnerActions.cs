@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Ships;
-using SRG.Ships.Player;
 using SRG.Ships.Services;
+using SRG.Simulation;
 
 namespace SRG.Dialog
 {
@@ -296,7 +295,7 @@ namespace SRG.Dialog
 
         private static bool IsDrone(ShipData ship)
         {
-            var types = GalaxyManager.Instance?.Context?.Config?.Ships?.ShipTypes;
+            var types = GameWorld.Context?.Config?.Ships?.ShipTypes;
             if (ship == null || types == null || string.IsNullOrEmpty(ship.ShipTypeId)) return false;
             return types.TryGetValue(ship.ShipTypeId, out var cfg) && cfg.IsDrone;
         }
@@ -372,7 +371,7 @@ namespace SRG.Dialog
             DialogService.RegisterTag("partner_months", ctx =>
             {
                 var t = ctx?.TargetShip;
-                var cfg = GalaxyManager.Instance?.Context?.Config?.Partners;
+                var cfg = GameWorld.Context?.Config?.Partners;
                 if (t == null || cfg?.PartnerableShipTypes == null) return null;
                 if (!cfg.PartnerableShipTypes.TryGetValue(t.ShipTypeId ?? "", out var typeCfg)) return null;
                 return typeCfg.ContractTermYears > 0
@@ -383,7 +382,7 @@ namespace SRG.Dialog
             DialogService.RegisterTag("is_hireable", ctx =>
             {
                 var t = ctx?.TargetShip;
-                var cfg = GalaxyManager.Instance?.Context?.Config?.Partners;
+                var cfg = GameWorld.Context?.Config?.Partners;
                 if (t == null || cfg == null) return "0";
                 return cfg.PartnerableShipTypes != null
                     && cfg.PartnerableShipTypes.ContainsKey(t.ShipTypeId ?? "") ? "1" : "0";
@@ -392,7 +391,7 @@ namespace SRG.Dialog
             DialogService.RegisterTag("is_drone", ctx =>
             {
                 var t = ctx?.TargetShip;
-                var types = GalaxyManager.Instance?.Context?.Config?.Ships?.ShipTypes;
+                var types = GameWorld.Context?.Config?.Ships?.ShipTypes;
                 if (t == null || types == null || string.IsNullOrEmpty(t.ShipTypeId)) return "0";
                 return types.TryGetValue(t.ShipTypeId, out var cfg) && cfg.IsDrone ? "1" : "0";
             });
@@ -429,8 +428,8 @@ namespace SRG.Dialog
 
         private static int GuessMinFee(ShipData target)
         {
-            int fallback = GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning?.PartnerMinFeeFallback ?? 1000;
-            var cfg = GalaxyManager.Instance?.Context?.Config?.Partners;
+            int fallback = GameWorld.Context?.Config?.Dialogs?.Tuning?.PartnerMinFeeFallback ?? 1000;
+            var cfg = GameWorld.Context?.Config?.Partners;
             if (cfg == null) return fallback;
             if (!cfg.PartnerableShipTypes.TryGetValue(target.ShipTypeId ?? "", out var t)) return fallback;
             return Mathf.RoundToInt(cfg.Global.BasePrice * t.PriceMultiplier * cfg.Global.MinFeeRatio);

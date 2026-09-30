@@ -1,9 +1,9 @@
 using UnityEngine;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {

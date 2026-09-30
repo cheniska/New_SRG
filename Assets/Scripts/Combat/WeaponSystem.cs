@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.Combat
 {
@@ -42,8 +42,7 @@ namespace SRG.Combat
             if (target == null) return true;
             if (target.IsPlayer)
             {
-                bool died = PlayerManager.Instance != null
-                    && PlayerManager.Instance.KillPlayer(cause, killerName, killerOwner);
+                bool died = GameWorld.Player != null && GameWorld.Player.KillPlayer(cause, killerName, killerOwner);
                 if (died && !(anim?.DeathUids.Contains(target.Uid) ?? false))
                     anim?.DeathUids.Add(target.Uid);
                 if (died) EmitShipDeath(target, killer, cause);
@@ -592,7 +591,7 @@ namespace SRG.Combat
         {
             if (attacker == null || target == null) return;
 
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             target.LastAttackerUid = attacker.Uid;
             target.LastAttackerTurn = currentTurn;
 
@@ -606,7 +605,7 @@ namespace SRG.Combat
             var rel = OwnerRaceRelationsManager.Instance;
             var star = target.CurrentStar;
             if (star == null && !string.IsNullOrEmpty(target.CurrentStarUid))
-                GalaxyManager.Instance?.GeneratedGalaxy?.StarsMap.TryGetValue(target.CurrentStarUid, out star);
+                GameWorld.GeneratedGalaxy?.StarsMap.TryGetValue(target.CurrentStarUid, out star);
             if (rel != null && star != null && !string.IsNullOrEmpty(attacker.Owner))
             {
                 _uniqueOwnersBuf.Clear();

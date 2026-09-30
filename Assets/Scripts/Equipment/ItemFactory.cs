@@ -3,11 +3,11 @@ using Random = UnityEngine.Random;
 using System.Linq;
 using SRG.Combat;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Ships;
+using SRG.Simulation;
 
 namespace SRG.Equipment
 {
@@ -66,7 +66,7 @@ namespace SRG.Equipment
 
             // Глобальная инфляция фиксируется в цене предмета на момент создания.
             // Старые предметы сохраняют старую цену, новые получают актуальный фактор.
-            priceMult *= InflationSystem.GetFactor(GalaxyManager.Instance?.GeneratedGalaxy);
+            priceMult *= InflationSystem.GetFactor(GameWorld.GeneratedGalaxy);
 
             var inst = ItemInstance.FromConfig(category, itemId, cfg, equipConfig, priceMult, durMult, gtlOverride);
             // У Hull раса закодирована в id и должна соответствовать графике — overrideRace не трогает её.

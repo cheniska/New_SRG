@@ -2,6 +2,7 @@ using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
 using SRG.Ships;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -45,7 +46,7 @@ namespace SRG.NpcAI.Actions
             var attacker = FindShip(star, _attackerUid);
             if (attacker == null || attacker.CurrentHull <= 0) { IsCompleted = true; return true; }
 
-            int turn = SRG.Core.GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int turn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             var victimClass = NpcBrain.ResolveCombatClass(ship.ShipTypeId);
             int helpers = 0;
             var rel = OwnerRaceRelationsManager.Instance;

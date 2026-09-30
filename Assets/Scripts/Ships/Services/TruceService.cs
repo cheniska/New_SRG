@@ -1,9 +1,9 @@
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -119,6 +119,6 @@ namespace SRG.Ships.Services
         }
 
         private static DialogTuning GetTuning() =>
-            GalaxyManager.Instance?.Context?.Config?.Dialogs?.Tuning;
+            GameWorld.Context?.Config?.Dialogs?.Tuning;
     }
 }

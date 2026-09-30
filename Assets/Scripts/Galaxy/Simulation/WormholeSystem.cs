@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Galaxy.Generation;
+using SRG.Simulation;
 
 namespace SRG.Galaxy.Simulation
 {
@@ -18,7 +18,7 @@ namespace SRG.Galaxy.Simulation
         public static void DailyTick(GalaxyData galaxy, GalaxyGenerationContext ctx)
         {
             if (galaxy == null) return;
-            var settings = GalaxyManager.Instance?.Settings;
+            var settings = GameWorld.Settings;
             if (settings == null) return;
 
             TickExisting(galaxy, settings);

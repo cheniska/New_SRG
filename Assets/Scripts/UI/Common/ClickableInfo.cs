@@ -1,6 +1,7 @@
 using SRG.Core;
 using SRG.Galaxy;
 using SRG.NpcAI;
+using SRG.Controllers;
 
 namespace SRG.UI.Common
 {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using SRG.Config;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.UI.Screens;
 
 namespace SRG.Presentation

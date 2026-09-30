@@ -8,8 +8,9 @@ using SRG.UI.Common;
 using SRG.UI.HUD;
 using SRG.UI.Screens;
 using SRG.Utils;
+using SRG.Ships;
 
-namespace SRG.Ships.Player
+namespace SRG.Controllers
 {
     // PlayerShip — Input/UI-режимы (этап T2 рефакторинга, июнь 2026). См. PlayerShip.cs.
     public partial class PlayerShip
@@ -21,11 +22,11 @@ namespace SRG.Ships.Player
             if (_weaponModeActive)
             {
                 if (_dialogModeActive) DisableDialogMode(silent: true);
-                GameConsoleController.AddEntry("[Оружие] Наведение включено.");
+                GameLog.Add("[Оружие] Наведение включено.");
             }
             else
             {
-                GameConsoleController.AddEntry("[Оружие] Наведение выключено.");
+                GameLog.Add("[Оружие] Наведение выключено.");
             }
         }
 
@@ -36,12 +37,12 @@ namespace SRG.Ships.Player
             {
                 if (_weaponModeActive) _weaponModeActive = false;
                 DialogCursor.Apply();
-                GameConsoleController.AddEntry("[Связь] Укажите цель для связи.");
+                GameLog.Add("[Связь] Укажите цель для связи.");
             }
             else
             {
                 DialogCursor.Reset();
-                GameConsoleController.AddEntry("[Связь] Режим связи выключен.");
+                GameLog.Add("[Связь] Режим связи выключен.");
             }
         }
 
@@ -51,12 +52,12 @@ namespace SRG.Ships.Player
             var forsage = EquipmentSystem.GetEquipped(ShipData, SlotKeys.Forsage);
             if (forsage == null)
             {
-                GameConsoleController.AddEntry("[Форсаж] Не установлен.");
+                GameLog.Add("[Форсаж] Не установлен.");
                 return;
             }
             if (!forsage.IsWorking)
             {
-                GameConsoleController.AddEntry($"[Форсаж] {forsage.Name}: повреждён, активация невозможна.");
+                GameLog.Add($"[Форсаж] {forsage.Name}: повреждён, активация невозможна.");
                 return;
             }
 
@@ -65,13 +66,13 @@ namespace SRG.Ships.Player
             if (!ShipData.ForsageActive
                 && !EquipmentSystem.CanActivateForsage(ShipData, out string reason))
             {
-                GameConsoleController.AddEntry($"[Форсаж] Активация невозможна: {reason}.");
+                GameLog.Add($"[Форсаж] Активация невозможна: {reason}.");
                 HudMessageController.Show($"Форсаж: {reason}");
                 return;
             }
 
             ShipData.ForsageActive = !ShipData.ForsageActive;
-            GameConsoleController.AddEntry(ShipData.ForsageActive
+            GameLog.Add(ShipData.ForsageActive
                 ? $"[Форсаж] Включён: {forsage.Name}."
                 : "[Форсаж] Выключен.");
             HudMessageController.Show(ShipData.ForsageActive
@@ -89,7 +90,7 @@ namespace SRG.Ships.Player
             if (!_dialogModeActive) return;
             _dialogModeActive = false;
             DialogCursor.Reset();
-            if (!silent) GameConsoleController.AddEntry("[Связь] Режим связи выключен.");
+            if (!silent) GameLog.Add("[Связь] Режим связи выключен.");
 
 
         }
@@ -193,7 +194,7 @@ namespace SRG.Ships.Player
                     if (HasPlannedRoute())
                     {
                         ClearRoute();
-                        GameConsoleController.AddEntry("[Навигация] Маршрут сброшен.");
+                        GameLog.Add("[Навигация] Маршрут сброшен.");
                     }
                     return;
                 }
@@ -217,7 +218,7 @@ namespace SRG.Ships.Player
                     SetWaypointToPosition(targetAsteroid.Position);
                     _trackedTargetFunc = () => targetAsteroid.Position;
                     _lastTrackedPos = targetAsteroid.Position;
-                    GameConsoleController.AddEntry($"[Навигация] Курс на астероид {SpriteUtility.ShortId(targetAsteroid.Uid)}.");
+                    GameLog.Add($"[Навигация] Курс на астероид {SpriteUtility.ShortId(targetAsteroid.Uid)}.");
                     return;
                 }
                 return;
@@ -244,7 +245,7 @@ namespace SRG.Ships.Player
             float maxRange = GetMaxWeaponRange();
             if (maxRange <= 0f)
             {
-                GameConsoleController.AddEntry("[Оружие] На корабле нет исправного оружия.");
+                GameLog.Add("[Оружие] На корабле нет исправного оружия.");
                 _weaponModeActive = false;
                 return;
             }
@@ -254,7 +255,7 @@ namespace SRG.Ships.Player
             if (dist > maxRange)
             {
                 string name = isShip ? info.Ship.Name : $"астероид {SpriteUtility.ShortId(info.Asteroid.Uid)}";
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Оружие] {name} вне радиуса поражения ({dist:F1} > {maxRange:F1}).");
                 _weaponModeActive = false;
                 return;
@@ -268,14 +269,14 @@ namespace SRG.Ships.Player
             {
                 ShipData.ManualShootTargetUid = info.Ship.Uid;
                 ShipData.ManualShootTargetIsAsteroid = false;
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Оружие] Цель выбрана: {info.Ship.Name}. Выстрел — в следующем ходу.");
             }
             else
             {
                 ShipData.ManualShootTargetUid = info.Asteroid.Uid;
                 ShipData.ManualShootTargetIsAsteroid = true;
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Оружие] Цель: астероид {SpriteUtility.ShortId(info.Asteroid.Uid)}. Выстрел — в следующем ходу.");
             }
 
@@ -296,7 +297,7 @@ namespace SRG.Ships.Player
             float dist = (targetShip.Position - ShipData.Position).magnitude;
             if (radarRange <= 0f || dist > radarRange)
             {
-                GameConsoleController.AddEntry(
+                GameLog.Add(
                     $"[Связь] {targetShip.Name}: объект вне зоны действия радара.");
                 HudMessageController.Show("Объект вне зоны радара");
                 DisableDialogMode(silent: true);
@@ -306,7 +307,7 @@ namespace SRG.Ships.Player
             string dialogId = SRG.Dialog.DialogService.ResolveShipDialogId(targetShip);
             if (string.IsNullOrEmpty(dialogId))
             {
-                GameConsoleController.AddEntry($"[Связь] {targetShip.Name} не отвечает.");
+                GameLog.Add($"[Связь] {targetShip.Name} не отвечает.");
                 HudMessageController.Show($"{targetShip.Name} не отвечает");
                 DisableDialogMode(silent: true);
                 return;

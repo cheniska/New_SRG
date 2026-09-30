@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Equipment;
 using SRG.Galaxy;
@@ -11,6 +10,7 @@ using SRG.NpcAI.Spawning.Policies;
 using SRG.Utils;
 using SRG.Ships;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Spawning
 {
@@ -81,7 +81,7 @@ namespace SRG.NpcAI.Spawning
                 Galaxy = galaxy,
                 Gen = ctx,
                 Config = ctx.Config,
-                Settings = GalaxyManager.Instance?.Settings,
+                Settings = GameWorld.Settings,
                 Counters = Counters,
                 Domination = Domination,
                 CurrentTurn = galaxy.CurrentTurn
@@ -195,7 +195,7 @@ namespace SRG.NpcAI.Spawning
             int baseMoney = policy?.StartingMoney ?? 0;
             if (baseMoney <= 0) return;
 
-            float inflation = GalaxyManager.Instance?.GeneratedGalaxy?.InflationFactor ?? 1f;
+            float inflation = GameWorld.GeneratedGalaxy?.InflationFactor ?? 1f;
             ship.Money = Mathf.RoundToInt(baseMoney * inflation);
         }
 
@@ -354,7 +354,7 @@ namespace SRG.NpcAI.Spawning
                 if (v != null && v.Contains("<GTU>")) { hasPlaceholder = true; break; }
             if (!hasPlaceholder) return kit;
 
-            int gtu = Mathf.Clamp(GalaxyManager.Instance?.GeneratedGalaxy?.GtuLevel ?? 1, 1, 10);
+            int gtu = Mathf.Clamp(GameWorld.GeneratedGalaxy?.GtuLevel ?? 1, 1, 10);
             string suffix = gtu.ToString();
             var copy = new System.Collections.Generic.Dictionary<string, string>(kit.Count);
             foreach (var kv in kit)

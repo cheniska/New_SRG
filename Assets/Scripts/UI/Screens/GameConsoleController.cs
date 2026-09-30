@@ -10,10 +10,11 @@ using SRG.Galaxy;
 using SRG.Galaxy.Simulation;
 using SRG.NpcAI.Spawning;
 using SRG.Ships;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Ships.Services;
 using SRG.Scripting;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.UI.Screens
 {
@@ -42,9 +43,16 @@ namespace SRG.UI.Screens
         {
             Instance = this;
             RegisterCommands();
+            GameLog.OnEntry += Log;
         }
 
-        public static void AddEntry(string msg) => Instance?.Log(msg);
+        void OnDestroy()
+        {
+            GameLog.OnEntry -= Log;
+            if (Instance == this) Instance = null;
+        }
+
+        public static void AddEntry(string msg) => GameLog.Add(msg);
 
         void Start()
         {

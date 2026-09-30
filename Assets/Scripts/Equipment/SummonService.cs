@@ -1,6 +1,5 @@
 using UnityEngine;
 using Newtonsoft.Json.Linq;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.NpcAI;
 

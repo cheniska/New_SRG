@@ -3,7 +3,6 @@ using SRG.Config;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Ships;
-using SRG.UI.Screens;
 
 namespace SRG.Economy
 {

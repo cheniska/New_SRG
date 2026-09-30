@@ -1,9 +1,9 @@
 using UnityEngine;
-using SRG.Core;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.NpcAI.Orders;
 using SRG.Utils;
+using SRG.Simulation;
 
 namespace SRG.NpcAI.Actions
 {
@@ -83,7 +83,7 @@ namespace SRG.NpcAI.Actions
             string atk = ship.LastAttackerUid;
             if (string.IsNullOrEmpty(atk) || atk == _targetUid) return false;
 
-            int currentTurn = GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0;
+            int currentTurn = GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0;
             if (currentTurn - ship.LastAttackerTurn > NpcBalance.LastAttackerMemoryTurns) return false;
 
             ShipData newAttacker = FindAliveShip(star, atk);

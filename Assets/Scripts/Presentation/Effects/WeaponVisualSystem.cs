@@ -5,7 +5,7 @@ using SRG.Config;
 using SRG.Core;
 using SRG.Galaxy;
 using SRG.Presentation.Common;
-using SRG.Ships.Player;
+using SRG.Controllers;
 using SRG.Utils;
 
 namespace SRG.Presentation.Effects

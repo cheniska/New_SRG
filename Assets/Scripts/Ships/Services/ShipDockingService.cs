@@ -1,12 +1,11 @@
 using UnityEngine;
 using SRG.Config;
-using SRG.Core;
 using SRG.Economy;
 using SRG.Galaxy;
 using SRG.Galaxy.Politics;
 using SRG.Galaxy.Simulation;
-using SRG.Presentation.World;
 using SRG.Ships.Movement;
+using SRG.Simulation;
 
 namespace SRG.Ships.Services
 {
@@ -35,7 +34,7 @@ namespace SRG.Ships.Services
             if (carrier == null) return false;
             if (carrier.IsStation) return true;
             if (string.IsNullOrEmpty(carrier.ShipTypeId)) return false;
-            var types = GalaxyManager.Instance?.Context?.AvailableShipTypes;
+            var types = GameWorld.Context?.AvailableShipTypes;
             return types != null
                 && types.TryGetValue(carrier.ShipTypeId, out var cfg)
                 && cfg != null && cfg.CanBeLandedOn;
@@ -97,7 +96,7 @@ namespace SRG.Ships.Services
 
             if (carrier.IsStation)
             {
-                var ctx = GalaxyManager.Instance?.Context;
+                var ctx = GameWorld.Context;
                 var shop = carrier.Settlement.EquipmentShop;
                 if (ctx != null && (shop == null || shop.Items.Count == 0))
                     EquipmentShopSystem.InitialFill(carrier, ctx);

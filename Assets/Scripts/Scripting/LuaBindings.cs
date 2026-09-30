@@ -1,17 +1,16 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using MoonSharp.Interpreter;
 using SRG.Combat;
-using SRG.Core;
 using SRG.Dialog;
 using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Simulation;
 using SRG.Ships;
-using SRG.Ships.Player;
 using SRG.Ships.Services;
 using SRG.Utils;
-using SRG.UI.Screens;
+using SRG.Simulation;
 
 namespace SRG.Scripting
 {
@@ -66,8 +65,6 @@ namespace SRG.Scripting
             typeof(SRG.Economy.TradeSystem),
             typeof(WormholeService),
             typeof(WormholeGraphics),
-            typeof(GalaxyManager),
-            typeof(PlayerManager),
             typeof(PartnerService),
             typeof(PartnerScriptApi),
             typeof(DroneService),
@@ -81,7 +78,6 @@ namespace SRG.Scripting
             typeof(ItemFactory),
             typeof(Positions),
             typeof(DebugScripting),
-            typeof(PlayerShip),
             typeof(ArtefactApi),
             typeof(ArtefactApi.News),
             typeof(EquipmentSystem),
@@ -90,6 +86,10 @@ namespace SRG.Scripting
             typeof(UnityEngine.Debug),
         };
 
+        // Статические API из слоёв выше симуляции (GalaxyManager, PlayerManager, PlayerShip…).
+        // Симуляция о них не знает — их регистрирует слой приложения через LuaHost.RegisterStaticApi.
+        static readonly List<Type> ExtraStaticApiTypes = new();
+
         static bool _typesRegistered;
 
         public static void RegisterTypes()
@@ -97,28 +97,42 @@ namespace SRG.Scripting
             if (_typesRegistered) return;
             _typesRegistered = true;
 
-            foreach (var t in DataTypes)      UserData.RegisterType(t);
-            foreach (var t in StaticApiTypes) UserData.RegisterType(t);
+            foreach (var t in DataTypes)           UserData.RegisterType(t);
+            foreach (var t in StaticApiTypes)      UserData.RegisterType(t);
+            foreach (var t in ExtraStaticApiTypes) UserData.RegisterType(t);
         }
+
+        /// <summary>Добавить статический API. Возвращает false, если тип уже добавлен.</summary>
+        internal static bool AddStaticApi(Type t)
+        {
+            if (t == null || ExtraStaticApiTypes.Contains(t)) return false;
+            ExtraStaticApiTypes.Add(t);
+            if (_typesRegistered) UserData.RegisterType(t);
+            return true;
+        }
+
+        internal static void BindStaticApi(Script s, Type t) => s.Globals[t.Name] = UserData.CreateStatic(t);
 
         public static void BindGlobals(Script s)
         {
             // Статические API — под коротким именем типа.
             foreach (var t in StaticApiTypes)
                 s.Globals[t.Name] = UserData.CreateStatic(t);
+            foreach (var t in ExtraStaticApiTypes)
+                BindStaticApi(s, t);
 
             // Короткий алиас Api = ArtefactApi для скриптов артефактов.
             s.Globals["Api"] = UserData.CreateStatic(typeof(ArtefactApi));
 
             // Удобные функции-акцессоры (всегда свежие).
-            s.Globals["Player"]  = (Func<ShipData>)   (() => PlayerShip.Instance != null ? PlayerShip.Instance.ShipData : null);
-            s.Globals["Galaxy"]  = (Func<GalaxyData>) (() => GalaxyManager.Instance?.GeneratedGalaxy);
-            s.Globals["Star"]    = (Func<StarData>)   (() => GalaxyManager.Instance?.CurrentStar);
-            s.Globals["Turn"]    = (Func<int>)        (() => GalaxyManager.Instance?.GeneratedGalaxy?.CurrentTurn ?? 0);
+            s.Globals["Player"]  = (Func<ShipData>)   (() => GameWorld.PlayerShip);
+            s.Globals["Galaxy"]  = (Func<GalaxyData>) (() => GameWorld.GeneratedGalaxy);
+            s.Globals["Star"]    = (Func<StarData>)   (() => GameWorld.CurrentStar);
+            s.Globals["Turn"]    = (Func<int>)        (() => GameWorld.GeneratedGalaxy?.CurrentTurn ?? 0);
 
             // Логирование в игровую консоль. print(...) тоже туда идёт (см. LuaHost.Options.DebugPrint).
             s.Globals["Log"] = (Action<object>)(msg =>
-                GameConsoleController.AddEntry(msg?.ToString() ?? "nil"));
+                GameLog.Add(msg?.ToString() ?? "nil"));
 
             // Быстрый доступ к рандому.
             s.Globals["Rand"]    = (Func<float, float, float>)((a, b) => UnityEngine.Random.Range(a, b));

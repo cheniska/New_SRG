@@ -1,5 +1,4 @@
 using SRG.Config;
-using SRG.Core;
 using SRG.NpcAI.Actions;
 using SRG.NpcAI.Orders;
 using SRG.Ships.Services;
