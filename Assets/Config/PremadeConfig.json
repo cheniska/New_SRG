@@ -7,7 +7,7 @@
 					"Name": "Caragon",
 					"Owner": "Coalition",
 					"Race": "Race3",
-					"StarsCount": 3,
+					"StarsCount": 4,
 					"Place": "Corner",
 					"Stars": {
 						"Star1": {
@@ -204,6 +204,35 @@
 									"OrbitIndex": 1
 								}
 							}
+						},
+						"StarNewTerra": {
+							"Owner": "Coalition",
+							"Race": "Race3",
+							"Name": "Новая Терра",
+							"Type": "Normal",
+							"Color": "Yellow",
+							"PlanetsCount": 6,
+							"Planets": {
+								"PlanetNewTerra": {
+									"Name": "Новая Терра",
+									"Race": "Race3",
+									"CurOwner": "Coalition",
+									"Size": "Normal",
+									"OrbitRadius": 2870,
+									"OrbitSpeed": 58,
+									"DaySpeed": 38,
+									"AxialTilt": 20,
+									"SatellitesCount": 1,
+									"OrbitIndex": 3,
+									"Density": 5.37,
+									"SurfaceGravity": 9.3,
+									"GeoActivity": 0.55,
+									"AtmPressure": 1.0,
+									"OxygenPercent": 15.0,
+									"WaterAbundance": 0.55,
+									"SurfaceTemp": 285.0
+								}
+							}
 						}
 					}
 				},
@@ -264,13 +293,13 @@
 									"AxialTilt": 18,
 									"SatellitesCount": 1,
 									"OrbitIndex": 3,
-									"Density": 5.2,
-									"SurfaceGravity": 14.0,
+									"Density": 5.8,
+									"SurfaceGravity": 13.2,
 									"GeoActivity": 0.55,
-									"AtmPressure": 1.1,
-									"OxygenPercent": 11.0,
-									"WaterAbundance": 0.50,
-									"SurfaceTemp": 270.0
+									"AtmPressure": 1.25,
+									"OxygenPercent": 16.0,
+									"WaterAbundance": 0.45,
+									"SurfaceTemp": 265.0
 								},
 								"TaronP4": {
 									"Name": "TaronP4",
@@ -418,20 +447,20 @@
 									"Name": "Rahish",
 									"Race": "Race2",
 									"CurOwner": "Coalition",
-									"Size": "Big",
-									"OrbitRadius": 2200,
+									"Size": "Normal",
+									"OrbitRadius": 2600,
 									"OrbitSpeed": 58,
 									"DaySpeed": 55,
 									"AxialTilt": 14,
 									"SatellitesCount": 2,
 									"OrbitIndex": 2,
-									"Density": 4.8,
-									"SurfaceGravity": 11.0,
+									"Density": 4.5,
+									"SurfaceGravity": 7.0,
 									"GeoActivity": 0.70,
-									"AtmPressure": 1.2,
-									"OxygenPercent": 22.0,
-									"WaterAbundance": 0.80,
-									"SurfaceTemp": 285.0
+									"AtmPressure": 1.1,
+									"OxygenPercent": 26.0,
+									"WaterAbundance": 0.85,
+									"SurfaceTemp": 296.0
 								},
 								"PhedokP3": {
 									"Name": "PhedokP3",
@@ -598,13 +627,13 @@
 									"AxialTilt": 28,
 									"SatellitesCount": 1,
 									"OrbitIndex": 3,
-									"Density": 5.3,
-									"SurfaceGravity": 15.0,
+									"Density": 5.4,
+									"SurfaceGravity": 9.3,
 									"GeoActivity": 0.60,
 									"AtmPressure": 1.0,
-									"OxygenPercent": 20.0,
-									"WaterAbundance": 0.50,
-									"SurfaceTemp": 282.0
+									"OxygenPercent": 19.0,
+									"WaterAbundance": 0.25,
+									"SurfaceTemp": 297.0
 								},
 								"KraaP4": {
 									"Name": "KraaP4",
@@ -728,20 +757,20 @@
 									"Name": "Eypentak",
 									"Race": "Race4",
 									"CurOwner": "Coalition",
-									"Size": "Big",
+									"Size": "Normal",
 									"OrbitRadius": 2700,
 									"OrbitSpeed": 48,
 									"DaySpeed": 52,
 									"AxialTilt": 20,
 									"SatellitesCount": 2,
 									"OrbitIndex": 3,
-									"Density": 4.9,
-									"SurfaceGravity": 9.0,
+									"Density": 5.5,
+									"SurfaceGravity": 8.8,
 									"GeoActivity": 0.45,
-									"AtmPressure": 1.1,
-									"OxygenPercent": 24.0,
-									"WaterAbundance": 0.55,
-									"SurfaceTemp": 290.0
+									"AtmPressure": 1.15,
+									"OxygenPercent": 23.0,
+									"WaterAbundance": 0.65,
+									"SurfaceTemp": 293.0
 								},
 								"AtlanP4": {
 									"Name": "AtlanP4",
@@ -813,6 +842,89 @@
 									"OxygenPercent": 1.5,
 									"WaterAbundance": 0.55,
 									"SurfaceTemp": 355.0
+								}
+							}
+						}
+					}
+				},
+				"SectorTarn": {
+					"Owner": "Coalition",
+					"Race": "Race8",
+					"Name": "Tarn",
+					"Place": "Border",
+					"StarsCount": 5,
+					"Stars": {
+						"StarTarn": {
+							"Owner": "Coalition",
+							"Race": "Race8",
+							"Name": "TarnA",
+							"Type": "Small",
+							"Color": "Yellow",
+							"PlanetsCount": 4,
+							"Planets": {
+								"TarnP1": {
+									"Name": "TarnP1",
+									"Race": "None",
+									"CurOwner": "None",
+									"Size": "Tiny",
+									"OrbitRadius": 900,
+									"OrbitSpeed": 110,
+									"DaySpeed": 40,
+									"AxialTilt": 2,
+									"SatellitesCount": 0,
+									"OrbitIndex": 1,
+									"Density": 5.0,
+									"SurfaceGravity": 2.5,
+									"GeoActivity": 0.05
+								},
+								"TarnTarna": {
+									"Name": "Tarna",
+									"Race": "Race8",
+									"CurOwner": "Coalition",
+									"Size": "Normal",
+									"OrbitRadius": 2600,
+									"OrbitSpeed": 55,
+									"DaySpeed": 40,
+									"AxialTilt": 23,
+									"SatellitesCount": 1,
+									"OrbitIndex": 2,
+									"Density": 5.0,
+									"SurfaceGravity": 8.5,
+									"GeoActivity": 0.50,
+									"AtmPressure": 0.91,
+									"OxygenPercent": 21.0,
+									"WaterAbundance": 0.50,
+									"SurfaceTemp": 287.0
+								},
+								"TarnP3": {
+									"Name": "TarnP3",
+									"Race": "None",
+									"CurOwner": "None",
+									"Size": "Big",
+									"OrbitRadius": 4300,
+									"OrbitSpeed": 32,
+									"DaySpeed": 36,
+									"AxialTilt": 14,
+									"SatellitesCount": 2,
+									"OrbitIndex": 3,
+									"Density": 4.6,
+									"SurfaceGravity": 12.0,
+									"GeoActivity": 0.30
+								},
+								"TarnP4": {
+									"Name": "TarnP4",
+									"Race": "None",
+									"CurOwner": "None",
+									"Size": "Giant",
+									"OrbitRadius": 6800,
+									"OrbitSpeed": 18,
+									"DaySpeed": -60,
+									"AxialTilt": 5,
+									"SatellitesCount": 3,
+									"OrbitIndex": 4,
+									"Density": 1.2,
+									"SurfaceGravity": 26.0,
+									"GeoActivity": 0.0
 								}
 							}
 						}

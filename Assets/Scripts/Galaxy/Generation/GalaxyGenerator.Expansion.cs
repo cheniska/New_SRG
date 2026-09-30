@@ -70,7 +70,7 @@ namespace SRG.Galaxy.Generation
                     states.Add(new ExpansionRaceState
                     {
                         Key = kvp.Key, Cfg = kvp.Value, StartDate = sd, Speed = kvp.Value.ColonizationSpeed,
-                        RoleKey = roleKey, Role = roleCfg,
+                        RoleKey = roleKey, Role = roleCfg, InitialDate = initialDate,
                     });
                 }
             states.Sort((a, b) => a.StartDate.CompareTo(b.StartDate));
@@ -125,6 +125,7 @@ namespace SRG.Galaxy.Generation
             public string Key;
             public RaceConfig Cfg;
             public DateTime StartDate;
+            public DateTime InitialDate;
             public float Speed;
             public string RoleKey;
             public GalaxyRaceRoleConfig Role;
@@ -304,7 +305,13 @@ namespace SRG.Galaxy.Generation
             }
             if (closestFs != null)
             {
-                double yearOffset = (st.Colonized + 1.0) / System.Math.Max(st.Speed, 0.001);
+                // Темп из досье (систем/год). Если при нём цель не успевает к стартовой дате игры,
+                // шкала сжимается, чтобы все рёбра экспансии были датированы до InitialDate.
+                double speed      = System.Math.Max(st.Speed, 0.001);
+                double yearOffset = (st.Colonized + 1.0) / speed;
+                double fullSpan   = System.Math.Max(1, st.Target) / speed;
+                double maxSpan    = (st.InitialDate - st.StartDate).TotalDays / 365.25;
+                if (maxSpan > 0 && fullSpan > maxSpan) yearOffset *= maxSpan / fullSpan;
                 int colonizationYear = st.StartDate.AddDays(yearOffset * 365.25).Year;
                 galaxy.ExpansionEdges.Add(new ExpansionEdge
                 {
