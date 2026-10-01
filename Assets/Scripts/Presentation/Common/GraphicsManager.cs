@@ -139,7 +139,7 @@ namespace SRG.Presentation.Common
             _singleSpriteCache.Clear();
             _missingSprites.Clear();
             _missingSheets.Clear();
-            _folderVariantsCache.Clear();
+            lock (_folderVariantsCache) _folderVariantsCache.Clear();
             Resources.UnloadUnusedAssets();
         }
 
@@ -214,8 +214,10 @@ namespace SRG.Presentation.Common
         public string[] EnumerateSheetPathsInFolder(string folderPath)
         {
             if (string.IsNullOrEmpty(folderPath)) return System.Array.Empty<string>();
+            // Кэш — до обращения к главному потоку: из расчёта хода Send стоит ожидания кадра.
+            lock (_folderVariantsCache)
+                if (_folderVariantsCache.TryGetValue(folderPath, out var cached)) return cached;
             if (!MainThread.IsCurrent) return MainThread.Send(() => EnumerateSheetPathsInFolder(folderPath));
-            if (_folderVariantsCache.TryGetValue(folderPath, out var cached)) return cached;
 
             var metas = Resources.LoadAll<TextAsset>(folderPath);
             var list = new List<string>(metas?.Length ?? 0);
@@ -229,7 +231,7 @@ namespace SRG.Presentation.Common
                 }
             list.Sort(System.StringComparer.OrdinalIgnoreCase);
             var result = list.ToArray();
-            _folderVariantsCache[folderPath] = result;
+            lock (_folderVariantsCache) _folderVariantsCache[folderPath] = result;
             return result;
         }
 

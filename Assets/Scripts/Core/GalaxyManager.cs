@@ -81,6 +81,8 @@ namespace SRG.Core
         private GalaxyGenerationContext _context;
         private System.Threading.Tasks.Task<TurnAnimationData> _calcTask;
         private MainThreadDispatcher _dispatcher;
+        private readonly Stopwatch _calcWatch = new();
+        private int _calcFrames;
         private float _simulationTimer;
         private int _currentSubTurn;
         private readonly HashSet<PlanningReason> _planningRequests = new();
@@ -139,6 +141,7 @@ namespace SRG.Core
         private void Update()
         {
             UpdateFramePacing();
+            LogFrameSpike();
 
             // Пока ход считается в фоне — обслуживаем его запросы к главному потоку и больше
             // ничего не делаем: мир сейчас меняется.
@@ -191,6 +194,17 @@ namespace SRG.Core
             int wanted = idle ? interval : 1;
             if (UnityEngine.Rendering.OnDemandRendering.renderFrameInterval != wanted)
                 UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = wanted;
+        }
+
+        // Кадры дольше порога — в perf_log.txt с фазой хода: по ним видно, на что приходятся
+        // провалы FPS (расчёт, анимация, планирование).
+        private const float FrameSpikeSeconds = 0.1f;
+        private void LogFrameSpike()
+        {
+            float dt = Time.unscaledDeltaTime;
+            if (dt < FrameSpikeSeconds || Time.frameCount < 10) return;
+            SRG.Utils.PerfLog.Log($"[FrameSpike] frame={Time.frameCount} dt={dt * 1000f:F0}ms phase={Phase} " +
+                                  $"calculating={IsCalculating} turn={GeneratedGalaxy?.CurrentTurn}");
         }
 
         private void ProcessDeferredArrivalTransition()
@@ -256,21 +270,30 @@ namespace SRG.Core
 
             var session = _session;
             SetUiInputBlocked(true);
+            _dispatcher.ResetStats();
+            _calcWatch.Restart();
+            _calcFrames = 0;
             _calcTask = System.Threading.Tasks.Task.Run(() => session.SimulateDay());
         }
 
         /// <summary>Обслужить фоновый расчёт. true — расчёт завершён и обработан.</summary>
         private bool PollTurnCalculation()
         {
+            _calcFrames++;
             _dispatcher.PumpSends();
             if (!_calcTask.IsCompleted) return false;
 
             var task = _calcTask;
             _calcTask = null;
+            long waitMs = _calcWatch.ElapsedMilliseconds;
             SetUiInputBlocked(false);
             // Отложенные уведомления расчёта (лог, новости, визуал новых кораблей, паузы) —
             // в том порядке, в каком симуляция их подняла, до событий хода.
+            var sw = Stopwatch.StartNew();
             _dispatcher.DrainPosts();
+            long drainMs = sw.ElapsedMilliseconds;
+            SRG.Utils.PerfLog.Log($"[TurnMain] Turn {GeneratedGalaxy?.CurrentTurn}: wait={waitMs}ms frames={_calcFrames} " +
+                                  $"sends={_dispatcher.SendCount} posts={_dispatcher.PostCount} drain={drainMs}ms");
 
             if (task.IsFaulted)
             {
@@ -317,6 +340,13 @@ namespace SRG.Core
 
         private void OnTurnCalculated(TurnAnimationData data)
         {
+            var sw = Stopwatch.StartNew();
+            OnTurnCalculatedCore(data);
+            SRG.Utils.PerfLog.Log($"[TurnMain] Turn {GeneratedGalaxy?.CurrentTurn}: begin animation={sw.ElapsedMilliseconds}ms");
+        }
+
+        private void OnTurnCalculatedCore(TurnAnimationData data)
+        {
             LastTurnData = data;
             PlayerManager.Instance?.CheckPauseConditions(LastTurnData);
             foreach (var reason in LastTurnData.PlanningReasons)
@@ -355,8 +385,10 @@ namespace SRG.Core
 
         private void CompleteCurrentTurn()
         {
+            var sw = Stopwatch.StartNew();
             SystemViewManager.Instance?.UpdatePlanetPositions();
             GameWorld.RaiseTurnComplete(LastTurnData);
+            SRG.Utils.PerfLog.Log($"[TurnMain] Turn {GeneratedGalaxy?.CurrentTurn}: turn complete={sw.ElapsedMilliseconds}ms");
 
             if (_simulationInterrupt)
             {
