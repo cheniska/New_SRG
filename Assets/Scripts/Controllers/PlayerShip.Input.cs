@@ -9,6 +9,7 @@ using SRG.UI.HUD;
 using SRG.UI.Screens;
 using SRG.Utils;
 using SRG.Ships;
+using SRG.Presentation.Common;
 using SRG.Presentation.World;
 
 namespace SRG.Controllers
@@ -106,9 +107,8 @@ namespace SRG.Controllers
             if (GameConsoleController.IsOpen) return;
             if (ObjectInfoPopup.IsMouseBlocked) return;
 
-            var worldPos = _cam.ScreenToWorldPoint(Input.mousePosition);
-            var clickPos = new Vector2(worldPos.x, worldPos.y);
-            var hit = Physics2D.Raycast(clickPos, Vector2.zero);
+            if (!WorldPointer.TryScreenToWorld(_cam, Input.mousePosition, out var clickPos)) return;
+            var hit = WorldPointer.PickAt(clickPos);
 
             // В режиме связи — выбор корабля для диалога
             if (_dialogModeActive)
@@ -118,7 +118,7 @@ namespace SRG.Controllers
             }
 
             // В режиме стрельбы — выбор цели; клик не по цели снимает режим и обрабатывается как обычный
-            if (_weaponModeActive && TryHandleWeaponModeClick(hit, clickPos)) return;
+            if (_weaponModeActive && TryHandleWeaponModeClick(hit)) return;
 
             HandleNavigationClick(hit, clickPos);
         }
@@ -142,18 +142,14 @@ namespace SRG.Controllers
         /// <summary>Клик в режиме стрельбы. Возвращает true, если клик «съеден»
         /// (попадание по врагу/астероиду — открыт огонь); false, если режим стрельбы снят и
         /// нужно продолжить обработку как обычный навигационный клик.</summary>
-        private bool TryHandleWeaponModeClick(RaycastHit2D hit, Vector2 clickPos)
+        private bool TryHandleWeaponModeClick(WorldPick hit)
         {
-            if (hit.collider != null)
+            bool isEnemy    = hit?.Ship != null && !hit.Ship.IsPlayer;
+            bool isAsteroid = hit?.Asteroid != null && !hit.Asteroid.IsDestroyed;
+            if (isEnemy || isAsteroid)
             {
-                var info = hit.collider.GetComponentInParent<ClickableInfo>();
-                bool isEnemy    = info?.Ship != null && !info.Ship.IsPlayer;
-                bool isAsteroid = info?.Asteroid != null && !info.Asteroid.IsDestroyed;
-                if (isEnemy || isAsteroid)
-                {
-                    HandleWeaponClick(clickPos);
-                    return true;
-                }
+                HandleWeaponClick(hit);
+                return true;
             }
             _weaponModeActive = false;
             return false;
@@ -162,7 +158,7 @@ namespace SRG.Controllers
         /// <summary>Обычный навигационный клик: планета → посадка, свой корабль с маршрутом →
         /// сброс маршрута, чужой корабль → follow или enqueue (если item), астероид → курс,
         /// пустое пространство → waypoint.</summary>
-        private void HandleNavigationClick(RaycastHit2D hit, Vector2 clickPos)
+        private void HandleNavigationClick(WorldPick info, Vector2 clickPos)
         {
             // Пристыкован к носителю: любой навигационный клик = взлёт
             // (аналог кнопки «взлететь» при посадке на планету). Идёт через PlayerManager,
@@ -175,22 +171,21 @@ namespace SRG.Controllers
                 return;
             }
 
-            if (hit.collider != null)
+            if (info != null)
             {
-                var info = hit.collider.GetComponentInParent<ClickableInfo>();
-                if (info?.Planet != null)
+                if (info.Planet != null)
                 {
                     SetLandingCourse(info.Planet);
                     return;
                 }
-                if (info?.Wormhole != null)
+                if (info.Wormhole != null)
                 {
                     SetWormholeCourse(info.Wormhole, info.WormholeStar);
                     return;
                 }
                 // Клик по СВОЕМУ кораблю при распланированном маршруте — сброс маршрута.
                 // На следующей симуляции корабль останется на месте.
-                if (info?.Ship != null && info.Ship.IsPlayer)
+                if (info.Ship != null && info.Ship.IsPlayer)
                 {
                     if (HasPlannedRoute())
                     {
@@ -199,7 +194,7 @@ namespace SRG.Controllers
                     }
                     return;
                 }
-                if (info?.Ship != null && !info.Ship.IsPlayer)
+                if (info.Ship != null && !info.Ship.IsPlayer)
                 {
                     // Item-цели (контейнеры в космосе) — левый клик ставит их в очередь захвата,
                     // без открытия follow-цикла. Обычные корабли — BeginOrCycleFollow.
@@ -212,7 +207,7 @@ namespace SRG.Controllers
                     return;
                 }
 
-                if (info?.Asteroid != null && !info.Asteroid.IsDestroyed)
+                if (info.Asteroid != null && !info.Asteroid.IsDestroyed)
                 {
                     var targetAsteroid = info.Asteroid;
                     ClearFollow();
@@ -231,12 +226,8 @@ namespace SRG.Controllers
 
 
         }
-        private void HandleWeaponClick(Vector2 clickPos)
+        private void HandleWeaponClick(WorldPick info)
         {
-            var hit = Physics2D.Raycast(clickPos, Vector2.zero);
-            if (hit.collider == null) return;
-
-            var info = hit.collider.GetComponentInParent<ClickableInfo>();
             if (info == null) return;
 
             bool isShip     = info.Ship != null && !info.Ship.IsPlayer;
@@ -284,10 +275,9 @@ namespace SRG.Controllers
             _weaponModeActive = false;
         }
 
-        private void HandleDialogClick(RaycastHit2D hit)
+        private void HandleDialogClick(WorldPick hit)
         {
-            var info = hit.collider != null ? hit.collider.GetComponentInParent<ClickableInfo>() : null;
-            var targetShip = info?.Ship;
+            var targetShip = hit?.Ship;
             if (targetShip == null || targetShip.IsPlayer)
             {
                 DisableDialogMode();

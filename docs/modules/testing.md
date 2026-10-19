@@ -36,6 +36,7 @@ CI (`.github/workflows/ci.yml`): job `headless-tests` на каждый push/PR;
 | `SaveSchemaTests` | формат сохранения совпадает с эталоном `SaveSchema.txt` (см. [saves.md](saves.md)) |
 | `UiPresenterTests` | логика экранов без UI: магазины товаров и оборудования, ангар, описание предмета, цвета карты галактики |
 | `ArchitectureTests` | в симуляции нет `UnityEngine.Random`, `Guid.NewGuid`, `new System.Random()`, `Uid.GetHashCode()`; нет `Resources.Load*`, `Sprite[]`, `Texture2D`, `SpriteRenderer` |
+| `WorldPickerTests` | выбор объекта по точке: радиусы из конфига, порядок перекрытия, скрытые корабли; в сгенерированном мире каждый видимый корабль выбирается в своей позиции |
 | `GraphicsCatalogTests` | `Config/GraphicsCatalog.json` совпадает с `Resources/Graphics`; размеры кораблей в headless-мире — из каталога |
 
 `SimulationDeterminismTests` помечены категорией `Slow` (генерируют настоящую галактику из

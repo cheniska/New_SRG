@@ -144,13 +144,6 @@ namespace SRG.Core
             var label = obj.GetComponent<StarLabelRenderer>() ?? obj.AddComponent<StarLabelRenderer>();
             label.Setup(star);
 
-            var starCol = obj.AddComponent<CircleCollider2D>();
-            starCol.isTrigger = true;
-            starCol.radius = 0.5f;
-
-            var starInfo = obj.AddComponent<ClickableInfo>();
-            starInfo.Star = star;
-
             _spawnedObjects.Add(obj);
         }
 
@@ -162,13 +155,6 @@ namespace SRG.Core
                 var obj = Instantiate(PlanetPrefab, SystemContainer);
                 obj.name = $"Planet_{planet.Name}";
                 obj.GetComponent<PlanetVisualController>()?.Setup(planet, SatellitePrefab);
-
-                var planetCol = obj.AddComponent<CircleCollider2D>();
-                planetCol.isTrigger = true;
-                planetCol.radius = 0.5f;
-
-                var planetInfo = obj.AddComponent<ClickableInfo>();
-                planetInfo.Planet = planet;
                 _planetList.Add((planet, obj.transform));
                 _spawnedObjects.Add(obj);
             }
@@ -211,14 +197,6 @@ namespace SRG.Core
             visual?.Setup(ship, ship.IsPlayer);
             _shipList.Add((ship, obj.transform, visual));
             _spawnedObjects.Add(obj);
-
-            var col = obj.AddComponent<CircleCollider2D>();
-            col.isTrigger = true;
-            col.radius = 0.35f;
-
-            var shipInfo = obj.AddComponent<ClickableInfo>();
-            shipInfo.Ship = ship;
-
             return obj;
         }
 
@@ -247,9 +225,6 @@ namespace SRG.Core
                 ctrl.Setup(asteroid);
                 _asteroidControllers[asteroid.Uid] = ctrl;
                 MinimapController?.OnAsteroidSpawned(asteroid);
-
-                var asteroidInfo = obj.AddComponent<ClickableInfo>();
-                asteroidInfo.Asteroid = asteroid;
             }
             else
             {

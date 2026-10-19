@@ -20,7 +20,7 @@ namespace SRG.Controllers
     {
         public ShipData ShipData { get; private set; }
 
-        // Делегируем в Brain — UI читает это поле через ClickableInfo
+        // Делегируем в Brain — UI читает это поле через выбранный ShipData
         public string CurrentOrder => ShipData?.Brain?.CurrentOrder ?? "—";
 
         private ShipVisualController _visual;

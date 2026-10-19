@@ -83,6 +83,24 @@ namespace SRG.Tests
             return violations;
         }
 
+        /// <summary>Объекты под курсором выбираются по данным (WorldPicker), а не 2D-физикой:
+        /// коллайдеры привязали бы выбор к спрайтовому рендеру.</summary>
+        [Test]
+        public void Scripts_DoNotUse2DPhysics()
+        {
+            var pattern = new Regex(@"\b(Physics2D|Collider2D|CircleCollider2D|BoxCollider2D|RaycastHit2D)\b");
+            var violations = new List<string>();
+            string root = Path.Combine(TestWorld.AssetsDir, "Scripts");
+            foreach (var file in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
+            {
+                var lines = File.ReadAllLines(file);
+                for (int i = 0; i < lines.Length; i++)
+                    if (!lines[i].TrimStart().StartsWith("//") && pattern.IsMatch(lines[i]))
+                        violations.Add($"{Path.GetFileName(file)}:{i + 1}: 2D-физика — выбирайте объекты через WorldPointer/WorldPicker");
+            }
+            Assert.IsEmpty(violations, string.Join("\n", violations));
+        }
+
         [Test]
         public void Simulation_SourcesAreFound()
         {

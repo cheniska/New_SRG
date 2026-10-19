@@ -17,6 +17,7 @@ using SRG.Utils;
 using SRG.UI.Screens;
 using SRG.Utils;
 using SRG.Simulation;
+using SRG.Presentation.Common;
 using SRG.Presentation.World;
 
 namespace SRG.UI.HUD
@@ -29,8 +30,8 @@ namespace SRG.UI.HUD
         public static ObjectInfoPopup Instance { get; private set; }
 
         private Camera _cam;
-        private ClickableInfo _hoveredInfo;   // объект под курсором в данный момент
-        private ClickableInfo _pinnedInfo;    // объект, для которого открыто окно
+        private WorldPick _hoveredInfo;   // объект под курсором в данный момент
+        private WorldPick _pinnedInfo;    // объект, для которого открыто окно
         private float _hoverTimer;
         private bool _showPopup;
         private Rect _popupRect;
@@ -100,16 +101,11 @@ namespace SRG.UI.HUD
             // Не убирать окно если курсор находится над ним
             if (_showPopup && IsMouseOverPopup()) return;
 
-            // Проверка объекта под курсором через OverlapPoint (надёжнее Raycast с нулевым направлением)
-            var worldPos = _cam.ScreenToWorldPoint(Input.mousePosition);
-            var clickPos = new Vector2(worldPos.x, worldPos.y);
-            var col = Physics2D.OverlapPoint(clickPos);
+            // Объект под курсором — по данным мира (WorldPicker), а не по коллайдерам визуала.
+            // Результат выбора создаётся заново каждый кадр: сравниваем выбранные объекты.
+            var newHover = WorldPointer.PickAtScreen(_cam, Input.mousePosition);
 
-            ClickableInfo newHover = null;
-            if (col != null)
-                newHover = col.GetComponentInParent<ClickableInfo>();
-
-            if (newHover != _hoveredInfo)
+            if (!SameTarget(newHover, _hoveredInfo))
             {
                 _hoveredInfo = newHover;
                 _hoverTimer = 0f;
@@ -119,7 +115,7 @@ namespace SRG.UI.HUD
                     // Мышь ушла с объекта — закрываем окно
                     Close();
                 }
-                else if (newHover != _pinnedInfo)
+                else if (!SameTarget(newHover, _pinnedInfo))
                 {
                     // Навели на новый объект — сбросить окно, начать новый отсчёт
                     Close();
@@ -152,13 +148,9 @@ namespace SRG.UI.HUD
         private void HandleRightClick()
         {
             if (_cam == null) return;
-            var worldPos = _cam.ScreenToWorldPoint(Input.mousePosition);
-            var col = Physics2D.OverlapPoint(new Vector2(worldPos.x, worldPos.y));
+            var info = WorldPointer.PickAtScreen(_cam, Input.mousePosition);
 
             _showContextMenu = false;
-            if (col == null) return;
-
-            var info = col.GetComponentInParent<ClickableInfo>();
             if (info?.Ship == null || info.Ship.IsPlayer) return;
 
             _contextMenuShip = info.Ship;
@@ -177,7 +169,10 @@ namespace SRG.UI.HUD
             Close();
         }
 
-        private void OpenFor(ClickableInfo info, Vector3 screenPos)
+        private static bool SameTarget(WorldPick a, WorldPick b)
+            => ReferenceEquals(a?.Target, b?.Target);
+
+        private void OpenFor(WorldPick info, Vector3 screenPos)
         {
             _pinnedInfo = info;
             _showPopup = true;
