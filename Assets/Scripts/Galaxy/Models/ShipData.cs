@@ -465,9 +465,7 @@ namespace SRG.Galaxy
                 // вне зависимости от того, кто сейчас на нём летает.
                 string ownerForGfx = hullItem.GraphicByManufacturer ? hullItem.ManufacturerSide : Owner;
                 string raceForGfx  = hullItem.GraphicByManufacturer ? hullItem.ManufacturerRace : Race;
-                SpritesheetPath = GameWorld.ShipSheetResolver != null
-                    ? GameWorld.ShipSheetResolver(hullItem.BodyGraphicPath, ownerForGfx, raceForGfx)
-                    : hullItem.BodyGraphicPath;
+                SpritesheetPath = ShipFactory.ResolveHullSheetPath(hullItem.BodyGraphicPath, ownerForGfx, raceForGfx);
                 return;
             }
 

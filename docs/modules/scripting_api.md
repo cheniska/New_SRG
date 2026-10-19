@@ -514,15 +514,9 @@ return { ok=true, consume=true, message='[Активация]: субпорта�
 | `BuildShipData(shipTypeId, ownerId, raceId, availableTypes, ctx)` | Собрать `ShipData` с базовым корпусом и параметрами. |
 | `RecalculateSpriteWorldSize(ship)` | Пересчитать мировой размер спрайта. |
 | `HullSizeMultiplier(ship)` / `HullSizeMultiplier(maxHull, baseSize)` | Множитель размера от MaxHull. |
-| `ResolveSpriteWorldSize(spritePath)` | Мировой размер по атласу. |
+| `ResolveSpriteWorldSize(spritePath)` | Мировой размер кадра листа по `GraphicsCatalog`. |
+| `ResolveHullSheetPath(basePath, ownerId, raceId)` | Owner/Race/Default-подпапка графики корпуса (по `GraphicsCatalog`). |
 | `GetRandomShipTypeForOwner(ownerId, ...)` | Случайный тип для владельца по конфигу. |
-
-### `ShipGraphicsResolver` (`SRG.Presentation`)
-| Метод | Что делает |
-|---|---|
-| `Resolve(...)` | Резолвит путь к спрайту с учётом Owner/Race/manufacturerSide. |
-| `ResolveFromBase(basePath, ownerId, raceId)` | Быстрый вариант от basePath. |
-| `ClearCache()` | Сбросить кэш. |
 
 ### `ShipRatingService`
 | Метод | Что делает |

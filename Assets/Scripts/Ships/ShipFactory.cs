@@ -90,29 +90,43 @@ namespace SRG.Ships
             return Mathf.Pow(maxHull / baseSize, k);
         }
 
-        // Размер листа не меняется за игру, а чтение Sprite доступно только с главного потока:
-        // из расчёта хода каждый промах кэша стоит ожидания кадра.
-        private static readonly Dictionary<string, float> _spriteWorldSizeCache = new();
-
-        public static float ResolveSpriteWorldSize(string spritePath)
+        /// <summary>
+        /// Опциональные Owner/Race-подпапки поверх базового пути к графике корпуса
+        /// (<c>hullItem.BodyGraphicPath</c>). Приоритет: Owner → Race → Default → базовый путь.
+        /// Раса и тип корпуса обычно уже подставлены в имя файла, поэтому подпапок нет и
+        /// возвращается базовый путь. Наличие листа — по <see cref="GraphicsCatalog"/>.
+        /// </summary>
+        public static string ResolveHullSheetPath(string basePath, string ownerId, string raceId)
         {
-            if (string.IsNullOrEmpty(spritePath)) return 1.0f;
-            lock (_spriteWorldSizeCache)
-                if (_spriteWorldSizeCache.TryGetValue(spritePath, out var cached)) return cached;
+            if (string.IsNullOrEmpty(basePath)) return basePath;
 
-            float size = MainThread.Send(() =>
+            if (!string.IsNullOrEmpty(ownerId)
+                && ownerId != GalaxyConstants.OWNER_NONE_KEY
+                && ownerId != GalaxyConstants.OWNER_UNRESOLVED_KEY
+                && ownerId != GalaxyConstants.OWNER_MIXED_KEY)
             {
-                var frames = GameWorld.Graphics?.GetSpriteSheet(spritePath);
-                Sprite first = frames != null && frames.Length > 0 ? frames[0] : null;
-                if (first == null) return 1.0f;
-                // sprites are square — width / pixelsPerUnit gives world size
-                return first.rect.width / first.pixelsPerUnit;
-            });
-            // Без графики (headless) не кэшируем: хост может подключиться позже.
-            if (GameWorld.Graphics != null)
-                lock (_spriteWorldSizeCache) _spriteWorldSizeCache[spritePath] = size;
-            return size;
+                string p = $"{basePath}/{ownerId}";
+                if (GraphicsCatalog.ContainsSheet(p)) return p;
+            }
+
+            if (!string.IsNullOrEmpty(raceId)
+                && raceId != GalaxyConstants.RACE_NONE_KEY
+                && raceId != GalaxyConstants.RACE_UNRESOLVED_KEY
+                && raceId != GalaxyConstants.RACE_MIXED_KEY)
+            {
+                string p = $"{basePath}/{raceId}";
+                if (GraphicsCatalog.ContainsSheet(p)) return p;
+            }
+
+            string defaultPath = $"{basePath}/Default";
+            if (GraphicsCatalog.ContainsSheet(defaultPath)) return defaultPath;
+
+            return basePath;
         }
+
+        /// <summary>Мировой размер кадра листа (ширина) по каталогу; 1 — если листа нет.</summary>
+        public static float ResolveSpriteWorldSize(string spritePath)
+            => GraphicsCatalog.FrameWorldSize(spritePath);
 
         public static string GetRandomShipTypeForOwner(string ownerId,
             Dictionary<string, List<string>> ownerLineups,

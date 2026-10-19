@@ -21,12 +21,7 @@ namespace SRG.Simulation
         public static IWorldHost Host { get; private set; }
         public static IPlayerHost Player { get; private set; }
         public static IViewHost View { get; private set; }
-        public static IGraphicsQuery Graphics { get; private set; }
         public static IDialogPresenter Dialogs { get; private set; }
-
-        /// <summary>Резолвер Owner/Race-вариантов графики корпуса: (basePath, owner, race) → path.
-        /// Без резолвера используется базовый путь.</summary>
-        public static Func<string, string, string, string> ShipSheetResolver { get; set; }
 
         // ── Регистрация хостов ─────────────────────────────────────────────────
         // Detach снимает хост только если он всё ещё текущий: иначе уничтожение старого
@@ -40,9 +35,6 @@ namespace SRG.Simulation
 
         public static void Attach(IViewHost host) => View = host;
         public static void Detach(IViewHost host) { if (ReferenceEquals(View, host)) View = null; }
-
-        public static void Attach(IGraphicsQuery host) => Graphics = host;
-        public static void Detach(IGraphicsQuery host) { if (ReferenceEquals(Graphics, host)) Graphics = null; }
 
         public static void Attach(IDialogPresenter host) => Dialogs = host;
         public static void Detach(IDialogPresenter host) { if (ReferenceEquals(Dialogs, host)) Dialogs = null; }
@@ -86,8 +78,7 @@ namespace SRG.Simulation
         /// <summary>Сбросить все хосты и подписки. Для тестов.</summary>
         public static void ResetForTests()
         {
-            Host = null; Player = null; View = null; Graphics = null; Dialogs = null;
-            ShipSheetResolver = null;
+            Host = null; Player = null; View = null; Dialogs = null;
             OnTurnCalculate = null; OnTurnAnimate = null; OnTurnComplete = null;
             MainThread.Dispatcher = null;
         }

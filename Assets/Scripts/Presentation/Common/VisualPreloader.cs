@@ -4,6 +4,7 @@ using SRG.Config;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Presentation.World;
+using SRG.Ships;
 
 namespace SRG.Presentation.Common
 {
@@ -50,8 +51,8 @@ namespace SRG.Presentation.Common
                         gm.GetSprite(cfg.Visual.SpritePath);
                 }
 
-            // 3) Корпуса кораблей: все BodyGraphicPath × все расы галактики. ShipGraphicsResolver
-            //    сам дедуплицирует запросы, HashSet тоже, поэтому двойной цикл дёшев
+            // 3) Корпуса кораблей: все BodyGraphicPath × все расы галактики. Резолв пути — по
+            //    каталогу, без загрузки; HashSet дедуплицирует, поэтому двойной цикл дёшев
             //    (реально загрузим ~30–50 уникальных hull-листов). Убирает хитч 30–200 мс
             //    на первом появлении каждого синтет-подтипа.
             if (equip != null && context != null)
@@ -63,12 +64,12 @@ namespace SRG.Presentation.Common
                     if (races != null)
                         foreach (var raceKey in races.Keys)
                         {
-                            string path = ShipGraphicsResolver.ResolveFromBase(
+                            string path = ShipFactory.ResolveHullSheetPath(
                                 cfg.BodyGraphicPath, null, raceKey);
                             if (!string.IsNullOrEmpty(path)) sheets.Add(path);
                         }
                     // Default-вариант (без расы) — тоже прогреваем: используется для owner-агностик спавнов.
-                    string defPath = ShipGraphicsResolver.ResolveFromBase(
+                    string defPath = ShipFactory.ResolveHullSheetPath(
                         cfg.BodyGraphicPath, null, null);
                     if (!string.IsNullOrEmpty(defPath)) sheets.Add(defPath);
                 }

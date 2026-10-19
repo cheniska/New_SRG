@@ -133,7 +133,7 @@ namespace SRG.Presentation.Effects
         public void Init(Transform root)
         {
             _root = root != null ? root : transform;
-            _dot  = SpriteUtility.CreateCircleSprite(16);
+            _dot  = ProceduralSprites.CreateCircle(16);
             _mat  = new Material(Shader.Find("Sprites/Default"));
             PrewarmPools();
         }

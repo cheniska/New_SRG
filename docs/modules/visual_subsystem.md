@@ -1,7 +1,8 @@
 # Visual Subsystem
 
 Модули: `Visual/*.cs` + `Core/SystemViewManager.cs` + `Core/GraphicsManager.cs` +
-`Ships/ShipVisualController.cs` + `Ships/ShipGraphicsResolver.cs`.
+`Ships/ShipVisualController.cs`. Путь к графике корпуса резолвит симуляция
+(`ShipFactory.ResolveHullSheetPath` по `GraphicsCatalog`, см. [architecture.md](architecture.md#графика-как-данные)).
 
 Полный список файлов: `BaseVisualController`, `PlanetVisualController`, `SatelliteVisualController`,
 `AsteroidVisualController`, `ShipVisualController` (формально в Ships/), `BackgroundVisualController`,
@@ -124,17 +125,8 @@ public void PreloadSheets(IEnumerable<string> paths);
 // Специфичное
 public (Sprite[] frames, float animSpeed) GetStarVisuals(string color, int variant);
 public float GetStarScale(string typeName);
-public string[] EnumerateSheetPathsInFolder(string folderPath);
 public GalaxyConfig GetConfig();
 public void ClearCache();
-```
-
-### `ShipGraphicsResolver` (static)
-
-```csharp
-public static ShipGraphicsResolution Resolve(ShipData ship, EquipmentConfig equipConfig);
-   // Возвращает spritesheet path + размер + параметры анимации для текущего корпуса/типа
-public static void ClearCache();
 ```
 
 ### `CameraController` (singleton)
@@ -174,7 +166,6 @@ SystemViewManager
    └─► TurnAnimationData (читает поля)
 
 ShipVisualController
-   ├─► ShipGraphicsResolver
    ├─► GraphicsManager
    ├─► PlanetGeometry (R_land/R_app для PrepareForTurn)
    ├─► AnimatedSpriteRenderer

@@ -33,7 +33,7 @@ namespace SRG.Presentation.Common
         public static readonly SheetHandle Empty = new(null, 0f);
     }
 
-    public class GraphicsManager : MonoBehaviour, IGraphicsQuery
+    public class GraphicsManager : MonoBehaviour
     {
         public static GraphicsManager Instance;
 
@@ -54,14 +54,12 @@ namespace SRG.Presentation.Common
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
-            GameWorld.Attach(this);
             DontDestroyOnLoad(gameObject);
         }
 
         private void OnDestroy()
         {
             if (Instance != this) return;
-            GameWorld.Detach(this);
             Instance = null;
         }
 
@@ -139,7 +137,6 @@ namespace SRG.Presentation.Common
             _singleSpriteCache.Clear();
             _missingSprites.Clear();
             _missingSheets.Clear();
-            lock (_folderVariantsCache) _folderVariantsCache.Clear();
             Resources.UnloadUnusedAssets();
         }
 
@@ -198,41 +195,6 @@ namespace SRG.Presentation.Common
                 if (string.IsNullOrEmpty(path)) continue;
                 GetSpriteSheet(path);
             }
-        }
-
-        // Кэш имён листов внутри «папки вариантов» (см. EnumerateSheetPathsInFolder).
-        // Один folderPath → массив полных resource-путей к каждому листу без расширения.
-        private readonly Dictionary<string, string[]> _folderVariantsCache = new Dictionary<string, string[]>();
-
-        /// <summary>Перечисляет resource-пути ко всем спрайт-листам внутри папки (без расширения),
-        /// найденные по сопроводительным `.png.json`-метам. Единственный легитимный случай
-        /// «папочной» семантики графики — категория с многими равнозначными вариантами
-        /// (астероиды: Rocky/00..14, Metallic/Blue00..Blue13). Пути возвращаются отсортированные
-        /// по имени (Ordinal, IgnoreCase) — вариант с индексом 10 идёт после 09.
-        /// Использует Resources.LoadAll&lt;TextAsset&gt; — вся эта нестандартная схема живёт
-        /// в GraphicsManager, чтобы бизнес-код никогда не звал LoadAll сам.</summary>
-        public string[] EnumerateSheetPathsInFolder(string folderPath)
-        {
-            if (string.IsNullOrEmpty(folderPath)) return System.Array.Empty<string>();
-            // Кэш — до обращения к главному потоку: из расчёта хода Send стоит ожидания кадра.
-            lock (_folderVariantsCache)
-                if (_folderVariantsCache.TryGetValue(folderPath, out var cached)) return cached;
-            if (!MainThread.IsCurrent) return MainThread.Send(() => EnumerateSheetPathsInFolder(folderPath));
-
-            var metas = Resources.LoadAll<TextAsset>(folderPath);
-            var list = new List<string>(metas?.Length ?? 0);
-            if (metas != null)
-                foreach (var m in metas)
-                {
-                    if (m == null || m.name == null) continue;
-                    if (!m.name.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase)) continue;
-                    string sheetName = m.name.Substring(0, m.name.Length - 4);
-                    list.Add(folderPath + "/" + sheetName);
-                }
-            list.Sort(System.StringComparer.OrdinalIgnoreCase);
-            var result = list.ToArray();
-            lock (_folderVariantsCache) _folderVariantsCache[folderPath] = result;
-            return result;
         }
 
         private Sprite[] LoadSpriteSheet(string path)

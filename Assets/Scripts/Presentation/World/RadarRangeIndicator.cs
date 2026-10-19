@@ -142,6 +142,6 @@ namespace SRG.Presentation.World
         }
 
         private static Sprite CreateCircleSprite()
-            => SpriteUtility.CreateCircleSprite(16);
+            => ProceduralSprites.CreateCircle(16);
     }
 }

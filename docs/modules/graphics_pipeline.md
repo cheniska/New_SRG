@@ -118,8 +118,7 @@ void PreloadSheets(IEnumerable<string> paths);
 
 - `GetStarVisuals(color, graphVariant)` — резолвит путь через `GalaxyConfig.Stars.Colors[color].Path + "/Var" + variant` и вызывает `LoadSpriteSheet`. Живёт отдельно, потому что путь конструируется из конфига.
 - `GetStarScale(typeName)` — не грузит графику, читает `GraphicSizeMult` из конфига.
-- `EnumerateSheetPathsInFolder(folderPath)` — сканирует папку и возвращает Resources-пути ко всем найденным листам (по `.png.json`-метам). **Единственный легитимный случай папочной семантики графики** — категория с многими равнозначными вариантами (астероиды: Rocky/00..14, Metallic/Blue00..Blue13). Не создавайте свой folder-scan; используйте этот метод.
-- `ClearCache()` — вайпает всё (позитив/негатив/оба кэша + folder-scan кэш) + `Resources.UnloadUnusedAssets()`. Используется в редких случаях (переход между сессиями).
+- `ClearCache()` — вайпает всё (позитив/негатив/оба кэша) + `Resources.UnloadUnusedAssets()`. Используется в редких случаях (переход между сессиями).
 
 ### Кэши
 
@@ -193,7 +192,7 @@ public struct FrameStepper {
 
 **Договор**: путь = Resources-относительный БЕЗ расширения. Для листов — путь к самому листу, не к папке. Для одиночных спрайтов — путь к спрайту.
 
-**Исключение — папка-с-вариантами**: `AsteroidTypeConfig.GraphicPath = "Graphics/SpaceObjects/Asteroids/Rocky"` — папка, внутри которой 15 листов `00.png`..`14.png` с мета-JSONами. Сканирование делает `GraphicsManager.EnumerateSheetPathsInFolder` — единая точка для этого паттерна (`AsteroidSystem` только зовёт её, никакого локального folder-scan). Для новой графики предпочтительно указывать явные пути к листам; папку — только когда вариантов много и они равнозначны.
+**Исключение — папка-с-вариантами**: `AsteroidTypeConfig.GraphicPath = "Graphics/SpaceObjects/Asteroids/Rocky"` — папка, внутри которой 15 листов `00.png`..`14.png` с мета-JSONами. Список вариантов даёт `GraphicsCatalog.SheetsInFolder` — каталог графики, а не сканирование ассетов, поэтому выбор варианта одинаков в игре и headless (см. [architecture.md](architecture.md#графика-как-данные)). Для новой графики предпочтительно указывать явные пути к листам; папку — только когда вариантов много и они равнозначны.
 
 ---
 
@@ -223,7 +222,7 @@ public struct FrameStepper {
 
 ### Случай C: категория с многими вариантами (типа Rocky/00..14)
 
-Не изобретайте свой folder-scan. Либо (a) сложите варианты в отдельную папку и используйте `GraphicsManager.EnumerateSheetPathsInFolder(folder)`, либо (b) в JSON перечислите список путей явно (`GraphicPaths: string[]`). Вариант (b) предпочтителен — папка без сканирования не даёт визуальной неопределённости «какие варианты сейчас в билде».
+Не изобретайте свой folder-scan. Либо (a) сложите варианты в отдельную папку и используйте `GraphicsCatalog.SheetsInFolder(folder)` (после добавления — перегенерировать каталог), либо (b) в JSON перечислите список путей явно (`GraphicPaths: string[]`). Вариант (b) предпочтителен — папка без сканирования не даёт визуальной неопределённости «какие варианты сейчас в билде».
 
 ### Случай D: нужен новый тип анимации (не loop, не one-shot)
 
@@ -238,11 +237,15 @@ public struct FrameStepper {
 
 1. **Никаких прямых `Resources.Load<Sprite>` / `Resources.LoadAll<Sprite>` в бизнес-коде.** Разрешено только в:
    - `GraphicsManager` (сам менеджер).
-   - Специфичных folder-scan (`AsteroidSystem.GetVariantNames`, `ShipGraphicsResolver`, `GalaxyUtils` для генерации).
    - Шейдеров (`Resources.Load<Shader>`).
    - TextAsset конфигов (`Resources.Load<TextAsset>`).
 
    Проверить: `git grep 'Resources\.Load' Assets/Scripts/` — новых `Sprite`-загрузок вне списка выше быть не должно.
+   В симуляции `Resources` запрещён полностью (`ArchitectureTests.Simulation_DoesNotReadGraphics`): данные об
+   ассетах — из `GraphicsCatalog`.
+
+1a. **Добавили, удалили или заменили картинку в `Resources/Graphics` — перегенерируйте каталог**:
+   `python3 tools/graphics-catalog/gen_graphics_catalog.py`. Иначе упадёт `GraphicsCatalogTests`.
 
 2. **Никаких локальных Sprite-кэшей в компонентах.** Они дублируют `GraphicsManager` и рассинхронизируются при `ClearCache`. Если хочется закэшировать промах — GraphicsManager уже делает это через `_missingSprites`/`_missingSheets`.
 

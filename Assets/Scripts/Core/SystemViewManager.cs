@@ -78,7 +78,7 @@ namespace SRG.Core
 
             _weaponVfx = gameObject.AddComponent<WeaponVisualSystem>();
             _weaponVfx.Init(SystemContainer);
-            _missileDot = SpriteUtility.CreateCircleSprite(12);
+            _missileDot = ProceduralSprites.CreateCircle(12);
             if (FindAnyObjectByType<PlanetUIController>() == null)
             {
                 var pgo = new GameObject("PlanetUIController");

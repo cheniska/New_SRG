@@ -20,9 +20,6 @@ namespace SRG.Core
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Init()
         {
-            // Owner/Race-варианты графики корпуса (ShipData.RefreshSpritesheetPath).
-            GameWorld.ShipSheetResolver = ShipGraphicsResolver.ResolveFromBase;
-
             // Горячие клавиши камеры/оверлеев молчат, пока открыта консоль.
             PresentationContext.IsTextInputActive = () => GameConsoleController.IsOpen;
 

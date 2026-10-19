@@ -59,6 +59,7 @@ namespace SRG.Tests
                 Items = Read("ItemsConfig.json"),
                 Dialogs = Read("DialogsConfig.json"),
                 Partners = Read("PartnersConfig.json"),
+                GraphicsCatalog = Read("GraphicsCatalog.json"),
             };
         }
 

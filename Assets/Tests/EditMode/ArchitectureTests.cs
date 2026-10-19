@@ -31,6 +31,16 @@ namespace SRG.Tests
                 "string.GetHashCode() зависит от рантайма — используйте StableHash.Of"),
         };
 
+        // Симуляция не читает графику: размеры и варианты листов — из GraphicsCatalog.
+        // Иначе ход зависит от рендера (2D/3D) и ждёт главный поток.
+        private static readonly (Regex pattern, string why)[] GraphicsApis =
+        {
+            (new Regex(@"\bResources\.(Load|LoadAll|LoadAsync)\b"),
+                "Resources в симуляции — данные о графике берите из GraphicsCatalog"),
+            (new Regex(@"\b(Sprite\s*\[\]|Texture2D|SpriteRenderer)\b"),
+                "графические типы в симуляции — данные о графике берите из GraphicsCatalog"),
+        };
+
         private static IEnumerable<string> SimulationSources()
         {
             string root = Path.Combine(TestWorld.AssetsDir, "Scripts");
@@ -44,6 +54,19 @@ namespace SRG.Tests
         [Test]
         public void Simulation_HasNoNondeterministicApis()
         {
+            var violations = FindViolations(Forbidden);
+            Assert.IsEmpty(violations, string.Join("\n", violations));
+        }
+
+        [Test]
+        public void Simulation_DoesNotReadGraphics()
+        {
+            var violations = FindViolations(GraphicsApis);
+            Assert.IsEmpty(violations, string.Join("\n", violations));
+        }
+
+        private static List<string> FindViolations((Regex pattern, string why)[] forbidden)
+        {
             var violations = new List<string>();
             foreach (var file in SimulationSources())
             {
@@ -52,12 +75,12 @@ namespace SRG.Tests
                 {
                     string line = lines[i].TrimStart();
                     if (line.StartsWith("//")) continue;
-                    foreach (var (pattern, why) in Forbidden)
+                    foreach (var (pattern, why) in forbidden)
                         if (pattern.IsMatch(line))
                             violations.Add($"{Path.GetFileName(file)}:{i + 1}: {why}");
                 }
             }
-            Assert.IsEmpty(violations, string.Join("\n", violations));
+            return violations;
         }
 
         [Test]

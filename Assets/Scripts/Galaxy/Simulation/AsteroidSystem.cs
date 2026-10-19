@@ -494,24 +494,18 @@ namespace SRG.Galaxy.Simulation
 
         // GraphicPath в конфиге астероида — «папка вариантов»: сама содержит 10–15 отдельных
         // атласов (например Rocky/00..14, Metallic/Blue00..Blue13, каждый — 100 кадров 10×10).
-        // Единственный легитимный случай папочной семантики графики; folder-scan живёт в
-        // GraphicsManager.EnumerateSheetPathsInFolder (единая точка для этого паттерна).
+        // Единственный легитимный случай папочной семантики графики. Список вариантов — из
+        // GraphicsCatalog, поэтому выбор варианта (и расход GameRng) одинаков в игре и headless.
 
         /// <summary>Все конкретные атласы астероидов данного типа (для прогрева на старте).</summary>
         public static IEnumerable<string> EnumerateVariantSheetPaths(string configPath)
-        {
-            var gm = GameWorld.Graphics;
-            if (gm == null || string.IsNullOrEmpty(configPath)) yield break;
-            foreach (var path in gm.EnumerateSheetPathsInFolder(configPath))
-                yield return path;
-        }
+            => GraphicsCatalog.SheetsInFolder(configPath);
 
         private static string ResolveSheetFolderPath(string configPath)
         {
-            var gm = GameWorld.Graphics;
-            if (gm == null || string.IsNullOrEmpty(configPath)) return configPath;
-            var variants = gm.EnumerateSheetPathsInFolder(configPath);
-            if (variants.Length == 0) return configPath; // fallback: старое поведение
+            if (string.IsNullOrEmpty(configPath)) return configPath;
+            var variants = GraphicsCatalog.SheetsInFolder(configPath);
+            if (variants.Length == 0) return configPath; // путь — сам лист, а не папка вариантов
             return variants[GameRng.Range(0, variants.Length)];
         }
     }

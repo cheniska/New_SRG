@@ -35,7 +35,8 @@ CI (`.github/workflows/ci.yml`): job `headless-tests` на каждый push/PR;
 | `AiStateSerializationTests` | решения ИИ (`NpcBrain`, действия, приказы) переживают сохранение; ссылки на объекты мира в состоянии ИИ помечены `[NonSerialized]`; инкрементальные счётчики спавна совпадают с полным пересчётом |
 | `SaveSchemaTests` | формат сохранения совпадает с эталоном `SaveSchema.txt` (см. [saves.md](saves.md)) |
 | `UiPresenterTests` | логика экранов без UI: магазины товаров и оборудования, ангар, описание предмета, цвета карты галактики |
-| `ArchitectureTests` | в симуляции нет `UnityEngine.Random`, `Guid.NewGuid`, `new System.Random()`, `Uid.GetHashCode()` |
+| `ArchitectureTests` | в симуляции нет `UnityEngine.Random`, `Guid.NewGuid`, `new System.Random()`, `Uid.GetHashCode()`; нет `Resources.Load*`, `Sprite[]`, `Texture2D`, `SpriteRenderer` |
+| `GraphicsCatalogTests` | `Config/GraphicsCatalog.json` совпадает с `Resources/Graphics`; размеры кораблей в headless-мире — из каталога |
 
 `SimulationDeterminismTests` помечены категорией `Slow` (генерируют настоящую галактику из
 `Assets/Config`, ~10–20 с).
