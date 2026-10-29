@@ -48,45 +48,8 @@ namespace SRG.Controllers
             }
         }
 
-        public void ToggleForsage()
-        {
-            if (ShipData == null) return;
-            var forsage = EquipmentSystem.GetEquipped(ShipData, SlotKeys.Forsage);
-            if (forsage == null)
-            {
-                GameLog.Add("[Форсаж] Не установлен.");
-                return;
-            }
-            if (!forsage.IsWorking)
-            {
-                GameLog.Add($"[Форсаж] {forsage.Name}: повреждён, активация невозможна.");
-                return;
-            }
+        public void ToggleForsage() => Pilot?.ToggleForsage();
 
-            // При включении — проверяем условия (износ двигателя, близость к посадке).
-            // При выключении — всегда разрешаем.
-            if (!ShipData.ForsageActive
-                && !EquipmentSystem.CanActivateForsage(ShipData, out string reason))
-            {
-                GameLog.Add($"[Форсаж] Активация невозможна: {reason}.");
-                HudMessageController.Show($"Форсаж: {reason}");
-                return;
-            }
-
-            ShipData.ForsageActive = !ShipData.ForsageActive;
-            GameLog.Add(ShipData.ForsageActive
-                ? $"[Форсаж] Включён: {forsage.Name}."
-                : "[Форсаж] Выключен.");
-            HudMessageController.Show(ShipData.ForsageActive
-                ? "Форсаж активирован"
-                : "Форсаж деактивирован");
-
-            // Скорость кораля изменилась — пересчитываем планируемый маршрут,
-            // чтобы метки дней на нём отражали новый шаг.
-            RefreshPlannedRoute();
-
-
-        }
         private void DisableDialogMode(bool silent = false)
         {
             if (!_dialogModeActive) return;
@@ -148,7 +111,8 @@ namespace SRG.Controllers
             bool isAsteroid = hit?.Asteroid != null && !hit.Asteroid.IsDestroyed;
             if (isEnemy || isAsteroid)
             {
-                HandleWeaponClick(hit);
+                Pilot.SelectShotTarget(isEnemy ? hit.Ship : null, isAsteroid ? hit.Asteroid : null);
+                _weaponModeActive = false;
                 return true;
             }
             _weaponModeActive = false;
@@ -167,112 +131,51 @@ namespace SRG.Controllers
             if (!string.IsNullOrEmpty(ShipData.LandedOnShipUid))
             {
                 if (PlayerManager.Instance != null) PlayerManager.Instance.LeavePlanet();
-                else UndockFromCarrier();
+                else Pilot.UndockFromCarrier();
                 return;
             }
 
-            if (info != null)
-            {
-                if (info.Planet != null)
-                {
-                    SetLandingCourse(info.Planet);
-                    return;
-                }
-                if (info.Wormhole != null)
-                {
-                    SetWormholeCourse(info.Wormhole, info.WormholeStar);
-                    return;
-                }
-                // Клик по СВОЕМУ кораблю при распланированном маршруте — сброс маршрута.
-                // На следующей симуляции корабль останется на месте.
-                if (info.Ship != null && info.Ship.IsPlayer)
-                {
-                    if (HasPlannedRoute())
-                    {
-                        ClearRoute();
-                        GameLog.Add("[Навигация] Маршрут сброшен.");
-                    }
-                    return;
-                }
-                if (info.Ship != null && !info.Ship.IsPlayer)
-                {
-                    // Item-цели (контейнеры в космосе) — левый клик ставит их в очередь захвата,
-                    // без открытия follow-цикла. Обычные корабли — BeginOrCycleFollow.
-                    if (info.Ship.IsItem)
-                    {
-                        EnqueuePullTarget(info.Ship.Uid);
-                        return;
-                    }
-                    BeginOrCycleFollow(info.Ship);
-                    return;
-                }
+            KeyCode shiftKey = _settings != null ? _settings.MultiWaypointKey : KeyCode.LeftShift;
+            bool append = Input.GetKey(shiftKey);
 
-                if (info.Asteroid != null && !info.Asteroid.IsDestroyed)
-                {
-                    var targetAsteroid = info.Asteroid;
-                    ClearFollow();
-                    SetWaypointToPosition(targetAsteroid.Position);
-                    _trackedTargetFunc = () => targetAsteroid.Position;
-                    _lastTrackedPos = targetAsteroid.Position;
-                    GameLog.Add($"[Навигация] Курс на астероид {SpriteUtility.ShortId(targetAsteroid.Uid)}.");
-                    return;
-                }
+            if (info == null)
+            {
+                Pilot.FlyTo(clickPos, append);
                 return;
             }
 
-            ClearFollow();
-            _trackedTargetFunc = null;
-            SetWaypointToPosition(clickPos);
-
-
-        }
-        private void HandleWeaponClick(WorldPick info)
-        {
-            if (info == null) return;
-
-            bool isShip     = info.Ship != null && !info.Ship.IsPlayer;
-            bool isAsteroid = info.Asteroid != null && !info.Asteroid.IsDestroyed;
-            if (!isShip && !isAsteroid) return;
-
-            float maxRange = GetMaxWeaponRange();
-            if (maxRange <= 0f)
+            if (info.Planet != null)
             {
-                GameLog.Add("[Оружие] На корабле нет исправного оружия.");
-                _weaponModeActive = false;
+                Pilot.SetLandingCourse(info.Planet);
                 return;
             }
-
-            Vector2 targetPos = isShip ? info.Ship.Position : info.Asteroid.Position;
-            float dist = (targetPos - ShipData.Position).magnitude;
-            if (dist > maxRange)
+            if (info.Wormhole != null)
             {
-                string name = isShip ? info.Ship.Name : $"астероид {SpriteUtility.ShortId(info.Asteroid.Uid)}";
-                GameLog.Add(
-                    $"[Оружие] {name} вне радиуса поражения ({dist:F1} > {maxRange:F1}).");
-                _weaponModeActive = false;
+                Pilot.SetWormholeCourse(info.Wormhole, info.WormholeStar);
                 return;
             }
-
-            // Ручной выстрел отменяет активный режим следования (иначе UpdateFollowAutoFire перепишет цель).
-            ClearFollow();
-
-            // Фиксируем цель
-            if (isShip)
+            // Клик по СВОЕМУ кораблю при распланированном маршруте — сброс маршрута.
+            // На следующей симуляции корабль останется на месте.
+            if (info.Ship != null && info.Ship.IsPlayer)
             {
-                ShipData.ManualShootTargetUid = info.Ship.Uid;
-                ShipData.ManualShootTargetIsAsteroid = false;
-                GameLog.Add(
-                    $"[Оружие] Цель выбрана: {info.Ship.Name}. Выстрел — в следующем ходу.");
+                if (Pilot.HasPlannedRoute())
+                {
+                    Pilot.ClearRoute();
+                    GameLog.Add("[Навигация] Маршрут сброшен.");
+                }
+                return;
             }
-            else
+            if (info.Ship != null)
             {
-                ShipData.ManualShootTargetUid = info.Asteroid.Uid;
-                ShipData.ManualShootTargetIsAsteroid = true;
-                GameLog.Add(
-                    $"[Оружие] Цель: астероид {SpriteUtility.ShortId(info.Asteroid.Uid)}. Выстрел — в следующем ходу.");
+                // Item-цели (контейнеры в космосе) — левый клик ставит их в очередь захвата,
+                // без открытия follow-цикла. Обычные корабли — следование / смена режима.
+                if (info.Ship.IsItem) Pilot.EnqueuePullTarget(info.Ship.Uid);
+                else Pilot.FollowOrCycle(info.Ship);
+                return;
             }
-
-            _weaponModeActive = false;
+            if (info.Asteroid != null)
+                Pilot.FlyToAsteroid(info.Asteroid, append);
+            // Звезда — без действия.
         }
 
         private void HandleDialogClick(WorldPick hit)
@@ -307,22 +210,6 @@ namespace SRG.Controllers
             if (DialogUIController.Instance != null)
                 DialogUIController.Instance.OpenSpaceDialog(dialogId, targetShip);
             DisableDialogMode(silent: true);
-        }
-
-        private float GetMaxWeaponRange()
-        {
-            float maxRange = 0f;
-            var ship = ShipData;
-            if (ship == null) return 0f;
-            foreach (var slotKey in ship.Equipment.GetOccupiedSlotsOfCategory(EquipmentCategory.Weapons))
-            {
-                string uid = ship.Equipment.GetItemUid(slotKey);
-                if (uid == null || !ship.AllItems.TryGetValue(uid, out var weapon)) continue;
-                if (!weapon.IsWorking) continue;
-                float range = SRUnits.ToWorld(weapon.GetParam("Range", 0f));
-                if (range > maxRange) maxRange = range;
-            }
-            return maxRange;
         }
     }
 }

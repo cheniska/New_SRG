@@ -10,6 +10,7 @@ using SRG.NpcAI;
 using SRG.NpcAI.Actions;
 using SRG.Presentation.Map;
 using SRG.Ships;
+using SRG.Ships.Player;
 using SRG.Ships.Movement;
 using SRG.Controllers;
 using SRG.UI.Common;
@@ -285,17 +286,17 @@ namespace SRG.UI.HUD
         /// (тип цели с <c>CanBeLandedOn</c>, не враждебен, не item и т.д.).</summary>
         private void DrawLandOnShipButton(ShipData target)
         {
-            var player = PlayerShip.Instance;
-            if (player == null || player.ShipData == null || target == null) return;
-            if (!player.CanUseFollowMode(target, PlayerShip.FollowMode.LandOnShip)) return;
+            var player = PlayerShip.Instance?.Pilot;
+            if (player == null || target == null) return;
+            if (!player.CanUseFollowMode(target, PlayerFollowMode.LandOnShip)) return;
 
             bool isActive = player.FollowShipUid == target.Uid
-                         && player.CurrentFollowMode == PlayerShip.FollowMode.LandOnShip;
+                         && player.CurrentFollowMode == PlayerFollowMode.LandOnShip;
             string prefix = isActive ? "▶ " : "  ";
-            string label = PlayerShip.GetFollowModeName(PlayerShip.FollowMode.LandOnShip);
+            string label = PlayerPilot.GetFollowModeName(PlayerFollowMode.LandOnShip);
             if (GUILayout.Button($"{prefix}{label}"))
             {
-                player.SetFollow(target, PlayerShip.FollowMode.LandOnShip);
+                player.SetFollow(target, PlayerFollowMode.LandOnShip);
                 _showContextMenu = false;
             }
         }
@@ -319,9 +320,9 @@ namespace SRG.UI.HUD
         /// Активный режим помечен «▶».</summary>
         private void DrawPursuitButtons(ShipData target)
         {
-            var player = PlayerShip.Instance;
-            if (player == null || player.ShipData == null || target == null) return;
-            if (target.IsItem || target == player.ShipData) return;
+            var player = PlayerShip.Instance?.Pilot;
+            if (player == null || target == null) return;
+            if (target.IsItem || target == player.Ship) return;
 
             for (int i = 0; i < PursuitModeOrder.Length; i++)
             {
@@ -330,7 +331,7 @@ namespace SRG.UI.HUD
 
                 bool isActive = player.FollowShipUid == target.Uid && player.CurrentFollowMode == mode;
                 string prefix = isActive ? "▶ " : "  ";
-                string label = PlayerShip.GetFollowModeName(mode);
+                string label = PlayerPilot.GetFollowModeName(mode);
 
                 if (GUILayout.Button($"{prefix}{label}"))
                 {
@@ -341,14 +342,14 @@ namespace SRG.UI.HUD
         }
 
         // Порядок кнопок преследования (LandOnShip — отдельно, выше как пункт «посадка»).
-        private static readonly PlayerShip.FollowMode[] PursuitModeOrder =
+        private static readonly PlayerFollowMode[] PursuitModeOrder =
         {
-            PlayerShip.FollowMode.PursueAtMaxRange,
-            PlayerShip.FollowMode.AttackWithLongRange,
-            PlayerShip.FollowMode.AttackWithAllGuns,
-            PlayerShip.FollowMode.FollowClose,
-            PlayerShip.FollowMode.Board,
-            PlayerShip.FollowMode.Tow,
+            PlayerFollowMode.PursueAtMaxRange,
+            PlayerFollowMode.AttackWithLongRange,
+            PlayerFollowMode.AttackWithAllGuns,
+            PlayerFollowMode.FollowClose,
+            PlayerFollowMode.Board,
+            PlayerFollowMode.Tow,
         };
 
         /// <summary>
@@ -474,7 +475,7 @@ namespace SRG.UI.HUD
                 {
                     if (GUILayout.Button("  В очередь захвата"))
                     {
-                        PlayerShip.Instance?.EnqueuePullTarget(target.Uid);
+                        PlayerShip.Instance?.Pilot?.EnqueuePullTarget(target.Uid);
                         _showContextMenu = false;
                     }
                 }

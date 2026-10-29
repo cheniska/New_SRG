@@ -230,7 +230,7 @@ namespace SRG.Presentation.World
             // ILandingSite): ставим LandingPhase=Fading если хвост хода попадает внутрь site.LandingRadius
             // от site.CenterPosition (для носителя — конечная позиция его SubTurns; для планеты
             // CenterPosition уже пересчитан по OrbitMath после симуляции). Финализация — в
-            // PlayerShip.TryFinalizeLanding по тому же LandingPhase.Fading.
+            // PlayerPilot.TryFinalizeLanding по тому же LandingPhase.Fading.
             _isLandingThisTurn = false;
             var landingTarget = LandingSiteRegistry.ResolveActiveTarget(_data, star);
             bool hasTarget = landingTarget != null;

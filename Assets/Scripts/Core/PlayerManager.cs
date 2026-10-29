@@ -86,7 +86,7 @@ namespace SRG.Core
         }
 
         /// <summary>UID корабля, за которым летит игрок (режим «следовать»), либо null.</summary>
-        public string FollowShipUid => PlayerShip.Instance != null ? PlayerShip.Instance.FollowShipUid : null;
+        public string FollowShipUid => PlayerShip.Instance != null ? PlayerShip.Instance.Pilot?.FollowShipUid : null;
 
         public void ClearPlayerShip()
         {
@@ -311,7 +311,7 @@ namespace SRG.Core
             }
 
             float hullPct = (float)ship.CurrentHull / ship.MaxHull;
-            var playerCtrl = PlayerShip.Instance;
+            var playerCtrl = PlayerShip.Instance != null ? PlayerShip.Instance.Pilot : null;
             bool autoCombat = playerCtrl != null && playerCtrl.IsFollowingShip;
 
             if (autoCombat)

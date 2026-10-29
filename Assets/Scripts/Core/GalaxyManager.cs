@@ -587,7 +587,7 @@ namespace SRG.Core
             bool ok = HyperjumpController.RequestJump(playerShip, target, GeneratedGalaxy);
             if (ok)
             {
-                PlayerShip.Instance?.ShowHyperjumpPath();
+                PlayerShip.Instance?.Pilot?.ShowHyperjumpPath();
 
                 // ── ТЕСТ-РЕЖИМ ────────────────────────────────────────────────────
                 // Все остальные корабли стартовой системы тоже летят в ту же цель —

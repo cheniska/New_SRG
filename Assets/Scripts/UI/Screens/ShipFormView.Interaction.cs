@@ -376,7 +376,7 @@ namespace SRG.UI.Screens
                 bool activated = EquipmentSystem.ActivateItem(_ship, item);
                 // Активация форсажа меняет скорость → пересчитать метки дней на маршруте.
                 if (activated && item.Category == EquipmentCategory.Forsage && PlayerShip.Instance != null)
-                    PlayerShip.Instance.RefreshPlannedRoute();
+                    PlayerShip.Instance.Pilot?.RefreshPlannedRoute();
                 // Дрон-обёртка потребляется при развёртывании → перестроить cargo-map чтобы
                 // не осталась иконка в клетке трюма.
                 if (activated && item.Category == EquipmentCategory.CompanionDrone)
