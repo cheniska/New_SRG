@@ -131,12 +131,31 @@ namespace SRG.Presentation.Common
 
         #endregion
 
+        // Префабы 3D-моделей (ShipVisualController3D): позитивный и негативный кэш, как у спрайтов —
+        // модели пока есть не у всех корпусов, и промах — норма (тогда рисуется заглушка).
+        private readonly Dictionary<string, GameObject> _modelCache = new Dictionary<string, GameObject>();
+        private readonly HashSet<string> _missingModels = new HashSet<string>();
+
+        /// <summary>Префаб модели из Resources или null (без LogError: модель опциональна).</summary>
+        public GameObject TryGetModelPrefab(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+            if (_modelCache.TryGetValue(path, out var cached)) return cached;
+            if (_missingModels.Contains(path)) return null;
+            var loaded = Resources.Load<GameObject>(path);
+            if (loaded != null) _modelCache[path] = loaded;
+            else _missingModels.Add(path);
+            return loaded;
+        }
+
         public void ClearCache()
         {
             _spriteSheetCache.Clear();
             _singleSpriteCache.Clear();
             _missingSprites.Clear();
             _missingSheets.Clear();
+            _modelCache.Clear();
+            _missingModels.Clear();
             Resources.UnloadUnusedAssets();
         }
 

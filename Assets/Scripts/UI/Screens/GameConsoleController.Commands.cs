@@ -71,6 +71,8 @@ namespace SRG.UI.Screens
             Reg("give",       "give <id|Cat:Id> [amount] [inv|slot|<slotKey>] — выдать игроку любой предмет " +
                               "(Equipment/Good/Mineral/MicroModule). Без префикса — автопоиск. amount только для стеков.", GiveItemCmd);
 
+            Reg("render",     "render 2d|3d — корпуса кораблей спрайтами или 3D-моделями (на лету, без правки настроек)",
+                RenderModeCmd);
             Reg("grabradius", "В очередь захвата все контейнеры в радиусе CargoGrabber",
                 () => { var n = PlayerShip.Instance?.Pilot?.EnqueueAllItemsInRadius() ?? 0; Log($"{n} цел(ей)."); });
             Reg("grabsystem", "В очередь захвата все контейнеры в системе (с автоостановкой)",

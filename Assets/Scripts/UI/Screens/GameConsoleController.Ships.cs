@@ -65,5 +65,18 @@ namespace SRG.UI.Screens
             Log($"Станция {station.Name} [{station.ShipTypeId}] в '{star.Name}' " +
                 $"(pos={station.Position.x:F1},{station.Position.y:F1}) uid={SpriteUtility.ShortId(station.Uid)}");
         }
+
+        void RenderModeCmd()
+        {
+            string arg = _lastArg?.Trim().ToLowerInvariant();
+            ShipRenderMode mode;
+            if (arg == "2d") mode = ShipRenderMode.Sprite2D;
+            else if (arg == "3d") mode = ShipRenderMode.Model3D;
+            else { Log($"render 2d|3d — сейчас {SRG.Presentation.World.ShipVisualFactory.Mode}."); return; }
+
+            if (SystemViewManager.Instance == null) { Log("Нет визуала системы."); return; }
+            SystemViewManager.Instance.SetShipRenderMode(mode);
+            Log($"Корпуса кораблей: {mode}.");
+        }
     }
 }

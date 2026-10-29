@@ -189,12 +189,33 @@ namespace SRG.Core
             }
         }
 
+        /// <summary>Переключить отрисовку корпусов 2D ↔ 3D на лету: визуалы всех кораблей системы
+        /// (и игрока) заменяются на месте, без пересоздания объектов.</summary>
+        public void SetShipRenderMode(ShipRenderMode mode)
+        {
+            ShipVisualFactory.Mode = mode;
+
+            var player = PlayerShip.Instance;
+            ShipVisualController playerVisual = null;
+            if (player != null && player.Visual != null && player.ShipData != null)
+                playerVisual = ShipVisualFactory.Replace(player.Visual, player.ShipData, isPlayer: true);
+
+            for (int i = 0; i < _shipList.Count; i++)
+            {
+                var (ship, t, visual) = _shipList[i];
+                if (ship == null || visual == null) continue;
+                var replaced = ship.IsPlayer
+                    ? playerVisual
+                    : ShipVisualFactory.Replace(visual, ship, isPlayer: false);
+                _shipList[i] = (ship, t, replaced);
+            }
+        }
+
         private GameObject SpawnShip(ShipData ship)
         {
             var obj = Instantiate(ShipPrefab, SystemContainer);
             obj.transform.localPosition = new Vector3(ship.Position.x, ship.Position.y, 0f);
-            var visual = obj.GetComponent<ShipVisualController>();
-            visual?.Setup(ship, ship.IsPlayer);
+            var visual = ShipVisualFactory.Attach(obj, ship, ship.IsPlayer);
             _shipList.Add((ship, obj.transform, visual));
             _spawnedObjects.Add(obj);
             return obj;

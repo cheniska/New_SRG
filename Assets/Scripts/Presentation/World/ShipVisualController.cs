@@ -2,38 +2,35 @@ using UnityEngine;
 using System.Collections.Generic;
 using SRG.Equipment;
 using SRG.Galaxy;
-using SRG.NpcAI.Orders;
 using SRG.Presentation.Common;
 using SRG.Presentation.Effects;
 using SRG.Ships;
 using SRG.Ships.Movement;
-using SRG.Ships.Services;
 using SRG.Utils;
 
 namespace SRG.Presentation.World
 {
-    public class ShipVisualController : MonoBehaviour
+    /// <summary>
+    /// Визуал корабля в системе — общая часть для любого способа отрисовки корпуса.
+    ///
+    /// Здесь «что показать»: позиция по кадрам хода, курс и плавный поворот, масштаб по корпусу,
+    /// прозрачность посадки/взлёта/гиперперехода, обнаружение посадки и взлёта, выхлоп двигателей
+    /// и взрыв. «Как нарисовать корпус» — в наследниках: <see cref="ShipVisualController2D"/>
+    /// (спрайт-лист с клипами) и <see cref="ShipVisualController3D"/> (модель). Выбор — по
+    /// <c>GameSettingsConfig.ShipRenderMode</c> через <see cref="ShipVisualFactory"/>.
+    /// </summary>
+    public abstract class ShipVisualController : MonoBehaviour
     {
-        [Header("Renderers")]
-        [SerializeField] private SpriteRenderer bodyRenderer;
-
-        private Sprite[] _allFrames;           // весь спрайтлист, индексируется глобально
-        private ShipData _data;
-        private int bodySortingOrder;          // задаётся в Setup() через SortingLayerRegistry
-
-        private ShipAnimationClip _currentClip;
-        private string _currentClipName;
-        private string _pendingClipName;
-        private readonly Queue<string> _clipChain = new Queue<string>();   // бесшовная цепочка после текущего
-        private int _localFrame;               // кадр внутри текущего клипа
-        private float _frameTimer;
-        private float _currentClipSecPerFrame;
+        protected ShipData Data { get; private set; }
+        /// <summary>Порядок отрисовки корпуса (SortingLayerRegistry): предмет / NPC / игрок.</summary>
+        protected int BodySortingOrder { get; private set; }
 
         private float _targetAngle;
         private float _currentAngle;
         private const float RotationSpeed = 180f;  // градусов/сек
 
         private readonly List<ThrusterInstance> _thrusters = new List<ThrusterInstance>();
+        private float _alpha = 1f;
 
         private Sprite _minimapIcon;
 
@@ -53,32 +50,57 @@ namespace SRG.Presentation.World
             public int CurrentFrame;
         }
 
+        // ── Отрисовка корпуса (наследники) ───────────────────────────────────────
+
+        /// <summary>Построить корпус по <see cref="Data"/> (графика из GetBodyGraphicPath).</summary>
+        protected abstract void BuildBody();
+        /// <summary>Пересобрать корпус после смены графики (новый корпус, маскировка).</summary>
+        protected abstract void RebuildBody();
+        /// <summary>Прозрачность корпуса 0..1.</summary>
+        protected abstract void ApplyBodyAlpha(float alpha);
+        /// <summary>Покадровое обновление корпуса (анимация клипов и т.п.).</summary>
+        protected virtual void TickBody(float dt) { }
+        /// <summary>Конец хода: вернуть корпус в состояние покоя.</summary>
+        protected virtual void ResetBodyAnimation() { }
+        /// <summary>Перед взрывом на этом GameObject: убрать то, что не должно рисоваться поверх.</summary>
+        protected virtual void PrepareBodyForExplosion() { }
+        /// <summary>Снять с GameObject всё, что создал этот визуал (замена 2D ↔ 3D на лету).</summary>
+        public virtual void Teardown()
+        {
+            foreach (var t in _thrusters)
+                if (t.Renderer != null) Destroy(t.Renderer.gameObject);
+            _thrusters.Clear();
+        }
+
+        /// <summary>Состояние движения корпуса: «Move» / «Idle». Спрайтовый визуал переключает клип.</summary>
+        public virtual void SetAnimation(string clipName) { }
+
+        // ── Настройка ────────────────────────────────────────────────────────────
+
         public void Setup(ShipData data, bool isPlayer = false)
         {
-            _data = data;
+            Data = data;
 
             // Контейнеры/предметы в космосе (IsItem=true) — отдельный слой ниже кораблей.
             if (data != null && data.IsItem)
-                bodySortingOrder = SortingLayerRegistry.Get(SortLayer.DroppedItem);
+                BodySortingOrder = SortingLayerRegistry.Get(SortLayer.DroppedItem);
             else
-                bodySortingOrder = isPlayer
+                BodySortingOrder = isPlayer
                     ? SortingLayerRegistry.Get(SortLayer.ShipPlayer)
                     : SortingLayerRegistry.Get(SortLayer.ShipNpc);
 
-            EnsureBodyRenderer();
-            LoadSpritesheet();
+            BuildBody();
             LoadMinimapIcon();
             SpawnThrusters();
             ApplyHullSizeScale();
-
-            PlayAnimation("Idle");
+            SetAnimation("Idle");
 
             // Если корабль появляется уже в фазе прибытия — снапаем поворот к нужному heading,
             // иначе MoveTowardsAngle разворачивает его на 180° за ~1 сек (визуально некрасиво).
             // Также сразу делаем его невидимым: HyperArrive держит корабль скрытым весь ход,
             // а HyperExit начинает fade-in с 0.
-            if (_data != null && (_data.HyperjumpPhase == HyperjumpPhase.HyperArrive
-                                  || _data.HyperjumpPhase == HyperjumpPhase.HyperExit))
+            if (Data != null && (Data.HyperjumpPhase == HyperjumpPhase.HyperArrive
+                                 || Data.HyperjumpPhase == HyperjumpPhase.HyperExit))
             {
                 SnapRotationToHyperjumpHeading();
                 SetAlpha(0f);
@@ -91,49 +113,57 @@ namespace SRG.Presentation.World
             // в тот же ход, что игрок прилетел в систему), PrepareForTurn увидит prev=planet,
             // current=null и корректно вызовет BeginTakeoff. Без этого корабль остался бы
             // невидимым после взлёта.
-            if (_data != null && !_data.IsPlayer)
+            if (Data != null && !Data.IsPlayer)
             {
-                _prevLandedPlanetUid = _data.LandedPlanetUid;
-                _prevLandedShipUid   = _data.LandedOnShipUid;
-                if (!string.IsNullOrEmpty(_data.LandedPlanetUid) || !string.IsNullOrEmpty(_data.LandedOnShipUid))
+                _prevLandedPlanetUid = Data.LandedPlanetUid;
+                _prevLandedShipUid   = Data.LandedOnShipUid;
+                if (!string.IsNullOrEmpty(Data.LandedPlanetUid) || !string.IsNullOrEmpty(Data.LandedOnShipUid))
                     gameObject.SetActive(false);
             }
 
-            // Игрок грузится пристыкованным к носителю — скрываем спрайт (система при этом видима).
-            if (_data != null && _data.IsPlayer && !string.IsNullOrEmpty(_data.LandedOnShipUid))
+            // Игрок грузится пристыкованным к носителю — скрываем корпус (система при этом видима).
+            if (Data != null && Data.IsPlayer && !string.IsNullOrEmpty(Data.LandedOnShipUid))
             {
-                _prevLandedShipUid = _data.LandedOnShipUid;
+                _prevLandedShipUid = Data.LandedOnShipUid;
                 SetAlpha(0f);
             }
         }
 
-        public void SetAnimation(string clipName)
+        /// <summary>Перезагрузить графику корпуса (после смены установленного корпуса или применения override).</summary>
+        public void ReloadBodyGraphic()
         {
-            if (_currentClipName == clipName) { _pendingClipName = null; return; }
-            _pendingClipName = clipName;
+            RebuildBody();
+            ApplyHullSizeScale();
+            ApplyBodyAlpha(_alpha);
+            SetAnimation("Idle");
         }
 
-        /// <summary>Поставить клип в очередь после текущего; стартует бесшовно — первый кадр сразу за последним.</summary>
-        public void QueueAnimation(string clipName)
+        // Масштаб корпуса в космосе растёт с HP: на базовом HP корпус равен «игровому»
+        // (localScale = 1), при удвоении MaxHull — ×1.25. Множитель общий с геймплейным
+        // SpriteWorldSize (см. ShipFactory.HullSizeMultiplier), чтобы визуал и логические
+        // дистанции (абордаж/стыковка/стоп) не расходились.
+        private void ApplyHullSizeScale()
         {
-            if (string.IsNullOrEmpty(clipName)) return;
-            _clipChain.Enqueue(clipName);
+            if (Data == null) return;
+            transform.localScale = Vector3.one * ShipFactory.HullSizeMultiplier(Data);
         }
 
-        /// <summary>Заменить очередь цепочкой клипов: первый запускается немедленно, остальные — последовательно без паузы.</summary>
-        public void SetAnimationChain(params string[] clipNames)
+        private void LoadMinimapIcon()
         {
-            _clipChain.Clear();
-            _pendingClipName = null;
-            if (clipNames == null || clipNames.Length == 0) return;
-            SetAnimation(clipNames[0]);
-            for (int i = 1; i < clipNames.Length; i++) _clipChain.Enqueue(clipNames[i]);
+            if (string.IsNullOrEmpty(Data?.MinimapIconPath)) return;
+            _minimapIcon = GraphicsManager.Instance?.TryGetSprite(Data.MinimapIconPath);
+            if (_minimapIcon == null)
+                Debug.LogWarning($"[ShipVisualController] Minimap icon not found: {Data.MinimapIconPath}");
         }
+
+        public Sprite GetMinimapIcon() => _minimapIcon;
+
+        // ── Поворот ──────────────────────────────────────────────────────────────
 
         public void SetMovementDirection(Vector2 direction)
         {
             // Станции (FixedRotation-корпус) не поворачивают графику по курсу — висят фиксированно.
-            if (_data != null && _data.SpriteFixedRotation) return;
+            if (Data != null && Data.SpriteFixedRotation) return;
             if (direction.sqrMagnitude < 0.001f) return;
             _targetAngle = Angles.Of(direction) * Mathf.Rad2Deg - 90f;
         }
@@ -141,16 +171,27 @@ namespace SRG.Presentation.World
         /// <summary>Мгновенно ставит визуал в направление текущего ship.HyperjumpHeading — без плавного разворота.</summary>
         public void SnapRotationToHyperjumpHeading()
         {
-            if (_data == null || float.IsNaN(_data.HyperjumpHeading)) return;
-            _targetAngle = _data.HyperjumpHeading * Mathf.Rad2Deg - 90f;
+            if (Data == null || float.IsNaN(Data.HyperjumpHeading)) return;
+            _targetAngle = Data.HyperjumpHeading * Mathf.Rad2Deg - 90f;
             _currentAngle = _targetAngle;
             transform.rotation = Quaternion.Euler(0f, 0f, _currentAngle);
         }
 
+        /// <summary>Мгновенно повернуть визуал по текущему курсу корабля (после замены визуала).</summary>
+        public void SnapRotationToHeading()
+        {
+            if (Data == null || Data.SpriteFixedRotation || float.IsNaN(Data.CurrentHeading)) return;
+            _targetAngle = Data.CurrentHeading * Mathf.Rad2Deg - 90f;
+            _currentAngle = _targetAngle;
+            transform.rotation = Quaternion.Euler(0f, 0f, _currentAngle);
+        }
+
+        // ── Выхлоп двигателей (спрайты при любом корпусе) ────────────────────────
+
         public void SetThrustersActive(bool active)
         {
             // Пристыкованный к носителю корабль скрыт — выхлоп тяг не должен «светиться» отдельно.
-            if (active && _data != null && !string.IsNullOrEmpty(_data.LandedOnShipUid)) return;
+            if (active && Data != null && !string.IsNullOrEmpty(Data.LandedOnShipUid)) return;
             if (active) RefreshExhaustColor();
             foreach (var t in _thrusters)
                 if (t.Renderer != null)
@@ -164,8 +205,8 @@ namespace SRG.Presentation.World
         /// </summary>
         public void RefreshExhaustColor()
         {
-            if (_thrusters.Count == 0 || _data == null) return;
-            Color tint = ResolveExhaustColor(_data);
+            if (_thrusters.Count == 0 || Data == null) return;
+            Color tint = ResolveExhaustColor(Data);
             foreach (var t in _thrusters)
             {
                 if (t.Renderer == null) continue;
@@ -184,14 +225,50 @@ namespace SRG.Presentation.World
             return Color.white;
         }
 
-        public Sprite GetMinimapIcon() => _minimapIcon;
+        private void SpawnThrusters()
+        {
+            // Станции неподвижны — выхлоп двигателей не нужен.
+            if (Data != null && Data.SpriteFixedRotation) return;
+            if (Data?.Thrusters == null || Data.Thrusters.Count == 0) return;
+
+            foreach (var thrusterData in Data.Thrusters)
+            {
+                var go = new GameObject("Thruster");
+                go.transform.SetParent(transform, false);
+                go.transform.localPosition = new Vector3(thrusterData.LocalOffset.x, thrusterData.LocalOffset.y, 0f);
+                go.SetActive(false); // выключены по умолчанию
+
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sortingOrder = SortingLayerRegistry.Get(SortLayer.ShipThruster);
+
+                Sprite[] frames = null;
+                if (!string.IsNullOrEmpty(thrusterData.SpritesheetPath) && GraphicsManager.Instance != null)
+                {
+                    frames = GraphicsManager.Instance.GetSpriteSheet(thrusterData.SpritesheetPath);
+                    if (frames?.Length > 0)
+                        sr.sprite = frames[0];
+                }
+
+                float secPerFrame = thrusterData.FPS > 0f ? 1f / thrusterData.FPS : 1f / 12f;
+                _thrusters.Add(new ThrusterInstance
+                {
+                    Renderer = sr,
+                    Frames = frames,
+                    SecPerFrame = secPerFrame,
+                    Timer = 0f,
+                    CurrentFrame = 0
+                });
+            }
+        }
+
+        // ── Ход: посадка, взлёт, анимация ────────────────────────────────────────
 
         // Вызывается в начале хода (после симуляции, до анимации).
         // Вычисляет isLandingThisTurn и автоматически обнаруживает взлёт для НПС-кораблей.
         public void PrepareForTurn(TurnAnimationData anim, StarData star)
         {
             // Обнаружение взлёта: был посажен, сейчас нет, BeginTakeoff ещё не вызывался явно
-            if (_prevLandedPlanetUid != null && _data.LandedPlanetUid == null && !IsTakingOff)
+            if (_prevLandedPlanetUid != null && Data.LandedPlanetUid == null && !IsTakingOff)
             {
                 var p = star?.FindPlanet(_prevLandedPlanetUid);
                 if (p != null) _landingPlanet = p;
@@ -199,32 +276,32 @@ namespace SRG.Presentation.World
                 // Кадры этого хода в StarSimulator были посчитаны, когда корабль ещё был посажен
                 // (LandedPlanetUid set → сабтёрны не двигались, все SubTurns[i] = позиция корабля
                 // на момент начала симуляции = позиция планеты на пред. ход). BeginTakeoff обновил
-                // _data.Position/transform на текущую планету, но AnimateTurn перезапишет transform
+                // Data.Position/transform на текущую планету, но AnimateTurn перезапишет transform
                 // старыми SubTurns. Синхронизируем и кадры хода, и PreviousPosition — fade-in
                 // сыграет на планете, а следующий ход стартует без визуального скачка.
-                if (p != null && anim != null && anim.ShipFrames.TryGetValue(_data.Uid, out var takeoffFrames))
+                if (p != null && anim != null && anim.ShipFrames.TryGetValue(Data.Uid, out var takeoffFrames))
                 {
                     Vector2 planetPos = OrbitMath.GetPlanetWorldPosition(p);
                     for (int i = 0; i < takeoffFrames.SubTurns.Length; i++)
                         takeoffFrames.SubTurns[i] = planetPos;
-                    _data.PreviousPosition = planetPos;
+                    Data.PreviousPosition = planetPos;
                 }
             }
 
             // Обнаружение расстыковки с носителем (в т.ч. авто-освобождение при гибели носителя):
             // позиция уже актуальна (ShipDockingService.Undock), нужен только fade-in.
-            if (_prevLandedShipUid != null && string.IsNullOrEmpty(_data.LandedOnShipUid) && !IsTakingOff)
+            if (_prevLandedShipUid != null && string.IsNullOrEmpty(Data.LandedOnShipUid) && !IsTakingOff)
                 BeginTakeoff();
-            _prevLandedShipUid = _data.LandedOnShipUid;
+            _prevLandedShipUid = Data.LandedOnShipUid;
 
             // Обнаружение посадки: был в полёте, теперь сел
-            if (_data.LandedPlanetUid != null && _prevLandedPlanetUid == null)
+            if (Data.LandedPlanetUid != null && _prevLandedPlanetUid == null)
             {
-                var p = star?.FindPlanet(_data.LandedPlanetUid);
+                var p = star?.FindPlanet(Data.LandedPlanetUid);
                 if (p != null) _landingPlanet = p;
             }
 
-            _prevLandedPlanetUid = _data.LandedPlanetUid;
+            _prevLandedPlanetUid = Data.LandedPlanetUid;
 
             // Двухфазная посадка (единая для планеты и корабля-носителя через
             // ILandingSite): ставим LandingPhase=Fading если хвост хода попадает внутрь site.LandingRadius
@@ -232,9 +309,9 @@ namespace SRG.Presentation.World
             // CenterPosition уже пересчитан по OrbitMath после симуляции). Финализация — в
             // PlayerPilot.TryFinalizeLanding по тому же LandingPhase.Fading.
             _isLandingThisTurn = false;
-            var landingTarget = LandingSiteRegistry.ResolveActiveTarget(_data, star);
+            var landingTarget = LandingSiteRegistry.ResolveActiveTarget(Data, star);
             bool hasTarget = landingTarget != null;
-            if (hasTarget && anim.ShipFrames.TryGetValue(_data.Uid, out var frames))
+            if (hasTarget && anim.ShipFrames.TryGetValue(Data.Uid, out var frames))
             {
                 var finalPos = frames.SubTurns[GalaxyData.SubTurnsPerTurn];
                 Vector2 targetEnd = landingTarget.CenterPosition;
@@ -247,7 +324,7 @@ namespace SRG.Presentation.World
                 float r = landingTarget.LandingRadius;
                 _isLandingThisTurn = (finalPos - targetEnd).sqrMagnitude < r * r;
             }
-            _data.LandingPhase = _isLandingThisTurn
+            Data.LandingPhase = _isLandingThisTurn
                 ? LandingPhase.Fading
                 : (hasTarget ? LandingPhase.Approach : LandingPhase.None);
         }
@@ -260,10 +337,10 @@ namespace SRG.Presentation.World
         }
 
         /// <summary>Вызывается в момент стыковки с кораблём-носителем (LandedOnShipUid уже
-        /// проставлен): мгновенно скрывает спрайт, без планетного fade-пайплайна.</summary>
+        /// проставлен): мгновенно скрывает корпус, без планетного fade-пайплайна.</summary>
         public void NotifyDockedOnShip()
         {
-            _prevLandedShipUid = _data?.LandedOnShipUid;
+            _prevLandedShipUid = Data?.LandedOnShipUid;
             SetAlpha(0f);
             SetThrustersActive(false);
         }
@@ -277,7 +354,7 @@ namespace SRG.Presentation.World
             if (_landingPlanet != null)
             {
                 Vector2 pos = OrbitMath.GetPlanetWorldPosition(_landingPlanet);
-                _data.Position     = pos;
+                Data.Position      = pos;
                 transform.position = new Vector3(pos.x, pos.y, 0f);
             }
             _landingPlanet = null;
@@ -290,27 +367,26 @@ namespace SRG.Presentation.World
         {
             IsTakingOff = false;
             SetThrustersActive(false);
-            _pendingClipName = null;
-            PlayAnimation("Idle");
+            ResetBodyAnimation();
             // В фазах гиперперехода прозрачность ведёт AnimateTurn — не затираем её.
-            var phase = _data?.HyperjumpPhase ?? HyperjumpPhase.None;
+            var phase = Data?.HyperjumpPhase ?? HyperjumpPhase.None;
             if (phase == HyperjumpPhase.HyperEnter
                 || phase == HyperjumpPhase.HyperArrive
                 || phase == HyperjumpPhase.HyperExit) return;
             // Хвост Travel (последний ход с открытым порталом) тоже ведёт fade-out в AnimateTurn —
             // иначе сброс alpha→1 «затрёт» наполовину сделанную прозрачность перед HyperEnter.
-            if (phase == HyperjumpPhase.Travel && HyperjumpController.IsApproachingHyperEdge(_data)) return;
-            if (_data == null) { SetAlpha(1f); return; }
+            if (phase == HyperjumpPhase.Travel && HyperjumpController.IsApproachingHyperEdge(Data)) return;
+            if (Data == null) { SetAlpha(1f); return; }
             // Корабль считается «вне космоса» если уже посажен ИЛИ закончил fade-out посадки этим ходом
             // (для NPC LandedPlanetUid проставится только на следующем Execute OrderLand),
             // ЛИБО пристыкован к кораблю-носителю.
-            bool isLanded = _data.LandedPlanetUid != null || _data.LandingPhase == LandingPhase.Fading
-                || !string.IsNullOrEmpty(_data.LandedOnShipUid);
+            bool isLanded = Data.LandedPlanetUid != null || Data.LandingPhase == LandingPhase.Fading
+                || !string.IsNullOrEmpty(Data.LandedOnShipUid);
             SetAlpha(isLanded ? 0f : 1f);
             // Гасим только NPC-визуал: у игрока на этом же GameObject висит PlayerShip с подпиской
             // на OnPlanetLeft через OnEnable, и SetActive(false) сорвал бы обратный взлёт.
             // Сцена с игроком гасится в PlayerManager.LandOnPlanet через SetSystemVisible(false).
-            if (isLanded && !_data.IsPlayer) gameObject.SetActive(false);
+            if (isLanded && !Data.IsPlayer) gameObject.SetActive(false);
         }
 
         // Посадка/взлёт: первые LandingFadeHold хода корабль полностью виден (заходит на глиссаду),
@@ -326,12 +402,12 @@ namespace SRG.Presentation.World
         // оверлеем: HyperEnter — fade-out, HyperExit — fade-in.
         public Vector2 AnimateTurn(float progress, int currentSubTurn, TurnAnimationData animData)
         {
-            if (!animData.ShipFrames.TryGetValue(_data.Uid, out var frames)) return Vector2.zero;
+            if (!animData.ShipFrames.TryGetValue(Data.Uid, out var frames)) return Vector2.zero;
 
             Vector2 pos;
             Vector2 direction = Vector2.zero;
 
-            animData.ShipRenderPaths.TryGetValue(_data.Uid, out var path);
+            animData.ShipRenderPaths.TryGetValue(Data.Uid, out var path);
             if (path != null && path.Count >= 2)
             {
                 float totalLen = 0f;
@@ -376,7 +452,7 @@ namespace SRG.Presentation.World
             // Во время HyperExit движок ВСЕГДА горит (корабль вылетает из портала, даже если
             // путь короткий) — даёт ощущение действия после прыжка, а не "промокшая котлета".
             // Во время HyperArrive корабль ещё невидим за порталом — двигатели тоже отключены.
-            var phaseForThrusters = _data != null ? _data.HyperjumpPhase : HyperjumpPhase.None;
+            var phaseForThrusters = Data != null ? Data.HyperjumpPhase : HyperjumpPhase.None;
             bool forceThrusters = phaseForThrusters == HyperjumpPhase.HyperExit;
             bool suppressThrusters = phaseForThrusters == HyperjumpPhase.HyperArrive;
             SetThrustersActive(!suppressThrusters && (moving || forceThrusters));
@@ -416,8 +492,8 @@ namespace SRG.Presentation.World
             }
             if (IsTakingOff) return 1f - LandingFade(1f - progress);
 
-            var phase = _data != null ? _data.HyperjumpPhase : HyperjumpPhase.None;
-            bool viaWormhole = _data != null && !string.IsNullOrEmpty(_data.HyperjumpViaWormholeUid);
+            var phase = Data != null ? Data.HyperjumpPhase : HyperjumpPhase.None;
+            bool viaWormhole = Data != null && !string.IsNullOrEmpty(Data.HyperjumpViaWormholeUid);
             switch (phase)
             {
                 case HyperjumpPhase.HyperEnter:
@@ -429,7 +505,7 @@ namespace SRG.Presentation.World
                     return 1f - (TailFadeShare + progress) / (TailFadeShare + 1f);
 
                 case HyperjumpPhase.HyperArrive:
-                    // Корабль ещё внутри портала — не показываем спрайт весь ход.
+                    // Корабль ещё внутри портала — не показываем корпус весь ход.
                     return 0f;
 
                 case HyperjumpPhase.HyperExit:
@@ -441,7 +517,7 @@ namespace SRG.Presentation.World
                     if (viaWormhole) break;
                     // Гиперпрыжок: портал открыт с начала симуляции; begin-клип заканчивается
                     // на ~94% хода и портал переходит в mid-loop — отсюда плавно делаем корабль прозрачным.
-                    if (HyperjumpController.IsApproachingHyperEdge(_data) && progress > BeginEndProgress)
+                    if (HyperjumpController.IsApproachingHyperEdge(Data) && progress > BeginEndProgress)
                         return 1f - (progress - BeginEndProgress) / (TailFadeShare + 1f);
                     break;
             }
@@ -450,11 +526,8 @@ namespace SRG.Presentation.World
 
         public void SetAlpha(float alpha)
         {
-            if (bodyRenderer != null)
-            {
-                var c = bodyRenderer.color;
-                bodyRenderer.color = new Color(c.r, c.g, c.b, alpha);
-            }
+            _alpha = alpha;
+            ApplyBodyAlpha(alpha);
             foreach (var t in _thrusters)
             {
                 if (t.Renderer == null) continue;
@@ -474,80 +547,19 @@ namespace SRG.Presentation.World
             SetThrustersActive(false);
             foreach (var t in _thrusters)
                 if (t.Renderer != null) t.Renderer.gameObject.SetActive(false);
+            PrepareBodyForExplosion();
             enabled = false;
             ExplosionPlayback.PlayOn(gameObject, explosionPath);
         }
 
+        // ── Кадр ─────────────────────────────────────────────────────────────────
+
         private void Update()
         {
             float dt = Time.unscaledDeltaTime;
-            TickAnimation(dt);
+            TickBody(dt);
             TickRotation(dt);
             TickThrusters(dt);
-        }
-
-        private void OnDestroy()
-        {
-        }
-
-        private void TickAnimation(float dt)
-        {
-            if (_currentClip == null || _allFrames == null) return;
-            if (_currentClip.FrameCount <= 1) return;
-
-            // Предмет на буксире замораживается на ItemFreezeFrame.
-            // Свободный предмет в космосе (TowedByUid пуст) — анимируется как обычно.
-            if (_data != null && _data.IsItem && !string.IsNullOrEmpty(_data.TowedByUid))
-            {
-                int freeze = Mathf.Clamp(_data.ItemFreezeFrame, 0, _currentClip.FrameCount - 1);
-                if (_localFrame != freeze)
-                {
-                    _localFrame = freeze;
-                    ApplyFrame();
-                }
-                return;
-            }
-
-            _frameTimer += dt;
-
-            if (_frameTimer < _currentClipSecPerFrame) return;
-
-            int advance = Mathf.FloorToInt(_frameTimer / _currentClipSecPerFrame);
-            _frameTimer %= _currentClipSecPerFrame;
-
-            int nextLocal = _localFrame + advance;
-
-            if (_currentClip.Loop)
-            {
-                if (nextLocal >= _currentClip.FrameCount && _pendingClipName != null)
-                {
-                    PlayAnimation(_pendingClipName);
-                    _pendingClipName = null;
-                    return;
-                }
-                if (nextLocal >= _currentClip.FrameCount && _clipChain.Count > 0)
-                {
-                    // Бесшовный переход: следующий клип стартует с frame 0 + остаточный таймер.
-                    float carry = _frameTimer;
-                    PlayAnimation(_clipChain.Dequeue());
-                    _frameTimer = carry;
-                    return;
-                }
-                _localFrame = nextLocal % _currentClip.FrameCount;
-            }
-            else
-            {
-                if (nextLocal >= _currentClip.FrameCount && _clipChain.Count > 0)
-                {
-                    float carry = _frameTimer;
-                    PlayAnimation(_clipChain.Dequeue());
-                    _frameTimer = carry;
-                    return;
-                }
-                _localFrame = Mathf.Min(nextLocal, _currentClip.FrameCount - 1);
-            }
-
-            ApplyFrame();
         }
 
         private void TickRotation(float dt)
@@ -571,149 +583,6 @@ namespace SRG.Presentation.World
                 t.CurrentFrame = (t.CurrentFrame + advance) % t.Frames.Length;
                 t.Renderer.sprite = t.Frames[t.CurrentFrame];
             }
-        }
-
-        private void EnsureBodyRenderer()
-        {
-            if (bodyRenderer == null)
-            {
-                if (!TryGetComponent(out bodyRenderer))
-                    bodyRenderer = gameObject.AddComponent<SpriteRenderer>();
-            }
-            bodyRenderer.sortingOrder = bodySortingOrder;
-        }
-
-        private void LoadSpritesheet()
-        {
-            string path = _data?.GetBodyGraphicPath();
-            if (string.IsNullOrEmpty(path))
-            {
-                Debug.LogWarning($"[ShipVisualController] Body graphic path is empty for '{_data?.Name}'.");
-                return;
-            }
-
-            if (GraphicsManager.Instance == null)
-            {
-                Debug.LogWarning("[ShipVisualController] GraphicsManager.Instance is null.");
-                return;
-            }
-
-            _allFrames = GraphicsManager.Instance.GetSpriteSheet(path);
-            if (_allFrames == null || _allFrames.Length == 0)
-                Debug.LogError($"[ShipVisualController] Spritesheet not found: {path}");
-        }
-
-        /// <summary>Перезагрузить графику корпуса (после смены установленного корпуса или применения override).</summary>
-        public void ReloadBodyGraphic()
-        {
-            LoadSpritesheet();
-            _currentClip = null;
-            _currentClipName = null;
-            ApplyHullSizeScale();
-            PlayAnimation("Idle");
-        }
-
-        // Масштаб спрайта корпуса в космосе растёт с HP: на базовом HP спрайт равен
-        // «игровому» (localScale = 1), при удвоении MaxHull — ×1.25. Множитель общий с
-        // геймплейным SpriteWorldSize (см. ShipFactory.HullSizeMultiplier), чтобы визуал и
-        // логические дистанции (абордаж/стыковка/стоп) не расходились.
-        private void ApplyHullSizeScale()
-        {
-            if (_data == null) return;
-            transform.localScale = Vector3.one * ShipFactory.HullSizeMultiplier(_data);
-        }
-
-        private void LoadMinimapIcon()
-        {
-            if (string.IsNullOrEmpty(_data?.MinimapIconPath)) return;
-            _minimapIcon = GraphicsManager.Instance?.TryGetSprite(_data.MinimapIconPath);
-            if (_minimapIcon == null)
-                Debug.LogWarning($"[ShipVisualController] Minimap icon not found: {_data.MinimapIconPath}");
-        }
-
-        private void SpawnThrusters()
-        {
-            // Станции неподвижны — выхлоп двигателей не нужен.
-            if (_data != null && _data.SpriteFixedRotation) return;
-            if (_data?.Thrusters == null || _data.Thrusters.Count == 0) return;
-
-            foreach (var thrusterData in _data.Thrusters)
-            {
-                var go = new GameObject("Thruster");
-                go.transform.SetParent(transform, false);
-                go.transform.localPosition = new Vector3(thrusterData.LocalOffset.x, thrusterData.LocalOffset.y, 0f);
-                go.SetActive(false); // выключены по умолчанию
-
-                var sr = go.AddComponent<SpriteRenderer>();
-                sr.sortingOrder = SortingLayerRegistry.Get(SortLayer.ShipThruster);
-
-                Sprite[] frames = null;
-                if (!string.IsNullOrEmpty(thrusterData.SpritesheetPath) && GraphicsManager.Instance != null)
-                {
-                    frames = GraphicsManager.Instance.GetSpriteSheet(thrusterData.SpritesheetPath);
-                    if (frames?.Length > 0)
-                        sr.sprite = frames[0];
-                }
-
-                float secPerFrame = thrusterData.FPS > 0f ? 1f / thrusterData.FPS : 1f / 12f;
-                _thrusters.Add(new ThrusterInstance
-                {
-                    Renderer = sr,
-                    Frames = frames,
-                    SecPerFrame = secPerFrame,
-                    Timer = 0f,
-                    CurrentFrame = 0
-                });
-            }
-        }
-
-        private void PlayAnimation(string clipName)
-        {
-            // Попытка найти именованный клип
-            if (_data?.Animations != null && _data.Animations.TryGetValue(clipName, out var clip))
-            {
-                _currentClip = clip;
-                _currentClipName = clipName;
-                _localFrame = 0;
-                _frameTimer = 0f;
-                _currentClipSecPerFrame = clip.FPS > 0f ? 1f / clip.FPS : 1f / 12f;
-                ApplyFrame();
-                return;
-            }
-
-            // Фолбэк: если есть кадры спрайтлиста, проигрывать их как единственный цикличный клип
-            if (_allFrames != null && _allFrames.Length > 0)
-            {
-                _currentClip = new ShipAnimationClip
-                {
-                    StartFrame = 0,
-                    FrameCount = _allFrames.Length,
-                    FPS = 12f,
-                    Loop = true
-                };
-                _currentClipName = clipName;
-                _localFrame = 0;
-                _frameTimer = 0f;
-                _currentClipSecPerFrame = 1f / 12f;
-                ApplyFrame();
-                return;
-            }
-
-            Debug.LogWarning($"[ShipVisualController] Animation '{clipName}' not found and no frames loaded for '{_data?.Name}'.");
-        }
-
-        private void ApplyFrame()
-        {
-            if (_currentClip == null || _allFrames == null || bodyRenderer == null) return;
-
-            int globalIndex = _currentClip.StartFrame + _localFrame;
-            if (globalIndex < 0 || globalIndex >= _allFrames.Length)
-            {
-                Debug.LogWarning($"[ShipVisualController] Frame index {globalIndex} out of range ({_allFrames.Length} frames).");
-                return;
-            }
-
-            bodyRenderer.sprite = _allFrames[globalIndex];
         }
     }
 }

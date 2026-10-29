@@ -135,6 +135,16 @@ void PreloadSheets(IEnumerable<string> paths);
 
 ---
 
+### 3D-модели
+
+```csharp
+// Префаб модели из Resources или null — без LogError (модель опциональна, у визуала есть заглушка).
+GameObject TryGetModelPrefab(string path);
+```
+
+Кэш позитивный + негативный, чистится `ClearCache()`. Путь модели корабля — путь листа корпуса с
+`Graphics/` → `Models/` (`ShipModelLibrary.ModelPathFor`), см. [visual_subsystem.md](visual_subsystem.md).
+
 ## Проигрывание анимаций
 
 `FrameStepper` — общий покадровый счётчик:

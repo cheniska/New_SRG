@@ -18,7 +18,7 @@ namespace SRG.Controllers
     /// <see cref="PlayerPilot"/> (без MonoBehaviour, тестируется headless); этот компонент
     /// переводит в них клики и рисует то, что пилот сообщает через <see cref="IPlayerPilotView"/>.
     /// </summary>
-    public partial class PlayerShip : MonoBehaviour, ISkillsCarrier, IPlayerAvatar, IPlayerPilotView
+    public partial class PlayerShip : MonoBehaviour, ISkillsCarrier, IPlayerAvatar, IPlayerPilotView, IShipVisualOwner
     {
         public static PlayerShip Instance { get; private set; }
         public ShipData ShipData { get; private set; }
@@ -43,6 +43,8 @@ namespace SRG.Controllers
         [SerializeField] private GameSettingsConfig _settings;
         private Camera _cam;
         private ShipVisualController _visual;
+        /// <summary>Визуал корпуса (2D или 3D, см. ShipVisualFactory).</summary>
+        public ShipVisualController Visual => _visual;
         private PathRenderer _pathRenderer;
         private bool _isTurnInProgress;
 
@@ -111,6 +113,8 @@ namespace SRG.Controllers
 
         /// <summary>Взлёт из посадочного UI (PlayerManager.OnLeft).</summary>
         private void OnLeavePlanet() => Pilot?.Takeoff();
+
+        void IShipVisualOwner.OnShipVisualReplaced(ShipVisualController visual) => _visual = visual;
 
         // ── IPlayerPilotView ──────────────────────────────────────────────────────
 
