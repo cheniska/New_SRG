@@ -5,7 +5,7 @@
 (`ShipFactory.ResolveHullSheetPath` по `GraphicsCatalog`, см. [architecture.md](architecture.md#графика-как-данные)).
 
 Полный список файлов: `BaseVisualController`, `PlanetVisualController`, `SatelliteVisualController`,
-`AsteroidVisualController`, `ShipVisualController` (+ `ShipVisualController2D`/`3D`, `ShipVisualFactory`, `ShipModelLibrary`), `BackgroundVisualController`,
+`AsteroidVisualController` (+ `AsteroidVisual`, `AsteroidVisualController3D`), `PlanetVisualController3D`, `SatelliteVisualController3D`, `SatelliteOrbit`, `PlanetSphereLayer`, `ShipVisualController` (+ `ShipVisualController2D`/`3D`), `VisualFactory`, `ModelLibrary`, `BackgroundVisualController`,
 `HyperjumpPortalVisualController`, `DroppedItemVisualController`, `TowBeamVisualController`,
 `SystemMinimapController`, `MinimapGraphics`, `GalaxyMapGraphics`, `StarLabelRenderer`,
 `StarVisualController`, `WeaponVisualSystem`, `WeaponRangeIndicator`, `RadarRangeIndicator`,
@@ -94,23 +94,45 @@ public virtual void Teardown();           // снять созданное (за
 | Класс | Корпус |
 |---|---|
 | `ShipVisualController2D` | спрайт-лист `GetBodyGraphicPath()` с клипами `ShipData.Animations` (иначе весь лист циклом), цепочки клипов, заморозка кадра у предмета на буксире |
-| `ShipVisualController3D` | префаб `Resources/Models/…` (`ShipModelLibrary.ModelPathFor`: `Graphics/…` → `Models/…`), иначе процедурная заглушка-«дротик» в цвете расы. Размер в плане = кадр листа (`GraphicsCatalog.FrameWorldSize`) |
+| `ShipVisualController3D` | префаб `Resources/Models/…` (`ModelLibrary.ModelPathFor`: `Graphics/…` → `Models/…`), иначе процедурная заглушка-«дротик» в цвете расы. Размер в плане = кадр листа (`GraphicsCatalog.FrameWorldSize`) |
 
-**Выбор** — `ShipVisualFactory.Attach` по `GameSettingsConfig.ShipRenderMode` (`Sprite2D`/`Model3D`).
-На лету — консольная команда `render 2d|3d` → `SystemViewManager.SetShipRenderMode`: визуалы
-кораблей системы и игрока заменяются на тех же объектах, владельцы ссылки (`PlayerShip`,
-`NpcController`, интерфейс `IShipVisualOwner`) получают новый визуал.
+**Выбор** — `VisualFactory.AttachShip` по `GameSettingsConfig.RenderMode` (`Sprite2D`/`Model3D`).
 
-**3D под камерой сверху.** Камера остаётся ортографической. Модель — `MeshRenderer` с шейдером
-`Resources/Shaders/ShipModel` (Ламберт от фиксированного направления + `_Alpha`, проходы
-`Universal2D` и `UniversalForward`), очередь Transparent: со спрайтами модель упорядочивается по
-`sortingOrder` (2D Renderer сортирует меш так же, как спрайт), а глубина нужна только для
-самоперекрытия граней. Чтобы модель не перекрывала спрайты, которые должны быть выше по
-`sortingOrder`, она целиком лежит за плоскостью z = 0 (ближайшая к камере точка — на ней).
+### Режим 3D (`GameSettingsConfig.RenderMode = Model3D`)
 
-**Соглашение для моделей:** нос по +Y, верх к камере (−Z), в плане вписана в квадрат 1×1
+Камера остаётся ортографической и смотрит сверху; меняется только то, чем нарисованы объекты.
+Визуалы создаёт `VisualFactory` (2D — префабы сцены, 3D — компоненты в коде):
+
+| Объект | 2D | 3D |
+|---|---|---|
+| Корабль, контейнер | `ShipVisualController2D` (спрайт-лист) | `ShipVisualController3D` (модель или «дротик») |
+| Планета | `PlanetVisualController` (квад + маска + шейдер `Custom/PlanetRotation`) | `PlanetVisualController3D`: сферы поверхности и облаков (`PlanetSphereLayer`, шейдер `SRG/PlanetSphere3D`), кольца — спрайт |
+| Спутник | `SatelliteVisualController` | `SatelliteVisualController3D`; орбита общая — `SatelliteOrbit` |
+| Астероид | `AsteroidVisualController` (атлас кадров вращения) | `AsteroidVisualController3D`: гранёный камень (`ModelLibrary.RockMesh`, вариант формы от Uid), кувыркается вокруг своей оси |
+| Звезда, фон, эффекты, ракеты, порталы | спрайты | спрайты (светящиеся анимированные листы без постобработки свечения сферой не заменить) |
+
+Общий тип астероида — `AsteroidVisual` (позиция, взрыв); 2D-контроллер остаётся на префабе `PF_Asteroid`.
+
+**Порядок отрисовки.** Проект на URP 2D Renderer: меши сортируются со спрайтами по
+`sortingOrder`, как спрайты, поэтому реестр слоёв `SortingLayerRegistry` общий для обоих режимов.
+Модели с записью глубины (`ModelLit`: корабли, астероиды) целиком лежат за плоскостью z = 0
+(`ModelLibrary.PlaceBehindSystemPlane`) и не перекрывают спрайты, которые выше по порядку.
+Сферы планет глубину не пишут (выпуклые, хватает отсечения задних граней).
+
+**Освещение** не зависит от источников света сцены и одинаково в 2D Renderer и Forward:
+Ламберт от звезды системы (она в начале координат) с примесью света «от камеры» + ambient.
+У планет дневная сторона смотрит на звезду. Текстура планеты натягивается той же формулой,
+что в 2D (`Custom/PlanetRotation`), — вид совпадает, добавляется только свет.
+
+**На лету** — консоль `render 2d|3d` → `SystemViewManager.SetRenderMode` (только вне анимации
+хода): визуалы текущей системы пересоздаются, как при входе в неё; у корабля игрока визуал
+заменяется на месте (`VisualFactory.ReplaceShip`), владельцы ссылки (`PlayerShip`,
+`NpcController`, интерфейс `IShipVisualOwner`) получают новый визуал. В 3D прогрев не грузит
+листы корпусов и атласы астероидов (`VisualPreloader`).
+
+**Соглашение для моделей кораблей:** нос по +Y, верх к камере (−Z), в плане вписана в квадрат 1×1
 (масштаб до кадра листа и до корпуса ставит визуал). Материалы префаба — свои; `_Alpha`
-понимают только материалы на `SRG/ShipModel`, остальные при `alpha = 0` просто выключаются.
+понимают только материалы на `SRG/ModelLit`, остальные при `alpha = 0` просто выключаются.
 
 ### `WeaponVisualSystem` (Visual/WeaponVisualSystem.cs)
 

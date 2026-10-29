@@ -143,7 +143,7 @@ GameObject TryGetModelPrefab(string path);
 ```
 
 Кэш позитивный + негативный, чистится `ClearCache()`. Путь модели корабля — путь листа корпуса с
-`Graphics/` → `Models/` (`ShipModelLibrary.ModelPathFor`), см. [visual_subsystem.md](visual_subsystem.md).
+`Graphics/` → `Models/` (`ModelLibrary.ModelPathFor`), см. [visual_subsystem.md](visual_subsystem.md).
 
 ## Проигрывание анимаций
 

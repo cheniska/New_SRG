@@ -55,7 +55,7 @@ namespace SRG.Presentation.Common
             //    каталогу, без загрузки; HashSet дедуплицирует, поэтому двойной цикл дёшев
             //    (реально загрузим ~30–50 уникальных hull-листов). Убирает хитч 30–200 мс
             //    на первом появлении каждого синтет-подтипа.
-            if (equip != null && context != null)
+            if (equip != null && context != null && !VisualFactory.Is3D)
             {
                 var races = context.AvailableRaces;
                 foreach (var (_, _, cfg) in equip.EnumerateAllItems())
@@ -76,7 +76,8 @@ namespace SRG.Presentation.Common
             }
 
             // 4) Астероиды: все варианты всех типов (Rocky/00..14, Metallic/Blue00..Blue13 и т.п.).
-            if (asteroidTypes != null)
+            //    В 3D корпуса и астероиды — модели: их листы (самые тяжёлые атласы) не греем.
+            if (asteroidTypes != null && !VisualFactory.Is3D)
                 foreach (var t in asteroidTypes.Values)
                 {
                     if (t == null || string.IsNullOrEmpty(t.GraphicPath)) continue;

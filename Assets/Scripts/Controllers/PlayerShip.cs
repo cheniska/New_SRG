@@ -43,7 +43,7 @@ namespace SRG.Controllers
         [SerializeField] private GameSettingsConfig _settings;
         private Camera _cam;
         private ShipVisualController _visual;
-        /// <summary>Визуал корпуса (2D или 3D, см. ShipVisualFactory).</summary>
+        /// <summary>Визуал корпуса (2D или 3D, см. VisualFactory).</summary>
         public ShipVisualController Visual => _visual;
         private PathRenderer _pathRenderer;
         private bool _isTurnInProgress;

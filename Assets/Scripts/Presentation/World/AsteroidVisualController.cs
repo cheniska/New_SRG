@@ -5,7 +5,8 @@ using SRG.Presentation.Effects;
 
 namespace SRG.Presentation.World
 {
-    public class AsteroidVisualController : MonoBehaviour
+    /// <summary>Астероид спрайт-листом: кадры вращения + медленный поворот в плоскости.</summary>
+    public class AsteroidVisualController : AsteroidVisual
     {
         [Header("Renderer")]
         public SpriteRenderer SpriteRenderer;
@@ -15,7 +16,7 @@ namespace SRG.Presentation.World
         private int _curFrame;
         private float _rotationSpeed; // °/сек, знак задаёт направление тумблинга
 
-        public void Setup(AsteroidData data)
+        public override void Setup(AsteroidData data)
         {
             _rotationSpeed = data.SelfRotationSpeed;
 
@@ -24,23 +25,11 @@ namespace SRG.Presentation.World
 
             LoadSpritesheet(data);
 
-            float scale = Mathf.Clamp(data.CollisionRadius * 2f, 0.2f, 1.5f);
-            transform.localScale = Vector3.one * scale;
+            transform.localScale = Vector3.one * VisualScale(data);
             transform.localPosition = new Vector3(data.Position.x, data.Position.y, 0f);
         }
 
-        public void UpdateVisualPosition(Vector2 pos)
-        {
-            transform.localPosition = new Vector3(pos.x, pos.y, 0f);
-        }
-
-        /// <summary>
-        /// Прерывает обычную анимацию астероида и проигрывает на его GameObject взрыв
-        /// (через ExplosionPlayback). По окончании анимации GO самоуничтожается.
-        /// Вызывать только когда астероид уже удалён из _asteroidControllers — иначе
-        /// AnimateSystem будет двигать ему позицию во время взрыва.
-        /// </summary>
-        public void PlayExplosion(string explosionPath = null)
+        public override void PlayExplosion(string explosionPath = null)
         {
             // Отключаем наш Update — ExplosionPlayback забирает SpriteRenderer и крутит свой цикл.
             enabled = false;

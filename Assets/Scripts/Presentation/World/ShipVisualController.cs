@@ -17,7 +17,7 @@ namespace SRG.Presentation.World
     /// прозрачность посадки/взлёта/гиперперехода, обнаружение посадки и взлёта, выхлоп двигателей
     /// и взрыв. «Как нарисовать корпус» — в наследниках: <see cref="ShipVisualController2D"/>
     /// (спрайт-лист с клипами) и <see cref="ShipVisualController3D"/> (модель). Выбор — по
-    /// <c>GameSettingsConfig.ShipRenderMode</c> через <see cref="ShipVisualFactory"/>.
+    /// <c>GameSettingsConfig.RenderMode</c> через <see cref="VisualFactory"/>.
     /// </summary>
     public abstract class ShipVisualController : MonoBehaviour
     {

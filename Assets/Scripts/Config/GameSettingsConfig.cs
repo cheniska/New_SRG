@@ -40,9 +40,11 @@ namespace SRG.Config
         public int ResolutionHeight = 1080;
         [Tooltip("Режим окна: Windowed, FullScreenWindow (безрамочный), ExclusiveFullScreen.")]
         public FullScreenMode WindowMode = FullScreenMode.FullScreenWindow;
-        [Tooltip("Отрисовка корпусов кораблей: Sprite2D — спрайт-листы, Model3D — 3D-модели " +
-                 "(Resources/Models/…, иначе заглушка) под той же камерой сверху. Консоль: render 2d|3d.")]
-        public ShipRenderMode ShipRenderMode = ShipRenderMode.Sprite2D;
+        [Tooltip("Отрисовка объектов системы: Sprite2D — спрайты; Model3D — 3D (корабли — модели " +
+                 "Resources/Models/… или заглушки, планеты и спутники — освещённые сферы, астероиды — " +
+                 "камни) под той же камерой сверху. Звёзды и эффекты — спрайты в обоих режимах. " +
+                 "Консоль: render 2d|3d.")]
+        public WorldRenderMode RenderMode = WorldRenderMode.Sprite2D;
 
         [Header("Map Limits")]
         public Vector2 MapLimit = new Vector2(1024f, 1024f);
@@ -415,8 +417,8 @@ namespace SRG.Config
         public string StarLargeShaderPath    = "Shaders/StarLarge";
     }
 
-    /// <summary>Чем рисуются корпуса кораблей в системе (см. ShipVisualFactory).</summary>
-    public enum ShipRenderMode
+    /// <summary>Чем рисуются объекты системы (см. SRG.Presentation.World.VisualFactory).</summary>
+    public enum WorldRenderMode
     {
         Sprite2D = 0,
         Model3D  = 1,

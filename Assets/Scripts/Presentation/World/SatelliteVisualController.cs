@@ -65,8 +65,7 @@ namespace SRG.Presentation.World
         {
             if (_data == null) return;
 
-            float step = Mathf.Abs(_data.OrbitSpeed) < 0.01f ? 0f : 360f / _data.OrbitSpeed;
-            _visualOrbitAngle = WrapAngle(_visualOrbitAngle + step * dt);
+            _visualOrbitAngle = SatelliteOrbit.Advance(_data, _visualOrbitAngle, dt);
             UpdateWorldPosition(_visualOrbitAngle);
 
             if (SurfaceRenderer != null && SurfaceRenderer.gameObject.activeSelf)
@@ -81,28 +80,7 @@ namespace SRG.Presentation.World
         }
 
         private void UpdateWorldPosition(float angleDeg)
-        {
-            float rad = angleDeg * Mathf.Deg2Rad;
-            float r = SRUnits.ToWorld(_data.OrbitRadius);
-            float incl = _data.OrbitInclination * Mathf.Deg2Rad;
-
-            float xBase = Mathf.Cos(rad) * r;
-            float yBase = Mathf.Sin(rad) * r * 0.4f;
-
-            transform.localPosition = new Vector3(
-                xBase * Mathf.Cos(incl) - yBase * Mathf.Sin(incl),
-                xBase * Mathf.Sin(incl) + yBase * Mathf.Cos(incl),
-                0f
-            );
-
-            float depthFactor = Mathf.Sin(rad);
-            float scaleMult = 1f - depthFactor * 0.25f;
-            transform.localScale = Vector3.one * (_baseScale * scaleMult);
-
-            SetSortingOrders(depthFactor > 0
-                ? SortingLayerRegistry.Get(SortLayer.SatelliteUp)
-                : SortingLayerRegistry.Get(SortLayer.SatelliteDown));
-        }
+            => SetSortingOrders(SatelliteOrbit.Place(transform, _data, angleDeg, _baseScale));
 
         private void SetupLayer(SpriteRenderer r, Sprite texture, Sprite mask)
         {
@@ -120,13 +98,8 @@ namespace SRG.Presentation.World
 
         private void ApplyScale(string sizeKey)
         {
-            float scale = 1f;
-            var config = GraphicsManager.Instance.GetConfig();
-            if (config?.Satellites?.Sizes != null &&
-                config.Satellites.Sizes.TryGetValue(sizeKey, out var data))
-                scale = data.BaseScale;
-            _baseScale = scale;
-            transform.localScale = Vector3.one * scale;
+            _baseScale = SatelliteOrbit.BaseScale(sizeKey);
+            transform.localScale = Vector3.one * _baseScale;
         }
 
         private void SetSortingOrders(int order)
@@ -134,7 +107,5 @@ namespace SRG.Presentation.World
             if (SurfaceRenderer) SurfaceRenderer.sortingOrder = order;
             if (AtmosphereRenderer) AtmosphereRenderer.sortingOrder = order + 1;
         }
-
-        private static float WrapAngle(float angle) => Mathf.Repeat(angle, 360f);
     }
 }

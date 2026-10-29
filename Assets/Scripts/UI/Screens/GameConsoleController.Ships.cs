@@ -69,14 +69,14 @@ namespace SRG.UI.Screens
         void RenderModeCmd()
         {
             string arg = _lastArg?.Trim().ToLowerInvariant();
-            ShipRenderMode mode;
-            if (arg == "2d") mode = ShipRenderMode.Sprite2D;
-            else if (arg == "3d") mode = ShipRenderMode.Model3D;
-            else { Log($"render 2d|3d — сейчас {SRG.Presentation.World.ShipVisualFactory.Mode}."); return; }
+            WorldRenderMode mode;
+            if (arg == "2d") mode = WorldRenderMode.Sprite2D;
+            else if (arg == "3d") mode = WorldRenderMode.Model3D;
+            else { Log($"render 2d|3d — сейчас {SRG.Presentation.World.VisualFactory.Mode}."); return; }
 
             if (SystemViewManager.Instance == null) { Log("Нет визуала системы."); return; }
-            SystemViewManager.Instance.SetShipRenderMode(mode);
-            Log($"Корпуса кораблей: {mode}.");
+            if (!SystemViewManager.Instance.SetRenderMode(mode)) { Log("Во время анимации хода нельзя — дождитесь планирования."); return; }
+            Log($"Отрисовка системы: {mode}.");
         }
     }
 }
