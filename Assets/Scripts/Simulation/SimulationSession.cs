@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SRG.Config;
+using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Galaxy.Generation;
 using SRG.Galaxy.Politics;
@@ -110,6 +111,8 @@ namespace SRG.Simulation
             foreach (var g in Galaxies.Values)
             {
                 g.InitSimulation(resetOrbits: false);
+                // Флаги предметов из старых сейвов — по текущему конфигу (см. ItemFlagsReconciler).
+                ItemFlagsReconciler.Apply(g, Context?.ItemsConfig);
                 foreach (var star in g.StarsMap.Values)
                     foreach (var ship in star.Ships)
                         ship?.Brain?.RestoreAfterLoad(ship);

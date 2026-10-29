@@ -110,7 +110,7 @@ namespace SRG.Config
                 foreach (var kv in byKind.Value)
                 {
                     // Kind проставляем из ключа группы — в JSON он не хранится.
-                    if (kv.Value != null) kv.Value.Kind = byKind.Key;
+                    AssignKind(kv.Value, byKind.Key);
                     if (_itemsById.ContainsKey(kv.Key))
                     {
                         UnityEngine.Debug.LogError($"[ItemsConfig] Duplicate item id '{kv.Key}' across kinds.");
@@ -119,6 +119,17 @@ namespace SRG.Config
                     _itemsById[kv.Key] = kv.Value;
                 }
             }
+        }
+
+        /// <summary>Kind рукописного предмета — из ключа группы. Рукописное оружие и артефакты —
+        /// оборудование по самой группе (<see cref="ItemKind.IsEquipment"/>): у шаблонных флаг
+        /// приходит из Defaults шаблона, а в рукописных записях его не пишут. Без этого стартовое
+        /// оружие NPC уходило в трюм вместо слота.</summary>
+        private static void AssignKind(ItemConfig item, string kind)
+        {
+            if (item == null) return;
+            item.Kind = kind;
+            if (ItemKind.IsEquipment(kind)) item.IsEquipment = true;
         }
 
         private void EnsureTemplatesCache()
@@ -194,7 +205,7 @@ namespace SRG.Config
             {
                 // Kind в JSON не хранится — гарантируем его наличие даже если EnsureItemsCache
                 // ещё не звали.
-                if (item != null && string.IsNullOrEmpty(item.Kind)) item.Kind = category;
+                if (item != null && string.IsNullOrEmpty(item.Kind)) AssignKind(item, category);
                 return item;
             }
 
