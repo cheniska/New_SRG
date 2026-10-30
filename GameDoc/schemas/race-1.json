@@ -3,7 +3,7 @@
   "id": "race-1",
   "metadata": {
     "id": {
-      "pattern": "^race\\.[a-z][a-z0-9-]*$"
+      "pattern": "^race\\.[a-z][a-z0-9_-]*$"
     },
     "type": {
       "enum": [
@@ -208,7 +208,16 @@
     "XII.1": "reputation.ridicule",
     "XII.2": "reputation.pride",
     "XII.3": "reputation.recognition",
-    "XII.4": "reputation.hidden-problem"
+    "XII.4": "reputation.hidden-problem",
+    "III-А": "architecture",
+    "III-А.1": "architecture.substrate",
+    "III-А.2": "architecture.energy",
+    "III-А.3": "architecture.senses",
+    "III-А.4": "architecture.communication",
+    "III-А.5": "architecture.repair",
+    "III-А.6": "architecture.life-cycle",
+    "III-А.7": "architecture.vulnerabilities",
+    "III-А.8": "architecture.unique-traits"
   },
   "alternatives": {
     "III": {

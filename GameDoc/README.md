@@ -45,31 +45,31 @@
 
 | Статья | Файл |
 |---|---|
-| АЭТАРИ | [also_races_1_aetari_v3.txt](also_races_1_aetari_v3.txt) |
-| СПАСИТЕЛИ (РОЙ) | [also_races_2_spasiteli_v3.txt](also_races_2_spasiteli_v3.txt) |
-| ВЕНТАРЫ | [also_races_3_ventary_v3.txt](also_races_3_ventary_v3.txt) |
-| ГОРАНДЫ | [also_races_4_gorandy_v3.txt](also_races_4_gorandy_v3.txt) |
-| КАЙРЕНЫ | [also_races_4_kayreny_v2.txt](also_races_4_kayreny_v2.txt) |
-| ИИ ДРЕВНИХ | [also_races_5_ii_drevnih_v2.txt](also_races_5_ii_drevnih_v2.txt) |
-| НАЭРЫ («СТРОИТЕЛИ») | [also_races_outer_stroiteli_v4.txt](also_races_outer_stroiteli_v4.txt) |
-| ГРОНДАРЫ (БРОНОКСЫ) | [big_race_1_grondary_v4.txt](big_race_1_grondary_v4.txt) |
-| КСЕНОПОДЫ | [big_race_2_ksenopody_v3.txt](big_race_2_ksenopody_v3.txt) |
-| HOMO SYNTHETICUS (ЛЮДИ) | [big_race_3_homo_syntheticus_v3.txt](big_race_3_homo_syntheticus_v3.txt) |
-| СИНАПТЫ | [big_race_4_sinapty_v3.txt](big_race_4_sinapty_v3.txt) |
-| ЭТЕРИАНЕ | [big_race_5_etheriane_v3.txt](big_race_5_etheriane_v3.txt) |
-| ТАРНАИ (ПРОПОВЕДНИКИ) | [big_race_6_propovedniki_v3.txt](big_race_6_propovedniki_v3.txt) |
-| ВОРН | [small_race_1_vorn_v3.txt](small_race_1_vorn_v3.txt) |
-| ХАМАРИ | [small_race_2_hamari_v3.txt](small_race_2_hamari_v3.txt) |
-| АЭЛИТЫ | [small_race_3_aelity_v3.txt](small_race_3_aelity_v3.txt) |
+| АЭТАРИ | [race_aetari.md](race_aetari.md) |
+| СПАСИТЕЛИ (РОЙ) | [race_spasiteli.md](race_spasiteli.md) |
+| ВЕНТАРЫ | [race_ventary.md](race_ventary.md) |
+| ГОРАНДЫ | [race_gorandy.md](race_gorandy.md) |
+| КАЙРЕНЫ | [race_kayreny.md](race_kayreny.md) |
+| ИИ ДРЕВНИХ | [race_ii_drevnih.md](race_ii_drevnih.md) |
+| НАЭРЫ («СТРОИТЕЛИ») | [race_stroiteli.md](race_stroiteli.md) |
+| ГРОНДАРЫ (БРОНОКСЫ) | [race_grondary.md](race_grondary.md) |
+| КСЕНОПОДЫ | [race_ksenopody.md](race_ksenopody.md) |
+| HOMO SYNTHETICUS (ЛЮДИ) | [race_homo_syntheticus.md](race_homo_syntheticus.md) |
+| СИНАПТЫ | [race_sinapty.md](race_sinapty.md) |
+| ЭТЕРИАНЕ | [race_etheriane.md](race_etheriane.md) |
+| ТАРНАИ (ПРОПОВЕДНИКИ) | [race_propovedniki.md](race_propovedniki.md) |
+| ВОРН | [race_vorn.md](race_vorn.md) |
+| ХАМАРИ | [race_hamari.md](race_hamari.md) |
+| АЭЛИТЫ | [race_aelity.md](race_aelity.md) |
 | ДЕЙМИ | [race_deymi.md](race_deymi.md) |
-| ВРАВШИ | [small_race_5_vravshi_v3.txt](small_race_5_vravshi_v3.txt) |
-| ЗАРГАШИ | [small_race_6_zargashi_v3.txt](small_race_6_zargashi_v3.txt) |
+| ВРАВШИ | [race_vravshi.md](race_vravshi.md) |
+| ЗАРГАШИ | [race_zargashi.md](race_zargashi.md) |
 
 Игровое приложение ИИ Древних: [also_races_5_ii_drevnih_gameplay_v1.txt](also_races_5_ii_drevnih_gameplay_v1.txt). Это дополнение, а не отдельная раса и не замена основному досье.
 
 ## Формат для людей и программ
 
-Эталон нового формата — [Дейми](race_deymi.md). Правила — [единый формат](FORMAT.md), машинная схема — [race-1](schemas/race-1.json), автоматически собираемый каталог — [catalog.json](catalog.json). Остальные 18 досье пока имеют формат legacy; это явно отмечено в каталоге. Старый путь к досье Дейми сохранён как alias в каталоге, а не как вторая каноническая копия.
+Эталон нового формата — [Дейми](race_deymi.md). Правила — [единый формат](FORMAT.md), машинная схема — [race-1](schemas/race-1.json), автоматически собираемый каталог — [catalog.json](catalog.json). Все 19 актуальных досье рас используют Markdown и схему `race-1`. Общие справочники и досье персонажей пока сохраняют текстовый формат; это явно отмечено в каталоге. Старые пути ко всем перенесённым досье сохранены как aliases в каталоге, без вторых канонических копий.
 
 ## Правила сопровождения
 

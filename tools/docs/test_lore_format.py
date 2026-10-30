@@ -67,6 +67,38 @@ class LoreFormatTests(unittest.TestCase):
         self.assertEqual(lore.select_sections(doc, 'X.5')[0]['id'], 'society.kinship')
         self.assertEqual(lore.select_sections(doc, 'society.kinship')[0]['slots'], ['X.5'])
 
+    def test_all_current_race_documents_are_markdown(self):
+        catalog = lore.build_catalog()
+        races = [d for d in catalog['documents'] if d['type'] == 'race']
+        self.assertEqual(len(races), 19)
+        self.assertTrue(all(d['format'] == 'markdown' and d['schema'] == 'race-1' for d in races))
+        for doc in races:
+            self.assertEqual(lore.validate_article(lore.ROOT / doc['path']), [], doc['id'])
+            self.assertTrue(doc['aliases'], doc['id'])
+
+    def test_nested_architecture_does_not_duplicate_biology_slot(self):
+        text = (lore.DOCS / 'race_ii_drevnih.md').read_text(encoding='utf-8')
+        sections = lore.parse_sections(text, markdown=True)
+        biology = next(s for s in sections if s['id'] == 'biology')
+        architecture = next(s for s in sections if s['id'] == 'architecture')
+        self.assertEqual(biology['slots'], ['III'])
+        self.assertNotIn('III', architecture['slots'])
+        self.assertIn('III.12', architecture['slots'])
+        self.assertEqual(architecture['level'], 3)
+        self.assertGreater(architecture['line'], biology['line'])
+
+    def test_standalone_architecture_covers_biology_slot(self):
+        text = (lore.DOCS / 'race_kayreny.md').read_text(encoding='utf-8')
+        architecture = next(s for s in lore.parse_sections(text, markdown=True) if s['id'] == 'architecture')
+        self.assertIn('III', architecture['slots'])
+        self.assertEqual(architecture['level'], 2)
+
+    def test_legacy_document_ids_remain_stable(self):
+        catalog = lore.build_catalog()
+        ids = {d['id'] for d in catalog['documents']}
+        self.assertIn('race.homo_syntheticus', ids)
+        self.assertIn('race.ii_drevnih', ids)
+
     def test_range_closure_covers_all_three_gameplay_slots(self):
         sections = lore.parse_sections(self.original, markdown=True)
         gameplay = next(s for s in sections if s['id'] == 'gameplay')

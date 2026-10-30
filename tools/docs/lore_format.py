@@ -88,7 +88,9 @@ def parse_sections(text, markdown=False, schema=None):
             continue
         covers = expand_slots(*slot.groups()) if slot else []
         if slot and slot[1] == 'III-А':
-            covers = schema['alternatives']['III']['covers']
+            covers = list(schema['alternatives']['III']['covers'])
+            if markdown and re.search(r'^## III\. ', text, re.M):
+                covers.remove('III')
         if not markdown:
             if slot:
                 sid = ('group.' + re.sub(r'[^a-z0-9]+', '-', title[:slot.end()].lower()).strip('-')
@@ -145,11 +147,15 @@ def validate_article(path, schema=None):
     for s in sections:
         if s['status'] not in schema['section_statuses']:
             errors.append(f'{s["title"]}: missing/invalid section status')
-        if len(s['slots']) == 1 and s['slots'][0] in schema['fixed_ids']:
-            expected = schema['fixed_ids'][s['slots'][0]]
+        label_match = SLOT.match(s['title'])
+        label = label_match[1] if label_match else None
+        if label_match and not label_match[2] and label in schema['fixed_ids']:
+            expected = schema['fixed_ids'][label]
             if s['id'] != expected:
                 errors.append(f'{s["title"]}: expected stable id {expected}')
         expected_level = min(4, 2 + s['slots'][0].count('.')) if s['slots'] else s['level']
+        if label and label.startswith('III-А'):
+            expected_level = min(4, (3 if re.search(r'^## III\. ', text, re.M) else 2) + label.count('.'))
         if s['slots'] and s['level'] != expected_level:
             errors.append(f'{s["title"]}: incorrect heading level')
         content = lines[s['line']:s['end_line']]
