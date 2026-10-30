@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "reference-1",
+  "metadata": {
+    "id": {
+      "pattern": "^reference\\.[a-z][a-z0-9_-]*$"
+    },
+    "type": {
+      "enum": [
+        "reference"
+      ]
+    },
+    "title": {
+      "nonempty": true
+    },
+    "schema": {
+      "enum": [
+        "reference-1"
+      ]
+    },
+    "status": {
+      "enum": [
+        "canonical",
+        "draft"
+      ]
+    }
+  },
+  "section_statuses": [
+    "filled",
+    "not_applicable",
+    "unknown_in_canon",
+    "needs_development"
+  ],
+  "required_slots": [],
+  "fixed_ids": {},
+  "alternatives": {},
+  "min_sections": 1,
+  "layout": "free",
+  "max_heading_depth": 4
+}

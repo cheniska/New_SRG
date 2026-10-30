@@ -98,9 +98,11 @@ def main():
     numbers = [int(n) for n in re.findall(r'^(\d+)\. ', principles, re.M)]
     if numbers != list(range(1, 12)):
         errors.append(f'template: invalid principle numbering: {numbers}')
+    modern_count = 0
     for path in DOCS.glob('*.md'):
         try:
-            if lore_format.metadata(path.read_text(encoding='utf-8'))[0].get('schema') == 'race-1':
+            if lore_format.metadata(path.read_text(encoding='utf-8'))[0]:
+                modern_count += 1
                 errors.extend(f'{path.name}: {e}' for e in lore_format.validate_article(path))
         except (ValueError, KeyError) as exc:
             errors.append(f'{path.name}: {exc}')
@@ -116,7 +118,7 @@ def main():
         print(f'ERROR: {error}')
     if errors:
         return 1
-    print(f'OK: {len(races)} current race articles; fixed slots, heading order, visual appendices, local index links and template numbering verified.')
+    print(f'OK: {len(races)} race articles and {modern_count} total Markdown articles; schemas, source links, catalog and navigation verified.')
     return 0
 
 

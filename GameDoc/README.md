@@ -9,7 +9,7 @@
 | [Общие справочники](#общие-справочники) | Канон физики, хронологии, миров и институтов |
 | [Досье рас](#актуальные-досье-рас) | Текущие статьи о расах |
 | `personage_*` | Досье персонажей; форма — в `templates/` |
-| [Игровые условности](common_igrovye_uslovnosti.txt) | Упрощения игрового представления; не переписывают канон |
+| [Игровые условности](reference_igrovye_uslovnosti.md) | Упрощения игрового представления; не переписывают канон |
 | [Шаблоны](templates/README.md) | Структура и правила оформления статей |
 | [Редакционные материалы](editorial/README.md) | Планы, аудит, вопросы, журналы; не самостоятельный источник принятого канона |
 | [Концепты](concepts/README.md) | Предложения; не канон до явного принятия автором |
@@ -20,7 +20,7 @@
 ## Приоритет источников
 
 1. Явные решения автора, зафиксированные в журнале решений [плана](editorial/PLAN_migracii_ras_v3.md#9-журнал-решений-автора).
-2. `common_spravochnik_sistem.txt` — численные параметры звёзд и планет.
+2. `reference_spravochnik_sistem.md` — численные параметры звёзд и планет.
 3. Общие справочники — каждый в своей предметной области: история, физика, институты и т. д.
 4. Принятые реестры контактов и эпох — после их создания и проверки. Сейчас такие реестры не созданы и не могут служить источником.
 5. Досье расы, которой принадлежит подробно раскрываемый факт.
@@ -30,14 +30,14 @@
 
 ## Общие справочники
 
-- [common_gipersfera.txt](common_gipersfera.txt)
-- [common_history_extended.txt](common_history_extended.txt)
-- [common_igrovye_uslovnosti.txt](common_igrovye_uslovnosti.txt)
-- [common_instituty_sodruzhestva.txt](common_instituty_sodruzhestva.txt)
-- [common_spravochnik_sistem.txt](common_spravochnik_sistem.txt)
-- [common_tovary_i_kontrabanda.txt](common_tovary_i_kontrabanda.txt)
-- [common_uchenie_uzora.txt](common_uchenie_uzora.txt)
-- [common_vneshniy_rukav.txt](common_vneshniy_rukav.txt)
+- [reference_gipersfera.md](reference_gipersfera.md)
+- [reference_history_extended.md](reference_history_extended.md)
+- [reference_igrovye_uslovnosti.md](reference_igrovye_uslovnosti.md)
+- [reference_instituty_sodruzhestva.md](reference_instituty_sodruzhestva.md)
+- [reference_spravochnik_sistem.md](reference_spravochnik_sistem.md)
+- [reference_tovary_i_kontrabanda.md](reference_tovary_i_kontrabanda.md)
+- [reference_uchenie_uzora.md](reference_uchenie_uzora.md)
+- [reference_vneshniy_rukav.md](reference_vneshniy_rukav.md)
 
 Отдельный планетологический объект без разумной расы: [ПХ-2114 «Расселина»](planetologiya_perhloratnaya_biosfera.txt).
 
@@ -69,7 +69,7 @@
 
 ## Формат для людей и программ
 
-Эталон нового формата — [Дейми](race_deymi.md). Правила — [единый формат](FORMAT.md), машинная схема — [race-1](schemas/race-1.json), автоматически собираемый каталог — [catalog.json](catalog.json). Все 19 актуальных досье рас используют Markdown и схему `race-1`. Общие справочники и досье персонажей пока сохраняют текстовый формат; это явно отмечено в каталоге. Старые пути ко всем перенесённым досье сохранены как aliases в каталоге, без вторых канонических копий.
+Эталон нового формата — [Дейми](race_deymi.md). Правила — [единый формат](FORMAT.md), машинные схемы — [race-1](schemas/race-1.json) и [reference-1](schemas/reference-1.json), автоматически собираемый каталог — [catalog.json](catalog.json). Все 19 актуальных досье рас используют Markdown и схему `race-1`. Все 8 общих справочников используют схему `reference-1`. Досье персонажей, отдельная планетология и игровое приложение пока сохраняют текстовый формат; это явно отмечено в каталоге. Старые пути ко всем перенесённым досье и справочникам сохранены как aliases в каталоге, без вторых канонических копий.
 
 ## Правила сопровождения
 

@@ -18,6 +18,14 @@ SLOT = re.compile(r'^([IVX]+(?:-А)?(?:\.\d+)*)(?:[–—]([IVX]+(?:\.\d+)*))?\.
 ANCHOR = re.compile(r'^<a id="([a-z][a-z0-9.-]*)"></a>$')
 STATUS = re.compile(r'^<!-- section-status: ([a-z_]+) -->$')
 ALIAS_PATH = DOCS / 'schemas/document-aliases.json'
+SUPPORTED_SCHEMAS = {'race-1', 'reference-1'}
+REFERENCE_LABEL = re.compile(r'^(?:ЧАСТЬ\s+)?([IVX]+(?:\.\d+)*(?:-(?:доп|ранн))?)\.\s+')
+
+def load_schema(schema_id):
+    if schema_id not in SUPPORTED_SCHEMAS:
+        raise ValueError(f'unsupported document schema: {schema_id}')
+    return json.loads((DOCS / 'schemas' / (schema_id + '.json')).read_text(encoding='utf-8'))
+
 
 
 def metadata(text):
@@ -57,7 +65,8 @@ def expand_slots(start, end):
 
 def parse_sections(text, markdown=False, schema=None):
     """Return source locations; section bounds include their nested sections."""
-    schema = schema or json.loads(SCHEMA_PATH.read_text(encoding='utf-8'))
+    meta = metadata(text)[0] if markdown else {}
+    schema = schema or load_schema(meta.get('schema', 'race-1'))
     lines = text.splitlines()
     sections = []
     _, offset = metadata(text) if markdown else ({}, 0)
@@ -87,6 +96,11 @@ def parse_sections(text, markdown=False, schema=None):
         if not markdown and not (slot or visual):
             continue
         covers = expand_slots(*slot.groups()) if slot else []
+        labels = []
+        if markdown and schema['id'] == 'reference-1':
+            label = REFERENCE_LABEL.match(title)
+            labels = [label[1]] if label else []
+            covers = []
         if slot and slot[1] == 'III-А':
             covers = list(schema['alternatives']['III']['covers'])
             if markdown and re.search(r'^## III\. ', text, re.M):
@@ -101,6 +115,8 @@ def parse_sections(text, markdown=False, schema=None):
         sections.append({'id': sid, 'title': title, 'slots': covers,
                          'status': state, 'level': level, 'line': i + 1,
                          'end_line': len(lines), 'block_line': block_line})
+        if labels:
+            sections[-1]['labels'] = labels
     for i, section in enumerate(sections):
         for following in sections[i + 1:]:
             if following['level'] <= section['level']:
@@ -111,11 +127,11 @@ def parse_sections(text, markdown=False, schema=None):
 
 
 def validate_article(path, schema=None):
-    schema = schema or json.loads(SCHEMA_PATH.read_text(encoding='utf-8'))
     errors = []
     text = path.read_text(encoding='utf-8')
     try:
         meta, offset = metadata(text)
+        schema = schema or load_schema(meta.get('schema', 'race-1'))
         sections = parse_sections(text, True, schema)
     except (ValueError, KeyError) as exc:
         return [str(exc)]
@@ -133,6 +149,8 @@ def validate_article(path, schema=None):
     titles = [line[2:] for line in lines[offset:] if line.startswith('# ')]
     if titles != [meta.get('title')]:
         errors.append('exactly one H1 matching metadata.title is required')
+    if len(sections) < schema.get('min_sections', 1):
+        errors.append('at least one section is required')
     ids = [s['id'] for s in sections]
     if None in ids or len(ids) != len(set(ids)):
         errors.append('every section must have a unique explicit anchor')
@@ -174,8 +192,12 @@ def validate_article(path, schema=None):
         target = path.parent / filepart if filepart else path
         if not target.exists():
             errors.append(f'broken file link: {destination}')
-        elif fragment and target == path and fragment not in anchors:
-            errors.append(f'broken section link: {destination}')
+        elif fragment:
+            target_text = text if target == path else target.read_text(encoding='utf-8')
+            if target == path or metadata(target_text)[0]:
+                target_anchors = anchors if target == path else set(re.findall(r'<a id="([^"]+)"></a>', target_text))
+                if fragment not in target_anchors:
+                    errors.append(f'broken section link: {destination}')
     if re.search(r'^\s*(?:<<<<<<< |>>>>>>> )', text, re.M):
         errors.append('unresolved merge marker')
     return errors
@@ -209,6 +231,8 @@ def build_catalog():
         text = path.read_text(encoding='utf-8')
         meta, _ = metadata(text)
         modern = bool(meta)
+        if modern:
+            load_schema(meta.get('schema'))
         did, kind = (meta['id'], meta['type']) if modern else legacy_identity(path)
         if did in used:
             raise ValueError(f'duplicate document id: {did}')
@@ -234,6 +258,9 @@ def select_sections(doc, address):
     direct = [s for s in doc['sections'] if s['id'] == address]
     if direct:
         return direct
+    labeled = [s for s in doc['sections'] if address in s.get('labels', [])]
+    if labeled:
+        return labeled
     schema = json.loads(SCHEMA_PATH.read_text(encoding='utf-8'))
     slot = next((slot for slot, sid in schema['fixed_ids'].items() if sid == address), address)
     single = [s for s in doc['sections'] if s['slots'] == [slot]]
@@ -245,7 +272,7 @@ def main():
     sub = parser.add_subparsers(dest='command', required=True)
     index = sub.add_parser('index', help='Generate catalog.json from the documents')
     index.add_argument('--check', action='store_true', help='Fail if the saved catalog is stale')
-    sub.add_parser('validate', help='Validate all articles using race-1 metadata')
+    sub.add_parser('validate', help='Validate all Markdown articles against their declared schemas')
     section = sub.add_parser('section', help='Print one section by document-id#section-id')
     section.add_argument('address')
     search = sub.add_parser('search', help='Search current articles with optional section scope')
@@ -257,13 +284,13 @@ def main():
             errors = []
             count = 0
             for path in DOCS.glob('*.md'):
-                if metadata(path.read_text(encoding='utf-8'))[0].get('schema') == 'race-1':
+                if metadata(path.read_text(encoding='utf-8'))[0]:
                     count += 1
                     errors.extend(f'{path.name}: {error}' for error in validate_article(path))
             for error in errors:
                 print('ERROR:', error)
             if not errors:
-                print(f'OK: {count} Markdown article(s) validated against race-1.')
+                print(f'OK: {count} Markdown article(s) validated against their document schemas.')
             return int(bool(errors))
         catalog = build_catalog()
         if args.command == 'index':

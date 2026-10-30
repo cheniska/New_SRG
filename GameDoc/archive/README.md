@@ -29,3 +29,7 @@
 - [small_race_4_deymi_v2.txt](small_race_4_deymi_v2.txt)
 - [small_race_5_vravshi_v2.txt](small_race_5_vravshi_v2.txt)
 - [small_race_6_zargashi.txt](small_race_6_zargashi.txt)
+
+## Общие справочники до перехода на Markdown
+
+[8 исходных TXT-справочников](pre_markdown_references/README.md), из которых подготовлены текущие Markdown-статьи.

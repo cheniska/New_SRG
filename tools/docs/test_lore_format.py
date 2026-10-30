@@ -99,6 +99,41 @@ class LoreFormatTests(unittest.TestCase):
         self.assertIn('race.homo_syntheticus', ids)
         self.assertIn('race.ii_drevnih', ids)
 
+    def test_all_eight_references_use_their_own_schema(self):
+        references = [d for d in lore.build_catalog()['documents'] if d['type'] == 'reference']
+        self.assertEqual(len(references), 8)
+        for doc in references:
+            self.assertEqual(doc['schema'], 'reference-1')
+            self.assertEqual(lore.validate_article(lore.ROOT / doc['path']), [], doc['id'])
+            self.assertTrue(doc['aliases'])
+
+    def test_reference_supplement_labels_are_not_truncated(self):
+        doc = next(d for d in lore.build_catalog()['documents'] if d['id'] == 'reference.gipersfera')
+        main = lore.select_sections(doc, 'I.2')[0]
+        supplement = lore.select_sections(doc, 'I.2-доп')[0]
+        self.assertNotEqual(main['id'], supplement['id'])
+        self.assertEqual(supplement['id'], 'theory.holding-field')
+        self.assertEqual(supplement['slots'], [])
+        self.assertEqual(supplement['labels'], ['I.2-доп'])
+
+    def test_reference_does_not_require_race_biology_slots(self):
+        text = (lore.DOCS / 'reference_history_extended.md').read_text(encoding='utf-8')
+        sections = lore.parse_sections(text, markdown=True)
+        self.assertTrue(all(not s['slots'] for s in sections))
+        self.assertEqual(lore.validate_article(lore.DOCS / 'reference_history_extended.md'), [])
+
+    def test_unsupported_schema_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'unsupported document schema'):
+            lore.load_schema('../../unrelated')
+
+    def test_cross_document_fragment_is_checked(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'article.md'
+            other = Path(tmp) / 'other.md'
+            other.write_text(self.original, encoding='utf-8')
+            path.write_text(self.original + '\n[missing](other.md#not-a-section)\n', encoding='utf-8')
+            self.assertTrue(any('broken section link: other.md#not-a-section' in e for e in lore.validate_article(path)))
+
     def test_range_closure_covers_all_three_gameplay_slots(self):
         sections = lore.parse_sections(self.original, markdown=True)
         gameplay = next(s for s in sections if s['id'] == 'gameplay')
