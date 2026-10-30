@@ -4,6 +4,14 @@
 
 [Основное оглавление](../README.md)
 
+## Редакции до перехода на Markdown
+
+[19 исходных TXT-досье](pre_markdown/README.md), из которых подготовлены текущие Markdown-статьи.
+
+## Более ранние версии
+
+17 предыдущих редакций:
+
 - [also_races_1_aetari_v2.txt](also_races_1_aetari_v2.txt)
 - [also_races_2_spasiteli_v2.txt](also_races_2_spasiteli_v2.txt)
 - [also_races_3_ventary_v2.txt](also_races_3_ventary_v2.txt)
