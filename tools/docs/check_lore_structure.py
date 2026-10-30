@@ -9,6 +9,8 @@ import re
 import sys
 from urllib.parse import unquote
 
+import lore_format
+
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / 'GameDoc'
 ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX',
@@ -17,13 +19,14 @@ REQUIRED = ROMAN + ['I.1', 'II.1', 'II.2', 'II.3', 'II.4', 'VI.5'] + [
     f'X.{i}' for i in range(1, 18)
 ] + [f'XI.{i}' for i in range(1, 5)]
 HEADER = re.compile(r'^([IVX]+(?:-А)?(?:\.\d+)*)(?:[–—]([IVX]+(?:\.\d+)*))?\.\s+')
-RACE = re.compile(r'(?:big_race_|small_race_|also_races_).+\.txt$')
+RACE = re.compile(r'(?:big_race_|small_race_|also_races_|race_).+\.(?:txt|md)$')
 
 
 def covered_slots(text):
     slots = set()
     top_order = []
     for line in text.splitlines():
+        line = re.sub(r'^#{1,4} ', '', line)
         match = HEADER.match(line)
         if not match:
             continue
@@ -57,8 +60,8 @@ def main():
         print('ERROR: GameDoc/README.md is missing')
         return 1
     text = index.read_text(encoding='utf-8')
-    listed = re.findall(r'\]\(([^)]+\.txt)\)', text)
-    races = [p for p in DOCS.glob('*.txt') if RACE.fullmatch(p.name)
+    listed = re.findall(r'^\|[^\n]*\]\(([^)]+\.(?:txt|md))\)', text, re.M)
+    races = [p for p in DOCS.iterdir() if RACE.fullmatch(p.name)
              and 'gameplay' not in p.name]
     families = {}
     for path in sorted(races):
@@ -82,7 +85,7 @@ def main():
             errors.append(f'{relative}: heading still has decorative dash wrappers')
         if re.search(r'^(?:<<<<<<< |>>>>>>> )', body, re.M):
             errors.append(f'{relative}: unresolved merge markers')
-    for path in [*DOCS.rglob('README.md'), ROOT / 'docs/README.md']:
+    for path in [*DOCS.rglob('README.md'), DOCS / 'FORMAT.md', ROOT / 'docs/README.md']:
         body = path.read_text(encoding='utf-8')
         for target in re.findall(r'\]\(([^)]+)\)', body):
             if re.match(r'\w+://|mailto:', target) or target.startswith('#'):
@@ -95,6 +98,20 @@ def main():
     numbers = [int(n) for n in re.findall(r'^(\d+)\. ', principles, re.M)]
     if numbers != list(range(1, 12)):
         errors.append(f'template: invalid principle numbering: {numbers}')
+    for path in DOCS.glob('*.md'):
+        try:
+            if lore_format.metadata(path.read_text(encoding='utf-8'))[0].get('schema') == 'race-1':
+                errors.extend(f'{path.name}: {e}' for e in lore_format.validate_article(path))
+        except (ValueError, KeyError) as exc:
+            errors.append(f'{path.name}: {exc}')
+    try:
+        import json
+        generated = lore_format.build_catalog()
+        saved = json.loads(lore_format.CATALOG_PATH.read_text(encoding='utf-8'))
+        if saved != generated:
+            errors.append('catalog.json is stale; run python tools/docs/lore_format.py index')
+    except (ValueError, KeyError, OSError) as exc:
+        errors.append(f'catalog: {exc}')
     for error in errors:
         print(f'ERROR: {error}')
     if errors:

@@ -61,11 +61,15 @@
 | ВОРН | [small_race_1_vorn_v3.txt](small_race_1_vorn_v3.txt) |
 | ХАМАРИ | [small_race_2_hamari_v3.txt](small_race_2_hamari_v3.txt) |
 | АЭЛИТЫ | [small_race_3_aelity_v3.txt](small_race_3_aelity_v3.txt) |
-| ДЕЙМИ | [small_race_4_deymi_v3.txt](small_race_4_deymi_v3.txt) |
+| ДЕЙМИ | [race_deymi.md](race_deymi.md) |
 | ВРАВШИ | [small_race_5_vravshi_v3.txt](small_race_5_vravshi_v3.txt) |
 | ЗАРГАШИ | [small_race_6_zargashi_v3.txt](small_race_6_zargashi_v3.txt) |
 
 Игровое приложение ИИ Древних: [also_races_5_ii_drevnih_gameplay_v1.txt](also_races_5_ii_drevnih_gameplay_v1.txt). Это дополнение, а не отдельная раса и не замена основному досье.
+
+## Формат для людей и программ
+
+Эталон нового формата — [Дейми](race_deymi.md). Правила — [единый формат](FORMAT.md), машинная схема — [race-1](schemas/race-1.json), автоматически собираемый каталог — [catalog.json](catalog.json). Остальные 18 досье пока имеют формат legacy; это явно отмечено в каталоге. Старый путь к досье Дейми сохранён как alias в каталоге, а не как вторая каноническая копия.
 
 ## Правила сопровождения
 
