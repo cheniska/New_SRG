@@ -48,7 +48,7 @@ namespace SRG.Core
         private readonly List<GameObject> _spawnedObjects = new();
         private readonly List<(PlanetData planet, Transform t)> _planetList = new();
         private readonly List<(ShipData ship, Transform t, ShipVisualController visual)> _shipList = new();
-        private readonly Dictionary<string, AsteroidVisualController> _asteroidControllers = new();
+        private readonly Dictionary<string, AsteroidVisual> _asteroidControllers = new();
         private readonly Dictionary<string, (Transform t, SpriteRenderer sr, ActiveMissile missile)> _missileVisuals = new();
         private readonly HashSet<string> _firedDestroyEvents = new();
         private Sprite _missileDot;
@@ -78,7 +78,7 @@ namespace SRG.Core
 
             _weaponVfx = gameObject.AddComponent<WeaponVisualSystem>();
             _weaponVfx.Init(SystemContainer);
-            _missileDot = SpriteUtility.CreateCircleSprite(12);
+            _missileDot = ProceduralSprites.CreateCircle(12);
             if (FindAnyObjectByType<PlanetUIController>() == null)
             {
                 var pgo = new GameObject("PlanetUIController");
@@ -144,31 +144,15 @@ namespace SRG.Core
             var label = obj.GetComponent<StarLabelRenderer>() ?? obj.AddComponent<StarLabelRenderer>();
             label.Setup(star);
 
-            var starCol = obj.AddComponent<CircleCollider2D>();
-            starCol.isTrigger = true;
-            starCol.radius = 0.5f;
-
-            var starInfo = obj.AddComponent<ClickableInfo>();
-            starInfo.Star = star;
-
             _spawnedObjects.Add(obj);
         }
 
         private void SpawnPlanets(StarData star)
         {
-            if (PlanetPrefab == null) return;
             foreach (var planet in star.Planets)
             {
-                var obj = Instantiate(PlanetPrefab, SystemContainer);
-                obj.name = $"Planet_{planet.Name}";
-                obj.GetComponent<PlanetVisualController>()?.Setup(planet, SatellitePrefab);
-
-                var planetCol = obj.AddComponent<CircleCollider2D>();
-                planetCol.isTrigger = true;
-                planetCol.radius = 0.5f;
-
-                var planetInfo = obj.AddComponent<ClickableInfo>();
-                planetInfo.Planet = planet;
+                var obj = VisualFactory.CreatePlanet(planet, SystemContainer, PlanetPrefab, SatellitePrefab);
+                if (obj == null) continue;
                 _planetList.Add((planet, obj.transform));
                 _spawnedObjects.Add(obj);
             }
@@ -203,28 +187,36 @@ namespace SRG.Core
             }
         }
 
+        /// <summary>Переключить отрисовку системы 2D ↔ 3D на лету: визуалы текущей системы
+        /// пересоздаются (как при входе в неё), у корабля игрока визуал заменяется на месте.
+        /// Только вне анимации хода — визуалы строятся по состоянию мира на конец хода.</summary>
+        public bool SetRenderMode(WorldRenderMode mode)
+        {
+            if (GalaxyManager.Instance?.Phase == TurnPhase.Simulation) return false;
+            VisualFactory.Mode = mode;
+
+            var player = PlayerShip.Instance;
+            if (player != null && player.Visual != null && player.ShipData != null)
+                VisualFactory.ReplaceShip(player.Visual, player.ShipData, isPlayer: true);
+
+            var star = GalaxyManager.Instance?.CurrentStar;
+            if (star != null) RenderSystem(star);
+            return true;
+        }
+
         private GameObject SpawnShip(ShipData ship)
         {
             var obj = Instantiate(ShipPrefab, SystemContainer);
             obj.transform.localPosition = new Vector3(ship.Position.x, ship.Position.y, 0f);
-            var visual = obj.GetComponent<ShipVisualController>();
-            visual?.Setup(ship, ship.IsPlayer);
+            var visual = VisualFactory.AttachShip(obj, ship, ship.IsPlayer);
             _shipList.Add((ship, obj.transform, visual));
             _spawnedObjects.Add(obj);
-
-            var col = obj.AddComponent<CircleCollider2D>();
-            col.isTrigger = true;
-            col.radius = 0.35f;
-
-            var shipInfo = obj.AddComponent<ClickableInfo>();
-            shipInfo.Ship = ship;
-
             return obj;
         }
 
         private void SpawnAsteroids(StarData star)
         {
-            if (AsteroidPrefab == null || star.Asteroids == null) return;
+            if (star.Asteroids == null) return;
 
             foreach (var asteroid in star.Asteroids)
             {
@@ -235,28 +227,11 @@ namespace SRG.Core
 
         private void SpawnAsteroidVisual(AsteroidData asteroid)
         {
-            if (AsteroidPrefab == null) return;
-
-            var obj = Instantiate(AsteroidPrefab, SystemContainer);
-            obj.name = $"Asteroid_{asteroid.Uid}";
-            obj.transform.localPosition = new Vector3(asteroid.Position.x, asteroid.Position.y, 0f);
-
-            var ctrl = obj.GetComponent<AsteroidVisualController>();
-            if (ctrl != null)
-            {
-                ctrl.Setup(asteroid);
-                _asteroidControllers[asteroid.Uid] = ctrl;
-                MinimapController?.OnAsteroidSpawned(asteroid);
-
-                var asteroidInfo = obj.AddComponent<ClickableInfo>();
-                asteroidInfo.Asteroid = asteroid;
-            }
-            else
-            {
-                Debug.LogError("[SpawnAsteroidVisual] AsteroidPrefab missing AsteroidVisualController component!");
-            }
-
-            _spawnedObjects.Add(obj);
+            var ctrl = VisualFactory.CreateAsteroid(asteroid, SystemContainer, AsteroidPrefab);
+            if (ctrl == null) return;
+            _asteroidControllers[asteroid.Uid] = ctrl;
+            MinimapController?.OnAsteroidSpawned(asteroid);
+            _spawnedObjects.Add(ctrl.gameObject);
         }
 
         // Вызывается перед OnTurnCalculate — подготавливает визуальные контроллеры НПС к ходу.

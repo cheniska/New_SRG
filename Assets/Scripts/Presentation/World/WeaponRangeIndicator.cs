@@ -34,7 +34,7 @@ namespace SRG.Presentation.World
 
         private void Start()
         {
-            _dotSprite = SpriteUtility.CreateCircleSprite(16);
+            _dotSprite = ProceduralSprites.CreateCircle(16);
         }
 
         private void OnDestroy()

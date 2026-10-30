@@ -227,6 +227,6 @@ namespace SRG.Presentation.World
         }
 
         private static Sprite CreateCircleSprite(Color color, int res)
-            => SpriteUtility.CreateCircleSprite(res, color);
+            => ProceduralSprites.CreateCircle(res, color);
     }
 }

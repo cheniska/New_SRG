@@ -1,10 +1,11 @@
 # Visual Subsystem
 
 Модули: `Visual/*.cs` + `Core/SystemViewManager.cs` + `Core/GraphicsManager.cs` +
-`Ships/ShipVisualController.cs` + `Ships/ShipGraphicsResolver.cs`.
+`Presentation/World/ShipVisualController*.cs` (2D/3D). Путь к графике корпуса резолвит симуляция
+(`ShipFactory.ResolveHullSheetPath` по `GraphicsCatalog`, см. [architecture.md](architecture.md#графика-как-данные)).
 
 Полный список файлов: `BaseVisualController`, `PlanetVisualController`, `SatelliteVisualController`,
-`AsteroidVisualController`, `ShipVisualController` (формально в Ships/), `BackgroundVisualController`,
+`AsteroidVisualController` (+ `AsteroidVisual`, `AsteroidVisualController3D`), `PlanetVisualController3D`, `SatelliteVisualController3D`, `SatelliteOrbit`, `PlanetSphereLayer`, `ShipVisualController` (+ `ShipVisualController2D`/`3D`), `VisualFactory`, `ModelLibrary`, `BackgroundVisualController`,
 `HyperjumpPortalVisualController`, `DroppedItemVisualController`, `TowBeamVisualController`,
 `SystemMinimapController`, `MinimapGraphics`, `GalaxyMapGraphics`, `StarLabelRenderer`,
 `StarVisualController`, `WeaponVisualSystem`, `WeaponRangeIndicator`, `RadarRangeIndicator`,
@@ -69,18 +70,69 @@ protected SpriteRenderer EnsureRenderer(SpriteRenderer r, string slotName, int s
   вокруг родительской планеты, динамические depth-факторы (масштаб + sortingOrder через
   `SortingLayerRegistry.SatelliteUp/Down`).
 
-### `ShipVisualController` (Ships/ShipVisualController.cs)
+### `ShipVisualController` (abstract — Presentation/World/ShipVisualController.cs)
+
+Общая часть визуала корабля, не зависящая от способа отрисовки корпуса: позиция по кадрам хода,
+курс и плавный поворот, масштаб по корпусу (`ShipFactory.HullSizeMultiplier`), прозрачность
+посадки/взлёта/гиперперехода, обнаружение посадки и взлёта, выхлоп двигателей (спрайты), взрыв.
 
 ```csharp
-public void Setup(ShipData ship);
+public void Setup(ShipData ship, bool isPlayer);
 public void PrepareForTurn(TurnAnimationData anim, StarData star);
    // Считает геометрию посадки заранее: если конец анимации этого хода попадает в R_land
    // целевой планеты — выставляет ship.LandingPhase = Fading. См. landing.md.
-public void AnimateTurn(float progress, int currentSubTurn, TurnAnimationData anim);
+public Vector2 AnimateTurn(float progress, int currentSubTurn, TurnAnimationData anim);
 public void EndTurn();
-public void PlayExplosion();
-public void Setup(...);  // загрузка spritesheet, init аниматора
+public void PlayExplosion(string explosionPath = null);
+public void ReloadBodyGraphic();          // после смены корпуса / маскировки
+public virtual void SetAnimation(string clip);   // «Move» / «Idle»
+public virtual void Teardown();           // снять созданное (замена 2D ↔ 3D на лету)
 ```
+
+Корпус рисуют наследники (`BuildBody`, `RebuildBody`, `ApplyBodyAlpha`, `TickBody`, …):
+
+| Класс | Корпус |
+|---|---|
+| `ShipVisualController2D` | спрайт-лист `GetBodyGraphicPath()` с клипами `ShipData.Animations` (иначе весь лист циклом), цепочки клипов, заморозка кадра у предмета на буксире |
+| `ShipVisualController3D` | префаб `Resources/Models/…` (`ModelLibrary.ModelPathFor`: `Graphics/…` → `Models/…`), иначе процедурная заглушка-«дротик» в цвете расы. Размер в плане = кадр листа (`GraphicsCatalog.FrameWorldSize`) |
+
+**Выбор** — `VisualFactory.AttachShip` по `GameSettingsConfig.RenderMode` (`Sprite2D`/`Model3D`).
+
+### Режим 3D (`GameSettingsConfig.RenderMode = Model3D`)
+
+Камера остаётся ортографической и смотрит сверху; меняется только то, чем нарисованы объекты.
+Визуалы создаёт `VisualFactory` (2D — префабы сцены, 3D — компоненты в коде):
+
+| Объект | 2D | 3D |
+|---|---|---|
+| Корабль, контейнер | `ShipVisualController2D` (спрайт-лист) | `ShipVisualController3D` (модель или «дротик») |
+| Планета | `PlanetVisualController` (квад + маска + шейдер `Custom/PlanetRotation`) | `PlanetVisualController3D`: сферы поверхности и облаков (`PlanetSphereLayer`, шейдер `SRG/PlanetSphere3D`), кольца — спрайт |
+| Спутник | `SatelliteVisualController` | `SatelliteVisualController3D`; орбита общая — `SatelliteOrbit` |
+| Астероид | `AsteroidVisualController` (атлас кадров вращения) | `AsteroidVisualController3D`: гранёный камень (`ModelLibrary.RockMesh`, вариант формы от Uid), кувыркается вокруг своей оси |
+| Звезда, фон, эффекты, ракеты, порталы | спрайты | спрайты (светящиеся анимированные листы без постобработки свечения сферой не заменить) |
+
+Общий тип астероида — `AsteroidVisual` (позиция, взрыв); 2D-контроллер остаётся на префабе `PF_Asteroid`.
+
+**Порядок отрисовки.** Проект на URP 2D Renderer: меши сортируются со спрайтами по
+`sortingOrder`, как спрайты, поэтому реестр слоёв `SortingLayerRegistry` общий для обоих режимов.
+Модели с записью глубины (`ModelLit`: корабли, астероиды) целиком лежат за плоскостью z = 0
+(`ModelLibrary.PlaceBehindSystemPlane`) и не перекрывают спрайты, которые выше по порядку.
+Сферы планет глубину не пишут (выпуклые, хватает отсечения задних граней).
+
+**Освещение** не зависит от источников света сцены и одинаково в 2D Renderer и Forward:
+Ламберт от звезды системы (она в начале координат) с примесью света «от камеры» + ambient.
+У планет дневная сторона смотрит на звезду. Текстура планеты натягивается той же формулой,
+что в 2D (`Custom/PlanetRotation`), — вид совпадает, добавляется только свет.
+
+**На лету** — консоль `render 2d|3d` → `SystemViewManager.SetRenderMode` (только вне анимации
+хода): визуалы текущей системы пересоздаются, как при входе в неё; у корабля игрока визуал
+заменяется на месте (`VisualFactory.ReplaceShip`), владельцы ссылки (`PlayerShip`,
+`NpcController`, интерфейс `IShipVisualOwner`) получают новый визуал. В 3D прогрев не грузит
+листы корпусов и атласы астероидов (`VisualPreloader`).
+
+**Соглашение для моделей кораблей:** нос по +Y, верх к камере (−Z), в плане вписана в квадрат 1×1
+(масштаб до кадра листа и до корпуса ставит визуал). Материалы префаба — свои; `_Alpha`
+понимают только материалы на `SRG/ModelLit`, остальные при `alpha = 0` просто выключаются.
 
 ### `WeaponVisualSystem` (Visual/WeaponVisualSystem.cs)
 
@@ -124,17 +176,8 @@ public void PreloadSheets(IEnumerable<string> paths);
 // Специфичное
 public (Sprite[] frames, float animSpeed) GetStarVisuals(string color, int variant);
 public float GetStarScale(string typeName);
-public string[] EnumerateSheetPathsInFolder(string folderPath);
 public GalaxyConfig GetConfig();
 public void ClearCache();
-```
-
-### `ShipGraphicsResolver` (static)
-
-```csharp
-public static ShipGraphicsResolution Resolve(ShipData ship, EquipmentConfig equipConfig);
-   // Возвращает spritesheet path + размер + параметры анимации для текущего корпуса/типа
-public static void ClearCache();
 ```
 
 ### `CameraController` (singleton)
@@ -173,11 +216,10 @@ SystemViewManager
    ├─► MinimapController
    └─► TurnAnimationData (читает поля)
 
-ShipVisualController
-   ├─► ShipGraphicsResolver
-   ├─► GraphicsManager
-   ├─► PlanetGeometry (R_land/R_app для PrepareForTurn)
-   ├─► AnimatedSpriteRenderer
+ShipVisualController (2D / 3D)
+   ├─► GraphicsManager (листы, иконка миникарты, префабы моделей)
+   ├─► GraphicsCatalog (размер кадра для 3D)
+   ├─► LandingSiteRegistry (PrepareForTurn)
    └─► ExplosionPlayback (PlayExplosion)
 
 PlanetVisualController / SatelliteVisualController

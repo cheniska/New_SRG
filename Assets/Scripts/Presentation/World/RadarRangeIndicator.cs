@@ -74,9 +74,7 @@ namespace SRG.Presentation.World
             if (SystemMinimapController.IsMouseOverMinimap)
             { SetVisible(false); return; }
 
-            Vector2 mouseWorld = _cam.ScreenToWorldPoint(Input.mousePosition);
-            var hit = Physics2D.Raycast(mouseWorld, Vector2.zero);
-            bool overObject = hit.collider != null;
+            bool overObject = WorldPointer.PickAtScreen(_cam, Input.mousePosition) != null;
 
             if (!overObject)
             {
@@ -142,6 +140,6 @@ namespace SRG.Presentation.World
         }
 
         private static Sprite CreateCircleSprite()
-            => SpriteUtility.CreateCircleSprite(16);
+            => ProceduralSprites.CreateCircle(16);
     }
 }

@@ -1,22 +1,29 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using SRG.Config;
 using SRG.Core;
 using SRG.Galaxy;
 using SRG.Presentation.World;
-using SRG.Ships.Movement;
 using SRG.Ships;
+using SRG.Ships.Player;
 using SRG.Simulation;
 using SRG.Presentation.Common;
+using SRG.UI.HUD;
 
 namespace SRG.Controllers
 {
-    public partial class PlayerShip : MonoBehaviour, ISkillsCarrier, IPlayerAvatar
+    /// <summary>
+    /// Корабль игрока в сцене: ввод (клики, режимы наведения и связи), анимация хода и показ
+    /// маршрута. Сами команды — маршрут, следование, посадка, выстрел, захват — исполняет
+    /// <see cref="PlayerPilot"/> (без MonoBehaviour, тестируется headless); этот компонент
+    /// переводит в них клики и рисует то, что пилот сообщает через <see cref="IPlayerPilotView"/>.
+    /// </summary>
+    public partial class PlayerShip : MonoBehaviour, ISkillsCarrier, IPlayerAvatar, IPlayerPilotView, IShipVisualOwner
     {
         public static PlayerShip Instance { get; private set; }
         public ShipData ShipData { get; private set; }
+        /// <summary>Управление кораблём: маршрут, следование, посадка, выстрел, захват.</summary>
+        public PlayerPilot Pilot { get; private set; }
 
         // ── ISkillsCarrier ────────────────────────────────────────────────────────
         // Делегирует в ShipData.Skills. SkillsConfig читается из GalaxyManager.
@@ -28,7 +35,6 @@ namespace SRG.Controllers
             => ShipData?.Skills?.GetEffective(skill, SkillsCfg) ?? 0;
         public void IncPoints(int amount, ExpCategory category)
             => ShipData?.Skills?.IncPoints(amount, category, SkillsCfg);
-        public static event System.Action OnRouteAssigned;
         public bool IsMovingThisTurn { get; private set; }
         public bool IsWeaponModeActive => _weaponModeActive;
         Transform IPlayerAvatar.Transform => transform;
@@ -37,53 +43,16 @@ namespace SRG.Controllers
         [SerializeField] private GameSettingsConfig _settings;
         private Camera _cam;
         private ShipVisualController _visual;
+        /// <summary>Визуал корпуса (2D или 3D, см. VisualFactory).</summary>
+        public ShipVisualController Visual => _visual;
         private PathRenderer _pathRenderer;
         private bool _isTurnInProgress;
-        private readonly Queue<Vector2> _targets = new Queue<Vector2>();
-        // true при старте: маршрута ещё не было — иначе первый же ход без курса
-        // ложно завершится «RouteCompleted» и прервёт симуляцию.
-        private bool _routeCompleted = true;
-
-        // Отслеживание движущейся цели
-        private Func<Vector2> _trackedTargetFunc;
-        private Vector2 _lastTrackedPos;
-        private const float TrackUpdateThreshold = 0.01f;
 
         // Режим стрельбы
         private bool _weaponModeActive;
 
-        // Режимы следования за кораблём — циклически переключаются повторным кликом по той же цели.
-        // Режимы Board/Tow доступны только при наличии соответствующего оборудования; цикл их пропускает.
-        public enum FollowMode
-        {
-            PursueAtMaxRange    = 0, // лететь и держаться на дистанции самой дальней пушки, не стреляя
-            AttackWithLongRange = 1, // та же дистанция + стрельба только из самой дальней пушки
-            AttackWithAllGuns   = 2, // подойти на дистанцию самой ближней пушки и стрелять всеми
-            FollowClose         = 3, // следовать вплотную (без стрельбы)
-            Board               = 4, // подойти на радиус крюка и взять на абордаж
-            Tow                 = 5, // подойти на радиус буксира и взять на буксир
-            LandOnShip          = 6, // сесть на корабль-носитель (ShipTypeConfig.CanBeLandedOn)
-        }
-        private const int FollowModeCount = 7;
-        private string _followShipUid;
-        private FollowMode _followMode;
-        private const float FollowRangeFraction = 0.9f; // держимся чуть ближе требуемой дальности
-
-        /// <summary>Активен ли режим следования за кораблём (любой из 4-х). Используется
-        /// PlayerManager.CheckPauseConditions, чтобы менять правила выхода в planning:
-        /// в автобое пауза запрашивается только при тяжёлых событиях.</summary>
-        public bool IsFollowingShip => !string.IsNullOrEmpty(_followShipUid);
-        public string FollowShipUid => _followShipUid;
-        public FollowMode CurrentFollowMode => _followMode;
-        /// <summary>Снимок CurrentHull игрока на момент начала текущего хода (до боевой симуляции).
-        /// Используется для подсчёта урона за ход.</summary>
-        public int HullBeforeLastSimulation { get; private set; } = -1;
-
         // Режим связи (диалога с кораблём)
         private bool _dialogModeActive;
-
-        // Посадка / взлёт
-        private PlanetData _landingPlanet; // только для логики маршрута; визуальное состояние — в ShipVisualController
 
         public void Init(ShipData shipData, Camera cam, GameSettingsConfig settings = null)
         {
@@ -110,7 +79,7 @@ namespace SRG.Controllers
                 _pathRenderer = go.AddComponent<PathRenderer>();
             }
 
-            HullBeforeLastSimulation = ShipData.CurrentHull;
+            Pilot = new PlayerPilot(shipData, _settings, this);
             Debug.Log($"[PlayerShip] Init: {ShipData.Name} speed={ShipData.EngineSpeed}");
         }
 
@@ -132,27 +101,30 @@ namespace SRG.Controllers
 
         private void Update()
         {
-
             // Ход считается в фоне — мир меняется, не читаем и не трогаем его (см. GameWorld.IsCalculating).
-
             if (GameWorld.IsCalculating) return;
             if (ShipData == null || ShipData.CurrentHull <= 0) return;
             if (!_isTurnInProgress)
             {
                 HandleInput();
-                UpdateTrackedTarget();
-                UpdateFollowAutoFire();
+                Pilot.UpdateBetweenTurns();
             }
         }
 
-        /// <summary>Пересчитать визуализацию запланированного маршрута. Вызывается извне
-        /// (например, после активации форсажа через UI-слот), когда меняется параметр,
-        /// влияющий на скорость или радиус разворота.</summary>
-        public void RefreshPlannedRoute()
-        {
-            if (_pathRenderer == null) return;
-            if (_targets.Count == 0 && _landingPlanet == null) return;
-            RedrawPath();
-        }
+        /// <summary>Взлёт из посадочного UI (PlayerManager.OnLeft).</summary>
+        private void OnLeavePlanet() => Pilot?.Takeoff();
+
+        void IShipVisualOwner.OnShipVisualReplaced(ShipVisualController visual) => _visual = visual;
+
+        // ── IPlayerPilotView ──────────────────────────────────────────────────────
+
+        void IPlayerPilotView.DrawRoute(List<Vector2> chain, float dayStep, Vector2? endMarker)
+            => _pathRenderer.DrawPath(chain, dayStep, preSampled: true, endMarkerOverride: endMarker);
+        void IPlayerPilotView.ClearRoute() => _pathRenderer?.ClearPath();
+        void IPlayerPilotView.OnLanded(PlanetData planet) => _visual?.NotifyLanded(planet);
+        void IPlayerPilotView.OnDockedOnShip() => _visual?.NotifyDockedOnShip();
+        void IPlayerPilotView.OnTakeoff() => _visual?.BeginTakeoff();
+        void IPlayerPilotView.OnLandingCancelled() => _visual?.SetAlpha(1f);
+        void IPlayerPilotView.ShowMessage(string text) => HudMessageController.Show(text);
     }
 }

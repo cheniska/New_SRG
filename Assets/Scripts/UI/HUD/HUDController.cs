@@ -6,6 +6,7 @@ using SRG.Equipment;
 using SRG.Galaxy;
 using SRG.Presentation;
 using SRG.Controllers;
+using SRG.Ships.Player;
 using SRG.Ships.Services;
 using SRG.UI.Screens;
 using SRG.Simulation;
@@ -289,13 +290,14 @@ namespace SRG.UI.HUD
                 return;
             }
 
-            if (ps == null || !ps.IsFollowingShip)
+            var pilot = ps?.Pilot;
+            if (pilot == null || !pilot.IsFollowingShip)
             {
                 if (_followLabel.text.Length != 0) _followLabel.text = "";
                 return;
             }
-            string targetName = ps.GetFollowTargetName() ?? "цель";
-            _followLabel.text = $"Следование: {targetName} — {PlayerShip.GetFollowModeName(ps.CurrentFollowMode)}";
+            string targetName = pilot.GetFollowTargetName() ?? "цель";
+            _followLabel.text = $"Следование: {targetName} — {PlayerPilot.GetFollowModeName(pilot.CurrentFollowMode)}";
         }
 
         private void UpdateWeaponButton()

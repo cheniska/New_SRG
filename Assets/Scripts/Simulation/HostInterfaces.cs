@@ -54,16 +54,6 @@ namespace SRG.Simulation
     }
 
     /// <summary>
-    /// Запросы к графике, которые влияют на данные (размер спрайта → радиус и т.п.).
-    /// Реализуется <c>SRG.Presentation.Common.GraphicsManager</c>.
-    /// </summary>
-    public interface IGraphicsQuery
-    {
-        Sprite[] GetSpriteSheet(string path);
-        string[] EnumerateSheetPathsInFolder(string folderPath);
-    }
-
-    /// <summary>
     /// Диалоговые окна, которые может инициировать симуляция (NPC вызывает игрока на связь).
     /// Реализуется <c>SRG.UI.Screens.DialogUIController</c>.
     /// </summary>

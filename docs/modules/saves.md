@@ -77,6 +77,7 @@ JSON (Newtonsoft) — объект `SaveData`:
 | Счётчик Id новостей | вычисляется по максимальному Id (`GalaxyNewsService.SyncNextId`) |
 | Кэши ИИ/поиска путей | сбрасываются при загрузке |
 | Визуальные данные (`RenderPath`, кадры анимации, `LandingPhase`) | не сохраняются |
+| Флаг `ItemInstance.IsEquipment` | в JSON; при загрузке сверяется с конфигом (`ItemFlagsReconciler`) — исправляет предметы из сейвов, где рукописное оружие/артефакты были созданы с `false` |
 
 `Vector2` пишется компактно `{x, y}` (`Vector2JsonConverter`); старые сейвы с полями
 `normalized/magnitude` читаются.

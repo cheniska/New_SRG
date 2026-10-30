@@ -65,5 +65,18 @@ namespace SRG.UI.Screens
             Log($"Станция {station.Name} [{station.ShipTypeId}] в '{star.Name}' " +
                 $"(pos={station.Position.x:F1},{station.Position.y:F1}) uid={SpriteUtility.ShortId(station.Uid)}");
         }
+
+        void RenderModeCmd()
+        {
+            string arg = _lastArg?.Trim().ToLowerInvariant();
+            WorldRenderMode mode;
+            if (arg == "2d") mode = WorldRenderMode.Sprite2D;
+            else if (arg == "3d") mode = WorldRenderMode.Model3D;
+            else { Log($"render 2d|3d — сейчас {SRG.Presentation.World.VisualFactory.Mode}."); return; }
+
+            if (SystemViewManager.Instance == null) { Log("Нет визуала системы."); return; }
+            if (!SystemViewManager.Instance.SetRenderMode(mode)) { Log("Во время анимации хода нельзя — дождитесь планирования."); return; }
+            Log($"Отрисовка системы: {mode}.");
+        }
     }
 }

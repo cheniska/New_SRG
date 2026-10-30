@@ -16,11 +16,11 @@ namespace SRG.Controllers
     /// визуал ещё не назначен или удалён). UpdateVisual безопасен при отсутствии _visual —
     /// ИИ-симуляция и Brain.Tick не зависят от рендера.
     /// </summary>
-    public class NpcController : MonoBehaviour
+    public class NpcController : MonoBehaviour, IShipVisualOwner
     {
         public ShipData ShipData { get; private set; }
 
-        // Делегируем в Brain — UI читает это поле через ClickableInfo
+        // Делегируем в Brain — UI читает это поле через выбранный ShipData
         public string CurrentOrder => ShipData?.Brain?.CurrentOrder ?? "—";
 
         private ShipVisualController _visual;
@@ -49,6 +49,8 @@ namespace SRG.Controllers
             TryGetComponent(out _visual);
             ship.Brain ??= new NpcBrain(ship, star);
         }
+
+        void IShipVisualOwner.OnShipVisualReplaced(ShipVisualController visual) => _visual = visual;
 
         private void OnEnable()  => GameWorld.OnTurnCalculate += OnTurnDone;
         private void OnDisable() => GameWorld.OnTurnCalculate -= OnTurnDone;

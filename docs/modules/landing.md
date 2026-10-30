@@ -1,6 +1,6 @@
 # Посадка
 
-Код: `Utils/PlanetGeometry.cs`, `NpcAI/Orders/OrderLand.cs`, `Ships/Player/PlayerShip.Route.cs`,
+Код: `Utils/PlanetGeometry.cs`, `NpcAI/Orders/OrderLand.cs`, `Ships/Player/PlayerPilot.cs`,
 `Presentation/World/ShipVisualController.cs`.
 
 ## Геометрия
@@ -26,7 +26,7 @@
 
 1. **Подлёт.** `PrepareForTurn` смотрит конец траектории хода: если он внутри `R_land` цели,
    ставится `LandingPhase = Fading`.
-2. **Финализация.** На следующем шаге логики (`OrderLand` / `PlayerShip.TryFinalizeLanding`)
+2. **Финализация.** На следующем шаге логики (`OrderLand` / `PlayerPilot.TryFinalizeLanding`)
    корабль считается севшим. Вне системы игрока проверка идёт напрямую по дистанции.
 
 ## Визуал

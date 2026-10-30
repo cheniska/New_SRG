@@ -82,7 +82,7 @@ namespace SRG.Presentation.Effects
             if (!sheet.IsValid)
             {
                 Debug.LogWarning($"[ExplosionPlayback] No explosion sprites at '{path}' — using procedural fallback.");
-                var dot = SpriteUtility.CreateCircleSprite(32, Color.white, FilterMode.Point);
+                var dot = ProceduralSprites.CreateCircle(32, Color.white, FilterMode.Point);
                 sheet = new SheetHandle(new[] { dot }, 0.4f);
             }
 

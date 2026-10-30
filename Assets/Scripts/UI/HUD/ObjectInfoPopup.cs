@@ -10,6 +10,7 @@ using SRG.NpcAI;
 using SRG.NpcAI.Actions;
 using SRG.Presentation.Map;
 using SRG.Ships;
+using SRG.Ships.Player;
 using SRG.Ships.Movement;
 using SRG.Controllers;
 using SRG.UI.Common;
@@ -17,6 +18,7 @@ using SRG.Utils;
 using SRG.UI.Screens;
 using SRG.Utils;
 using SRG.Simulation;
+using SRG.Presentation.Common;
 using SRG.Presentation.World;
 
 namespace SRG.UI.HUD
@@ -29,8 +31,8 @@ namespace SRG.UI.HUD
         public static ObjectInfoPopup Instance { get; private set; }
 
         private Camera _cam;
-        private ClickableInfo _hoveredInfo;   // объект под курсором в данный момент
-        private ClickableInfo _pinnedInfo;    // объект, для которого открыто окно
+        private WorldPick _hoveredInfo;   // объект под курсором в данный момент
+        private WorldPick _pinnedInfo;    // объект, для которого открыто окно
         private float _hoverTimer;
         private bool _showPopup;
         private Rect _popupRect;
@@ -100,16 +102,11 @@ namespace SRG.UI.HUD
             // Не убирать окно если курсор находится над ним
             if (_showPopup && IsMouseOverPopup()) return;
 
-            // Проверка объекта под курсором через OverlapPoint (надёжнее Raycast с нулевым направлением)
-            var worldPos = _cam.ScreenToWorldPoint(Input.mousePosition);
-            var clickPos = new Vector2(worldPos.x, worldPos.y);
-            var col = Physics2D.OverlapPoint(clickPos);
+            // Объект под курсором — по данным мира (WorldPicker), а не по коллайдерам визуала.
+            // Результат выбора создаётся заново каждый кадр: сравниваем выбранные объекты.
+            var newHover = WorldPointer.PickAtScreen(_cam, Input.mousePosition);
 
-            ClickableInfo newHover = null;
-            if (col != null)
-                newHover = col.GetComponentInParent<ClickableInfo>();
-
-            if (newHover != _hoveredInfo)
+            if (!SameTarget(newHover, _hoveredInfo))
             {
                 _hoveredInfo = newHover;
                 _hoverTimer = 0f;
@@ -119,7 +116,7 @@ namespace SRG.UI.HUD
                     // Мышь ушла с объекта — закрываем окно
                     Close();
                 }
-                else if (newHover != _pinnedInfo)
+                else if (!SameTarget(newHover, _pinnedInfo))
                 {
                     // Навели на новый объект — сбросить окно, начать новый отсчёт
                     Close();
@@ -152,13 +149,9 @@ namespace SRG.UI.HUD
         private void HandleRightClick()
         {
             if (_cam == null) return;
-            var worldPos = _cam.ScreenToWorldPoint(Input.mousePosition);
-            var col = Physics2D.OverlapPoint(new Vector2(worldPos.x, worldPos.y));
+            var info = WorldPointer.PickAtScreen(_cam, Input.mousePosition);
 
             _showContextMenu = false;
-            if (col == null) return;
-
-            var info = col.GetComponentInParent<ClickableInfo>();
             if (info?.Ship == null || info.Ship.IsPlayer) return;
 
             _contextMenuShip = info.Ship;
@@ -177,7 +170,10 @@ namespace SRG.UI.HUD
             Close();
         }
 
-        private void OpenFor(ClickableInfo info, Vector3 screenPos)
+        private static bool SameTarget(WorldPick a, WorldPick b)
+            => ReferenceEquals(a?.Target, b?.Target);
+
+        private void OpenFor(WorldPick info, Vector3 screenPos)
         {
             _pinnedInfo = info;
             _showPopup = true;
@@ -290,17 +286,17 @@ namespace SRG.UI.HUD
         /// (тип цели с <c>CanBeLandedOn</c>, не враждебен, не item и т.д.).</summary>
         private void DrawLandOnShipButton(ShipData target)
         {
-            var player = PlayerShip.Instance;
-            if (player == null || player.ShipData == null || target == null) return;
-            if (!player.CanUseFollowMode(target, PlayerShip.FollowMode.LandOnShip)) return;
+            var player = PlayerShip.Instance?.Pilot;
+            if (player == null || target == null) return;
+            if (!player.CanUseFollowMode(target, PlayerFollowMode.LandOnShip)) return;
 
             bool isActive = player.FollowShipUid == target.Uid
-                         && player.CurrentFollowMode == PlayerShip.FollowMode.LandOnShip;
+                         && player.CurrentFollowMode == PlayerFollowMode.LandOnShip;
             string prefix = isActive ? "▶ " : "  ";
-            string label = PlayerShip.GetFollowModeName(PlayerShip.FollowMode.LandOnShip);
+            string label = PlayerPilot.GetFollowModeName(PlayerFollowMode.LandOnShip);
             if (GUILayout.Button($"{prefix}{label}"))
             {
-                player.SetFollow(target, PlayerShip.FollowMode.LandOnShip);
+                player.SetFollow(target, PlayerFollowMode.LandOnShip);
                 _showContextMenu = false;
             }
         }
@@ -324,9 +320,9 @@ namespace SRG.UI.HUD
         /// Активный режим помечен «▶».</summary>
         private void DrawPursuitButtons(ShipData target)
         {
-            var player = PlayerShip.Instance;
-            if (player == null || player.ShipData == null || target == null) return;
-            if (target.IsItem || target == player.ShipData) return;
+            var player = PlayerShip.Instance?.Pilot;
+            if (player == null || target == null) return;
+            if (target.IsItem || target == player.Ship) return;
 
             for (int i = 0; i < PursuitModeOrder.Length; i++)
             {
@@ -335,7 +331,7 @@ namespace SRG.UI.HUD
 
                 bool isActive = player.FollowShipUid == target.Uid && player.CurrentFollowMode == mode;
                 string prefix = isActive ? "▶ " : "  ";
-                string label = PlayerShip.GetFollowModeName(mode);
+                string label = PlayerPilot.GetFollowModeName(mode);
 
                 if (GUILayout.Button($"{prefix}{label}"))
                 {
@@ -346,14 +342,14 @@ namespace SRG.UI.HUD
         }
 
         // Порядок кнопок преследования (LandOnShip — отдельно, выше как пункт «посадка»).
-        private static readonly PlayerShip.FollowMode[] PursuitModeOrder =
+        private static readonly PlayerFollowMode[] PursuitModeOrder =
         {
-            PlayerShip.FollowMode.PursueAtMaxRange,
-            PlayerShip.FollowMode.AttackWithLongRange,
-            PlayerShip.FollowMode.AttackWithAllGuns,
-            PlayerShip.FollowMode.FollowClose,
-            PlayerShip.FollowMode.Board,
-            PlayerShip.FollowMode.Tow,
+            PlayerFollowMode.PursueAtMaxRange,
+            PlayerFollowMode.AttackWithLongRange,
+            PlayerFollowMode.AttackWithAllGuns,
+            PlayerFollowMode.FollowClose,
+            PlayerFollowMode.Board,
+            PlayerFollowMode.Tow,
         };
 
         /// <summary>
@@ -479,7 +475,7 @@ namespace SRG.UI.HUD
                 {
                     if (GUILayout.Button("  В очередь захвата"))
                     {
-                        PlayerShip.Instance?.EnqueuePullTarget(target.Uid);
+                        PlayerShip.Instance?.Pilot?.EnqueuePullTarget(target.Uid);
                         _showContextMenu = false;
                     }
                 }

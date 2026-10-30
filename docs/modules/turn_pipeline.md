@@ -110,7 +110,7 @@ GalaxyManager
 `MinimapController`, всех Visual-контроллеров, `WeaponVisualSystem`, `ExplosionPlayback`.
 
 `PlayerManager` зависит от: `GalaxyManager.GeneratedGalaxy`, `OwnerRaceRelationsManager`,
-`PlayerShip.Instance` (для CheckPauseConditions).
+`PlayerShip.Instance.Pilot` (автобой и урон за ход для CheckPauseConditions).
 
 ---
 

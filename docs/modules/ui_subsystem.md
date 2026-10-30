@@ -5,7 +5,10 @@
 Полный список UI: `GalaxyMapController`, `ShipFormView`, `PlanetUIController`, `ObjectInfoPopup`,
 `MenuController`, `GameConsoleController`, `HUDController`, `PilotPanelController`,
 `DeathScreenController`, `ShipScanUIController`, `InventoryUIController`, `LoadingScreenController`,
-`HudMessageController`, `InventoryItemIcon`, `ClickableInfo`.
+`HudMessageController`, `InventoryItemIcon`.
+
+Объект под курсором (наведение, клики, контекстное меню) — `WorldPointer.PickAtScreen`, выбор по
+данным мира без коллайдеров (см. [architecture.md](architecture.md#выбор-объектов-курсором)).
 
 Dialog: `DialogUIController`, `DialogService`, `DialogActions`, `DialogConfigModels`, `DialogCursor`.
 

@@ -163,14 +163,6 @@ namespace SRG.Presentation.World
                         ctrl = go.AddComponent<WormholeVisualController>();
                         ctrl.Setup(wh, _settings.Wormhole_WorldSize);
                         _controllers[wh.Uid] = ctrl;
-
-                        var col = go.AddComponent<CircleCollider2D>();
-                        col.isTrigger = true;
-                        col.radius = 0.5f;
-
-                        var info = go.AddComponent<ClickableInfo>();
-                        info.Wormhole = wh;
-                        info.WormholeStar = star;
                         freshCreated = true;
                     }
 

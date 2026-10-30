@@ -41,6 +41,7 @@ namespace SRG.Core
         [SerializeField] private TextAsset itemsConfigJson;
         [SerializeField] private TextAsset dialogsConfigJson;
         [SerializeField] private TextAsset partnersConfigJson;
+        [SerializeField] private TextAsset graphicsCatalogJson;
 
         [Header("Settings")]
         public int GalaxySeed = 0;
@@ -487,7 +488,6 @@ namespace SRG.Core
 
             GalaxySeed = seed;
             PlayerManager.Instance?.ClearPlayerShip();
-            ShipGraphicsResolver.ClearCache();
 
             // Генерируем ВСЕ галактики, определённые в GalaxyConfig.Galaxies.
             if (!_session.GenerateAll(seed)) return;
@@ -587,7 +587,7 @@ namespace SRG.Core
             bool ok = HyperjumpController.RequestJump(playerShip, target, GeneratedGalaxy);
             if (ok)
             {
-                PlayerShip.Instance?.ShowHyperjumpPath();
+                PlayerShip.Instance?.Pilot?.ShowHyperjumpPath();
 
                 // ── ТЕСТ-РЕЖИМ ────────────────────────────────────────────────────
                 // Все остальные корабли стартовой системы тоже летят в ту же цель —
@@ -733,6 +733,7 @@ namespace SRG.Core
                 Items    = itemsConfigJson    ? itemsConfigJson.text    : null,
                 Dialogs  = dialogsConfigJson  ? dialogsConfigJson.text  : null,
                 Partners = partnersConfigJson ? partnersConfigJson.text : null,
+                GraphicsCatalog = graphicsCatalogJson ? graphicsCatalogJson.text : null,
             }, settings);
             if (_context == null)
             {

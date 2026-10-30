@@ -71,12 +71,14 @@ namespace SRG.UI.Screens
             Reg("give",       "give <id|Cat:Id> [amount] [inv|slot|<slotKey>] — выдать игроку любой предмет " +
                               "(Equipment/Good/Mineral/MicroModule). Без префикса — автопоиск. amount только для стеков.", GiveItemCmd);
 
+            Reg("render",     "render 2d|3d — система спрайтами или в 3D (корабли, планеты, спутники, астероиды; на лету, без правки настроек)",
+                RenderModeCmd);
             Reg("grabradius", "В очередь захвата все контейнеры в радиусе CargoGrabber",
-                () => { var n = PlayerShip.Instance?.EnqueueAllItemsInRadius() ?? 0; Log($"{n} цел(ей)."); });
+                () => { var n = PlayerShip.Instance?.Pilot?.EnqueueAllItemsInRadius() ?? 0; Log($"{n} цел(ей)."); });
             Reg("grabsystem", "В очередь захвата все контейнеры в системе (с автоостановкой)",
-                () => { var n = PlayerShip.Instance?.EnqueueAllItemsInSystem() ?? 0; Log($"{n} цел(ей)."); });
+                () => { var n = PlayerShip.Instance?.Pilot?.EnqueueAllItemsInSystem() ?? 0; Log($"{n} цел(ей)."); });
             Reg("grabclear",  "Очистить очередь захвата",
-                () => { PlayerShip.Instance?.ClearPullQueue(); });
+                () => { PlayerShip.Instance?.Pilot?.ClearPullQueue(); });
 
             // ── Партнёрство и дроны ─────────────────────────────────────────────
             Reg("spawndrone", "spawndrone [race] — дрон рядом с игроком, партнёром (race по умолчанию Race1)",  SpawnDroneCmd);

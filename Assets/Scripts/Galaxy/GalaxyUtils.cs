@@ -625,48 +625,31 @@ namespace SRG.Galaxy
 
     public static class GenerationHelpers
     {
-        private static readonly Dictionary<string, string[]> _resourceNameCache = new();
-
-        private static string[] GetResourceNames(string path)
+        // Список картинок папки — из GraphicsCatalog (только сама папка, без вложенных),
+        // поэтому выбор текстуры и расход GameRng одинаковы в игре и headless.
+        private static string PickImage(string folder)
         {
-            if (_resourceNameCache.TryGetValue(path, out var cached)) return cached;
-            var textures = Resources.LoadAll<Texture2D>(path);
-            var names = System.Array.ConvertAll(textures, t => t.name);
-            _resourceNameCache[path] = names;
-            return names;
+            var paths = GraphicsCatalog.ImagesInFolder(folder);
+            return paths.Length > 0 ? paths[GameRng.Range(0, paths.Length)] : null;
         }
-
 
         public static string GetRandomPlanetGraphic(string size)
-        {
-            string p1 = $"{GalaxyConstants.PATH_PLANET_TEXTURES_BASE}/{size}";
-            var names1 = GetResourceNames(p1);
-            if (names1.Length > 0) return $"{p1}/{names1[GameRng.Range(0, names1.Length)]}";
-            var names2 = GetResourceNames(GalaxyConstants.PATH_COMMON_TEXTURES);
-            if (names2.Length > 0) return $"{GalaxyConstants.PATH_COMMON_TEXTURES}/{names2[GameRng.Range(0, names2.Length)]}";
-            return GalaxyConstants.PATH_PLANET_FALLBACK;
-        }
+            => PickImage($"{GalaxyConstants.PATH_PLANET_TEXTURES_BASE}/{size}")
+               ?? PickImage(GalaxyConstants.PATH_COMMON_TEXTURES)
+               ?? GalaxyConstants.PATH_PLANET_FALLBACK;
 
         public static string GetRandomSatelliteGraphic()
-        {
-            var names1 = GetResourceNames(GalaxyConstants.PATH_SAT_TEXTURES);
-            if (names1.Length > 0) return $"{GalaxyConstants.PATH_SAT_TEXTURES}/{names1[GameRng.Range(0, names1.Length)]}";
-            var names2 = GetResourceNames(GalaxyConstants.PATH_COMMON_TEXTURES);
-            if (names2.Length > 0) return $"{GalaxyConstants.PATH_COMMON_TEXTURES}/{names2[GameRng.Range(0, names2.Length)]}";
-            return GalaxyConstants.PATH_SATELLITE_FALLBACK;
-        }
+            => PickImage(GalaxyConstants.PATH_SAT_TEXTURES)
+               ?? PickImage(GalaxyConstants.PATH_COMMON_TEXTURES)
+               ?? GalaxyConstants.PATH_SATELLITE_FALLBACK;
 
-        public static string GetRandomOrbitalPath()
-        {
-            var names = GetResourceNames(GalaxyConstants.PATH_ORBITAL);
-            return names.Length > 0 ? $"{GalaxyConstants.PATH_ORBITAL}/{names[GameRng.Range(0, names.Length)]}" : null;
-        }
+        public static string GetRandomOrbitalPath() => PickImage(GalaxyConstants.PATH_ORBITAL);
 
         public static string BuildStarMapIcon(string color, int variant)
         {
             string basePath = $"{GalaxyConstants.PATH_STAR_MINIMAP_ICONS}/{color}";
             string variantPath = $"{basePath}/Var{variant}_minimap";
-            return Resources.Load(variantPath) != null ? variantPath : $"{basePath}/minimap";
+            return GraphicsCatalog.ContainsImage(variantPath) ? variantPath : $"{basePath}/minimap";
         }
 
         public static void ApplyWeightedStarColor(StarData star, GalaxyConfig config)

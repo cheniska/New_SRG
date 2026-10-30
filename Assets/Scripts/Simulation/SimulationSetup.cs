@@ -20,6 +20,8 @@ namespace SRG.Simulation
         public string Items;
         public string Dialogs;
         public string Partners;
+        /// <summary>Каталог графики (<see cref="GraphicsCatalog"/>): размеры кадров, варианты листов и картинок.</summary>
+        public string GraphicsCatalog;
     }
 
     /// <summary>
@@ -82,6 +84,25 @@ namespace SRG.Simulation
             else
             {
                 Debug.LogWarning("[SimulationSetup] PartnersConfig not assigned — партнёрство будет использовать дефолты.");
+            }
+
+            // Размеры кораблей и варианты графики — из каталога, а не из ассетов (до генерации).
+            if (src.GraphicsCatalog != null)
+            {
+                try
+                {
+                    GraphicsCatalog.Load(src.GraphicsCatalog);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[SimulationSetup] Failed to parse GraphicsCatalog: {e.Message}");
+                    GraphicsCatalog.Load(null);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[SimulationSetup] GraphicsCatalog не назначен — размеры всех кораблей = 1, у астероидов и планет нет вариантов графики.");
+                GraphicsCatalog.Load(null);
             }
 
             var context = new GalaxyGenerationContext(cfg, txt, pre, itemsCfg);

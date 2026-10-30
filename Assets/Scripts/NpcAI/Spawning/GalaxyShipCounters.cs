@@ -251,14 +251,17 @@ namespace SRG.NpcAI.Spawning
             float crimeSum = 0f;
 
             foreach (var sector in galaxy.Sectors)
+                if (sector != null)
+                    foreach (var star in sector.Stars)
+                        if (star?.Uid != null) _sectorByStar[star.Uid] = sector.Uid;
+
+            foreach (var sector in galaxy.Sectors)
             {
                 if (sector == null) continue;
-                string sectorUid = sector.Uid;
 
                 foreach (var star in sector.Stars)
                 {
                     if (star == null) continue;
-                    if (star.Uid != null) _sectorByStar[star.Uid] = sectorUid;
 
                     // Системные счётчики
                     CountSystem(star);
@@ -272,16 +275,20 @@ namespace SRG.NpcAI.Spawning
                         string type = ship.ShipTypeId ?? "Unknown";
                         string side = ship.Owner ?? "None";
                         string race = ship.Race ?? "None";
+                        // Звезда корабля — CurrentStarUid, как у инкрементальных хуков. Список
+                        // star.Ships догоняет его только в MigrateShipsBetweenStars в начале следующего
+                        // дня: после CompleteJump корабль ещё лежит в списке старой звезды.
+                        string starUid = !string.IsNullOrEmpty(ship.CurrentStarUid) ? ship.CurrentStarUid : star.Uid;
 
                         Inc(ShipsByType, type, +1);
                         Inc(ShipsBySide, side, +1);
                         Inc(ShipsByRace, race, +1);
-                        Inc(ShipsByStarAndType, (star.Uid, type), +1);
-                        Inc(ShipsByStarAndSide, (star.Uid, side), +1);
-                        AddToStarOwnerList(ship, star.Uid, side);
+                        Inc(ShipsByStarAndType, (starUid, type), +1);
+                        Inc(ShipsByStarAndSide, (starUid, side), +1);
+                        AddToStarOwnerList(ship, starUid, side);
                         if (!string.IsNullOrEmpty(ship.HomePlanetUid))
                             Inc(ShipsByPlanetAndType, (ship.HomePlanetUid, type), +1);
-                        Inc(ShipsBySectorAndType, (sectorUid, type), +1);
+                        IncSector(starUid, type, +1);
 
                         if (ship.Personality != null)
                         {
