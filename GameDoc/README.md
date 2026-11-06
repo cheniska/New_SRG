@@ -32,6 +32,7 @@
 
 - [reference_gipersfera.md](reference_gipersfera.md)
 - [reference_history_extended.md](reference_history_extended.md)
+- [Эпоха контактов и становления Содружества, 2500–2800](reference_period_2500_2800.md)
 - [reference_igrovye_uslovnosti.md](reference_igrovye_uslovnosti.md)
 - [reference_instituty_sodruzhestva.md](reference_instituty_sodruzhestva.md)
 - [reference_spravochnik_sistem.md](reference_spravochnik_sistem.md)
@@ -69,7 +70,7 @@
 
 ## Формат для людей и программ
 
-Эталон нового формата — [Дейми](race_deymi.md). Правила — [единый формат](FORMAT.md), машинные схемы — [race-1](schemas/race-1.json) и [reference-1](schemas/reference-1.json), автоматически собираемый каталог — [catalog.json](catalog.json). Все 19 актуальных досье рас используют Markdown и схему `race-1`. Все 8 общих справочников используют схему `reference-1`. Досье персонажей, отдельная планетология и игровое приложение пока сохраняют текстовый формат; это явно отмечено в каталоге. Старые пути ко всем перенесённым досье и справочникам сохранены как aliases в каталоге, без вторых канонических копий.
+Эталон нового формата — [Дейми](race_deymi.md). Правила — [единый формат](FORMAT.md), машинные схемы — [race-1](schemas/race-1.json) и [reference-1](schemas/reference-1.json), автоматически собираемый каталог — [catalog.json](catalog.json). Все 19 актуальных досье рас используют Markdown и схему `race-1`. Все 9 общих справочников используют схему `reference-1`. Досье персонажей, отдельная планетология и игровое приложение пока сохраняют текстовый формат; это явно отмечено в каталоге. Старые пути ко всем перенесённым досье и справочникам сохранены как aliases в каталоге, без вторых канонических копий.
 
 ## Правила сопровождения
 
