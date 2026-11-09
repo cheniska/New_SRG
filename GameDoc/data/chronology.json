@@ -1,7 +1,84 @@
 {
   "schema": "chronology-1",
-  "scope": "Эпоха контактов 2500–2800; необходимые предшествующие вехи, ранние гиперприводы и первые колонии людей, грондаров и синаптов включены отдельно. Это не полный реестр всех эпох.",
+  "scope": "Эпоха контактов 2500–2800 и необходимые предшествующие вехи: ранние гиперприводы, первые колонии шести старших рас и развитие вравши. Это не полный реестр всех эпох.",
   "events": [
+    {
+      "id": "tarnai.orbit",
+      "date": "1980",
+      "title": "Первые орбитальные полёты тарнаев",
+      "source": "race_propovedniki.md#history.precontact-development",
+      "precision": "approximate"
+    },
+    {
+      "id": "etherians.space-return",
+      "date": "2000",
+      "title": "Возвращение современных этериан в космос",
+      "source": "race_etheriane.md#history.early.item-6",
+      "precision": "approximate"
+    },
+    {
+      "id": "etherians.sena",
+      "date": "2060",
+      "title": "Основание Сэна",
+      "source": "race_etheriane.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.mobile-hyperdrive",
+      "date": "2080",
+      "title": "Создание собственного тарнайского мобильного гиперпривода",
+      "source": "race_propovedniki.md#history.precontact-development",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.first-step",
+      "date": "2094",
+      "title": "Основание Первая Ступень",
+      "source": "race_propovedniki.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "etherians.miori",
+      "date": "2105",
+      "title": "Основание Миори",
+      "source": "race_etheriane.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.plain-hearth",
+      "date": "2132",
+      "title": "Основание Равнинный Очаг",
+      "source": "race_propovedniki.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "etherians.renka",
+      "date": "2150",
+      "title": "Основание Рэнка",
+      "source": "race_etheriane.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.mera",
+      "date": "2175",
+      "title": "Основание Мера",
+      "source": "race_propovedniki.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "etherians.sayo",
+      "date": "2190",
+      "title": "Основание Саё",
+      "source": "race_etheriane.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.quiet-haven",
+      "date": "2226",
+      "title": "Основание Тихая Гавань",
+      "source": "race_propovedniki.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
     {
       "id": "synapts.mobile-hyperdrive",
       "date": "2250",
@@ -17,10 +94,24 @@
       "precision": "exact"
     },
     {
+      "id": "etherians.tose",
+      "date": "2265",
+      "title": "Основание Тосэ",
+      "source": "race_etheriane.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
       "id": "synapts.mtsvane",
       "date": "2281",
       "title": "Основание Мцване",
       "source": "race_sinapty.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.distant-threshold",
+      "date": "2284",
+      "title": "Основание Дальний Порог",
+      "source": "race_propovedniki.md#homeworld.settlements.first-five",
       "precision": "exact"
     },
     {
@@ -52,6 +143,13 @@
       "precision": "exact"
     },
     {
+      "id": "xenopods.nakhil",
+      "date": "2337",
+      "title": "Основание Нахиль",
+      "source": "race_ksenopody.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
       "id": "synapts.tsereti",
       "date": "2342",
       "title": "Основание Церети",
@@ -59,10 +157,24 @@
       "precision": "exact"
     },
     {
+      "id": "xenopods.mizan",
+      "date": "2346",
+      "title": "Основание Мизан",
+      "source": "race_ksenopody.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
       "id": "humans.new-terra",
       "date": "2353",
       "title": "Основание Новой Терры",
       "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "xenopods.sahil",
+      "date": "2362",
+      "title": "Основание Сахиль",
+      "source": "race_ksenopody.md#homeworld.settlements.first-five",
       "precision": "exact"
     },
     {
@@ -77,6 +189,13 @@
       "date": "2376",
       "title": "Основание Саквели",
       "source": "race_sinapty.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "xenopods.rahba",
+      "date": "2379",
+      "title": "Основание Рахба",
+      "source": "race_ksenopody.md#homeworld.settlements.first-five",
       "precision": "exact"
     },
     {
@@ -99,6 +218,13 @@
       "title": "Основание Палимпсеста",
       "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
       "precision": "exact"
+    },
+    {
+      "id": "vravshi.orbit",
+      "date": "2440",
+      "title": "Самостоятельные первые орбитальные запуски вравши",
+      "source": "race_vravshi.md#history.chronology",
+      "precision": "approximate"
     },
     {
       "id": "vravshi.contact",
@@ -358,6 +484,13 @@
       "title": "Мирный контакт людей с хамари",
       "source": "reference_period_2500_2800.md#contacts.hamari",
       "precision": "approximate"
+    },
+    {
+      "id": "vravshi.reactors-and-probes",
+      "date": "2600–2750",
+      "title": "Развитие реакторов и беспилотной программы спутника Тэтис",
+      "source": "race_vravshi.md#history.chronology",
+      "precision": "approximate_range"
     },
     {
       "id": "hamari.extended-visits",

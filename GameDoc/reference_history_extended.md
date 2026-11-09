@@ -221,6 +221,17 @@ status: "canonical"
 
 Грондары выходят в космос. Синапты осваивают свою звёздную систему.
 
+<a id="civilizations.precontact-expansion"></a>
+<!-- section-status: filled -->
+
+### Доконтактное освоение этериан, тарнаев и ксеноподов
+
+Современные этериане вернулись в космос около 2000<!-- date:etherians.space-return --> года, восстанавливая производственные цепочки по архивам. Первые пять колоний — Сэна (2060<!-- date:etherians.sena -->), Миори (2105<!-- date:etherians.miori -->), Рэнка (2150<!-- date:etherians.renka -->), Саё (2190<!-- date:etherians.sayo -->), Тосэ (2265<!-- date:etherians.tose -->). Обследования Миори, археология Ауреума и ограниченные наблюдения сектора определяли условия дальнейшей деятельности; [подробности](race_etheriane.md#history.return-decisions).
+
+Тарнаи начали орбитальные полёты около 1980<!-- date:tarnai.orbit --> года и создали воспроизводимый мобильный привод в 2080<!-- date:tarnai.mobile-hyperdrive --> году. Первые пять поселений — Первая Ступень (2094<!-- date:tarnai.first-step -->), Равнинный Очаг (2132<!-- date:tarnai.plain-hearth -->), Мера (2175<!-- date:tarnai.mera -->), Тихая Гавань (2226<!-- date:tarnai.quiet-haven -->), Дальний Порог (2284<!-- date:tarnai.distant-threshold -->). Они размещались в четырёх освоенных системах; после первой волны продолжалось углубление хозяйства и исследований до встречи 2612 года. [Подробности](race_propovedniki.md#history.precontact-development).
+
+У ксеноподов первая колония — Аман в Промиссе (2326–2330<!-- date:xenopods.first-colony -->), затем Нахиль (2337<!-- date:xenopods.nakhil -->), Мизан (2346<!-- date:xenopods.mizan -->), Сахиль (2362<!-- date:xenopods.sahil -->), Рахба (2379<!-- date:xenopods.rahba -->). Вравши стали первой внешней цивилизацией, встреченной ксеноподами в 2460<!-- date:vravshi.contact --> году. Межклановая практика предшествовала этому событию; первый опыт внешних отношений и зависимого обмена складывался уже на Тэтис. Позднее этот опыт ошибочно переносили на грондаров. [Колонии](race_ksenopody.md#homeworld.settlements.first-five), [этапы развития вравши](race_vravshi.md#history.dependency-stages).
+
 <a id="civilizations.date-2250"></a>
 <!-- section-status: filled -->
 

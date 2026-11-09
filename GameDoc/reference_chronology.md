@@ -10,7 +10,7 @@ status: "canonical"
 
 Этот справочник автоматически собирается из `data/chronology.json`. Дата и степень её точности хранятся у события с постоянным ID. Связные расовые истории сохраняются в досье; общий ход — в [статье периода](reference_period_2500_2800.md).
 
-Эпоха контактов 2500–2800; необходимые предшествующие вехи, ранние гиперприводы и первые колонии людей, грондаров и синаптов включены отдельно. Это не полный реестр всех эпох.
+Эпоха контактов 2500–2800 и необходимые предшествующие вехи: ранние гиперприводы, первые колонии шести старших рас и развитие вравши. Это не полный реестр всех эпох.
 
 <a id="events"></a>
 <!-- section-status: filled -->
@@ -19,20 +19,38 @@ status: "canonical"
 
 | Дата | Событие | ID | Источник |
 |---|---|---|---|
+| около 1980 | Первые орбитальные полёты тарнаев | `tarnai.orbit` | [Подробнее](race_propovedniki.md#history.precontact-development) |
+| около 2000 | Возвращение современных этериан в космос | `etherians.space-return` | [Подробнее](race_etheriane.md#history.early.item-6) |
+| 2060 | Основание Сэна | `etherians.sena` | [Подробнее](race_etheriane.md#homeworld.settlements.first-five) |
+| 2080 | Создание собственного тарнайского мобильного гиперпривода | `tarnai.mobile-hyperdrive` | [Подробнее](race_propovedniki.md#history.precontact-development) |
+| 2094 | Основание Первая Ступень | `tarnai.first-step` | [Подробнее](race_propovedniki.md#homeworld.settlements.first-five) |
+| 2105 | Основание Миори | `etherians.miori` | [Подробнее](race_etheriane.md#homeworld.settlements.first-five) |
+| 2132 | Основание Равнинный Очаг | `tarnai.plain-hearth` | [Подробнее](race_propovedniki.md#homeworld.settlements.first-five) |
+| 2150 | Основание Рэнка | `etherians.renka` | [Подробнее](race_etheriane.md#homeworld.settlements.first-five) |
+| 2175 | Основание Мера | `tarnai.mera` | [Подробнее](race_propovedniki.md#homeworld.settlements.first-five) |
+| 2190 | Основание Саё | `etherians.sayo` | [Подробнее](race_etheriane.md#homeworld.settlements.first-five) |
+| 2226 | Основание Тихая Гавань | `tarnai.quiet-haven` | [Подробнее](race_propovedniki.md#homeworld.settlements.first-five) |
 | 2250 | Создание синаптского мобильного гиперпривода | `synapts.mobile-hyperdrive` | [Подробнее](race_sinapty.md#history.hyperdrive-origin) |
 | 2258 | Основание Цкари | `synapts.tskari` | [Подробнее](race_sinapty.md#homeworld.settlements.first-five) |
+| 2265 | Основание Тосэ | `etherians.tose` | [Подробнее](race_etheriane.md#homeworld.settlements.first-five) |
 | 2281 | Основание Мцване | `synapts.mtsvane` | [Подробнее](race_sinapty.md#homeworld.settlements.first-five) |
+| 2284 | Основание Дальний Порог | `tarnai.distant-threshold` | [Подробнее](race_propovedniki.md#homeworld.settlements.first-five) |
 | 2300 | Создание человеческого мобильного гиперпривода | `humans.mobile-hyperdrive` | [Подробнее](race_homo_syntheticus.md#history.hyperdrive-origin) |
 | 2304 | Основание Гверди | `synapts.gverdi` | [Подробнее](race_sinapty.md#homeworld.settlements.first-five) |
 | 2326–2330 | Первая постоянная колония ксеноподов вне Сциллы — Промисса, раньше внутрисистемных планетных и лунных колоний | `xenopods.first-colony` | [Подробнее](race_ksenopody.md#homeworld.settlements) |
 | 2330 | Серийный гипердрайв и регулярное сообщение с Промиссой | `xenopods.regular-hyperdrive` | [Подробнее](race_ksenopody.md#history.chronology) |
+| 2337 | Основание Нахиль | `xenopods.nakhil` | [Подробнее](race_ksenopody.md#homeworld.settlements.first-five) |
 | 2342 | Основание Церети | `synapts.tsereti` | [Подробнее](race_sinapty.md#homeworld.settlements.first-five) |
+| 2346 | Основание Мизан | `xenopods.mizan` | [Подробнее](race_ksenopody.md#homeworld.settlements.first-five) |
 | 2353 | Основание Новой Терры | `humans.new-terra` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
+| 2362 | Основание Сахиль | `xenopods.sahil` | [Подробнее](race_ksenopody.md#homeworld.settlements.first-five) |
 | 2371 | Основание Авроры | `humans.aurora` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
 | 2376 | Основание Саквели | `synapts.sakveli` | [Подробнее](race_sinapty.md#homeworld.settlements.first-five) |
+| 2379 | Основание Рахба | `xenopods.rahba` | [Подробнее](race_ksenopody.md#homeworld.settlements.first-five) |
 | 2396 | Основание Согласия | `humans.soglasie` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
 | к 2400 | Десять колоний ксеноподов | `xenopods.ten-colonies` | [Подробнее](race_ksenopody.md#history.chronology) |
 | 2434 | Основание Палимпсеста | `humans.palimpsest` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
+| около 2440 | Самостоятельные первые орбитальные запуски вравши | `vravshi.orbit` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2460 | Первый контакт ксеноподов с вравши; начало формирования скрытого протектората | `vravshi.contact` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2476 | Основание Дальнего Берега | `humans.dalniy-bereg` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
 | 2500 | Мирный контакт синаптов и этериан | `synapts.etherians-contact` | [Подробнее](reference_period_2500_2800.md#contacts.sinapty-etheriane) |
@@ -70,6 +88,7 @@ status: "canonical"
 | 2598 | Основание Арката | `grondars.arkat` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
 | около 2600 | Этерианское обнаружение радиопередач аэлитов | `aelites.discovery` | [Подробнее](reference_period_2500_2800.md#contacts.aelity) |
 | около 2600 | Мирный контакт людей с хамари | `hamari.contact` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
+| примерно 2600–2750 | Развитие реакторов и беспилотной программы спутника Тэтис | `vravshi.reactors-and-probes` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2601–2603 | Посещения соседних общин хамари | `hamari.extended-visits` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
 | 2603–2606 | Присоединение синаптов и этериан к контактам с хамари | `hamari.new-guests` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
 | 2607 | Основные ограничения Протокола Хамары | `hamari.protocol` | [Подробнее](reference_period_2500_2800.md#contacts.hamari.protocol) |
