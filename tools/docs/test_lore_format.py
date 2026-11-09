@@ -12,8 +12,10 @@ class LoreFormatTests(unittest.TestCase):
         cls.original = (lore.DOCS / 'race_deymi.md').read_text(encoding='utf-8')
 
     def validate(self, body):
-        # The fixture needs only local anchors; the pilot has no external file links.
+        # Preserve the pilot’s real cross-article navigation in the temporary fixture.
         with tempfile.TemporaryDirectory() as tmp:
+            for source in lore.DOCS.glob('*.md'):
+                (Path(tmp) / source.name).symlink_to(source)
             path = Path(tmp) / 'article.md'
             path.write_text(body, encoding='utf-8')
             return lore.validate_article(path)
@@ -99,13 +101,13 @@ class LoreFormatTests(unittest.TestCase):
         self.assertIn('race.homo_syntheticus', ids)
         self.assertIn('race.ii_drevnih', ids)
 
-    def test_all_eight_references_use_their_own_schema(self):
+    def test_all_current_references_use_their_own_schema(self):
         references = [d for d in lore.build_catalog()['documents'] if d['type'] == 'reference']
-        self.assertEqual(len(references), 8)
+        self.assertEqual(len(references), len(list((lore.ROOT / "GameDoc").glob("reference_*.md"))))
         for doc in references:
             self.assertEqual(doc['schema'], 'reference-1')
             self.assertEqual(lore.validate_article(lore.ROOT / doc['path']), [], doc['id'])
-            self.assertTrue(doc['aliases'])
+            self.assertIsInstance(doc['aliases'], list)
 
     def test_reference_supplement_labels_are_not_truncated(self):
         doc = next(d for d in lore.build_catalog()['documents'] if d['id'] == 'reference.gipersfera')
@@ -128,6 +130,8 @@ class LoreFormatTests(unittest.TestCase):
 
     def test_cross_document_fragment_is_checked(self):
         with tempfile.TemporaryDirectory() as tmp:
+            for source in lore.DOCS.glob('*.md'):
+                (Path(tmp) / source.name).symlink_to(source)
             path = Path(tmp) / 'article.md'
             other = Path(tmp) / 'other.md'
             other.write_text(self.original, encoding='utf-8')

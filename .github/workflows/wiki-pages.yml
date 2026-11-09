@@ -6,6 +6,7 @@ on:
     paths:
       - 'GameDoc/**'
       - 'wiki-site/**'
+      - 'tools/docs/**'
       - 'index.html'
       - 'wiki/**'
       - '.github/workflows/wiki-pages.yml'
@@ -31,6 +32,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate lore and chronology
+        run: |
+          python tools/docs/check_lore_structure.py
+          python -m unittest discover -s tools/docs -p 'test_chronology.py'
       - name: Build static wiki
         working-directory: wiki-site
         run: node export-github.mjs ../.pages

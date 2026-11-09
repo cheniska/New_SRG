@@ -1,0 +1,438 @@
+{
+  "schema": "chronology-1",
+  "scope": "Эпоха контактов 2500–2800; необходимые предшествующие вехи включены отдельно. Это не полный реестр всех эпох.",
+  "events": [
+    {
+      "id": "xenopods.regular-hyperdrive",
+      "date": "2330",
+      "title": "Серийный гипердрайв и регулярное сообщение с Промиссой",
+      "source": "race_ksenopody.md#history.chronology",
+      "precision": "exact"
+    },
+    {
+      "id": "xenopods.ten-colonies",
+      "date": "2400",
+      "title": "Десять колоний ксеноподов",
+      "source": "race_ksenopody.md#history.chronology",
+      "precision": "by"
+    },
+    {
+      "id": "vravshi.contact",
+      "date": "2450–2500",
+      "title": "Контакт ксеноподов с вравши и начало скрытого протектората",
+      "source": "race_vravshi.md#history.chronology",
+      "precision": "approximate_range"
+    },
+    {
+      "id": "synapts.etherians-contact",
+      "date": "2500",
+      "title": "Мирный контакт синаптов и этериан",
+      "source": "reference_period_2500_2800.md#contacts.sinapty-etheriane",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.grondars-contact",
+      "date": "2520",
+      "title": "Первый контакт и начало человеческо-грондарской войны",
+      "source": "reference_period_2500_2800.md#war.first-strike",
+      "precision": "exact"
+    },
+    {
+      "id": "grondars.fleet",
+      "date": "2525",
+      "title": "Оформление первого грондарского космического флота",
+      "source": "reference_period_2500_2800.md#war.first-strike",
+      "precision": "exact"
+    },
+    {
+      "id": "grondars.hyperdrive",
+      "date": "2535",
+      "title": "Адаптация человеческого гипердрайва грондарами",
+      "source": "reference_period_2500_2800.md#war.breakthrough",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.grondars-ceasefire",
+      "date": "2536",
+      "title": "Операция у Новой Терры, переговоры и прекращение огня",
+      "source": "reference_period_2500_2800.md#war.breakthrough",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.grondars-peace",
+      "date": "2537",
+      "title": "Мир людей и грондаров",
+      "source": "reference_period_2500_2800.md#peace",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.grondars-diplomacy",
+      "date": "2540",
+      "title": "Постоянные дипломатические отношения",
+      "source": "reference_period_2500_2800.md#peace",
+      "precision": "exact"
+    },
+    {
+      "id": "grondars.colonization",
+      "date": "2548",
+      "title": "Начало постоянной межзвёздной колонизации грондаров",
+      "source": "reference_period_2500_2800.md#reconstruction",
+      "precision": "exact"
+    },
+    {
+      "id": "xenopods.forpost-attack",
+      "date": "2550",
+      "title": "Захват грондарского ресурсного форпоста ксеноподами",
+      "source": "reference_period_2500_2800.md#xenopod-war.origins",
+      "precision": "exact"
+    },
+    {
+      "id": "grondars.forpost-recaptured",
+      "date": "2550–2551",
+      "title": "Возвращение форпоста без всех пленных",
+      "source": "reference_period_2500_2800.md#xenopod-war.campaigns",
+      "precision": "range"
+    },
+    {
+      "id": "grondars.three-colonies",
+      "date": "2553",
+      "title": "Три ранние колонии в трёх системах",
+      "source": "reference_period_2500_2800.md#reconstruction",
+      "precision": "by"
+    },
+    {
+      "id": "grondars.forward-victory",
+      "date": "2553–2555",
+      "title": "Разгром передового ксеноподского соединения",
+      "source": "reference_period_2500_2800.md#xenopod-war.campaigns",
+      "precision": "range"
+    },
+    {
+      "id": "humans.war-entry",
+      "date": "2555",
+      "title": "Захват транспорта, прямой контакт с ксеноподами и союз с грондарами",
+      "source": "reference_period_2500_2800.md#xenopod-war.human-alliance",
+      "precision": "exact"
+    },
+    {
+      "id": "xenopods.synapts-contact",
+      "date": "2556",
+      "title": "Контакт ксеноподов с синаптами",
+      "source": "reference_period_2500_2800.md#xenopod-war.trust",
+      "precision": "exact"
+    },
+    {
+      "id": "xenopods.etherians-contact",
+      "date": "2556",
+      "title": "Знакомство ксеноподов с этерианами через синаптов",
+      "source": "reference_period_2500_2800.md#xenopod-war.trust",
+      "precision": "soon_after"
+    },
+    {
+      "id": "allies.offensive",
+      "date": "2557–2559",
+      "title": "Союзное наступление и потеря ксеноподского узла снабжения",
+      "source": "reference_period_2500_2800.md#xenopod-war.campaigns",
+      "precision": "range"
+    },
+    {
+      "id": "synapts.war-entry",
+      "date": "2560",
+      "title": "Синаптское вмешательство и прекращение этерианских союзных работ",
+      "source": "reference_period_2500_2800.md#xenopod-war.intervention",
+      "precision": "exact"
+    },
+    {
+      "id": "allies.defense",
+      "date": "2562–2563",
+      "title": "Срыв ксеноподско-синаптского наступления",
+      "source": "reference_period_2500_2800.md#xenopod-war.campaigns",
+      "precision": "range"
+    },
+    {
+      "id": "synapts.war-exit",
+      "date": "2565",
+      "title": "Разоблачение обмана, разрыв союза и выход синаптов из войны",
+      "source": "reference_period_2500_2800.md#xenopod-war.peace",
+      "precision": "exact"
+    },
+    {
+      "id": "contact-war.peace",
+      "date": "2566",
+      "title": "Поражение ксеноподов и окончательное урегулирование войны",
+      "source": "reference_period_2500_2800.md#xenopod-war.peace",
+      "precision": "exact"
+    },
+    {
+      "id": "etherians.humans-grondars-contact",
+      "date": "2566",
+      "title": "Знакомство этериан с людьми и грондарами",
+      "source": "reference_period_2500_2800.md#xenopod-war.peace",
+      "precision": "after_peace"
+    },
+    {
+      "id": "postwar.immediate-recovery",
+      "date": "2566–2568",
+      "title": "Возвращение пленных и исполнение первых обязательств",
+      "source": "reference_period_2500_2800.md#postwar.recovery",
+      "precision": "range"
+    },
+    {
+      "id": "humans.synapts-recovery",
+      "date": "2568–2573",
+      "title": "Совместные ремонтные и обследовательские группы",
+      "source": "reference_period_2500_2800.md#postwar.recovery",
+      "precision": "range"
+    },
+    {
+      "id": "vravshi.fission",
+      "date": "2570",
+      "title": "Ядерное деление вравши при поддержке ксеноподов",
+      "source": "race_vravshi.md#history.chronology",
+      "precision": "approximate"
+    },
+    {
+      "id": "hyperdrive.program",
+      "date": "2572",
+      "title": "Начало человеческо-синаптской гиперпрограммы",
+      "source": "reference_period_2500_2800.md#postwar.hyperdrive",
+      "precision": "exact"
+    },
+    {
+      "id": "hyperdrive.experiment",
+      "date": "2578",
+      "title": "Первый успешный экспериментальный глубокий переход",
+      "source": "reference_period_2500_2800.md#postwar.hyperdrive",
+      "precision": "exact"
+    },
+    {
+      "id": "hyperdrive.new-ships",
+      "date": "2584",
+      "title": "Начало установки усовершенствованных приводов на новые корабли",
+      "source": "reference_period_2500_2800.md#postwar.hyperdrive",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.synapts-partnership",
+      "date": "2590",
+      "title": "Оформление партнёрства людей и синаптов; условный рубеж угасания прежнего союза",
+      "source": "reference_period_2500_2800.md#postwar.realignments",
+      "precision": "conventional_boundary"
+    },
+    {
+      "id": "lingua.development",
+      "date": "2590–2800",
+      "title": "Совместная разработка Лингвы",
+      "source": "race_sinapty.md#language.lingua",
+      "precision": "range"
+    },
+    {
+      "id": "hamari.contact",
+      "date": "2600",
+      "title": "Мирный контакт людей с хамари",
+      "source": "reference_period_2500_2800.md#contacts.hamari",
+      "precision": "approximate"
+    },
+    {
+      "id": "aelites.discovery",
+      "date": "2600",
+      "title": "Этерианское обнаружение радиопередач аэлитов",
+      "source": "reference_period_2500_2800.md#contacts.aelity",
+      "precision": "approximate"
+    },
+    {
+      "id": "hamari.extended-visits",
+      "date": "2601–2603",
+      "title": "Посещения соседних общин хамари",
+      "source": "reference_period_2500_2800.md#contacts.hamari",
+      "precision": "range"
+    },
+    {
+      "id": "hamari.new-guests",
+      "date": "2603–2606",
+      "title": "Присоединение синаптов и этериан к контактам с хамари",
+      "source": "reference_period_2500_2800.md#contacts.hamari",
+      "precision": "range"
+    },
+    {
+      "id": "hamari.protocol",
+      "date": "2607",
+      "title": "Основные ограничения Протокола Хамары",
+      "source": "reference_period_2500_2800.md#contacts.hamari.protocol",
+      "precision": "exact"
+    },
+    {
+      "id": "college.proposal",
+      "date": "2610",
+      "title": "Этерианское предложение модели Коллегии",
+      "source": "reference_instituty_sodruzhestva.md#council.proishozhdenie",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.contact",
+      "date": "2612",
+      "title": "Контакт с тарнаями и знакомство с пятью цивилизациями",
+      "source": "reference_period_2500_2800.md#contacts.tarnai",
+      "precision": "exact"
+    },
+    {
+      "id": "tarnai.three-fallen",
+      "date": "2615–2640",
+      "title": "Позднейшее включение чужой истории в формулу «Трёх Павших»",
+      "source": "reference_period_2500_2800.md#contacts.tarnai",
+      "precision": "range"
+    },
+    {
+      "id": "aelites.contact",
+      "date": "2620",
+      "title": "Подготовленный контакт этериан с аэлитами",
+      "source": "reference_period_2500_2800.md#contacts.aelity",
+      "precision": "approximate"
+    },
+    {
+      "id": "grondars.xenopods-contract",
+      "date": "2645",
+      "title": "Защитный контракт грондаров и ксеноподов",
+      "source": "reference_period_2500_2800.md#postwar.xenopods",
+      "precision": "exact"
+    },
+    {
+      "id": "vorn.contact",
+      "date": "2650",
+      "title": "Первый человеческий контакт с ворн",
+      "source": "reference_period_2500_2800.md#contacts.vorn",
+      "precision": "approximate"
+    },
+    {
+      "id": "hamari.protocol-revision",
+      "date": "2650",
+      "title": "Уточнение процедур Протокола Хамары",
+      "source": "reference_period_2500_2800.md#contacts.hamari.protocol",
+      "precision": "exact"
+    },
+    {
+      "id": "border.local-conflicts",
+      "date": "2650–2700",
+      "title": "Локальные пограничные конфликты грондаров и синаптов",
+      "source": "reference_period_2500_2800.md#postwar.border-conflicts",
+      "precision": "range"
+    },
+    {
+      "id": "vorn.rare-meetings",
+      "date": "2660–2680",
+      "title": "Редкие встречи и уточнение языка ворн",
+      "source": "reference_period_2500_2800.md#contacts.vorn",
+      "precision": "range"
+    },
+    {
+      "id": "vorn.personal-membership",
+      "date": "2680–2720",
+      "title": "Два личных случая вплетения людей в общины ворн",
+      "source": "race_vorn.md#history.episodes.item-1",
+      "precision": "range"
+    },
+    {
+      "id": "boundaries.recognition",
+      "date": "2700",
+      "title": "Общерасовое признание границ и прекращение защитного контракта",
+      "source": "reference_period_2500_2800.md#foundation.boundaries",
+      "precision": "exact"
+    },
+    {
+      "id": "vorn.visits-agreement",
+      "date": "2700",
+      "title": "Согласование минимального порядка посещений Ворны",
+      "source": "reference_period_2500_2800.md#contacts.vorn",
+      "precision": "by"
+    },
+    {
+      "id": "deymi.discovery",
+      "date": "2720",
+      "title": "Обнаружение Деймии синаптами",
+      "source": "reference_period_2500_2800.md#foundation.deymi",
+      "precision": "exact"
+    },
+    {
+      "id": "deymi.preparation",
+      "date": "2720–2722",
+      "title": "Наблюдение и подготовка открытой встречи",
+      "source": "reference_period_2500_2800.md#foundation.deymi",
+      "precision": "range"
+    },
+    {
+      "id": "deymi.contact",
+      "date": "2722",
+      "title": "Первая открытая встреча с дейми",
+      "source": "reference_period_2500_2800.md#foundation.deymi",
+      "precision": "exact"
+    },
+    {
+      "id": "deymi.etherians",
+      "date": "2725",
+      "title": "Присоединение этериан к работе на Деймии",
+      "source": "reference_period_2500_2800.md#foundation.deymi",
+      "precision": "exact"
+    },
+    {
+      "id": "deymi.protocol",
+      "date": "2740–2770",
+      "title": "Оформление Протокола Деймии",
+      "source": "reference_period_2500_2800.md#foundation.deymi",
+      "precision": "range"
+    },
+    {
+      "id": "peace.guarantees",
+      "date": "2760",
+      "title": "Гарантированный мир шести цивилизаций",
+      "source": "reference_period_2500_2800.md#foundation.peace",
+      "precision": "exact"
+    },
+    {
+      "id": "zargash.discovery",
+      "date": "2788",
+      "title": "Грондарское обнаружение радиопередач заргашей",
+      "source": "reference_period_2500_2800.md#contacts.zargashi",
+      "precision": "exact"
+    },
+    {
+      "id": "zargash.radio-exchange",
+      "date": "2788–2790",
+      "title": "Открытый радиообмен грондаров и заргашей",
+      "source": "reference_period_2500_2800.md#contacts.zargashi",
+      "precision": "range"
+    },
+    {
+      "id": "zargash.personal-meeting",
+      "date": "2791",
+      "title": "Первая личная встреча грондаров и заргашей",
+      "source": "reference_period_2500_2800.md#contacts.zargashi",
+      "precision": "approximate"
+    },
+    {
+      "id": "zargash.agreement",
+      "date": "2794",
+      "title": "Соглашение с государствами заргашей",
+      "source": "reference_period_2500_2800.md#contacts.zargashi",
+      "precision": "exact"
+    },
+    {
+      "id": "commonwealth.foundation",
+      "date": "2800",
+      "title": "Основание Содружества шестью полноправными участницами",
+      "source": "reference_period_2500_2800.md#foundation.acts",
+      "precision": "exact"
+    }
+  ],
+  "undated": [
+    {
+      "id": "humans.synapts-first-colonies",
+      "description": "Вторая половина 2580-х; точный год не закреплён.",
+      "source": "reference_period_2500_2800.md#postwar.colonies"
+    },
+    {
+      "id": "border.two-planets-clash",
+      "description": "Ранняя часть периода 2650–2700; точный год требует разработки.",
+      "source": "reference_period_2500_2800.md#postwar.colonization-clash"
+    }
+  ]
+}

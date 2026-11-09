@@ -10,6 +10,7 @@ import sys
 from urllib.parse import unquote
 
 import lore_format
+import chronology
 
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / 'GameDoc'
@@ -54,7 +55,7 @@ def covered_slots(text):
 
 
 def main():
-    errors = []
+    errors, _ = chronology.process(ROOT)
     index = DOCS / 'README.md'
     if not index.exists():
         print('ERROR: GameDoc/README.md is missing')
