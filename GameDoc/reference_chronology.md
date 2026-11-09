@@ -21,7 +21,7 @@ status: "canonical"
 |---|---|---|---|
 | 2330 | Серийный гипердрайв и регулярное сообщение с Промиссой | `xenopods.regular-hyperdrive` | [Подробнее](race_ksenopody.md#history.chronology) |
 | к 2400 | Десять колоний ксеноподов | `xenopods.ten-colonies` | [Подробнее](race_ksenopody.md#history.chronology) |
-| примерно 2450–2500 | Контакт ксеноподов с вравши и начало скрытого протектората | `vravshi.contact` | [Подробнее](race_vravshi.md#history.chronology) |
+| 2460 | Первый контакт ксеноподов с вравши; начало формирования скрытого протектората | `vravshi.contact` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2500 | Мирный контакт синаптов и этериан | `synapts.etherians-contact` | [Подробнее](reference_period_2500_2800.md#contacts.sinapty-etheriane) |
 | 2520 | Первый контакт и начало человеческо-грондарской войны | `humans.grondars-contact` | [Подробнее](reference_period_2500_2800.md#war.first-strike) |
 | 2525 | Оформление первого грондарского космического флота | `grondars.fleet` | [Подробнее](reference_period_2500_2800.md#war.first-strike) |
