@@ -20,6 +20,7 @@ status: "canonical"
 | Дата | Событие | ID | Источник |
 |---|---|---|---|
 | 2300 | Создание человеческого мобильного гиперпривода | `humans.mobile-hyperdrive` | [Подробнее](race_homo_syntheticus.md#history.hyperdrive-origin) |
+| 2326–2330 | Первая постоянная колония ксеноподов вне Сциллы — Промисса, раньше внутрисистемных планетных и лунных колоний | `xenopods.first-colony` | [Подробнее](race_ksenopody.md#homeworld.settlements) |
 | 2330 | Серийный гипердрайв и регулярное сообщение с Промиссой | `xenopods.regular-hyperdrive` | [Подробнее](race_ksenopody.md#history.chronology) |
 | 2353 | Основание Новой Терры | `humans.new-terra` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
 | 2371 | Основание Авроры | `humans.aurora` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
@@ -99,6 +100,8 @@ status: "canonical"
 
 - `humans.synapts-first-colonies` — Вторая половина 2580-х; точный год не закреплён. [Источник](reference_period_2500_2800.md#postwar.colonies).
 - `border.two-planets-clash` — Ранняя часть периода 2650–2700; точный год требует разработки. [Источник](reference_period_2500_2800.md#postwar.colonization-clash).
+- `xenopods.promissa-clan` — Точный год оформления нового смешанного клана из участников «Скалы Мира» во время изоляции требует разработки; восстановление сообщений в 2326 году не означало начала регулярных перевозок [Источник](race_ksenopody.md#history.episodes.promissa-clan).
+- `xenopods.promissa-settlement` — Год завершения многолетней напряжённости между новым кланом Промиссы и метрополией, конкретные условия признания и хозяйственного урегулирования требуют разработки [Источник](race_ksenopody.md#history.episodes.promissa-clan).
 
 <a id="maintenance"></a>
 <!-- section-status: filled -->
