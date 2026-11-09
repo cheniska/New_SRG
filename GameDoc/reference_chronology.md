@@ -10,7 +10,7 @@ status: "canonical"
 
 Этот справочник автоматически собирается из `data/chronology.json`. Дата и степень её точности хранятся у события с постоянным ID. Связные расовые истории сохраняются в досье; общий ход — в [статье периода](reference_period_2500_2800.md).
 
-Эпоха контактов 2500–2800; необходимые предшествующие вехи включены отдельно. Это не полный реестр всех эпох.
+Эпоха контактов 2500–2800; необходимые предшествующие вехи, человеческий гиперпривод и первые колонии людей и грондаров включены отдельно. Это не полный реестр всех эпох.
 
 <a id="events"></a>
 <!-- section-status: filled -->
@@ -19,9 +19,15 @@ status: "canonical"
 
 | Дата | Событие | ID | Источник |
 |---|---|---|---|
+| 2300 | Создание человеческого мобильного гиперпривода | `humans.mobile-hyperdrive` | [Подробнее](race_homo_syntheticus.md#history.hyperdrive-origin) |
 | 2330 | Серийный гипердрайв и регулярное сообщение с Промиссой | `xenopods.regular-hyperdrive` | [Подробнее](race_ksenopody.md#history.chronology) |
+| 2353 | Основание Новой Терры | `humans.new-terra` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
+| 2371 | Основание Авроры | `humans.aurora` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
+| 2396 | Основание Согласия | `humans.soglasie` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
 | к 2400 | Десять колоний ксеноподов | `xenopods.ten-colonies` | [Подробнее](race_ksenopody.md#history.chronology) |
+| 2434 | Основание Палимпсеста | `humans.palimpsest` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
 | 2460 | Первый контакт ксеноподов с вравши; начало формирования скрытого протектората | `vravshi.contact` | [Подробнее](race_vravshi.md#history.chronology) |
+| 2476 | Основание Дальнего Берега | `humans.dalniy-bereg` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
 | 2500 | Мирный контакт синаптов и этериан | `synapts.etherians-contact` | [Подробнее](reference_period_2500_2800.md#contacts.sinapty-etheriane) |
 | 2520 | Первый контакт и начало человеческо-грондарской войны | `humans.grondars-contact` | [Подробнее](reference_period_2500_2800.md#war.first-strike) |
 | 2525 | Оформление первого грондарского космического флота | `grondars.fleet` | [Подробнее](reference_period_2500_2800.md#war.first-strike) |
@@ -29,9 +35,11 @@ status: "canonical"
 | 2536 | Операция у Новой Терры, переговоры и прекращение огня | `humans.grondars-ceasefire` | [Подробнее](reference_period_2500_2800.md#war.breakthrough) |
 | 2537 | Мир людей и грондаров | `humans.grondars-peace` | [Подробнее](reference_period_2500_2800.md#peace) |
 | 2540 | Постоянные дипломатические отношения | `humans.grondars-diplomacy` | [Подробнее](reference_period_2500_2800.md#peace) |
-| 2548 | Начало постоянной межзвёздной колонизации грондаров | `grondars.colonization` | [Подробнее](reference_period_2500_2800.md#reconstruction) |
+| 2548 | Основание Демира; начало постоянной межзвёздной колонизации грондаров | `grondars.colonization` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
+| 2549 | Основание Караташа | `grondars.karatash` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
 | 2550–2551 | Возвращение форпоста без всех пленных | `grondars.forpost-recaptured` | [Подробнее](reference_period_2500_2800.md#xenopod-war.campaigns) |
 | 2550 | Захват грондарского ресурсного форпоста ксеноподами | `xenopods.forpost-attack` | [Подробнее](reference_period_2500_2800.md#xenopod-war.origins) |
+| 2552 | Основание Серинга | `grondars.sering` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
 | 2553–2555 | Разгром передового ксеноподского соединения | `grondars.forward-victory` | [Подробнее](reference_period_2500_2800.md#xenopod-war.campaigns) |
 | к 2553 | Три ранние колонии в трёх системах | `grondars.three-colonies` | [Подробнее](reference_period_2500_2800.md#reconstruction) |
 | 2555 | Захват транспорта, прямой контакт с ксеноподами и союз с грондарами | `humans.war-entry` | [Подробнее](reference_period_2500_2800.md#xenopod-war.human-alliance) |
@@ -47,10 +55,12 @@ status: "canonical"
 | 2568–2573 | Совместные ремонтные и обследовательские группы | `humans.synapts-recovery` | [Подробнее](reference_period_2500_2800.md#postwar.recovery) |
 | около 2570 | Ядерное деление вравши при поддержке ксеноподов | `vravshi.fission` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2572 | Начало человеческо-синаптской гиперпрограммы | `hyperdrive.program` | [Подробнее](reference_period_2500_2800.md#postwar.hyperdrive) |
+| 2574 | Основание Даяна | `grondars.dayan` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
 | 2578 | Первый успешный экспериментальный глубокий переход | `hyperdrive.experiment` | [Подробнее](reference_period_2500_2800.md#postwar.hyperdrive) |
 | 2584 | Начало установки усовершенствованных приводов на новые корабли | `hyperdrive.new-ships` | [Подробнее](reference_period_2500_2800.md#postwar.hyperdrive) |
 | условный рубеж 2590 | Оформление партнёрства людей и синаптов; условный рубеж угасания прежнего союза | `humans.synapts-partnership` | [Подробнее](reference_period_2500_2800.md#postwar.realignments) |
 | 2590–2800 | Совместная разработка Лингвы | `lingua.development` | [Подробнее](race_sinapty.md#language.lingua) |
+| 2598 | Основание Арката | `grondars.arkat` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
 | около 2600 | Этерианское обнаружение радиопередач аэлитов | `aelites.discovery` | [Подробнее](reference_period_2500_2800.md#contacts.aelity) |
 | около 2600 | Мирный контакт людей с хамари | `hamari.contact` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
 | 2601–2603 | Посещения соседних общин хамари | `hamari.extended-visits` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |

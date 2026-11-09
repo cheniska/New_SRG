@@ -1,12 +1,40 @@
 {
   "schema": "chronology-1",
-  "scope": "Эпоха контактов 2500–2800; необходимые предшествующие вехи включены отдельно. Это не полный реестр всех эпох.",
+  "scope": "Эпоха контактов 2500–2800; необходимые предшествующие вехи, человеческий гиперпривод и первые колонии людей и грондаров включены отдельно. Это не полный реестр всех эпох.",
   "events": [
+    {
+      "id": "humans.mobile-hyperdrive",
+      "date": "2300",
+      "title": "Создание человеческого мобильного гиперпривода",
+      "source": "race_homo_syntheticus.md#history.hyperdrive-origin",
+      "precision": "exact"
+    },
     {
       "id": "xenopods.regular-hyperdrive",
       "date": "2330",
       "title": "Серийный гипердрайв и регулярное сообщение с Промиссой",
       "source": "race_ksenopody.md#history.chronology",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.new-terra",
+      "date": "2353",
+      "title": "Основание Новой Терры",
+      "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.aurora",
+      "date": "2371",
+      "title": "Основание Авроры",
+      "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.soglasie",
+      "date": "2396",
+      "title": "Основание Согласия",
+      "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
       "precision": "exact"
     },
     {
@@ -17,10 +45,24 @@
       "precision": "by"
     },
     {
+      "id": "humans.palimpsest",
+      "date": "2434",
+      "title": "Основание Палимпсеста",
+      "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
       "id": "vravshi.contact",
       "date": "2460",
       "title": "Первый контакт ксеноподов с вравши; начало формирования скрытого протектората",
       "source": "race_vravshi.md#history.chronology",
+      "precision": "exact"
+    },
+    {
+      "id": "humans.dalniy-bereg",
+      "date": "2476",
+      "title": "Основание Дальнего Берега",
+      "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
       "precision": "exact"
     },
     {
@@ -75,9 +117,23 @@
     {
       "id": "grondars.colonization",
       "date": "2548",
-      "title": "Начало постоянной межзвёздной колонизации грондаров",
-      "source": "reference_period_2500_2800.md#reconstruction",
+      "title": "Основание Демира; начало постоянной межзвёздной колонизации грондаров",
+      "source": "race_grondary.md#homeworld.settlements.first-five",
       "precision": "exact"
+    },
+    {
+      "id": "grondars.karatash",
+      "date": "2549",
+      "title": "Основание Караташа",
+      "source": "race_grondary.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "grondars.forpost-recaptured",
+      "date": "2550–2551",
+      "title": "Возвращение форпоста без всех пленных",
+      "source": "reference_period_2500_2800.md#xenopod-war.campaigns",
+      "precision": "range"
     },
     {
       "id": "xenopods.forpost-attack",
@@ -87,9 +143,16 @@
       "precision": "exact"
     },
     {
-      "id": "grondars.forpost-recaptured",
-      "date": "2550–2551",
-      "title": "Возвращение форпоста без всех пленных",
+      "id": "grondars.sering",
+      "date": "2552",
+      "title": "Основание Серинга",
+      "source": "race_grondary.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "grondars.forward-victory",
+      "date": "2553–2555",
+      "title": "Разгром передового ксеноподского соединения",
       "source": "reference_period_2500_2800.md#xenopod-war.campaigns",
       "precision": "range"
     },
@@ -101,24 +164,10 @@
       "precision": "by"
     },
     {
-      "id": "grondars.forward-victory",
-      "date": "2553–2555",
-      "title": "Разгром передового ксеноподского соединения",
-      "source": "reference_period_2500_2800.md#xenopod-war.campaigns",
-      "precision": "range"
-    },
-    {
       "id": "humans.war-entry",
       "date": "2555",
       "title": "Захват транспорта, прямой контакт с ксеноподами и союз с грондарами",
       "source": "reference_period_2500_2800.md#xenopod-war.human-alliance",
-      "precision": "exact"
-    },
-    {
-      "id": "xenopods.synapts-contact",
-      "date": "2556",
-      "title": "Контакт ксеноподов с синаптами",
-      "source": "reference_period_2500_2800.md#xenopod-war.trust",
       "precision": "exact"
     },
     {
@@ -127,6 +176,13 @@
       "title": "Знакомство ксеноподов с этерианами через синаптов",
       "source": "reference_period_2500_2800.md#xenopod-war.trust",
       "precision": "soon_after"
+    },
+    {
+      "id": "xenopods.synapts-contact",
+      "date": "2556",
+      "title": "Контакт ксеноподов с синаптами",
+      "source": "reference_period_2500_2800.md#xenopod-war.trust",
+      "precision": "exact"
     },
     {
       "id": "allies.offensive",
@@ -199,6 +255,13 @@
       "precision": "exact"
     },
     {
+      "id": "grondars.dayan",
+      "date": "2574",
+      "title": "Основание Даяна",
+      "source": "race_grondary.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
       "id": "hyperdrive.experiment",
       "date": "2578",
       "title": "Первый успешный экспериментальный глубокий переход",
@@ -227,17 +290,24 @@
       "precision": "range"
     },
     {
-      "id": "hamari.contact",
-      "date": "2600",
-      "title": "Мирный контакт людей с хамари",
-      "source": "reference_period_2500_2800.md#contacts.hamari",
-      "precision": "approximate"
+      "id": "grondars.arkat",
+      "date": "2598",
+      "title": "Основание Арката",
+      "source": "race_grondary.md#homeworld.settlements.first-five",
+      "precision": "exact"
     },
     {
       "id": "aelites.discovery",
       "date": "2600",
       "title": "Этерианское обнаружение радиопередач аэлитов",
       "source": "reference_period_2500_2800.md#contacts.aelity",
+      "precision": "approximate"
+    },
+    {
+      "id": "hamari.contact",
+      "date": "2600",
+      "title": "Мирный контакт людей с хамари",
+      "source": "reference_period_2500_2800.md#contacts.hamari",
       "precision": "approximate"
     },
     {
@@ -297,11 +367,11 @@
       "precision": "exact"
     },
     {
-      "id": "vorn.contact",
-      "date": "2650",
-      "title": "Первый человеческий контакт с ворн",
-      "source": "reference_period_2500_2800.md#contacts.vorn",
-      "precision": "approximate"
+      "id": "border.local-conflicts",
+      "date": "2650–2700",
+      "title": "Локальные пограничные конфликты грондаров и синаптов",
+      "source": "reference_period_2500_2800.md#postwar.border-conflicts",
+      "precision": "range"
     },
     {
       "id": "hamari.protocol-revision",
@@ -311,11 +381,11 @@
       "precision": "exact"
     },
     {
-      "id": "border.local-conflicts",
-      "date": "2650–2700",
-      "title": "Локальные пограничные конфликты грондаров и синаптов",
-      "source": "reference_period_2500_2800.md#postwar.border-conflicts",
-      "precision": "range"
+      "id": "vorn.contact",
+      "date": "2650",
+      "title": "Первый человеческий контакт с ворн",
+      "source": "reference_period_2500_2800.md#contacts.vorn",
+      "precision": "approximate"
     },
     {
       "id": "vorn.rare-meetings",

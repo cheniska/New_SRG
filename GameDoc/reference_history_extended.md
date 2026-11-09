@@ -233,7 +233,7 @@ status: "canonical"
 
 ### 2300
 
-Люди изобретают мобильный гипердрайв.
+Люди создают мобильный гипердрайв в 2300<!-- date:humans.mobile-hyperdrive --> году после экспериментального изучения удерживающего поля, приборных погружений и стационарных катапульт. Это независимая разработка до контактов с другими расами. [История программы](race_homo_syntheticus.md#history.hyperdrive-origin).
 
 <a id="civilizations.date-2325"></a>
 <!-- section-status: filled -->
@@ -248,6 +248,15 @@ status: "canonical"
 ### 2330
 
 Ксеноподы вводят в эксплуатацию мобильный гипердрайв, реконструировав принцип аварийного погружения.
+
+<a id="civilizations.early-colonies"></a>
+<!-- section-status: filled -->
+
+### Первые колонии людей и грондаров
+
+У людей освоение Луны и Марса в 2125 году предшествовало межзвёздной экспансии. Первые пять постоянных внесолнечных колоний: Новая Терра (2353<!-- date:humans.new-terra -->), Аврора (2371<!-- date:humans.aurora -->), Согласие (2396<!-- date:humans.soglasie -->), Палимпсест (2434<!-- date:humans.palimpsest -->) и Дальний Берег (2476<!-- date:humans.dalniy-bereg -->). Они закрепили разные подходы к хозяйству, общественному устройству и сохранению местной жизни; [подробности](race_homo_syntheticus.md#homeworld.settlements.first-five).
+
+У грондаров собственное межпланетное освоение предшествовало получению человеческого гиперпривода. Первые пять межзвёздных колоний — Демир (2548<!-- date:grondars.colonization -->), Караташ (2549<!-- date:grondars.karatash -->), Серинг (2552<!-- date:grondars.sering -->), Даян (2574<!-- date:grondars.dayan -->) и Аркат (2598<!-- date:grondars.arkat -->). Первую тройку основали по подготовленной программе; после Серинга новые крупные проекты отложили до мира 2566 года. Подробности — в [досье](race_grondary.md#homeworld.settlements.first-five), военный контекст — в [истории периода](reference_period_2500_2800.md#reconstruction).
 
 <a id="civilizations.date-2460"></a>
 <!-- section-status: filled -->
