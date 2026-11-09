@@ -1,6 +1,6 @@
 {
   "schema": "chronology-1",
-  "scope": "Эпоха контактов 2500–2800 и необходимые предшествующие вехи: ранние гиперприводы, первые колонии шести старших рас и развитие вравши. Это не полный реестр всех эпох.",
+  "scope": "Эпоха контактов 2500–2800, её предшествующие вехи и первый подпериод истории Содружества 2800–2996. Это не полный реестр всех эпох.",
   "events": [
     {
       "id": "tarnai.orbit",
@@ -673,6 +673,76 @@
       "title": "Основание Содружества шестью полноправными участницами",
       "source": "reference_period_2500_2800.md#foundation.acts",
       "precision": "exact"
+    },
+    {
+      "id": "deymi.illicit-contact",
+      "date": "2830",
+      "precision": "approximate",
+      "title": "Первые доказанные попытки ксеноподских операторов связаться с дейми через посредников",
+      "source": "reference_history_commonwealth.md#early-commonwealth.deymi"
+    },
+    {
+      "id": "deymi.steel-crisis",
+      "date": "2871–2896",
+      "precision": "range",
+      "title": "Стальной кризис на Деймии",
+      "source": "reference_history_commonwealth.md#early-commonwealth.deymi"
+    },
+    {
+      "id": "deymi.blockade",
+      "date": "2880",
+      "precision": "exact",
+      "title": "Частичная торговая блокада Кайрош-Ведда",
+      "source": "reference_history_commonwealth.md#early-commonwealth.deymi"
+    },
+    {
+      "id": "deymi.leak-report",
+      "date": "2882",
+      "precision": "exact",
+      "title": "Синаптский доклад о вероятной утечке на Деймии и ужесточение протокола",
+      "source": "reference_history_commonwealth.md#early-commonwealth.deymi"
+    },
+    {
+      "id": "deymi.steel-settlement",
+      "date": "2896",
+      "precision": "by",
+      "title": "Компромисс и завершение Стального кризиса",
+      "source": "reference_history_commonwealth.md#early-commonwealth.deymi"
+    },
+    {
+      "id": "deymi.glass-breakthroughs",
+      "date": "2900–2950",
+      "precision": "approximate_range",
+      "title": "Локальные технологические прорывы на Деймии после Стального кризиса",
+      "source": "reference_history_commonwealth.md#early-commonwealth.deymi"
+    },
+    {
+      "id": "aelites.fission",
+      "date": "2870",
+      "precision": "approximate",
+      "title": "Освоение ядерного деления аэлитами",
+      "source": "reference_history_commonwealth.md#early-commonwealth.minor-worlds"
+    },
+    {
+      "id": "aelites.orbit",
+      "date": "2900",
+      "precision": "approximate",
+      "title": "Первые беспилотные орбитальные пуски аэлитов",
+      "source": "reference_history_commonwealth.md#early-commonwealth.minor-worlds"
+    },
+    {
+      "id": "zargash.satellite-network",
+      "date": "2960",
+      "precision": "approximate",
+      "title": "Завершение спутниковой сети заргашей",
+      "source": "reference_history_commonwealth.md#early-commonwealth.minor-worlds"
+    },
+    {
+      "id": "swarm.first-contact",
+      "date": "2996",
+      "precision": "exact",
+      "title": "Первый контакт Содружества со Спасителями и начало войны",
+      "source": "reference_history_commonwealth.md#early-commonwealth.threshold"
     }
   ],
   "undated": [

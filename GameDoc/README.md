@@ -35,6 +35,7 @@
 - [reference_history_extended.md](reference_history_extended.md)
 - [Единый реестр дат эпохи контактов](reference_chronology.md) — автоматически из `data/chronology.json`; постоянные ID, точность дат и проверяемые привязки в статьях.
 - [Эпоха контактов и становления Содружества, 2500–2800](reference_period_2500_2800.md)
+- [История Содружества: от основания к новым эпохам](reference_history_commonwealth.md) — продолжение; первый подпериод 2800–2996.
 - [reference_igrovye_uslovnosti.md](reference_igrovye_uslovnosti.md)
 - [reference_instituty_sodruzhestva.md](reference_instituty_sodruzhestva.md)
 - [reference_spravochnik_sistem.md](reference_spravochnik_sistem.md)

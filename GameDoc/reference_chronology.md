@@ -10,7 +10,7 @@ status: "canonical"
 
 Этот справочник автоматически собирается из `data/chronology.json`. Дата и степень её точности хранятся у события с постоянным ID. Связные расовые истории сохраняются в досье; общий ход — в [статье периода](reference_period_2500_2800.md).
 
-Эпоха контактов 2500–2800 и необходимые предшествующие вехи: ранние гиперприводы, первые колонии шести старших рас и развитие вравши. Это не полный реестр всех эпох.
+Эпоха контактов 2500–2800, её предшествующие вехи и первый подпериод истории Содружества 2800–2996. Это не полный реестр всех эпох.
 
 <a id="events"></a>
 <!-- section-status: filled -->
@@ -115,6 +115,16 @@ status: "canonical"
 | около 2791 | Первая личная встреча грондаров и заргашей | `zargash.personal-meeting` | [Подробнее](reference_period_2500_2800.md#contacts.zargashi) |
 | 2794 | Соглашение с государствами заргашей | `zargash.agreement` | [Подробнее](reference_period_2500_2800.md#contacts.zargashi) |
 | 2800 | Основание Содружества шестью полноправными участницами | `commonwealth.foundation` | [Подробнее](reference_period_2500_2800.md#foundation.acts) |
+| около 2830 | Первые доказанные попытки ксеноподских операторов связаться с дейми через посредников | `deymi.illicit-contact` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
+| около 2870 | Освоение ядерного деления аэлитами | `aelites.fission` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
+| 2871–2896 | Стальной кризис на Деймии | `deymi.steel-crisis` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
+| 2880 | Частичная торговая блокада Кайрош-Ведда | `deymi.blockade` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
+| 2882 | Синаптский доклад о вероятной утечке на Деймии и ужесточение протокола | `deymi.leak-report` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
+| к 2896 | Компромисс и завершение Стального кризиса | `deymi.steel-settlement` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
+| около 2900 | Первые беспилотные орбитальные пуски аэлитов | `aelites.orbit` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
+| примерно 2900–2950 | Локальные технологические прорывы на Деймии после Стального кризиса | `deymi.glass-breakthroughs` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
+| около 2960 | Завершение спутниковой сети заргашей | `zargash.satellite-network` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
+| 2996 | Первый контакт Содружества со Спасителями и начало войны | `swarm.first-contact` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.threshold) |
 
 <a id="undated"></a>
 <!-- section-status: needs_development -->
