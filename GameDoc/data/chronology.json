@@ -1,12 +1,40 @@
 {
   "schema": "chronology-1",
-  "scope": "Эпоха контактов 2500–2800; необходимые предшествующие вехи, человеческий гиперпривод и первые колонии людей и грондаров включены отдельно. Это не полный реестр всех эпох.",
+  "scope": "Эпоха контактов 2500–2800; необходимые предшествующие вехи, ранние гиперприводы и первые колонии людей, грондаров и синаптов включены отдельно. Это не полный реестр всех эпох.",
   "events": [
+    {
+      "id": "synapts.mobile-hyperdrive",
+      "date": "2250",
+      "title": "Создание синаптского мобильного гиперпривода",
+      "source": "race_sinapty.md#history.hyperdrive-origin",
+      "precision": "exact"
+    },
+    {
+      "id": "synapts.tskari",
+      "date": "2258",
+      "title": "Основание Цкари",
+      "source": "race_sinapty.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "synapts.mtsvane",
+      "date": "2281",
+      "title": "Основание Мцване",
+      "source": "race_sinapty.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
     {
       "id": "humans.mobile-hyperdrive",
       "date": "2300",
       "title": "Создание человеческого мобильного гиперпривода",
       "source": "race_homo_syntheticus.md#history.hyperdrive-origin",
+      "precision": "exact"
+    },
+    {
+      "id": "synapts.gverdi",
+      "date": "2304",
+      "title": "Основание Гверди",
+      "source": "race_sinapty.md#homeworld.settlements.first-five",
       "precision": "exact"
     },
     {
@@ -24,6 +52,13 @@
       "precision": "exact"
     },
     {
+      "id": "synapts.tsereti",
+      "date": "2342",
+      "title": "Основание Церети",
+      "source": "race_sinapty.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
       "id": "humans.new-terra",
       "date": "2353",
       "title": "Основание Новой Терры",
@@ -35,6 +70,13 @@
       "date": "2371",
       "title": "Основание Авроры",
       "source": "race_homo_syntheticus.md#homeworld.settlements.first-five",
+      "precision": "exact"
+    },
+    {
+      "id": "synapts.sakveli",
+      "date": "2376",
+      "title": "Основание Саквели",
+      "source": "race_sinapty.md#homeworld.settlements.first-five",
       "precision": "exact"
     },
     {
@@ -520,6 +562,11 @@
       "id": "xenopods.promissa-settlement",
       "description": "Год завершения многолетней напряжённости между новым кланом Промиссы и метрополией, конкретные условия признания и хозяйственного урегулирования требуют разработки",
       "source": "race_ksenopody.md#history.episodes.promissa-clan"
+    },
+    {
+      "id": "synapts.colonial-autonomy",
+      "description": "Год первого решения о праве постоянных жителей менять задачи поселения и форма колониальных учредительных документов требуют разработки",
+      "source": "race_sinapty.md#history.colonial-autonomy"
     }
   ]
 }
