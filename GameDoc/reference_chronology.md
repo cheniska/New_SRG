@@ -10,7 +10,7 @@ status: "canonical"
 
 Этот справочник автоматически собирается из `data/chronology.json`. Дата и степень её точности хранятся у события с постоянным ID. Связные расовые истории сохраняются в досье; общий ход — в [статье периода](reference_period_2500_2800.md).
 
-Эпоха контактов 2500–2800, её предшествующие вехи и первый подпериод истории Содружества 2800–2996. Это не полный реестр всех эпох.
+Эпоха контактов 2500–2800, её предшествующие вехи и история Содружества до 3100, включая окно кампании Роя и восстановление. Это не полный реестр всех эпох.
 
 <a id="events"></a>
 <!-- section-status: filled -->
@@ -124,7 +124,12 @@ status: "canonical"
 | около 2900 | Первые беспилотные орбитальные пуски аэлитов | `aelites.orbit` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
 | примерно 2900–2950 | Локальные технологические прорывы на Деймии после Стального кризиса | `deymi.glass-breakthroughs` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
 | около 2960 | Завершение спутниковой сети заргашей | `zargash.satellite-network` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
+| 2996–3056 | Окно кампании Роя; 3056 — верхняя граница войны | `swarm.campaign-window` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
 | 2996 | Первый контакт Содружества со Спасителями и начало войны | `swarm.first-contact` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.threshold) |
+| 3056–3076 | Период восстановления после войны с Роем | `swarm.recovery` | [Подробнее](reference_history_extended.md#late-commonwealth.recovery-3056-3076) |
+| к 3056 | Прекращение экспансии Роя и утрата контроля — не позднее этого года | `swarm.war-end-limit` | [Подробнее](reference_history_extended.md#late-commonwealth.date-3021) |
+| 3076–3100 | Мирное развитие после восстановления | `swarm.peaceful-development` | [Подробнее](reference_history_extended.md#late-commonwealth.peace-3076-3100) |
+| 3100 | Начало следующего исторического подпериода | `commonwealth.next-period` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
 
 <a id="undated"></a>
 <!-- section-status: needs_development -->

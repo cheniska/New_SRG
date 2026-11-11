@@ -1,6 +1,6 @@
 {
   "schema": "chronology-1",
-  "scope": "Эпоха контактов 2500–2800, её предшествующие вехи и первый подпериод истории Содружества 2800–2996. Это не полный реестр всех эпох.",
+  "scope": "Эпоха контактов 2500–2800, её предшествующие вехи и история Содружества до 3100, включая окно кампании Роя и восстановление. Это не полный реестр всех эпох.",
   "events": [
     {
       "id": "tarnai.orbit",
@@ -743,6 +743,41 @@
       "precision": "exact",
       "title": "Первый контакт Содружества со Спасителями и начало войны",
       "source": "reference_history_commonwealth.md#early-commonwealth.threshold"
+    },
+    {
+      "id": "swarm.campaign-window",
+      "date": "2996–3056",
+      "precision": "range",
+      "title": "Окно кампании Роя; 3056 — верхняя граница войны",
+      "source": "reference_history_commonwealth.md#swarm-war.chronology"
+    },
+    {
+      "id": "swarm.war-end-limit",
+      "date": "3056",
+      "precision": "by",
+      "title": "Прекращение экспансии Роя и утрата контроля — не позднее этого года",
+      "source": "reference_history_extended.md#late-commonwealth.date-3021"
+    },
+    {
+      "id": "swarm.recovery",
+      "date": "3056–3076",
+      "precision": "range",
+      "title": "Период восстановления после войны с Роем",
+      "source": "reference_history_extended.md#late-commonwealth.recovery-3056-3076"
+    },
+    {
+      "id": "swarm.peaceful-development",
+      "date": "3076–3100",
+      "precision": "range",
+      "title": "Мирное развитие после восстановления",
+      "source": "reference_history_extended.md#late-commonwealth.peace-3076-3100"
+    },
+    {
+      "id": "commonwealth.next-period",
+      "date": "3100",
+      "precision": "exact",
+      "title": "Начало следующего исторического подпериода",
+      "source": "reference_history_commonwealth.md#swarm-war.chronology"
     }
   ],
   "undated": [

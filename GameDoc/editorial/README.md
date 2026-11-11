@@ -7,3 +7,6 @@
 - [PLAN_migracii_ras_v3.md](PLAN_migracii_ras_v3.md)
 - [audit_lora_hard_sf_v1.md](audit_lora_hard_sf_v1.md)
 - [Журналы и вопросы автору](sessions/README.md)
+
+
+- [Решения и открытые вопросы по Спасителям](decisions_spasiteli.md) — восстановленные договорённости 10 ноября 2026.
