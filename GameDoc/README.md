@@ -41,6 +41,7 @@
 - [Эпоха контактов и становления Содружества, 2500–2800](reference_period_2500_2800.md)
 - [История Содружества: от основания к новым эпохам](reference_history_commonwealth.md) — продолжение: становление 2800–2996, война с Роем и восстановление 2996–3100.
 - [reference_igrovye_uslovnosti.md](reference_igrovye_uslovnosti.md)
+- [Рой: геймплей и масштаб кампании](reference_swarm_gameplay.md) — флот, корабли-поселения, оккупация, производство, трофеи и развязки.
 - [reference_instituty_sodruzhestva.md](reference_instituty_sodruzhestva.md)
 - [reference_spravochnik_sistem.md](reference_spravochnik_sistem.md)
 - [reference_tovary_i_kontrabanda.md](reference_tovary_i_kontrabanda.md)

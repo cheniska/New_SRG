@@ -21685,7 +21685,7 @@
           "status": "filled",
           "level": 2,
           "line": 890,
-          "end_line": 950,
+          "end_line": 928,
           "block_line": 887
         },
         {
@@ -21697,7 +21697,7 @@
           "status": "filled",
           "level": 3,
           "line": 897,
-          "end_line": 904,
+          "end_line": 900,
           "block_line": 894
         },
         {
@@ -21708,9 +21708,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 908,
-          "end_line": 919,
-          "block_line": 905
+          "line": 904,
+          "end_line": 907,
+          "block_line": 901
         },
         {
           "id": "gameplay.fleet.scale-and-occupation",
@@ -21718,9 +21718,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 923,
-          "end_line": 928,
-          "block_line": 920
+          "line": 911,
+          "end_line": 914,
+          "block_line": 908
         },
         {
           "id": "gameplay.fleet.item-3",
@@ -21730,9 +21730,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 932,
-          "end_line": 941,
-          "block_line": 929
+          "line": 918,
+          "end_line": 921,
+          "block_line": 915
         },
         {
           "id": "gameplay.production",
@@ -21742,9 +21742,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 945,
-          "end_line": 950,
-          "block_line": 942
+          "line": 925,
+          "end_line": 928,
+          "block_line": 922
         },
         {
           "id": "gameplay.rewards",
@@ -21754,9 +21754,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 954,
-          "end_line": 961,
-          "block_line": 951
+          "line": 932,
+          "end_line": 935,
+          "block_line": 929
         },
         {
           "id": "gameplay.quests",
@@ -21766,9 +21766,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 965,
-          "end_line": 974,
-          "block_line": 962
+          "line": 939,
+          "end_line": 942,
+          "block_line": 936
         },
         {
           "id": "people",
@@ -21778,9 +21778,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 978,
-          "end_line": 984,
-          "block_line": 975
+          "line": 946,
+          "end_line": 952,
+          "block_line": 943
         },
         {
           "id": "visual",
@@ -21788,9 +21788,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 988,
-          "end_line": 1017,
-          "block_line": 985
+          "line": 956,
+          "end_line": 985,
+          "block_line": 953
         },
         {
           "id": "visual.v-i-1-bazovaya-forma-rabochie-voiny-upravlentsy-minimalnyy-dimorfizm-sm-iii-18",
@@ -21798,9 +21798,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 993,
-          "end_line": 1003,
-          "block_line": 990
+          "line": 961,
+          "end_line": 971,
+          "block_line": 958
         },
         {
           "id": "visual.v-i-2-koroleva-korol-sm-iii-8-iii-12",
@@ -21808,9 +21808,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1007,
-          "end_line": 1017,
-          "block_line": 1004
+          "line": 975,
+          "end_line": 985,
+          "block_line": 972
         }
       ]
     },
@@ -32664,6 +32664,142 @@
           "block_line": 351,
           "labels": [
             "VI"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reference.swarm_gameplay",
+      "path": "GameDoc/reference_swarm_gameplay.md",
+      "type": "reference",
+      "title": "Рой: геймплей и масштаб кампании",
+      "status": "canonical",
+      "format": "markdown",
+      "schema": "reference-1",
+      "aliases": [],
+      "sections": [
+        {
+          "id": "overview",
+          "title": "Назначение",
+          "slots": [],
+          "status": "filled",
+          "level": 2,
+          "line": 14,
+          "end_line": 17,
+          "block_line": 11
+        },
+        {
+          "id": "scale",
+          "title": "Соотношение лора и игрового масштаба",
+          "slots": [],
+          "status": "filled",
+          "level": 2,
+          "line": 21,
+          "end_line": 37,
+          "block_line": 18
+        },
+        {
+          "id": "gameplay.fleet",
+          "title": "XIV. Флот и игровая фракция (игровой раздел)",
+          "slots": [],
+          "status": "filled",
+          "level": 2,
+          "line": 41,
+          "end_line": 103,
+          "block_line": 38,
+          "labels": [
+            "XIV"
+          ]
+        },
+        {
+          "id": "gameplay.fleet.item-1",
+          "title": "XIV.1. Тактика против малых целей: почему одиночные разведчики особенно эффективны",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 48,
+          "end_line": 55,
+          "block_line": 45,
+          "labels": [
+            "XIV.1"
+          ]
+        },
+        {
+          "id": "gameplay.fleet.item-2",
+          "title": "XIV.2. Классы флота",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 59,
+          "end_line": 72,
+          "block_line": 56,
+          "labels": [
+            "XIV.2"
+          ]
+        },
+        {
+          "id": "gameplay.fleet.scale-and-occupation",
+          "title": "XIV.2-доп. Масштаб сил и контроль планет",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 76,
+          "end_line": 81,
+          "block_line": 73,
+          "labels": [
+            "XIV.2-доп"
+          ]
+        },
+        {
+          "id": "gameplay.fleet.item-3",
+          "title": "XIV.3. Ход войны: от генерального сражения к рассредоточенной доктрине",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 85,
+          "end_line": 94,
+          "block_line": 82,
+          "labels": [
+            "XIV.3"
+          ]
+        },
+        {
+          "id": "gameplay.production",
+          "title": "XIV.4. Производство и восполнение флота",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 98,
+          "end_line": 103,
+          "block_line": 95,
+          "labels": [
+            "XIV.4"
+          ]
+        },
+        {
+          "id": "gameplay.rewards",
+          "title": "XV. Лут, товары и исследования (игровой раздел)",
+          "slots": [],
+          "status": "filled",
+          "level": 2,
+          "line": 107,
+          "end_line": 114,
+          "block_line": 104,
+          "labels": [
+            "XV"
+          ]
+        },
+        {
+          "id": "gameplay.quests",
+          "title": "XVI. Сюжетные крючки, дипломатия и развязки (игровой раздел)",
+          "slots": [],
+          "status": "filled",
+          "level": 2,
+          "line": 118,
+          "end_line": 127,
+          "block_line": 115,
+          "labels": [
+            "XVI"
           ]
         }
       ]
