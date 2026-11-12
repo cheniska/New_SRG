@@ -133,6 +133,7 @@ status: "canonical"
 | 3056–3076 | Период восстановления после войны с Роем | `swarm.recovery` | [Подробнее](reference_history_extended.md#late-commonwealth.recovery-3056-3076) |
 | к 3056 | Прекращение экспансии Роя и утрата контроля — не позднее этого года | `swarm.war-end-limit` | [Подробнее](reference_history_extended.md#late-commonwealth.date-3021) |
 | 3076–3100 | Мирное развитие после восстановления | `swarm.peaceful-development` | [Подробнее](reference_history_extended.md#late-commonwealth.peace-3076-3100) |
+| около 3080 | Практический результат синаптской обратной разработки ройской гипертехнологии | `swarm.hypertech-ready` | [Подробнее](reference_history_commonwealth.md#postwar.science) |
 | 3100 | Начало следующего исторического подпериода | `commonwealth.next-period` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
 
 <a id="undated"></a>
