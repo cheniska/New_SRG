@@ -124,8 +124,12 @@ status: "canonical"
 | около 2900 | Первые беспилотные орбитальные пуски аэлитов | `aelites.orbit` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
 | примерно 2900–2950 | Локальные технологические прорывы на Деймии после Стального кризиса | `deymi.glass-breakthroughs` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
 | около 2960 | Завершение спутниковой сети заргашей | `zargash.satellite-network` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
-| 2996–3056 | Окно кампании Роя; 3056 — верхняя граница войны | `swarm.campaign-window` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
-| 2996 | Первый контакт Содружества со Спасителями и начало войны | `swarm.first-contact` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.threshold) |
+| 2996–3056 | Историческое окно войны с Роем; 3056 — верхняя граница войны | `swarm.campaign-window` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
+| примерно 2996–2998 | Оборонительные бои, отход и эвакуация; поиск новой тактики | `swarm.defensive-phase` | [Подробнее](reference_history_commonwealth.md#swarm-war.campaign) |
+| 2996 | Первый контакт Содружества со Спасителями и начало войны | `swarm.first-contact` | [Подробнее](reference_history_commonwealth.md#swarm-war.campaign) |
+| 2996 | Генеральное сражение: технологическое превосходство Роя и отступление сводного флота | `swarm.general-battle` | [Подробнее](reference_history_commonwealth.md#swarm-war.campaign) |
+| около 2998 | Оформление рассредоточенной доктрины и развёртывание программы независимых капитанов | `swarm.dispersed-doctrine` | [Подробнее](reference_history_commonwealth.md#swarm-war.campaign) |
+| 3000 | 1 января: начало игры в столице расы игрока; около половины систем под контролем Роя | `swarm.player-start` | [Подробнее](reference_history_commonwealth.md#swarm-war.situation-3000) |
 | 3056–3076 | Период восстановления после войны с Роем | `swarm.recovery` | [Подробнее](reference_history_extended.md#late-commonwealth.recovery-3056-3076) |
 | к 3056 | Прекращение экспансии Роя и утрата контроля — не позднее этого года | `swarm.war-end-limit` | [Подробнее](reference_history_extended.md#late-commonwealth.date-3021) |
 | 3076–3100 | Мирное развитие после восстановления | `swarm.peaceful-development` | [Подробнее](reference_history_extended.md#late-commonwealth.peace-3076-3100) |
