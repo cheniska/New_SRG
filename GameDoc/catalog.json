@@ -32699,14 +32699,64 @@
           "block_line": 18
         },
         {
+          "id": "campaign.freedom",
+          "title": "Свобода игрока и развитие кампании",
+          "slots": [],
+          "status": "filled",
+          "level": 2,
+          "line": 41,
+          "end_line": 99,
+          "block_line": 38
+        },
+        {
+          "id": "campaign.roles",
+          "title": "Занятия и вклад в войну",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 50,
+          "end_line": 63,
+          "block_line": 47
+        },
+        {
+          "id": "campaign.research",
+          "title": "Исследования и практические открытия",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 67,
+          "end_line": 79,
+          "block_line": 64
+        },
+        {
+          "id": "campaign.operations",
+          "title": "Несколько способов решить оперативную задачу",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 83,
+          "end_line": 90,
+          "block_line": 80
+        },
+        {
+          "id": "campaign.adaptation",
+          "title": "Обучение Роя и обратная связь",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 94,
+          "end_line": 99,
+          "block_line": 91
+        },
+        {
           "id": "gameplay.fleet",
           "title": "XIV. Флот и игровая фракция (игровой раздел)",
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 41,
-          "end_line": 103,
-          "block_line": 38,
+          "line": 103,
+          "end_line": 165,
+          "block_line": 100,
           "labels": [
             "XIV"
           ]
@@ -32717,9 +32767,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 48,
-          "end_line": 55,
-          "block_line": 45,
+          "line": 110,
+          "end_line": 117,
+          "block_line": 107,
           "labels": [
             "XIV.1"
           ]
@@ -32730,9 +32780,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 59,
-          "end_line": 72,
-          "block_line": 56,
+          "line": 121,
+          "end_line": 134,
+          "block_line": 118,
           "labels": [
             "XIV.2"
           ]
@@ -32743,9 +32793,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 76,
-          "end_line": 81,
-          "block_line": 73,
+          "line": 138,
+          "end_line": 143,
+          "block_line": 135,
           "labels": [
             "XIV.2-доп"
           ]
@@ -32756,9 +32806,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 85,
-          "end_line": 94,
-          "block_line": 82,
+          "line": 147,
+          "end_line": 156,
+          "block_line": 144,
           "labels": [
             "XIV.3"
           ]
@@ -32769,9 +32819,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 98,
-          "end_line": 103,
-          "block_line": 95,
+          "line": 160,
+          "end_line": 165,
+          "block_line": 157,
           "labels": [
             "XIV.4"
           ]
@@ -32782,9 +32832,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 107,
-          "end_line": 114,
-          "block_line": 104,
+          "line": 169,
+          "end_line": 176,
+          "block_line": 166,
           "labels": [
             "XV"
           ]
@@ -32795,12 +32845,32 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 118,
-          "end_line": 127,
-          "block_line": 115,
+          "line": 180,
+          "end_line": 219,
+          "block_line": 177,
           "labels": [
             "XVI"
           ]
+        },
+        {
+          "id": "campaign.endings",
+          "title": "Формирование развязки решениями игрока",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 193,
+          "end_line": 212,
+          "block_line": 190
+        },
+        {
+          "id": "campaign.defeat",
+          "title": "Поражение и геймовер",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 216,
+          "end_line": 219,
+          "block_line": 213
         }
       ]
     },
