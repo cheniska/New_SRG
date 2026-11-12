@@ -137,6 +137,8 @@ status: "canonical"
 | 3100 | Начало следующего исторического подпериода | `commonwealth.next-period` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
 | 3280–3300 | Получение аэлитами статуса наблюдателя Содружества; точный год не определён | `aelites.observer-status` | [Подробнее](race_aelity.md#history.commonwealth) |
 | 3280–3300 | Получение заргашами статуса наблюдателя Содружества; точный год не определён | `zargash.observer-status` | [Подробнее](race_zargashi.md#history.commonwealth) |
+| 3300 | Разведка находит систему базирования ИИ, ошибочно считая их единой силой | `ancient-ai.base-discovery` | [Подробнее](race_ii_drevnih.md#history.episodes.item-3) |
+| 3300 | Первое нападение Карателя на периферийную систему; начало открытого вторжения | `ancient-ai.invasion` | [Подробнее](race_ii_drevnih.md#history.episodes.item-3) |
 
 <a id="undated"></a>
 <!-- section-status: needs_development -->
