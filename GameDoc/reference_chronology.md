@@ -10,7 +10,7 @@ status: "canonical"
 
 Этот справочник автоматически собирается из `data/chronology.json`. Дата и степень её точности хранятся у события с постоянным ID. Связные расовые истории сохраняются в досье; общий ход — в [статье периода](reference_period_2500_2800.md).
 
-Эпоха контактов 2500–2800, её предшествующие вехи и история Содружества до 3100, включая окно кампании Роя и восстановление. Это не полный реестр всех эпох.
+Эпоха контактов 2500–2800, её предшествующие вехи и история Содружества до 3300, включая окно кампании Роя и восстановление. Это не полный реестр всех эпох.
 
 <a id="events"></a>
 <!-- section-status: filled -->
@@ -135,6 +135,8 @@ status: "canonical"
 | 3076–3100 | Мирное развитие после восстановления | `swarm.peaceful-development` | [Подробнее](reference_history_extended.md#late-commonwealth.peace-3076-3100) |
 | около 3080 | Практический результат синаптской обратной разработки ройской гипертехнологии | `swarm.hypertech-ready` | [Подробнее](reference_history_commonwealth.md#postwar.science) |
 | 3100 | Начало следующего исторического подпериода | `commonwealth.next-period` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
+| 3280–3300 | Получение аэлитами статуса наблюдателя Содружества; точный год не определён | `aelites.observer-status` | [Подробнее](race_aelity.md#history.commonwealth) |
+| 3280–3300 | Получение заргашами статуса наблюдателя Содружества; точный год не определён | `zargash.observer-status` | [Подробнее](race_zargashi.md#history.commonwealth) |
 
 <a id="undated"></a>
 <!-- section-status: needs_development -->

@@ -1,6 +1,6 @@
 {
   "schema": "chronology-1",
-  "scope": "Эпоха контактов 2500–2800, её предшествующие вехи и история Содружества до 3100, включая окно кампании Роя и восстановление. Это не полный реестр всех эпох.",
+  "scope": "Эпоха контактов 2500–2800, её предшествующие вехи и история Содружества до 3300, включая окно кампании Роя и восстановление. Это не полный реестр всех эпох.",
   "events": [
     {
       "id": "tarnai.orbit",
@@ -813,6 +813,20 @@
       "precision": "approximate",
       "title": "Практический результат синаптской обратной разработки ройской гипертехнологии",
       "source": "reference_history_commonwealth.md#postwar.science"
+    },
+    {
+      "id": "aelites.observer-status",
+      "date": "3280–3300",
+      "precision": "range",
+      "title": "Получение аэлитами статуса наблюдателя Содружества; точный год не определён",
+      "source": "race_aelity.md#history.commonwealth"
+    },
+    {
+      "id": "zargash.observer-status",
+      "date": "3280–3300",
+      "precision": "range",
+      "title": "Получение заргашами статуса наблюдателя Содружества; точный год не определён",
+      "source": "race_zargashi.md#history.commonwealth"
     }
   ],
   "undated": [
