@@ -24,7 +24,7 @@
 
 ## Приоритет источников
 
-1. Явные решения автора, зафиксированные в журнале решений [плана](editorial/PLAN_migracii_ras_v3.md#9-журнал-решений-автора) и [дополнении по войне эпохи контактов](editorial/decisions_contact_war.md). Решения по [Спасителям и кампании Роя](editorial/decisions_spasiteli.md#принятые-решения) также включены в этот уровень. Также действуют [полная сверка истории рас](editorial/decisions_history_shared_chat.md) и [решения по Спасителям](editorial/decisions_spasiteli.md). Более позднее явное решение заменяет прежнее в своей области.
+1. Явные решения автора, зафиксированные в журнале решений [плана](editorial/PLAN_migracii_ras_v3.md#9-журнал-решений-автора) и [дополнении по войне эпохи контактов](editorial/decisions_contact_war.md). Решения по [Спасителям и кампании Роя](editorial/decisions_spasiteli.md#принятые-решения) также включены в этот уровень. Также действуют [полная сверка истории рас](editorial/decisions_history_shared_chat.md) и [решения по Спасителям](editorial/decisions_spasiteli.md). Решения по [Легатам и второй кампании](editorial/decisions_legates.md) входят в тот же уровень. Более позднее явное решение заменяет прежнее в своей области.
 2. `reference_spravochnik_sistem.md` — численные параметры звёзд и планет.
 3. Общие справочники — каждый в своей предметной области: история, физика, институты и т. д.
 4. Принятые реестры контактов и эпох — после их создания и проверки. Сейчас такие реестры не созданы и не могут служить источником.
@@ -59,7 +59,7 @@
 | ВЕНТАРЫ | [race_ventary.md](race_ventary.md) |
 | ГОРАНДЫ | [race_gorandy.md](race_gorandy.md) |
 | КАЙРЕНЫ | [race_kayreny.md](race_kayreny.md) |
-| ИИ ДРЕВНИХ | [race_ii_drevnih.md](race_ii_drevnih.md) |
+| ЛЕГАТЫ (ИИ ДРЕВНИХ) | [race_ii_drevnih.md](race_ii_drevnih.md) |
 | НАЭРЫ («СТРОИТЕЛИ») | [race_stroiteli.md](race_stroiteli.md) |
 | ГРОНДАРЫ (БРОНОКСЫ) | [race_grondary.md](race_grondary.md) |
 | КСЕНОПОДЫ | [race_ksenopody.md](race_ksenopody.md) |

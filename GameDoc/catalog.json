@@ -7,7 +7,7 @@
       "id": "document.also-races-5-ii-drevnih-gameplay-v1",
       "path": "GameDoc/also_races_5_ii_drevnih_gameplay_v1.txt",
       "type": "document",
-      "title": "ИИ ДРЕВНИХ — ГЕЙМПЛЕЙНОЕ ПРИЛОЖЕНИЕ [ПРЕДЛОЖЕНО]",
+      "title": "ЛЕГАТЫ (ИИ ДРЕВНИХ) — ГЕЙМПЛЕЙНОЕ ПРИЛОЖЕНИЕ",
       "status": "canonical",
       "format": "legacy-text",
       "schema": null,
@@ -118,7 +118,7 @@
           "status": null,
           "level": 2,
           "line": 104,
-          "end_line": 169,
+          "end_line": 157,
           "block_line": 104
         },
         {
@@ -129,9 +129,9 @@
           ],
           "status": null,
           "level": 3,
-          "line": 115,
-          "end_line": 123,
-          "block_line": 115
+          "line": 113,
+          "end_line": 121,
+          "block_line": 113
         },
         {
           "id": "homeworld.star",
@@ -141,9 +141,9 @@
           ],
           "status": null,
           "level": 3,
-          "line": 124,
-          "end_line": 132,
-          "block_line": 124
+          "line": 122,
+          "end_line": 131,
+          "block_line": 122
         },
         {
           "id": "homeworld.parameters",
@@ -153,9 +153,9 @@
           ],
           "status": null,
           "level": 3,
-          "line": 133,
-          "end_line": 141,
-          "block_line": 133
+          "line": 132,
+          "end_line": 139,
+          "block_line": 132
         },
         {
           "id": "homeworld.atmosphere",
@@ -165,9 +165,9 @@
           ],
           "status": null,
           "level": 3,
-          "line": 142,
-          "end_line": 150,
-          "block_line": 142
+          "line": 140,
+          "end_line": 147,
+          "block_line": 140
         },
         {
           "id": "homeworld.climate",
@@ -177,9 +177,33 @@
           ],
           "status": null,
           "level": 3,
-          "line": 151,
+          "line": 148,
+          "end_line": 157,
+          "block_line": 148
+        },
+        {
+          "id": "nutrition",
+          "title": "V. ИССЛЕДОВАНИЯ И РАСКРЫТИЕ ПЯТИ СЕРИЙ",
+          "slots": [
+            "V"
+          ],
+          "status": null,
+          "level": 2,
+          "line": 158,
           "end_line": 169,
-          "block_line": 151
+          "block_line": 158
+        },
+        {
+          "id": "language",
+          "title": "VI. ОТ ОБОРОННЫХ ДИРЕКТИВ К РАСКОЛУ",
+          "slots": [
+            "VI"
+          ],
+          "status": null,
+          "level": 2,
+          "line": 170,
+          "end_line": 187,
+          "block_line": 170
         }
       ]
     },
@@ -13526,7 +13550,7 @@
       "id": "race.ii_drevnih",
       "path": "GameDoc/race_ii_drevnih.md",
       "type": "race",
-      "title": "ИИ Древних",
+      "title": "Легаты (ИИ Древних)",
       "status": "canonical",
       "format": "markdown",
       "schema": "race-1",
@@ -13965,7 +13989,7 @@
           "status": "filled",
           "level": 2,
           "line": 312,
-          "end_line": 369,
+          "end_line": 371,
           "block_line": 309
         },
         {
@@ -13977,7 +14001,7 @@
           "status": "filled",
           "level": 3,
           "line": 317,
-          "end_line": 339,
+          "end_line": 341,
           "block_line": 314
         },
         {
@@ -14006,14 +14030,14 @@
         },
         {
           "id": "language.speech.item-3",
-          "title": "VI.1.3. Контакт с Содружеством: общение идёт не на языке Древних, а на собственных шифрах и машинных кодах фракций, которые Содружество дешифровало. Именно дешифровка сделала возможными и диалог с Prime (логическая ловушка для Ольверна, дебат с Кортеном, сигналы прекращения огня), и взлом (распознавание Карателя, протокол Роя-Эхо). Сроки: до 3300 шифры фракций не были вскрыты, что и позволило расколу остаться незамеченным; дешифровка",
+          "title": "VI.1.3. Контакт и дешифровка",
           "slots": [
             "VI.1.3"
           ],
           "status": "filled",
           "level": 4,
           "line": 336,
-          "end_line": 339,
+          "end_line": 341,
           "block_line": 333
         },
         {
@@ -14024,9 +14048,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 343,
-          "end_line": 346,
-          "block_line": 340
+          "line": 345,
+          "end_line": 348,
+          "block_line": 342
         },
         {
           "id": "language.communication-technology",
@@ -14036,9 +14060,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 350,
-          "end_line": 353,
-          "block_line": 347
+          "line": 352,
+          "end_line": 355,
+          "block_line": 349
         },
         {
           "id": "language.lingua",
@@ -14048,9 +14072,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 357,
-          "end_line": 362,
-          "block_line": 354
+          "line": 359,
+          "end_line": 364,
+          "block_line": 356
         },
         {
           "id": "language.names",
@@ -14060,9 +14084,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 366,
-          "end_line": 369,
-          "block_line": 363
+          "line": 368,
+          "end_line": 371,
+          "block_line": 365
         },
         {
           "id": "psychology",
@@ -14072,9 +14096,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 373,
-          "end_line": 404,
-          "block_line": 370
+          "line": 375,
+          "end_line": 406,
+          "block_line": 372
         },
         {
           "id": "psychology.trait-1",
@@ -14084,9 +14108,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 380,
-          "end_line": 383,
-          "block_line": 377
+          "line": 382,
+          "end_line": 385,
+          "block_line": 379
         },
         {
           "id": "psychology.trait-2",
@@ -14096,9 +14120,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 387,
-          "end_line": 390,
-          "block_line": 384
+          "line": 389,
+          "end_line": 392,
+          "block_line": 386
         },
         {
           "id": "psychology.trait-3",
@@ -14108,9 +14132,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 394,
-          "end_line": 397,
-          "block_line": 391
+          "line": 396,
+          "end_line": 399,
+          "block_line": 393
         },
         {
           "id": "psychology.trait-4",
@@ -14120,9 +14144,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 401,
-          "end_line": 404,
-          "block_line": 398
+          "line": 403,
+          "end_line": 406,
+          "block_line": 400
         },
         {
           "id": "culture",
@@ -14132,9 +14156,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 408,
-          "end_line": 458,
-          "block_line": 405
+          "line": 410,
+          "end_line": 460,
+          "block_line": 407
         },
         {
           "id": "culture.science",
@@ -14144,9 +14168,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 413,
-          "end_line": 416,
-          "block_line": 410
+          "line": 415,
+          "end_line": 418,
+          "block_line": 412
         },
         {
           "id": "culture.art",
@@ -14156,9 +14180,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 420,
-          "end_line": 423,
-          "block_line": 417
+          "line": 422,
+          "end_line": 425,
+          "block_line": 419
         },
         {
           "id": "culture.beliefs",
@@ -14168,9 +14192,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 427,
-          "end_line": 430,
-          "block_line": 424
+          "line": 429,
+          "end_line": 432,
+          "block_line": 426
         },
         {
           "id": "culture.artificial-intelligence",
@@ -14180,9 +14204,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 434,
-          "end_line": 437,
-          "block_line": 431
+          "line": 436,
+          "end_line": 439,
+          "block_line": 433
         },
         {
           "id": "culture.clothing",
@@ -14192,9 +14216,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 441,
-          "end_line": 444,
-          "block_line": 438
+          "line": 443,
+          "end_line": 446,
+          "block_line": 440
         },
         {
           "id": "culture.visual-style",
@@ -14204,9 +14228,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 448,
-          "end_line": 451,
-          "block_line": 445
+          "line": 450,
+          "end_line": 453,
+          "block_line": 447
         },
         {
           "id": "culture.leisure",
@@ -14216,9 +14240,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 455,
-          "end_line": 458,
-          "block_line": 452
+          "line": 457,
+          "end_line": 460,
+          "block_line": 454
         },
         {
           "id": "unique-institution",
@@ -14228,9 +14252,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 462,
-          "end_line": 465,
-          "block_line": 459
+          "line": 464,
+          "end_line": 467,
+          "block_line": 461
         },
         {
           "id": "society",
@@ -14240,9 +14264,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 469,
-          "end_line": 540,
-          "block_line": 466
+          "line": 471,
+          "end_line": 542,
+          "block_line": 468
         },
         {
           "id": "society.government",
@@ -14252,9 +14276,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 474,
-          "end_line": 512,
-          "block_line": 471
+          "line": 476,
+          "end_line": 514,
+          "block_line": 473
         },
         {
           "id": "society.government.item-1",
@@ -14264,9 +14288,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 481,
-          "end_line": 484,
-          "block_line": 478
+          "line": 483,
+          "end_line": 486,
+          "block_line": 480
         },
         {
           "id": "society.government.item-2",
@@ -14276,9 +14300,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 488,
-          "end_line": 491,
-          "block_line": 485
+          "line": 490,
+          "end_line": 493,
+          "block_line": 487
         },
         {
           "id": "society.government.item-3",
@@ -14288,9 +14312,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 495,
-          "end_line": 498,
-          "block_line": 492
+          "line": 497,
+          "end_line": 500,
+          "block_line": 494
         },
         {
           "id": "society.government.item-4",
@@ -14300,9 +14324,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 502,
-          "end_line": 505,
-          "block_line": 499
+          "line": 504,
+          "end_line": 507,
+          "block_line": 501
         },
         {
           "id": "society.government.item-5",
@@ -14312,9 +14336,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 509,
-          "end_line": 512,
-          "block_line": 506
+          "line": 511,
+          "end_line": 514,
+          "block_line": 508
         },
         {
           "id": "society.conflicts",
@@ -14324,9 +14348,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 516,
-          "end_line": 519,
-          "block_line": 513
+          "line": 518,
+          "end_line": 521,
+          "block_line": 515
         },
         {
           "id": "society.economy",
@@ -14336,9 +14360,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 523,
-          "end_line": 526,
-          "block_line": 520
+          "line": 525,
+          "end_line": 528,
+          "block_line": 522
         },
         {
           "id": "society.military",
@@ -14348,9 +14372,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 530,
-          "end_line": 533,
-          "block_line": 527
+          "line": 532,
+          "end_line": 535,
+          "block_line": 529
         },
         {
           "id": "group.x-5-x-17",
@@ -14372,9 +14396,9 @@
           ],
           "status": "not_applicable",
           "level": 3,
-          "line": 537,
-          "end_line": 540,
-          "block_line": 534
+          "line": 539,
+          "end_line": 542,
+          "block_line": 536
         },
         {
           "id": "technology",
@@ -14384,9 +14408,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 544,
-          "end_line": 573,
-          "block_line": 541
+          "line": 546,
+          "end_line": 575,
+          "block_line": 543
         },
         {
           "id": "technology.materials",
@@ -14396,9 +14420,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 549,
-          "end_line": 552,
-          "block_line": 546
+          "line": 551,
+          "end_line": 554,
+          "block_line": 548
         },
         {
           "id": "technology.energy",
@@ -14408,9 +14432,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 556,
-          "end_line": 559,
-          "block_line": 553
+          "line": 558,
+          "end_line": 561,
+          "block_line": 555
         },
         {
           "id": "technology.spaceflight",
@@ -14420,9 +14444,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 563,
-          "end_line": 566,
-          "block_line": 560
+          "line": 565,
+          "end_line": 568,
+          "block_line": 562
         },
         {
           "id": "technology.special-practices",
@@ -14432,9 +14456,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 570,
-          "end_line": 573,
-          "block_line": 567
+          "line": 572,
+          "end_line": 575,
+          "block_line": 569
         },
         {
           "id": "reputation",
@@ -14444,9 +14468,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 577,
-          "end_line": 606,
-          "block_line": 574
+          "line": 579,
+          "end_line": 608,
+          "block_line": 576
         },
         {
           "id": "reputation.ridicule",
@@ -14456,9 +14480,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 582,
-          "end_line": 585,
-          "block_line": 579
+          "line": 584,
+          "end_line": 587,
+          "block_line": 581
         },
         {
           "id": "reputation.pride",
@@ -14468,9 +14492,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 589,
-          "end_line": 592,
-          "block_line": 586
+          "line": 591,
+          "end_line": 594,
+          "block_line": 588
         },
         {
           "id": "reputation.recognition",
@@ -14480,9 +14504,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 596,
-          "end_line": 599,
-          "block_line": 593
+          "line": 598,
+          "end_line": 601,
+          "block_line": 595
         },
         {
           "id": "reputation.hidden-problem",
@@ -14492,9 +14516,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 603,
-          "end_line": 606,
-          "block_line": 600
+          "line": 605,
+          "end_line": 608,
+          "block_line": 602
         },
         {
           "id": "relations",
@@ -14504,9 +14528,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 610,
-          "end_line": 641,
-          "block_line": 607
+          "line": 612,
+          "end_line": 643,
+          "block_line": 609
         },
         {
           "id": "gameplay.fleet",
@@ -14516,9 +14540,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 645,
-          "end_line": 648,
-          "block_line": 642
+          "line": 647,
+          "end_line": 650,
+          "block_line": 644
         },
         {
           "id": "gameplay.rewards",
@@ -14528,9 +14552,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 652,
-          "end_line": 655,
-          "block_line": 649
+          "line": 654,
+          "end_line": 657,
+          "block_line": 651
         },
         {
           "id": "gameplay.quests",
@@ -14540,9 +14564,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 659,
-          "end_line": 668,
-          "block_line": 656
+          "line": 661,
+          "end_line": 672,
+          "block_line": 658
         },
         {
           "id": "people",
@@ -14552,9 +14576,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 672,
-          "end_line": 681,
-          "block_line": 669
+          "line": 676,
+          "end_line": 685,
+          "block_line": 673
         },
         {
           "id": "visual",
@@ -14562,9 +14586,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 685,
-          "end_line": 690,
-          "block_line": 682
+          "line": 689,
+          "end_line": 694,
+          "block_line": 686
         },
         {
           "id": "visual.i.1",
@@ -14572,9 +14596,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 690,
-          "end_line": 690,
-          "block_line": 687
+          "line": 694,
+          "end_line": 694,
+          "block_line": 691
         }
       ]
     },
