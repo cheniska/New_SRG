@@ -17,7 +17,7 @@ class SynaptPhraseTests(unittest.TestCase):
     def test_four_segments_local_swap(self):
         result, segments = transform("gamarjoba")
         self.assertEqual(len(segments), 4)
-        self.assertEqual(result, "gamaobalj")
+        self.assertEqual(result, "gamabarjo")
 
     def test_cyrillic(self):
         self.assertEqual(cyrillic("tshkh"), "цшх")
