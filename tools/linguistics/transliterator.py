@@ -15,7 +15,9 @@ PROFILES = {
         "glottal_before": ("a", "e"),
         "consonant_maps": {
             "none": {},
-            "rotation": {"r": "d", "d": "r", "b": "g", "g": "t", "t": "b"},
+            "rotation": {"r": "d", "d": "r", "b": "g", "g": "t", "t": "b"},  # legacy demonstration
+            "synapt_cluster": {"s": "z", "z": "s", "t": "d", "d": "t",
+                               "k": "g", "g": "k", "p": "b", "b": "p"},
         },
     }
 }
@@ -36,7 +38,7 @@ def rough_syllables(word: str) -> list[str]:
 
 def encode(word: str, profile: str = "synapt", syllables: str | None = None,
            reverse: bool = True, apostrophe: bool = True,
-           consonant_map: str = "none") -> dict:
+           consonant_map: str = "synapt_cluster") -> dict:
     if profile not in PROFILES:
         raise ValueError("Unknown profile")
     if consonant_map not in PROFILES[profile]["consonant_maps"]:
@@ -98,7 +100,7 @@ def main() -> None:
     enc.add_argument("--profile", default="synapt", choices=PROFILES)
     enc.add_argument("--no-reverse", action="store_true")
     enc.add_argument("--no-apostrophe", action="store_true")
-    enc.add_argument("--consonant-map", default="none", choices=PROFILES["synapt"]["consonant_maps"])
+    enc.add_argument("--consonant-map", default="synapt_cluster", choices=PROFILES["synapt"]["consonant_maps"])
     dec = sub.add_parser("decode")
     dec.add_argument("record", help="JSON object from encode output")
     args = parser.parse_args()
