@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Synapt phonology v0.2: Georgian -> conservative alien adaptation.
+"""Experimental Synapt phonology v0.3.
 
-Input is Georgian, NOT Russian; semantic translation is a separate step.
-Russian-script output is a display transcription, not IPA.
-All transformations are deterministic. Exact reversal needs the source record.
+Accepts verified Georgian text (NOT Russian). Outputs Cyrillic transcriptions.
+Retains Georgian consonant clusters while changing vowels and some consonants.
+Not a translator, not an IPA transcription. No names are automatically canon.
 """
+from __future__ import annotations
 import argparse
 import json
 import re
@@ -14,8 +15,6 @@ GEO = dict(zip(
     ["a","b","g","d","e","v","z","t","i","k","l","m","n","o","p",
      "zh","r","s","t","u","p","k","gh","q","sh","ch","ts","dz",
      "ts","ch","kh","j","h"]))
-# Orthographic Georgian distinctions are retained only approximately in this
-# prototype. Do not use as authoritative Georgian phonetic transcription.
 VOWELS = "aeiou"
 CYR = {
     "dzh":"дж", "tsh":"цш", "zh":"ж", "sh":"ш", "ch":"ч",
@@ -28,71 +27,55 @@ CYR = {
 }
 CYR_RE = re.compile("|".join(re.escape(x) for x in sorted(CYR, key=len, reverse=True)))
 
-def cyrillic(text):
+def cyrillic(text: str) -> str:
     return CYR_RE.sub(lambda m: CYR[m.group()], text)
 
-def syllables(word):
-    """Conservative nuclei-based segments, retaining onset clusters intact.
+# These are authorial sound laws, NOT descriptions of Georgian.
+# Most consonants and all original consonant clusters survive intact.
+DIGRAPH_SHIFT = {"sh":"zh", "ch":"ts", "gh":"kh"}
+SINGLE_SHIFT = {"v":"w", "j":"zh"}
+VOWEL_SHIFT = {"a":"e", "e":"i", "i":"a", "o":"u", "u":"o"}
+TOKENS = re.compile("sh|ch|gh|[a-z]")
 
-    A cluster between two vowels belongs to the following segment.
-    This is an algorithmic approximation, NOT Georgian linguistic syllabification.
+def shift(word: str) -> str:
+    def repl(m):
+        p = m.group()
+        return DIGRAPH_SHIFT.get(p, SINGLE_SHIFT.get(p, VOWEL_SHIFT.get(p, p)))
+    return TOKENS.sub(repl, word)
+
+def compact(word: str) -> str:
+    """Trim only a weak FINAL open vowel of long words, if safe.
+
+    Never remove internal syllabic vowels or split consonant clusters.
+    Keep at least one vowel and >= 4 characters in resulting word.
     """
-    nuclei = list(re.finditer("[aeiou]+", word))
-    if len(nuclei) < 2:
-        return [word]
-    cuts = [n.end() for n in nuclei[:-1]]
-    return [word[a:b] for a,b in zip([0]+cuts, cuts+[len(word)])]
-
-# Sparse, cluster-friendly replacements; not global permutations.
-# Replacements happen once, simultaneously, on original grapheme tokens.
-SHIFTS = {"sh":"zh", "ch":"ts", "gh":"kh", "v":"w"}
-TOKEN_RE = re.compile("sh|ch|gh|[a-z]")
-
-def soften(word):
-    return TOKEN_RE.sub(lambda m: SHIFTS.get(m.group(), m.group()), word)
-
-def compact(word):
-    """Only reduce obvious vowel hiatus; never delete a whole syllable."""
-    word = re.sub(r"([aeiou])\\1+", r"\\1", word)
-    # Three consecutive vowels become two; avoid collapsing all vowels.
-    word = re.sub(r"([aeiou])([aeiou])([aeiou])", r"\\1\\3", word)
+    if len(word) >= 8 and word[-1:] in VOWELS and sum(c in VOWELS for c in word) >= 3:
+        return word[:-1]
     return word
 
-def transform(word):
-    original = syllables(word)
-    # Preserve first segment and all its onset consonants. For 4+ segments,
-    # swap only the final two; 1-3 segments keep original order.
-    segments = original[:]
-    if len(segments) >= 4:
-        segments[-2], segments[-1] = segments[-1], segments[-2]
-    joined = "".join(segments)
-    result = compact(soften(joined))
-    # Do not allow transformations to collapse a meaningful source word.
-    if len(result) < 3 and len(word) >= 3:
-        result = soften(word)
-    return result, original
+def transform(word: str) -> str:
+    if not re.fullmatch("[a-z]+", word):
+        raise ValueError("Expected lowercase Latin transcription")
+    return compact(shift(word))
 
-def convert(text):
+def convert(text: str) -> dict:
     rows = []
     for token in re.findall(r"[ა-ჰ]+|[^ა-ჰ]+", text.lower()):
         if not re.fullmatch(r"[ა-ჰ]+", token):
-            rows.append({"source":token, "georgian_ru":token, "synapt_ru":token})
+            rows.append({"source":token,"georgian_ru":token,"synapt_ru":token})
             continue
         latin = "".join(GEO[c] for c in token)
-        output, chunks = transform(latin)
-        rows.append({"source":token, "roman":latin, "segments":chunks,
-                     "georgian_ru":cyrillic(latin),
-                     "synapt_ru":cyrillic(output), "synapt_latin":output})
-    return {
-        "georgian_ru":"".join(x["georgian_ru"] for x in rows),
-        "synapt_ru":"".join(x["synapt_ru"] for x in rows),
-        "tokens":rows,
-        "version":"0.2",
-        "note":"Experimental phonological adaptation, not a real Synapt translation."
-    }
+        result = transform(latin)
+        rows.append({"source":token,"roman":latin,"synapt_latin":result,
+                     "georgian_ru":cyrillic(latin),"synapt_ru":cyrillic(result)})
+    return {"version":"0.3",
+            "georgian_ru":"".join(x["georgian_ru"] for x in rows),
+            "synapt_ru":"".join(x["synapt_ru"] for x in rows),
+            "tokens":rows,
+            "note":"Experimental transformation; not a real Georgian translation or canonical Synapt."}
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("georgian", help="Georgian text (not Russian)")
-    args = parser.parse_args()
+    p = argparse.ArgumentParser()
+    p.add_argument("georgian", help="Georgian phrase")
+    args = p.parse_args()
     print(json.dumps(convert(args.georgian), ensure_ascii=False, indent=2))
