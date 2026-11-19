@@ -13,6 +13,10 @@ PROFILES = {
         "version": "0.1",
         "shifts": [("sh", "zh"), ("ch", "ts"), ("q", "kh"), ("v", "w")],
         "glottal_before": ("a", "e"),
+        "consonant_maps": {
+            "none": {},
+            "rotation": {"r": "d", "d": "r", "b": "g", "g": "t", "t": "b"},
+        },
     }
 }
 
@@ -31,9 +35,12 @@ def rough_syllables(word: str) -> list[str]:
     return [word[a:b] for a, b in zip([0] + boundaries, boundaries + [len(word)])]
 
 def encode(word: str, profile: str = "synapt", syllables: str | None = None,
-           reverse: bool = True, apostrophe: bool = True) -> dict:
+           reverse: bool = True, apostrophe: bool = True,
+           consonant_map: str = "none") -> dict:
     if profile not in PROFILES:
         raise ValueError("Unknown profile")
+    if consonant_map not in PROFILES[profile]["consonant_maps"]:
+        raise ValueError("Unknown consonant map")
     source = word.lower().strip()
     if not re.fullmatch(r"[a-z]+", source):
         raise ValueError("Source must be Latin transcription a-z")
@@ -55,6 +62,10 @@ def encode(word: str, profile: str = "synapt", syllables: str | None = None,
             chunk = chunk.replace(chr(0xE000 + i), new)
         return chunk
     transformed = [shift(c) for c in ordered]
+    mapping = PROFILES[profile]["consonant_maps"][consonant_map]
+    # str.translate applies the permutation simultaneously, never cascading.
+    table = str.maketrans(mapping)
+    transformed = [c.translate(table) for c in transformed]
     surface = "-".join(transformed)
     # Apostrophe marks an explicit glottal onset at a syllable boundary,
     # and does not appear merely for visual effect.
@@ -64,6 +75,7 @@ def encode(word: str, profile: str = "synapt", syllables: str | None = None,
         "profile": profile, "version": PROFILES[profile]["version"],
         "source": source, "source_syllables": chunks,
         "reverse_syllables": reverse, "apostrophe": apostrophe,
+        "consonant_map": consonant_map,
         "result": surface, "meaning": None,
     }
 
@@ -71,7 +83,8 @@ def decode(record: dict) -> str:
     """Exact reconstruction using the saved source and deterministic verification."""
     expected = encode(record["source"], record["profile"],
                       "-".join(record["source_syllables"]),
-                      record["reverse_syllables"], record["apostrophe"])
+                      record["reverse_syllables"], record["apostrophe"],
+                      record.get("consonant_map", "none"))
     if expected["result"] != record["result"]:
         raise ValueError("Record differs from reproducible output")
     return record["source"]
@@ -85,12 +98,14 @@ def main() -> None:
     enc.add_argument("--profile", default="synapt", choices=PROFILES)
     enc.add_argument("--no-reverse", action="store_true")
     enc.add_argument("--no-apostrophe", action="store_true")
+    enc.add_argument("--consonant-map", default="none", choices=PROFILES["synapt"]["consonant_maps"])
     dec = sub.add_parser("decode")
     dec.add_argument("record", help="JSON object from encode output")
     args = parser.parse_args()
     if args.cmd == "encode":
         print(json.dumps(encode(args.word, args.profile, args.syllables,
-                                not args.no_reverse, not args.no_apostrophe),
+                                not args.no_reverse, not args.no_apostrophe,
+                                args.consonant_map),
                          ensure_ascii=False, indent=2))
     else:
         print(decode(json.loads(args.record)))
