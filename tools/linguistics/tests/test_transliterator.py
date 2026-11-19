@@ -13,6 +13,14 @@ class TestSynapt(unittest.TestCase):
     def test_apostrophe_is_phonetic_boundary(self):
         rec = encode("khae", syllables="kh-ae")
         self.assertIn("'", rec["result"])
+    def test_simultaneous_rotation(self):
+        rec = encode("rdbgt", consonant_map="rotation")
+        self.assertEqual(rec["result"], "drgtb")
+        self.assertEqual(decode(rec), "rdbgt")
+    def test_rotation_with_syllable_inversion(self):
+        rec = encode("gamarjoba", syllables="ga-mar-jo-ba", consonant_map="rotation")
+        self.assertEqual(decode(rec), "gamarjoba")
+        self.assertEqual(rec["consonant_map"], "rotation")
     def test_invalid_segmentation(self):
         with self.assertRaises(ValueError):
             encode("gamarjoba", syllables="ga-mar-ba")
