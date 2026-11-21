@@ -1,5 +1,5 @@
 import unittest
-from morphology_v2 import noun, verb, lexeme, sentence, survey
+from morphology_v2 import noun, verb, lexeme, sentence, survey, NOUN_NUMBER, NOUN_CASE, LEXICAL_DERIVATION, ROOTS
 
 class MorphologyV2Tests(unittest.TestCase):
     def test_one_root_inflection(self):
@@ -20,6 +20,16 @@ class MorphologyV2Tests(unittest.TestCase):
                          "мцэр цвэкэс дзримит")
     def test_no_collisions(self):
         self.assertEqual(survey()["collisions"], {})
+    def test_expanded_cases(self):
+        self.assertEqual(noun("place", case="abl")["form"], "цхэмаш")
+        self.assertEqual(noun("place", case="all")["form"], "цхэмуц")
+        self.assertEqual(noun("person", case="com")["form"], "мцэрил")
+    def test_collective_and_mood(self):
+        self.assertEqual(noun("detect", number="collective")["form"], "дзримум")
+        self.assertEqual(verb("detect", tense="fut")["form"], "дзримав")
+        self.assertEqual(verb("detect", mood="cond", tense="pst")["form"], "дзримиташ")
+    def test_survey_count(self):
+        self.assertEqual(survey()["nominal_forms"], len(ROOTS)*len(LEXICAL_DERIVATION)*len(NOUN_NUMBER)*len(NOUN_CASE))
     def test_unknown_features_fail(self):
         with self.assertRaises(ValueError): noun("detect",case="unknown")
         with self.assertRaises(ValueError): verb("detect",tense="unknown")
