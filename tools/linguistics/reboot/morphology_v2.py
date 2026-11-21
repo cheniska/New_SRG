@@ -15,21 +15,27 @@ from dataclasses import dataclass
 from morphology import ROOTS
 
 # No gender agreement assumed. "Plural" marks count, not social group.
-NOUN_NUMBER = {"sg": "", "pl": "к"}
+NOUN_NUMBER = {"sg": "", "pl": "к", "collective": "ум"}
 NOUN_CASE = {
     "nom": "",     # citation form / subject (working model)
     "acc": "эс",   # patient / direct object
     "gen": "эн",   # possessor
     "dat": "ир",   # recipient, goal
     "loc": "эц",   # location
-    "ins": "ум",   # instrument, means
+    "ins": "ов",   # instrument, means
+    "abl": "аш",   # source / from
+    "all": "уц",   # direction / toward
+    "com": "ил",   # with
 }
-VERB_TENSE = {"prs": "а", "pst": "ит", "fut": "ор"}
-VERB_ASPECT_PREFIX = {"simple": "", "ongoing": "мэ"}
+VERB_TENSE = {"prs": "а", "pst": "ит", "fut": "ав"}
+VERB_ASPECT_PREFIX = {"simple": "", "ongoing": "мэ", "complete": "кэ", "iterative": "цэ", "inceptive": "нэ", "repetitive": "рэ", "joint": "мцэ"}
 VERB_POLARITY_PREFIX = {"pos": "", "neg": "шэ"}
 LEXICAL_DERIVATION = {
-    "bare": "", "agent": "ик", "instrument": "ац", "event": "э", "site": "ор"
+    "bare": "", "agent": "ик", "instrument": "ац", "event": "э", "site": "ор",
+    "abstract": "энц", "result": "ут", "material": "ис",
+    "adjectival": "ив", "diminutive": "эцр"
 }
+VERB_MOOD = {"ind": "", "imp": "эц", "cond": "аш", "opt": "ир"}
 COMPOUND_LINK = "и"
 VOWELS = "аэиоу"
 
@@ -94,21 +100,21 @@ def noun(*roots: str, derived: str = "bare",
 
 
 def verb(root: str, tense: str = "prs", aspect: str = "simple",
-         polarity: str = "pos") -> dict:
+         polarity: str = "pos", mood: str = "ind") -> dict:
     if root not in ROOTS:
         raise ValueError("unknown root")
-    if tense not in VERB_TENSE or aspect not in VERB_ASPECT_PREFIX or polarity not in VERB_POLARITY_PREFIX:
+    if tense not in VERB_TENSE or aspect not in VERB_ASPECT_PREFIX or polarity not in VERB_POLARITY_PREFIX or mood not in VERB_MOOD:
         raise ValueError("unknown verb features")
     # Fixed ordering avoids ambiguous choices:
     # NEGATIVE > ASPECT > ROOT > TENSE
     pieces = tuple(x for x in (
         VERB_POLARITY_PREFIX[polarity], VERB_ASPECT_PREFIX[aspect],
-        ROOTS[root][0], VERB_TENSE[tense]
+        ROOTS[root][0], VERB_TENSE[tense], VERB_MOOD[mood]
     ) if x)
     return WordForm("".join(pieces), pieces,
                     {"pos": "verb", "root": root, "tense": tense,
-                     "aspect": aspect, "polarity": polarity},
-                    "NEG-ASPECT-ROOT-TENSE").as_dict()
+                     "aspect": aspect, "polarity": polarity, "mood": mood},
+                    "NEG-ASPECT-ROOT-TENSE-MOOD").as_dict()
 
 
 def sentence(subject: str, action: str, obj: str | None = None,
@@ -159,6 +165,7 @@ def main() -> None:
     pv.add_argument("--tense", choices=VERB_TENSE, default="prs")
     pv.add_argument("--aspect", choices=VERB_ASPECT_PREFIX, default="simple")
     pv.add_argument("--polarity", choices=VERB_POLARITY_PREFIX, default="pos")
+    pv.add_argument("--mood", choices=VERB_MOOD, default="ind")
     ps = commands.add_parser("sentence")
     ps.add_argument("subject")
     ps.add_argument("action")
@@ -172,7 +179,7 @@ def main() -> None:
                       number=args.number, case=args.case)
     elif args.command == "verb":
         result = verb(args.root, tense=args.tense, aspect=args.aspect,
-                      polarity=args.polarity)
+                      polarity=args.polarity, mood=args.mood)
     elif args.command == "sentence":
         result = sentence(args.subject, args.action, args.object,
                           args.tense, args.polarity)
