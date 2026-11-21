@@ -44,6 +44,8 @@ def inspect_boundary(left: str, right: str) -> list[str]:
     alerts = []
     if ls[-1] in VOWELS and rs[0] in VOWELS:
         alerts.append("vowel_hiatus")
+    if ls[-1] == rs[0] and ls[-1] not in VOWELS:
+        alerts.append("identical_consonants")
     cluster = consonant_run(left, right)
     if len(cluster) > 3:
         alerts.append("four_plus_consonants")
