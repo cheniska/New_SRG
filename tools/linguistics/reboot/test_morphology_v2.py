@@ -14,7 +14,7 @@ class MorphologyV2Tests(unittest.TestCase):
         self.assertNotEqual(noun("detect","signal")["form"],noun("signal","detect")["form"])
     def test_prefixes_and_tense(self):
         self.assertEqual(verb("detect",tense="pst",polarity="neg")["form"],"шэдзримит")
-        self.assertEqual(verb("detect",tense="fut",aspect="ongoing")["form"],"мэдзримор")
+        self.assertEqual(verb("detect",tense="fut",aspect="ongoing")["form"],"мэдзримав")
     def test_sentence(self):
         self.assertEqual(sentence("person","detect","signal",tense="pst")["text"],
                          "мцэр цвэкэс дзримит")
