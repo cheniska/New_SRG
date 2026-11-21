@@ -23,7 +23,7 @@ def trials() -> list[dict]:
     rows = []
     for i, (meaning, subject, obj, action, tense, polarity, aspect) in enumerate(SAMPLES, 1):
         subj = noun(*subject)
-        target = noun(*obj, derived="instrument" if len(obj) > 1 else "bare", case="acc")
+        target = noun(*obj, derived="instrument" if len(obj) > 1 or i == 8 else "bare", case="acc")
         predicate = verb(action, tense=tense, polarity=polarity, aspect=aspect)
         # Experimental order is subject-object-verb, not agreed syntax.
         words = [subj, target, predicate]
