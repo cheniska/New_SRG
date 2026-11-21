@@ -13,6 +13,7 @@ from dataclasses import dataclass
 
 # Lexical roots are exploratory, shared with the earlier reboot experiment.
 from morphology import ROOTS
+from boundary_phonology import surface
 
 # No gender agreement assumed. "Plural" marks count, not social group.
 NOUN_NUMBER = {"sg": "", "pl": "к", "collective": "ум"}
@@ -48,8 +49,11 @@ class WordForm:
     gloss: str
 
     def as_dict(self) -> dict:
+        spoken = surface(self.morphemes)
         return {
             "form": self.spelling, "morphemes": list(self.morphemes),
+            "pronunciation": spoken["pronunciation"],
+            "boundary_changes": spoken["changes"],
             "tags": self.tags, "gloss": self.gloss,
             "warnings": phonology_warnings(self.spelling)
         }
