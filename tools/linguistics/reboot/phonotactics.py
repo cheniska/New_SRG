@@ -68,7 +68,7 @@ def check_word(syllables: list[Syllable]) -> list[str]:
         errors.extend(check_syllable(s))
     for a, b in zip(syllables, syllables[1:]):
         boundary = a.coda + b.onset
-        if len(boundary) > 4:
+        if len(boundary) > 3:
             errors.append("overlong medial consonant junction")
         if any(x in AFFRICATES and y in AFFRICATES
                for x, y in zip(boundary, boundary[1:])):
@@ -108,7 +108,7 @@ def generate(count: int, seed: int = 42, style: str = "chitter",
         errors = check_word(syllables)
         word = render(syllables)
         # Reject too-short, overlong and identical display forms.
-        if errors or len(word) < 3 or len(word) > 13 or word in used:
+        if errors or len(word) < 3 or len(word) > 9 or word in used:
             continue
         used.add(word)
         results.append({
