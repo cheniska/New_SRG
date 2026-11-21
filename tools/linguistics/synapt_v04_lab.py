@@ -19,13 +19,10 @@ RULES = (
     ("intervocalic_g", r"(?<=[aeiou])g(?=[aeiou])", "gh"),
     ("initial_sh", r"^sh", "zh"),
     ("final_a_after_consonant", r"(?<=[bcdfghjklmnpqrstvwxyz])a$", "e"),
-    ("final_e_after_cluster", r"(?<=[bcdfghjklmnpqrstvwxyz]{2})e$", ""),  # unsupported variable lookbehind, handled below
 )
 # Russian display, not a claim of exact pronunciation.
 DISPLAY = {"gh":"гъ","zh":"ж","sh":"ш","ch":"ч","ts":"ц","dz":"дз",
            "kh":"х","w":"в","q":"къ","j":"дж"}
-DISPLAY.update(dict(zip("abgdevzti klmnoprsufqyh".replace(" ",""),
-                        "абгдэвзтиклмнопрсуфкйх")))
 DISPLAY.update({"a":"а","e":"э","i":"и","o":"о","u":"у","v":"в","t":"т",
                 "s":"с","z":"з","p":"п","b":"б","g":"г","d":"д","r":"р",
                 "l":"л","m":"м","n":"н","k":"к","f":"ф","h":"х","y":"й"})
