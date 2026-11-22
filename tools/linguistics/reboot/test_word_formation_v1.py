@@ -21,19 +21,31 @@ class MorphologyTests(unittest.TestCase):
             self.assertEqual(x.form, w)
             self.assertEqual(x.status, "candidate")
 
-    def test_long_compounds_are_flagged(self):
-        for a, b in [("цвэк", "мдзар"), ("нэдар", "ндзэ"), ("сорив", "мдзар")]:
-            self.assertEqual(compound(a, b).status, "review")
+    def test_long_compounds_are_allowed(self):
+        for a, b, surface in [
+            ("цвэк", "мдзар", "цвэкимдзар"),
+            ("нэдар", "ндзэ", "нэдариндзэ"),
+            ("сорив", "мдзар", "соривимдзар"),
+        ]:
+            result = compound(a, b)
+            self.assertEqual(result.form, surface)
+            self.assertEqual(result.status, "candidate")
 
-    def test_vowel_hiatus_not_silently_repaired(self):
+    def test_vowel_hiatus_preserved(self):
         x = derive("дзрина", "instrument")
         self.assertEqual(x.form, "дзринаац")
-        self.assertIn("unresolved vowel hiatus at a morpheme boundary", x.issues)
-        self.assertEqual(x.status, "review")
+        self.assertEqual(x.status, "candidate")
+        self.assertEqual(x.issues, ())
 
-    def test_connector_only_between_consonant_roots(self):
-        self.assertEqual(compound("дзрина", "мцив").status, "review")
-        self.assertEqual(compound("кцор", "эцан").status, "review")
+    def test_connector_preserves_vowel_boundaries(self):
+        self.assertEqual(compound("дзрина", "мцив").form, "дзринаимцив")
+        self.assertEqual(compound("дзрина", "мцив").status, "candidate")
+        self.assertEqual(compound("кцор", "эцан").form, "кцориэцан")
+        self.assertEqual(compound("кцор", "эцан").status, "candidate")
+
+    def test_rejected_phonotactics_still_flagged(self):
+        self.assertEqual(derive("чвар", "agent").status, "review")
+        self.assertEqual(compound("чвар", "нэв").status, "review")
 
     def test_invalid_operation(self):
         with self.assertRaises(ValueError):
