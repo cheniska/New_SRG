@@ -4,7 +4,7 @@
 Three distinct representations:
   underlying: immutable concatenation of morphemes;
   orthography: identical vowels coalesce; other morphemes stay visible;
-  pronunciation: annotated long consonants and optional glides.
+  pronunciation: provisional reading with coalescence and long consonants.
 
 This module does not assert how an alien vocal organ physically works.
 """
@@ -13,8 +13,6 @@ from __future__ import annotations
 import re
 
 VOWELS = set("аэиоу")
-FRONT = {"э", "и"}
-ROUNDED = {"о", "у"}
 TOKEN_RE = re.compile(r"дз|дж|[а-яё]")
 LONG_MARK = "ː"
 
@@ -34,8 +32,8 @@ def surface(parts: list[str] | tuple[str, ...]) -> dict:
     Identical vowels coalesce in spelling and pronunciation: а+а -> а.
     Geminate consonants stay doubled in spelling; phonetic aid marks length.
     Unlike identical vowels, distinct adjacent vowels remain distinct in
-    spelling. A phonetic glide is represented for э/и or о/у
-    onsets in this older illustrative model; its reality is not settled.
+    spelling and in the provisional sound hint. No glide /j/ or /w/ is
+    imposed: possible alien phonetic transitions remain an open question.
     """
     if not parts:
         raise ValueError("at least one morpheme required")
@@ -63,16 +61,12 @@ def surface(parts: list[str] | tuple[str, ...]) -> dict:
             changes.append({"boundary": index, "kind": "geminate",
                             "between": last + "|" + first})
         elif last in VOWELS and first in VOWELS:
+            # Different vowels remain distinct in the working game spelling.
+            # Do not impose an Earth-style /j/ or /w/ sound on alien speech.
             spelling.extend(unit)
-            glide = "й" if first in FRONT else "ў" if first in ROUNDED else None
-            if glide:
-                pronunciation.append(glide)
-                changes.append({"boundary": index, "kind": "glide",
-                                "sound": glide, "between": last + "|" + first})
-            else:
-                changes.append({"boundary": index, "kind": "hiatus",
-                                "between": last + "|" + first})
             pronunciation.extend(unit)
+            changes.append({"boundary": index, "kind": "distinct_vowel_sequence",
+                            "between": last + "|" + first})
         else:
             spelling.extend(unit)
             pronunciation.extend(unit)
