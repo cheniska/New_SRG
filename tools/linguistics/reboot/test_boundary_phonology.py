@@ -16,15 +16,16 @@ class BoundaryPhonologyTests(unittest.TestCase):
         self.assertEqual(result["pronunciation"], "дзримэс")
         self.assertEqual(result["changes"][0]["kind"], "identical_vowel_coalescence")
 
-    def test_different_front_vowels_keep_spelling_and_optional_glide(self):
+    def test_different_front_vowels_keep_spelling_without_forced_glide(self):
         result = surface(["мцэ", "ик"])
         self.assertEqual(result["spelling"], "мцэик")
-        self.assertEqual(result["pronunciation"], "мцэйик")
-        self.assertEqual(result["changes"][0]["kind"], "glide")
+        self.assertEqual(result["pronunciation"], "мцэик")
+        self.assertEqual(result["changes"][0]["kind"], "distinct_vowel_sequence")
 
-    def test_rounded_vowel_glide(self):
+    def test_different_rounded_vowels_no_invented_glide(self):
         result = surface(["мцэ", "ум"])
-        self.assertEqual(result["pronunciation"], "мцэўум")
+        self.assertEqual(result["pronunciation"], "мцэум")
+        self.assertEqual(result["changes"][0]["kind"], "distinct_vowel_sequence")
 
     def test_identical_a_vowels_coalesce(self):
         result = surface(["дзрина", "ац"])
@@ -37,7 +38,7 @@ class BoundaryPhonologyTests(unittest.TestCase):
     def test_different_vowels_can_remain_adjacent(self):
         result = surface(["дзрина", "ик"])
         self.assertEqual(result["spelling"], "дзринаик")
-        self.assertEqual(result["changes"][0]["kind"], "glide")
+        self.assertEqual(result["changes"][0]["kind"], "distinct_vowel_sequence")
 
     def test_plain_boundary(self):
         result = surface(["цвэк", "и", "дзрим", "ац"])
