@@ -78,6 +78,47 @@ def check_word(syllables: list[Syllable]) -> list[str]:
             errors.append("three stop consonants in a row")
     return errors
 
+# Candidate production profile v1: weighted style, not a new phoneme inventory.
+# Previous chitter/balanced modes remain unchanged for reproducibility.
+V1_COMMON_CHITTER = [
+    ("м", "ц"), ("н", "ц"), ("м", "дз"), ("н", "дз"),
+    ("ц", "р"), ("дз", "р"), ("ц", "в"), ("к", "ц"),
+    ("п", "ц"), ("т", "ц")
+]
+V1_RARE_CHITTER = [
+    ("м", "ц", "р"), ("к", "ц", "в"), ("н", "ц", "р"),
+    ("ц", "ш"), ("ц", "х"), ("ч", "р")
+]
+V1_SIMPLE = [("м",), ("н",), ("к",), ("т",), ("ц",),
+             ("дз",), ("з",), ("в",), ("р",), ("л",),
+             ("г",), ("д",), ("с",), ("п",), ()]
+V1_VOWELS = ["а", "э", "и", "о", "у"]
+V1_CODAS = [(), (), (), (), ("н",), ("р",), ("в",),
+            ("к",), ("т",), ("ц",), ("ш",)]
+V1_VOWEL_WEIGHTS = [5, 5, 3, 3, 2]
+
+def choose_v1_syllable(
+    rng: random.Random, *, first: bool, last: bool,
+    allow_syllabic: bool,
+) -> Syllable:
+    """Weighted game-naming style, not an attested language frequency."""
+    u = rng.random()
+    if first:
+        family = "strong" if u < .68 else ("rare" if u < .72 else "simple")
+    else:
+        family = "strong" if u < .31 else ("rare" if u < .33 else "simple")
+    options = (V1_COMMON_CHITTER if family == "strong"
+               else V1_RARE_CHITTER if family == "rare" else V1_SIMPLE)
+    onset = rng.choice(options)
+    nucleus = rng.choices(V1_VOWELS, weights=V1_VOWEL_WEIGHTS, k=1)[0]
+    if allow_syllabic and rng.random() < .035 and onset and onset[-1] not in {"р", "н"}:
+        nucleus = rng.choice(["R", "N"])
+    if not last and rng.random() < .78:
+        coda = ()
+    else:
+        coda = rng.choice(V1_CODAS)
+    return Syllable(onset, nucleus, coda)
+
 def choose_syllable(rng: random.Random, style: str, allow_syllabic: bool) -> Syllable:
     families = ["chitter", "chitter", "chitter", "simple", "quiet"] if style == "chitter" else [
         "chitter", "simple", "simple", "quiet", "quiet"]
@@ -94,8 +135,8 @@ def generate(count: int, seed: int = 42, style: str = "chitter",
              syllabic: bool = True) -> list[dict]:
     if count < 1 or count > 10000:
         raise ValueError("count must be 1..10000")
-    if style not in {"chitter", "balanced"}:
-        raise ValueError("style must be chitter or balanced")
+    if style not in {"chitter", "balanced", "synapt-v1"}:
+        raise ValueError("style must be chitter, balanced or synapt-v1")
     if not (1 <= min_syllables <= max_syllables <= 3):
         raise ValueError("syllables must be in range 1..3")
     rng = random.Random(seed)
@@ -104,7 +145,7 @@ def generate(count: int, seed: int = 42, style: str = "chitter",
     while len(results) < count and attempts < count * 500:
         attempts += 1
         n = rng.randint(min_syllables, max_syllables)
-        syllables = [choose_syllable(rng, style, syllabic) for _ in range(n)]
+        syllables = ([choose_v1_syllable(rng, first=(i == 0), last=(i == n-1), allow_syllabic=syllabic) for i in range(n)] if style == "synapt-v1" else [choose_syllable(rng, style, syllabic) for _ in range(n)])
         errors = check_word(syllables)
         word = render(syllables)
         # Reject too-short, overlong and identical display forms.
@@ -126,7 +167,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--count", type=int, default=30)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--style", choices=["chitter", "balanced"], default="chitter")
+    parser.add_argument("--style", choices=["chitter", "balanced", "synapt-v1"], default="synapt-v1")
     parser.add_argument("--min-syllables", type=int, default=1)
     parser.add_argument("--max-syllables", type=int, default=2)
     parser.add_argument("--no-syllabic", action="store_true")
