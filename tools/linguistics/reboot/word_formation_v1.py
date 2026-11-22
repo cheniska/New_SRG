@@ -1,10 +1,11 @@
 """Experimental Synapt word formation; preserves boundaries and surface spelling.
 
-Long words and vowel hiatus are permitted following author feedback.
-Phonetic realization of hiatus is not specified by this generator.
+Long words and different adjacent vowels are permitted. Identical vowels
+coalesce only at morpheme boundaries; underlying morphemes stay intact.
 """
 from dataclasses import dataclass
 import re
+from boundary_phonology import surface
 
 VOWELS = frozenset("аэиоу")
 SUFFIXES = {"agent": "ик", "instrument": "ац", "place": "ор", "result": "ут"}
@@ -31,13 +32,12 @@ def derive(root: str, function: str) -> WordFormationResult:
     if function not in SUFFIXES:
         raise ValueError("unsupported derivational suffix function")
     suffix = SUFFIXES[function]
-    return _evaluate(root + suffix, (root, suffix), (len(root),))
+    parts = (root, suffix)
+    return _evaluate(surface(parts)["spelling"], parts, (len(root),))
 
 def compound(modifier: str, head: str) -> WordFormationResult:
     _check_part(modifier)
     _check_part(head)
-    joined = modifier + "и" + head
-    result = _evaluate(joined, (modifier, "и", head), (len(modifier), len(modifier) + 1))
-    issues = list(result.issues)
-    return WordFormationResult(joined, result.morphemes,
-                               "review" if issues else "candidate", tuple(issues))
+    parts = (modifier, "и", head)
+    return _evaluate(surface(parts)["spelling"], parts,
+                     (len(modifier), len(modifier) + 1))
