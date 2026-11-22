@@ -31,17 +31,19 @@ class MorphologyTests(unittest.TestCase):
             self.assertEqual(result.form, surface)
             self.assertEqual(result.status, "candidate")
 
-    def test_vowel_hiatus_preserved(self):
+    def test_identical_vowels_coalesce_but_morphemes_remain(self):
         x = derive("дзрина", "instrument")
-        self.assertEqual(x.form, "дзринаац")
+        self.assertEqual(x.form, "дзринац")
+        self.assertEqual(x.morphemes, ("дзрина", "ац"))
         self.assertEqual(x.status, "candidate")
         self.assertEqual(x.issues, ())
 
-    def test_connector_preserves_vowel_boundaries(self):
+    def test_connector_preserves_distinct_vowels_but_merges_identical(self):
         self.assertEqual(compound("дзрина", "мцив").form, "дзринаимцив")
-        self.assertEqual(compound("дзрина", "мцив").status, "candidate")
         self.assertEqual(compound("кцор", "эцан").form, "кцориэцан")
-        self.assertEqual(compound("кцор", "эцан").status, "candidate")
+        self.assertEqual(compound("мциви", "вар").form, "мцививар")
+        self.assertEqual(compound("мциви", "вар").morphemes, ("мциви", "и", "вар"))
+        self.assertEqual(compound("мцив", "иван").form, "мцививан")
 
     def test_rejected_phonotactics_still_flagged(self):
         self.assertEqual(derive("чвар", "agent").status, "review")
