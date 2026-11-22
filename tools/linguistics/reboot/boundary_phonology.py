@@ -3,7 +3,7 @@
 
 Three distinct representations:
   underlying: immutable concatenation of morphemes;
-  orthography: same letters, no decorative separators;
+  orthography: identical vowels coalesce; other morphemes stay visible;
   pronunciation: annotated long consonants and optional glides.
 
 This module does not assert how an alien vocal organ physically works.
@@ -31,53 +31,64 @@ def tokenize(part: str) -> list[str]:
 def surface(parts: list[str] | tuple[str, ...]) -> dict:
     """Apply phonetic transitions strictly at morpheme boundaries.
 
-    Geminates are retained in spelling; pronounced as one long consonant.
-    Before a vowel-initial morpheme, a transition /j/ or /w/ may emerge:
-    e/i => j (displayed й); o/u => w (displayed ў).
-    a+a or a+e after a vowel are not blindly rewritten: only the following
-    vowel class determines the epenthetic glide (e => й; a => hiatus).
+    Identical vowels coalesce in spelling and pronunciation: а+а -> а.
+    Geminate consonants stay doubled in spelling; phonetic aid marks length.
+    Unlike identical vowels, distinct adjacent vowels remain distinct in
+    spelling. A phonetic glide is represented for э/и or о/у
+    onsets in this older illustrative model; its reality is not settled.
     """
     if not parts:
         raise ValueError("at least one morpheme required")
     units = [tokenize(p) for p in parts]
-    orthographic = "".join(parts)
+    underlying = "".join(parts)
+    spelling: list[str] = list(units[0])
     pronunciation: list[str] = list(units[0])
     changes: list[dict] = []
     for index, unit in enumerate(units[1:], 1):
         previous = units[index - 1]
         last, first = previous[-1], unit[0]
-        if last == first and last not in VOWELS:
-            # The preceding consonant is already in the output. Represent
-            # the *pair* as one long consonant, do not repeat it.
+        if last == first and last in VOWELS:
+            # Productive vowel coalescence at a morpheme boundary:
+            # дзрина+ац => дзринац, not дзринаац.
+            # Keep underlying morphemes and do not infer an ancient sound law.
+            spelling.extend(unit[1:])
+            pronunciation.extend(unit[1:])
+            changes.append({"boundary": index, "kind": "identical_vowel_coalescence",
+                            "between": last + "|" + first})
+        elif last == first and last not in VOWELS:
+            spelling.extend(unit)
+            # Preserve both consonants in written form, mark length in phonetic aid.
             pronunciation[-1] = pronunciation[-1] + LONG_MARK
             pronunciation.extend(unit[1:])
-            changes.append({"boundary":index, "kind":"geminate",
-                            "between":last + "|" + first})
+            changes.append({"boundary": index, "kind": "geminate",
+                            "between": last + "|" + first})
         elif last in VOWELS and first in VOWELS:
+            spelling.extend(unit)
             glide = "й" if first in FRONT else "ў" if first in ROUNDED else None
             if glide:
                 pronunciation.append(glide)
-                changes.append({"boundary":index, "kind":"glide",
-                                "sound":glide, "between":last+"|"+first})
+                changes.append({"boundary": index, "kind": "glide",
+                                "sound": glide, "between": last + "|" + first})
             else:
-                changes.append({"boundary":index, "kind":"hiatus",
-                                "between":last+"|"+first})
+                changes.append({"boundary": index, "kind": "hiatus",
+                                "between": last + "|" + first})
             pronunciation.extend(unit)
         else:
+            spelling.extend(unit)
             pronunciation.extend(unit)
     return {
-        "morphemes":list(parts),
-        "underlying":orthographic,
-        "spelling":orthographic,
-        "pronunciation":"".join(pronunciation),
-        "changes":changes
+        "morphemes": list(parts),
+        "underlying": underlying,
+        "spelling": "".join(spelling),
+        "pronunciation": "".join(pronunciation),
+        "changes": changes,
     }
 
 
 def split_examples() -> list[dict]:
     return [
         surface(["цвэк", "ик", "к", "эс"]),
-        surface(["дзрим", "э", "эс"]),
+        surface(["дзрина", "ац"]),
         surface(["цвэк", "и", "дзрим", "ац"]),
         surface(["цхэм", "эц"]),
         surface(["мэ", "дзрим", "ит"]),
