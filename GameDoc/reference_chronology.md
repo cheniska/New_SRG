@@ -30,7 +30,7 @@ status: "canonical"
 | 2175 | Основание Мера | `tarnai.mera` | [Подробнее](race_propovedniki.md#homeworld.settlements.first-five) |
 | 2190 | Основание Саё | `etherians.sayo` | [Подробнее](race_etheriane.md#homeworld.settlements.first-five) |
 | 2226 | Основание Тихая Гавань | `tarnai.quiet-haven` | [Подробнее](race_propovedniki.md#homeworld.settlements.first-five) |
-| 2250 | Создание синаптского мобильного гиперпривода | `synapts.mobile-hyperdrive` | [Подробнее](race_sinapty.md#history.hyperdrive-origin) |
+| 2250 | Создание ндзеракского мобильного гиперпривода | `synapts.mobile-hyperdrive` | [Подробнее](race_sinapty.md#history.hyperdrive-origin) |
 | 2258 | Основание Цкари | `synapts.tskari` | [Подробнее](race_sinapty.md#homeworld.settlements.first-five) |
 | 2265 | Основание Тосэ | `etherians.tose` | [Подробнее](race_etheriane.md#homeworld.settlements.first-five) |
 | 2281 | Основание Мцване | `synapts.mtsvane` | [Подробнее](race_sinapty.md#homeworld.settlements.first-five) |
@@ -53,7 +53,7 @@ status: "canonical"
 | около 2440 | Самостоятельные первые орбитальные запуски вравши | `vravshi.orbit` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2460 | Первый контакт ксеноподов с вравши; начало формирования скрытого протектората | `vravshi.contact` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2476 | Основание Дальнего Берега | `humans.dalniy-bereg` | [Подробнее](race_homo_syntheticus.md#homeworld.settlements.first-five) |
-| 2500 | Мирный контакт синаптов и этериан | `synapts.etherians-contact` | [Подробнее](reference_period_2500_2800.md#contacts.sinapty-etheriane) |
+| 2500 | Мирный контакт ндзераков и этериан | `synapts.etherians-contact` | [Подробнее](reference_period_2500_2800.md#contacts.sinapty-etheriane) |
 | 2520 | Первый контакт и начало человеческо-грондарской войны | `humans.grondars-contact` | [Подробнее](reference_period_2500_2800.md#war.first-strike) |
 | 2525 | Оформление первого грондарского космического флота | `grondars.fleet` | [Подробнее](reference_period_2500_2800.md#war.first-strike) |
 | 2535 | Адаптация человеческого гипердрайва грондарами | `grondars.hyperdrive` | [Подробнее](reference_period_2500_2800.md#war.breakthrough) |
@@ -68,43 +68,43 @@ status: "canonical"
 | 2553–2555 | Разгром передового ксеноподского соединения | `grondars.forward-victory` | [Подробнее](reference_period_2500_2800.md#xenopod-war.campaigns) |
 | к 2553 | Три ранние колонии в трёх системах | `grondars.three-colonies` | [Подробнее](reference_period_2500_2800.md#reconstruction) |
 | 2555 | Захват транспорта, прямой контакт с ксеноподами и союз с грондарами | `humans.war-entry` | [Подробнее](reference_period_2500_2800.md#xenopod-war.human-alliance) |
-| вскоре после 2556 | Знакомство ксеноподов с этерианами через синаптов | `xenopods.etherians-contact` | [Подробнее](reference_period_2500_2800.md#xenopod-war.trust) |
-| 2556 | Контакт ксеноподов с синаптами | `xenopods.synapts-contact` | [Подробнее](reference_period_2500_2800.md#xenopod-war.trust) |
+| вскоре после 2556 | Знакомство ксеноподов с этерианами через ндзераков | `xenopods.etherians-contact` | [Подробнее](reference_period_2500_2800.md#xenopod-war.trust) |
+| 2556 | Контакт ксеноподов с ндзераками | `xenopods.synapts-contact` | [Подробнее](reference_period_2500_2800.md#xenopod-war.trust) |
 | 2557–2559 | Союзное наступление и потеря ксеноподского узла снабжения | `allies.offensive` | [Подробнее](reference_period_2500_2800.md#xenopod-war.campaigns) |
-| 2560 | Синаптское вмешательство и прекращение этерианских союзных работ | `synapts.war-entry` | [Подробнее](reference_period_2500_2800.md#xenopod-war.intervention) |
-| 2562–2563 | Срыв ксеноподско-синаптского наступления | `allies.defense` | [Подробнее](reference_period_2500_2800.md#xenopod-war.campaigns) |
-| 2565 | Разоблачение обмана, разрыв союза и выход синаптов из войны | `synapts.war-exit` | [Подробнее](reference_period_2500_2800.md#xenopod-war.peace) |
+| 2560 | Ндзеракское вмешательство и прекращение этерианских союзных работ | `synapts.war-entry` | [Подробнее](reference_period_2500_2800.md#xenopod-war.intervention) |
+| 2562–2563 | Срыв ксеноподско-ндзеракского наступления | `allies.defense` | [Подробнее](reference_period_2500_2800.md#xenopod-war.campaigns) |
+| 2565 | Разоблачение обмана, разрыв союза и выход ндзераков из войны | `synapts.war-exit` | [Подробнее](reference_period_2500_2800.md#xenopod-war.peace) |
 | 2566 | Поражение ксеноподов и окончательное урегулирование войны | `contact-war.peace` | [Подробнее](reference_period_2500_2800.md#xenopod-war.peace) |
 | после мира 2566 | Знакомство этериан с людьми и грондарами | `etherians.humans-grondars-contact` | [Подробнее](reference_period_2500_2800.md#xenopod-war.peace) |
 | 2566–2568 | Возвращение пленных и исполнение первых обязательств | `postwar.immediate-recovery` | [Подробнее](reference_period_2500_2800.md#postwar.recovery) |
 | 2568–2573 | Совместные ремонтные и обследовательские группы | `humans.synapts-recovery` | [Подробнее](reference_period_2500_2800.md#postwar.recovery) |
 | около 2570 | Ядерное деление вравши при поддержке ксеноподов | `vravshi.fission` | [Подробнее](race_vravshi.md#history.chronology) |
-| 2572 | Начало человеческо-синаптской гиперпрограммы | `hyperdrive.program` | [Подробнее](reference_period_2500_2800.md#postwar.hyperdrive) |
+| 2572 | Начало человеческо-ндзеракской гиперпрограммы | `hyperdrive.program` | [Подробнее](reference_period_2500_2800.md#postwar.hyperdrive) |
 | 2574 | Основание Даяна | `grondars.dayan` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
 | 2578 | Первый успешный экспериментальный глубокий переход | `hyperdrive.experiment` | [Подробнее](reference_period_2500_2800.md#postwar.hyperdrive) |
 | 2584 | Начало установки усовершенствованных приводов на новые корабли | `hyperdrive.new-ships` | [Подробнее](reference_period_2500_2800.md#postwar.hyperdrive) |
-| условный рубеж 2590 | Оформление партнёрства людей и синаптов; условный рубеж угасания прежнего союза | `humans.synapts-partnership` | [Подробнее](reference_period_2500_2800.md#postwar.realignments) |
+| условный рубеж 2590 | Оформление партнёрства людей и ндзераков; условный рубеж угасания прежнего союза | `humans.synapts-partnership` | [Подробнее](reference_period_2500_2800.md#postwar.realignments) |
 | 2590–2800 | Совместная разработка Лингвы | `lingua.development` | [Подробнее](race_sinapty.md#language.lingua) |
 | 2598 | Основание Арката | `grondars.arkat` | [Подробнее](race_grondary.md#homeworld.settlements.first-five) |
 | около 2600 | Этерианское обнаружение радиопередач аэлитов | `aelites.discovery` | [Подробнее](reference_period_2500_2800.md#contacts.aelity) |
 | около 2600 | Мирный контакт людей с хамари | `hamari.contact` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
 | примерно 2600–2750 | Развитие реакторов и беспилотной программы спутника Тэтис | `vravshi.reactors-and-probes` | [Подробнее](race_vravshi.md#history.chronology) |
 | 2601–2603 | Посещения соседних общин хамари | `hamari.extended-visits` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
-| 2603–2606 | Присоединение синаптов и этериан к контактам с хамари | `hamari.new-guests` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
+| 2603–2606 | Присоединение ндзераков и этериан к контактам с хамари | `hamari.new-guests` | [Подробнее](reference_period_2500_2800.md#contacts.hamari) |
 | 2607 | Основные ограничения Протокола Хамары | `hamari.protocol` | [Подробнее](reference_period_2500_2800.md#contacts.hamari.protocol) |
 | 2610 | Этерианское предложение модели Коллегии | `college.proposal` | [Подробнее](reference_instituty_sodruzhestva.md#council.proishozhdenie) |
 | 2612 | Контакт с тарнаями и знакомство с пятью цивилизациями | `tarnai.contact` | [Подробнее](reference_period_2500_2800.md#contacts.tarnai) |
 | 2615–2640 | Позднейшее включение чужой истории в формулу «Трёх Павших» | `tarnai.three-fallen` | [Подробнее](reference_period_2500_2800.md#contacts.tarnai) |
 | около 2620 | Подготовленный контакт этериан с аэлитами | `aelites.contact` | [Подробнее](reference_period_2500_2800.md#contacts.aelity) |
 | 2645 | Защитный контракт грондаров и ксеноподов | `grondars.xenopods-contract` | [Подробнее](reference_period_2500_2800.md#postwar.xenopods) |
-| 2650–2700 | Локальные пограничные конфликты грондаров и синаптов | `border.local-conflicts` | [Подробнее](reference_period_2500_2800.md#postwar.border-conflicts) |
+| 2650–2700 | Локальные пограничные конфликты грондаров и ндзераков | `border.local-conflicts` | [Подробнее](reference_period_2500_2800.md#postwar.border-conflicts) |
 | 2650 | Уточнение процедур Протокола Хамары | `hamari.protocol-revision` | [Подробнее](reference_period_2500_2800.md#contacts.hamari.protocol) |
 | около 2650 | Первый человеческий контакт с ворн | `vorn.contact` | [Подробнее](reference_period_2500_2800.md#contacts.vorn) |
 | 2660–2680 | Редкие встречи и уточнение языка ворн | `vorn.rare-meetings` | [Подробнее](reference_period_2500_2800.md#contacts.vorn) |
 | 2680–2720 | Два личных случая вплетения людей в общины ворн | `vorn.personal-membership` | [Подробнее](race_vorn.md#history.episodes.item-1) |
 | 2700 | Общерасовое признание границ и прекращение защитного контракта | `boundaries.recognition` | [Подробнее](reference_period_2500_2800.md#foundation.boundaries) |
 | к 2700 | Согласование минимального порядка посещений Ворны | `vorn.visits-agreement` | [Подробнее](reference_period_2500_2800.md#contacts.vorn) |
-| 2720 | Обнаружение Деймии синаптами | `deymi.discovery` | [Подробнее](reference_period_2500_2800.md#foundation.deymi) |
+| 2720 | Обнаружение Деймии ндзераками | `deymi.discovery` | [Подробнее](reference_period_2500_2800.md#foundation.deymi) |
 | 2720–2722 | Наблюдение и подготовка открытой встречи | `deymi.preparation` | [Подробнее](reference_period_2500_2800.md#foundation.deymi) |
 | 2722 | Первая открытая встреча с дейми | `deymi.contact` | [Подробнее](reference_period_2500_2800.md#foundation.deymi) |
 | 2725 | Присоединение этериан к работе на Деймии | `deymi.etherians` | [Подробнее](reference_period_2500_2800.md#foundation.deymi) |
@@ -119,7 +119,7 @@ status: "canonical"
 | около 2870 | Освоение ядерного деления аэлитами | `aelites.fission` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
 | 2871–2896 | Стальной кризис на Деймии | `deymi.steel-crisis` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
 | 2880 | Частичная торговая блокада Кайрош-Ведда | `deymi.blockade` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
-| 2882 | Синаптский доклад о вероятной утечке на Деймии и ужесточение протокола | `deymi.leak-report` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
+| 2882 | Ндзеракский доклад о вероятной утечке на Деймии и ужесточение протокола | `deymi.leak-report` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
 | к 2896 | Компромисс и завершение Стального кризиса | `deymi.steel-settlement` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
 | около 2900 | Первые беспилотные орбитальные пуски аэлитов | `aelites.orbit` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.minor-worlds) |
 | примерно 2900–2950 | Локальные технологические прорывы на Деймии после Стального кризиса | `deymi.glass-breakthroughs` | [Подробнее](reference_history_commonwealth.md#early-commonwealth.deymi) |
@@ -133,7 +133,7 @@ status: "canonical"
 | 3056–3076 | Период восстановления после войны с Роем | `swarm.recovery` | [Подробнее](reference_history_extended.md#late-commonwealth.recovery-3056-3076) |
 | к 3056 | Прекращение экспансии Роя и утрата контроля — не позднее этого года | `swarm.war-end-limit` | [Подробнее](reference_history_extended.md#late-commonwealth.date-3021) |
 | 3076–3100 | Мирное развитие после восстановления | `swarm.peaceful-development` | [Подробнее](reference_history_extended.md#late-commonwealth.peace-3076-3100) |
-| около 3080 | Практический результат синаптской обратной разработки ройской гипертехнологии | `swarm.hypertech-ready` | [Подробнее](reference_history_commonwealth.md#postwar.science) |
+| около 3080 | Практический результат ндзеракской обратной разработки ройской гипертехнологии | `swarm.hypertech-ready` | [Подробнее](reference_history_commonwealth.md#postwar.science) |
 | 3100 | Начало следующего исторического подпериода | `commonwealth.next-period` | [Подробнее](reference_history_commonwealth.md#swarm-war.chronology) |
 | 3280–3300 | Получение аэлитами статуса наблюдателя Содружества; точный год не определён | `aelites.observer-status` | [Подробнее](race_aelity.md#history.commonwealth) |
 | 3280–3300 | Получение заргашами статуса наблюдателя Содружества; точный год не определён | `zargash.observer-status` | [Подробнее](race_zargashi.md#history.commonwealth) |
