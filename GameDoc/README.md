@@ -64,7 +64,7 @@
 | ГРОНДАРЫ (БРОНОКСЫ) | [race_grondary.md](race_grondary.md) |
 | КСЕНОПОДЫ | [race_ksenopody.md](race_ksenopody.md) |
 | HOMO SYNTHETICUS (ЛЮДИ) | [race_homo_syntheticus.md](race_homo_syntheticus.md) |
-| СИНАПТЫ | [race_sinapty.md](race_sinapty.md) |
+| НДЗЕРАКИ | [race_sinapty.md](race_sinapty.md) |
 | ЭТЕРИАНЕ | [race_etheriane.md](race_etheriane.md) |
 | ТАРНАИ (ПРОПОВЕДНИКИ) | [race_propovedniki.md](race_propovedniki.md) |
 | ВОРН | [race_vorn.md](race_vorn.md) |
