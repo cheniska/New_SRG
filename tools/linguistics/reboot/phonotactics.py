@@ -24,8 +24,10 @@ ONSETS = {
     "quiet": [(), ("р",), ("л",), ("г",), ("д",), ("с",), ("п",)]
 }
 NUCLEI = [("а",), ("э",), ("и",), ("о",), ("у",), ("R",), ("N",)]
-CODAS = [(), ("к",), ("т",), ("н",), ("р",), ("в",), ("ш",),
+CODAS = [(), ("к",), ("т",), ("н",), ("р",), ("в",), ("ш",), ("г",),
          ("ц",), ("р", "к"), ("н", "ц"), ("ц", "к")]
+# Rare final г is accepted for the author-selected root Цраг; it remains absent
+# from weighted V1_CODAS to avoid making it a common generative ending.
 # Forbidden token-sequences across syllable junctions: avoid accidental
 # adjacency of two affricates or unmanageably long consonant strings.
 AFFRICATES = {"ц", "дз", "ч", "дж"}
