@@ -21,11 +21,13 @@ ONSETS = {
         ("т", "ц"), ("ц", "ш"), ("ц", "х"), ("ч", "р"),
         ("м", "ц", "р"), ("к", "ц", "в"), ("н", "ц", "р")
     ],
-    "quiet": [(), ("р",), ("л",), ("г",), ("д",), ("с",), ("п",)]
+    "quiet": [(), ("р",), ("л",), ("г",), ("д",), ("с",), ("п",), ("дж",)]
 }
 NUCLEI = [("а",), ("э",), ("и",), ("о",), ("у",), ("R",), ("N",)]
 CODAS = [(), ("к",), ("т",), ("н",), ("р",), ("в",), ("ш",), ("г",),
-         ("ц",), ("р", "к"), ("н", "ц"), ("ц", "к")]
+         ("ц",), ("й",), ("р", "к"), ("н", "ц"), ("ц", "к")]
+# Rare final г (Цраг), й (Нэй) and initial дж (Джев) are accepted
+# for selected roots; they remain absent from weighted V1 generation.
 # Rare final г is accepted for the author-selected root Цраг; it remains absent
 # from weighted V1_CODAS to avoid making it a common generative ending.
 # Forbidden token-sequences across syllable junctions: avoid accidental
