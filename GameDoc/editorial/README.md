@@ -5,6 +5,8 @@
 [Основное оглавление](../README.md)
 
 - [PLAN_migracii_ras_v3.md](PLAN_migracii_ras_v3.md)
+- [Дорожная карта развития шести старших цивилизаций](PLAN_planetarnyh_civilizaciy_New_SRG.md) — основной срез 3290, согласованный маршрут детализации планетарного мира.
+- [Борея: первый этап, география](boreya_geography_stage1.md) — исходные данные и вопросы к обсуждению.
 - [audit_lora_hard_sf_v1.md](audit_lora_hard_sf_v1.md)
 - [Журналы и вопросы автору](sessions/README.md)
 
