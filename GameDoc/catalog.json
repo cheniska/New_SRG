@@ -202,10 +202,67 @@
           "status": null,
           "level": 2,
           "line": 170,
-          "end_line": 187,
+          "end_line": 190,
           "block_line": 170
+        },
+        {
+          "id": "language",
+          "title": "VI. КАНОНИЧЕСКОЕ СВЕДЕНИЕ ВАРИАТИВНЫХ КОНЦОВОК (РЕШЕНИЕ АВТОРА, 14.11.2026)",
+          "slots": [
+            "VI"
+          ],
+          "status": null,
+          "level": 2,
+          "line": 191,
+          "end_line": 207,
+          "block_line": 191
+        },
+        {
+          "id": "psychology",
+          "title": "VII. КАНОНИЧЕСКИЕ РАМКИ ПЕСОЧНИЦЫ И ВОЙНЫ (15.11.2026)",
+          "slots": [
+            "VII"
+          ],
+          "status": null,
+          "level": 2,
+          "line": 208,
+          "end_line": 214,
+          "block_line": 208
         }
       ]
+    },
+    {
+      "id": "document.concept-extreme-cyberization-characters",
+      "path": "GameDoc/concept_extreme_cyberization_characters.md",
+      "type": "document",
+      "title": "# Концепты: крайняя киборгизация и два уникальных персонажа",
+      "status": "canonical",
+      "format": "legacy-text",
+      "schema": null,
+      "aliases": [],
+      "sections": []
+    },
+    {
+      "id": "document.gameplay-medical-system",
+      "path": "GameDoc/gameplay_medical_system.md",
+      "type": "document",
+      "title": "# Игровая система травм и заболеваний",
+      "status": "canonical",
+      "format": "legacy-text",
+      "schema": null,
+      "aliases": [],
+      "sections": []
+    },
+    {
+      "id": "document.medical-diseases-catalog",
+      "path": "GameDoc/medical_diseases_catalog.md",
+      "type": "document",
+      "title": "# Заболевания рас и межрасовые медицинские синдромы",
+      "status": "canonical",
+      "format": "legacy-text",
+      "schema": null,
+      "aliases": [],
+      "sections": []
     },
     {
       "id": "character.etheriane_kagero_sadovnik",
@@ -1103,7 +1160,7 @@
         },
         {
           "id": "history.chronology",
-          "title": "II.3. ГРАНД-АДМИРАЛ И УДАР 3300 ГОДА",
+          "title": "II.3. ГРАНД-АДМИРАЛ И УДАР 3301 ГОДА",
           "slots": [
             "II.3"
           ],
@@ -1163,7 +1220,7 @@
         },
         {
           "id": "homeworld.overview",
-          "title": "IV.1. Базовые черты характера — расчётливость, спокойствие, привычка доводить анализ до конца; нелюбовь к жестам и речам. После 3300 — замкнутость и подчёркнутая ответственность за каждый приказ.",
+          "title": "IV.1. Базовые черты характера — расчётливость, спокойствие, привычка доводить анализ до конца; нелюбовь к жестам и речам. После 3301 — замкнутость и подчёркнутая ответственность за каждый приказ.",
           "slots": [
             "IV.1"
           ],
@@ -1175,7 +1232,7 @@
         },
         {
           "id": "homeworld.star",
-          "title": "IV.2. Мировоззрение — люди как раса продолжают Предков и отвечают перед ними («хранительство», «Люди», IX). Война с ИИ Древних для неё — повторение истории Предков: снова ИИ, оставшийся без создателей, снова война с ним. Отсюда её убеждённость, что победить можно, только если различать среди противников тех, кто способен выбрать, кем быть.",
+          "title": "IV.2. Мировоззрение — люди как раса продолжают Предков и отвечают перед ними («хранительство», «Люди», IX). Война с ИИ Древних для него — повторение истории Предков: снова ИИ, оставшийся без создателей, снова война с ним. Отсюда его убеждённость, что победить можно, только если различать среди противников тех, кто способен выбрать, кем быть.",
           "slots": [
             "IV.2"
           ],
@@ -1187,7 +1244,7 @@
         },
         {
           "id": "homeworld.parameters",
-          "title": "IV.3. Эмоциональные привязанности — экипаж «Ариадны»; память погибших адмиралов пяти рас (она лично встречалась с представителями каждого флота после 3300). Семьи не создавала.",
+          "title": "IV.3. Эмоциональные привязанности — экипаж «Ариадны»; память погибших адмиралов пяти рас (он лично встречался с представителями каждого флота после 3301). Семьи не создавал.",
           "slots": [
             "IV.3"
           ],
@@ -1199,7 +1256,7 @@
         },
         {
           "id": "homeworld.atmosphere",
-          "title": "IV.4. Противоречия и слепые зоны — человек, гордившийся тем, что считает до конца, подал решающий голос за удар, не дождавшись полной разведки. Сама она объясняла это не ошибкой расчёта, а нехваткой данных; часть Содружества считает, что расчёт был неверен изначально.",
+          "title": "IV.4. Противоречия и слепые зоны — человек, гордившийся тем, что считает до конца, подал решающий голос за удар, не дождавшись полной разведки. Сам он объяснял это не ошибкой расчёта, а нехваткой данных; часть Содружества считает, что расчёт был неверен изначально.",
           "slots": [
             "IV.4"
           ],
@@ -1223,7 +1280,7 @@
         },
         {
           "id": "nutrition.diet",
-          "title": "V.1. Главная цель — закончить войну с ИИ Древних так, чтобы её исход искупил катастрофу 3300 года.",
+          "title": "V.1. Главная цель — закончить войну с ИИ Древних так, чтобы её исход искупил катастрофу 3301 года.",
           "slots": [
             "V.1"
           ],
@@ -1247,7 +1304,7 @@
         },
         {
           "id": "slot.V.3",
-          "title": "V.3. Реестр начинаний: достигнуто — отход 3300 года, переход к рассредоточенной войне; не достигнуто при жизни — союз с Кортеном (решается в кампании), окончание войны.",
+          "title": "V.3. Реестр начинаний: достигнуто — отход 3301 года, переход к рассредоточенной войне; не достигнуто при жизни — союз с Кортеном (решается в кампании), окончание войны.",
           "slots": [
             "V.3"
           ],
@@ -7940,7 +7997,7 @@
         },
         {
           "id": "history.commonwealth",
-          "title": "II.4. ЭПОХА СОДРУЖЕСТВА (2800–3400)",
+          "title": "II.4. ЭПОХА СОДРУЖЕСТВА (2800–3700)",
           "slots": [
             "II.4"
           ],
@@ -9075,7 +9132,7 @@
           "status": "filled",
           "level": 2,
           "line": 883,
-          "end_line": 905,
+          "end_line": 907,
           "block_line": 880
         },
         {
@@ -9095,8 +9152,18 @@
           "status": "filled",
           "level": 3,
           "line": 902,
-          "end_line": 905,
+          "end_line": 907,
           "block_line": 899
+        },
+        {
+          "id": null,
+          "title": "Примечание о сдвиге первого контакта (16.11.2026)",
+          "slots": [],
+          "status": null,
+          "level": 2,
+          "line": 908,
+          "end_line": 910,
+          "block_line": 908
         }
       ]
     },
@@ -12269,7 +12336,7 @@
           "status": "filled",
           "level": 2,
           "line": 37,
-          "end_line": 242,
+          "end_line": 243,
           "block_line": 34
         },
         {
@@ -12405,7 +12472,7 @@
           "status": "filled",
           "level": 3,
           "line": 173,
-          "end_line": 227,
+          "end_line": 228,
           "block_line": 170
         },
         {
@@ -12416,9 +12483,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 231,
-          "end_line": 242,
-          "block_line": 228
+          "line": 232,
+          "end_line": 243,
+          "block_line": 229
         },
         {
           "id": "biology",
@@ -12428,9 +12495,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 246,
-          "end_line": 428,
-          "block_line": 243
+          "line": 247,
+          "end_line": 429,
+          "block_line": 244
         },
         {
           "id": "biology.body",
@@ -12440,9 +12507,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 253,
-          "end_line": 256,
-          "block_line": 250
+          "line": 254,
+          "end_line": 257,
+          "block_line": 251
         },
         {
           "id": "biology.skeleton",
@@ -12452,9 +12519,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 260,
-          "end_line": 263,
-          "block_line": 257
+          "line": 261,
+          "end_line": 264,
+          "block_line": 258
         },
         {
           "id": "biology.integument",
@@ -12464,9 +12531,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 267,
-          "end_line": 274,
-          "block_line": 264
+          "line": 268,
+          "end_line": 275,
+          "block_line": 265
         },
         {
           "id": "biology.locomotion",
@@ -12476,9 +12543,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 278,
-          "end_line": 281,
-          "block_line": 275
+          "line": 279,
+          "end_line": 282,
+          "block_line": 276
         },
         {
           "id": "biology.circulation",
@@ -12488,9 +12555,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 285,
-          "end_line": 288,
-          "block_line": 282
+          "line": 286,
+          "end_line": 289,
+          "block_line": 283
         },
         {
           "id": "biology.respiration",
@@ -12500,9 +12567,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 292,
-          "end_line": 295,
-          "block_line": 289
+          "line": 293,
+          "end_line": 296,
+          "block_line": 290
         },
         {
           "id": "biology.metabolism",
@@ -12512,9 +12579,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 299,
-          "end_line": 302,
-          "block_line": 296
+          "line": 300,
+          "end_line": 303,
+          "block_line": 297
         },
         {
           "id": "biology.nervous-system",
@@ -12524,9 +12591,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 306,
-          "end_line": 311,
-          "block_line": 303
+          "line": 307,
+          "end_line": 312,
+          "block_line": 304
         },
         {
           "id": "biology.senses",
@@ -12536,9 +12603,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 315,
-          "end_line": 318,
-          "block_line": 312
+          "line": 316,
+          "end_line": 319,
+          "block_line": 313
         },
         {
           "id": "biology.communication-organs",
@@ -12548,9 +12615,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 322,
-          "end_line": 329,
-          "block_line": 319
+          "line": 323,
+          "end_line": 330,
+          "block_line": 320
         },
         {
           "id": "biology.sleep",
@@ -12560,9 +12627,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 333,
-          "end_line": 338,
-          "block_line": 330
+          "line": 334,
+          "end_line": 339,
+          "block_line": 331
         },
         {
           "id": "biology.reproduction",
@@ -12572,9 +12639,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 342,
-          "end_line": 345,
-          "block_line": 339
+          "line": 343,
+          "end_line": 346,
+          "block_line": 340
         },
         {
           "id": "biology.life-cycle",
@@ -12584,9 +12651,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 349,
-          "end_line": 358,
-          "block_line": 346
+          "line": 350,
+          "end_line": 359,
+          "block_line": 347
         },
         {
           "id": "biology.pain",
@@ -12596,9 +12663,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 362,
-          "end_line": 365,
-          "block_line": 359
+          "line": 363,
+          "end_line": 366,
+          "block_line": 360
         },
         {
           "id": "biology.substances",
@@ -12608,9 +12675,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 369,
-          "end_line": 372,
-          "block_line": 366
+          "line": 370,
+          "end_line": 373,
+          "block_line": 367
         },
         {
           "id": "biology.environment",
@@ -12620,9 +12687,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 376,
-          "end_line": 381,
-          "block_line": 373
+          "line": 377,
+          "end_line": 382,
+          "block_line": 374
         },
         {
           "id": "biology.comfort-temperature",
@@ -12632,9 +12699,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 385,
-          "end_line": 388,
-          "block_line": 382
+          "line": 386,
+          "end_line": 389,
+          "block_line": 383
         },
         {
           "id": "biology.variation",
@@ -12644,9 +12711,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 392,
-          "end_line": 395,
-          "block_line": 389
+          "line": 393,
+          "end_line": 396,
+          "block_line": 390
         },
         {
           "id": "biology.unique-traits",
@@ -12656,9 +12723,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 399,
-          "end_line": 428,
-          "block_line": 396
+          "line": 400,
+          "end_line": 429,
+          "block_line": 397
         },
         {
           "id": "biology.unique-traits.item-1",
@@ -12668,9 +12735,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 404,
-          "end_line": 407,
-          "block_line": 401
+          "line": 405,
+          "end_line": 408,
+          "block_line": 402
         },
         {
           "id": "biology.unique-traits.item-2",
@@ -12680,9 +12747,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 411,
-          "end_line": 414,
-          "block_line": 408
+          "line": 412,
+          "end_line": 415,
+          "block_line": 409
         },
         {
           "id": "biology.unique-traits.item-3",
@@ -12692,9 +12759,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 418,
-          "end_line": 421,
-          "block_line": 415
+          "line": 419,
+          "end_line": 422,
+          "block_line": 416
         },
         {
           "id": "biology.unique-traits.item-4",
@@ -12704,9 +12771,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 425,
-          "end_line": 428,
-          "block_line": 422
+          "line": 426,
+          "end_line": 429,
+          "block_line": 423
         },
         {
           "id": "homeworld",
@@ -12716,9 +12783,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 432,
-          "end_line": 575,
-          "block_line": 429
+          "line": 433,
+          "end_line": 576,
+          "block_line": 430
         },
         {
           "id": "homeworld.overview",
@@ -12728,9 +12795,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 437,
-          "end_line": 440,
-          "block_line": 434
+          "line": 438,
+          "end_line": 441,
+          "block_line": 435
         },
         {
           "id": "homeworld.star",
@@ -12740,9 +12807,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 444,
-          "end_line": 447,
-          "block_line": 441
+          "line": 445,
+          "end_line": 448,
+          "block_line": 442
         },
         {
           "id": "homeworld.parameters",
@@ -12752,9 +12819,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 451,
-          "end_line": 454,
-          "block_line": 448
+          "line": 452,
+          "end_line": 455,
+          "block_line": 449
         },
         {
           "id": "homeworld.atmosphere",
@@ -12764,9 +12831,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 458,
-          "end_line": 461,
-          "block_line": 455
+          "line": 459,
+          "end_line": 462,
+          "block_line": 456
         },
         {
           "id": "homeworld.climate",
@@ -12776,9 +12843,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 465,
-          "end_line": 468,
-          "block_line": 462
+          "line": 466,
+          "end_line": 469,
+          "block_line": 463
         },
         {
           "id": "homeworld.geology",
@@ -12788,9 +12855,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 472,
-          "end_line": 475,
-          "block_line": 469
+          "line": 473,
+          "end_line": 476,
+          "block_line": 470
         },
         {
           "id": "homeworld.landscape",
@@ -12800,9 +12867,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 479,
-          "end_line": 482,
-          "block_line": 476
+          "line": 480,
+          "end_line": 483,
+          "block_line": 477
         },
         {
           "id": "homeworld.flora",
@@ -12812,9 +12879,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 486,
-          "end_line": 489,
-          "block_line": 483
+          "line": 487,
+          "end_line": 490,
+          "block_line": 484
         },
         {
           "id": "homeworld.fauna",
@@ -12824,9 +12891,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 493,
-          "end_line": 496,
-          "block_line": 490
+          "line": 494,
+          "end_line": 497,
+          "block_line": 491
         },
         {
           "id": "homeworld.evolution",
@@ -12836,9 +12903,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 500,
-          "end_line": 503,
-          "block_line": 497
+          "line": 501,
+          "end_line": 504,
+          "block_line": 498
         },
         {
           "id": "homeworld.resources",
@@ -12848,9 +12915,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 507,
-          "end_line": 510,
-          "block_line": 504
+          "line": 508,
+          "end_line": 511,
+          "block_line": 505
         },
         {
           "id": "homeworld.settlements",
@@ -12860,9 +12927,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 514,
-          "end_line": 560,
-          "block_line": 511
+          "line": 515,
+          "end_line": 561,
+          "block_line": 512
         },
         {
           "id": "homeworld.settlements.first-five",
@@ -12872,9 +12939,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 535,
-          "end_line": 560,
-          "block_line": 532
+          "line": 536,
+          "end_line": 561,
+          "block_line": 533
         },
         {
           "id": "homeworld.demography",
@@ -12884,9 +12951,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 564,
-          "end_line": 568,
-          "block_line": 561
+          "line": 565,
+          "end_line": 569,
+          "block_line": 562
         },
         {
           "id": "homeworld.cultural-influence",
@@ -12896,9 +12963,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 572,
-          "end_line": 575,
-          "block_line": 569
+          "line": 573,
+          "end_line": 576,
+          "block_line": 570
         },
         {
           "id": "nutrition",
@@ -12908,9 +12975,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 579,
-          "end_line": 594,
-          "block_line": 576
+          "line": 580,
+          "end_line": 595,
+          "block_line": 577
         },
         {
           "id": "nutrition.diet",
@@ -12920,9 +12987,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 584,
-          "end_line": 587,
-          "block_line": 581
+          "line": 585,
+          "end_line": 588,
+          "block_line": 582
         },
         {
           "id": "nutrition.history",
@@ -12932,9 +12999,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 591,
-          "end_line": 594,
-          "block_line": 588
+          "line": 592,
+          "end_line": 595,
+          "block_line": 589
         },
         {
           "id": "language",
@@ -12944,9 +13011,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 598,
-          "end_line": 642,
-          "block_line": 595
+          "line": 599,
+          "end_line": 643,
+          "block_line": 596
         },
         {
           "id": "language.speech",
@@ -12956,9 +13023,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 603,
-          "end_line": 608,
-          "block_line": 600
+          "line": 604,
+          "end_line": 609,
+          "block_line": 601
         },
         {
           "id": "language.writing",
@@ -12968,9 +13035,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 612,
-          "end_line": 615,
-          "block_line": 609
+          "line": 613,
+          "end_line": 616,
+          "block_line": 610
         },
         {
           "id": "language.communication-technology",
@@ -12980,9 +13047,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 619,
-          "end_line": 622,
-          "block_line": 616
+          "line": 620,
+          "end_line": 623,
+          "block_line": 617
         },
         {
           "id": "language.lingua",
@@ -12992,9 +13059,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 626,
-          "end_line": 631,
-          "block_line": 623
+          "line": 627,
+          "end_line": 632,
+          "block_line": 624
         },
         {
           "id": "language.names",
@@ -13004,9 +13071,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 635,
-          "end_line": 642,
-          "block_line": 632
+          "line": 636,
+          "end_line": 643,
+          "block_line": 633
         },
         {
           "id": "psychology",
@@ -13016,9 +13083,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 646,
-          "end_line": 682,
-          "block_line": 643
+          "line": 647,
+          "end_line": 683,
+          "block_line": 644
         },
         {
           "id": "psychology.trait-1",
@@ -13028,9 +13095,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 651,
-          "end_line": 654,
-          "block_line": 648
+          "line": 652,
+          "end_line": 655,
+          "block_line": 649
         },
         {
           "id": "psychology.trait-2",
@@ -13040,9 +13107,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 658,
-          "end_line": 661,
-          "block_line": 655
+          "line": 659,
+          "end_line": 662,
+          "block_line": 656
         },
         {
           "id": "psychology.trait-3",
@@ -13052,9 +13119,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 665,
-          "end_line": 668,
-          "block_line": 662
+          "line": 666,
+          "end_line": 669,
+          "block_line": 663
         },
         {
           "id": "psychology.trait-4",
@@ -13064,9 +13131,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 672,
-          "end_line": 675,
-          "block_line": 669
+          "line": 673,
+          "end_line": 676,
+          "block_line": 670
         },
         {
           "id": "psychology.trait-5",
@@ -13076,9 +13143,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 679,
-          "end_line": 682,
-          "block_line": 676
+          "line": 680,
+          "end_line": 683,
+          "block_line": 677
         },
         {
           "id": "culture",
@@ -13088,9 +13155,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 686,
-          "end_line": 742,
-          "block_line": 683
+          "line": 687,
+          "end_line": 743,
+          "block_line": 684
         },
         {
           "id": "culture.science",
@@ -13100,9 +13167,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 691,
-          "end_line": 694,
-          "block_line": 688
+          "line": 692,
+          "end_line": 695,
+          "block_line": 689
         },
         {
           "id": "culture.art",
@@ -13112,9 +13179,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 698,
-          "end_line": 701,
-          "block_line": 695
+          "line": 699,
+          "end_line": 702,
+          "block_line": 696
         },
         {
           "id": "culture.beliefs",
@@ -13124,9 +13191,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 705,
-          "end_line": 708,
-          "block_line": 702
+          "line": 706,
+          "end_line": 709,
+          "block_line": 703
         },
         {
           "id": "culture.artificial-intelligence",
@@ -13136,9 +13203,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 712,
-          "end_line": 715,
-          "block_line": 709
+          "line": 713,
+          "end_line": 716,
+          "block_line": 710
         },
         {
           "id": "culture.clothing",
@@ -13148,9 +13215,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 719,
-          "end_line": 728,
-          "block_line": 716
+          "line": 720,
+          "end_line": 729,
+          "block_line": 717
         },
         {
           "id": "culture.visual-style",
@@ -13160,9 +13227,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 732,
-          "end_line": 735,
-          "block_line": 729
+          "line": 733,
+          "end_line": 736,
+          "block_line": 730
         },
         {
           "id": "culture.leisure",
@@ -13172,9 +13239,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 739,
-          "end_line": 742,
-          "block_line": 736
+          "line": 740,
+          "end_line": 743,
+          "block_line": 737
         },
         {
           "id": "unique-institution",
@@ -13184,9 +13251,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 746,
-          "end_line": 755,
-          "block_line": 743
+          "line": 747,
+          "end_line": 756,
+          "block_line": 744
         },
         {
           "id": "society",
@@ -13196,9 +13263,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 759,
-          "end_line": 889,
-          "block_line": 756
+          "line": 760,
+          "end_line": 890,
+          "block_line": 757
         },
         {
           "id": "society.government",
@@ -13208,9 +13275,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 764,
-          "end_line": 767,
-          "block_line": 761
+          "line": 765,
+          "end_line": 768,
+          "block_line": 762
         },
         {
           "id": "society.conflicts",
@@ -13220,9 +13287,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 771,
-          "end_line": 774,
-          "block_line": 768
+          "line": 772,
+          "end_line": 775,
+          "block_line": 769
         },
         {
           "id": "society.economy",
@@ -13232,9 +13299,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 778,
-          "end_line": 781,
-          "block_line": 775
+          "line": 779,
+          "end_line": 782,
+          "block_line": 776
         },
         {
           "id": "society.military",
@@ -13244,9 +13311,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 785,
-          "end_line": 792,
-          "block_line": 782
+          "line": 786,
+          "end_line": 793,
+          "block_line": 783
         },
         {
           "id": "society.kinship",
@@ -13256,9 +13323,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 796,
-          "end_line": 801,
-          "block_line": 793
+          "line": 797,
+          "end_line": 802,
+          "block_line": 794
         },
         {
           "id": "society.stratification",
@@ -13268,9 +13335,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 805,
-          "end_line": 808,
-          "block_line": 802
+          "line": 806,
+          "end_line": 809,
+          "block_line": 803
         },
         {
           "id": "society.gender-age",
@@ -13280,9 +13347,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 812,
-          "end_line": 816,
-          "block_line": 809
+          "line": 813,
+          "end_line": 817,
+          "block_line": 810
         },
         {
           "id": "society.education",
@@ -13292,9 +13359,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 820,
-          "end_line": 823,
-          "block_line": 817
+          "line": 821,
+          "end_line": 824,
+          "block_line": 818
         },
         {
           "id": "society.life-course",
@@ -13304,9 +13371,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 827,
-          "end_line": 831,
-          "block_line": 824
+          "line": 828,
+          "end_line": 832,
+          "block_line": 825
         },
         {
           "id": "society.law",
@@ -13316,9 +13383,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 835,
-          "end_line": 839,
-          "block_line": 832
+          "line": 836,
+          "end_line": 840,
+          "block_line": 833
         },
         {
           "id": "society.everyday-life",
@@ -13328,9 +13395,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 843,
-          "end_line": 847,
-          "block_line": 840
+          "line": 844,
+          "end_line": 848,
+          "block_line": 841
         },
         {
           "id": "society.work",
@@ -13340,9 +13407,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 851,
-          "end_line": 854,
-          "block_line": 848
+          "line": 852,
+          "end_line": 855,
+          "block_line": 849
         },
         {
           "id": "society.etiquette",
@@ -13352,9 +13419,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 858,
-          "end_line": 861,
-          "block_line": 855
+          "line": 859,
+          "end_line": 862,
+          "block_line": 856
         },
         {
           "id": "society.deviance",
@@ -13364,9 +13431,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 865,
-          "end_line": 868,
-          "block_line": 862
+          "line": 866,
+          "end_line": 869,
+          "block_line": 863
         },
         {
           "id": "society.diaspora",
@@ -13376,9 +13443,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 872,
-          "end_line": 875,
-          "block_line": 869
+          "line": 873,
+          "end_line": 876,
+          "block_line": 870
         },
         {
           "id": "society.health",
@@ -13388,9 +13455,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 879,
-          "end_line": 882,
-          "block_line": 876
+          "line": 880,
+          "end_line": 883,
+          "block_line": 877
         },
         {
           "id": "society.information",
@@ -13400,9 +13467,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 886,
-          "end_line": 889,
-          "block_line": 883
+          "line": 887,
+          "end_line": 890,
+          "block_line": 884
         },
         {
           "id": "technology",
@@ -13412,9 +13479,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 893,
-          "end_line": 922,
-          "block_line": 890
+          "line": 894,
+          "end_line": 923,
+          "block_line": 891
         },
         {
           "id": "technology.materials",
@@ -13424,9 +13491,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 898,
-          "end_line": 901,
-          "block_line": 895
+          "line": 899,
+          "end_line": 902,
+          "block_line": 896
         },
         {
           "id": "technology.energy",
@@ -13436,9 +13503,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 905,
-          "end_line": 908,
-          "block_line": 902
+          "line": 906,
+          "end_line": 909,
+          "block_line": 903
         },
         {
           "id": "technology.spaceflight",
@@ -13448,9 +13515,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 912,
-          "end_line": 915,
-          "block_line": 909
+          "line": 913,
+          "end_line": 916,
+          "block_line": 910
         },
         {
           "id": "technology.special-practices",
@@ -13460,9 +13527,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 919,
-          "end_line": 922,
-          "block_line": 916
+          "line": 920,
+          "end_line": 923,
+          "block_line": 917
         },
         {
           "id": "reputation",
@@ -13472,9 +13539,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 926,
-          "end_line": 935,
-          "block_line": 923
+          "line": 927,
+          "end_line": 936,
+          "block_line": 924
         },
         {
           "id": "relations",
@@ -13484,9 +13551,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 939,
-          "end_line": 999,
-          "block_line": 936
+          "line": 940,
+          "end_line": 1000,
+          "block_line": 937
         },
         {
           "id": "gameplay",
@@ -13498,9 +13565,9 @@
           ],
           "status": "needs_development",
           "level": 2,
-          "line": 1003,
-          "end_line": 1006,
-          "block_line": 1000
+          "line": 1004,
+          "end_line": 1007,
+          "block_line": 1001
         },
         {
           "id": "people",
@@ -13510,9 +13577,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 1010,
-          "end_line": 1016,
-          "block_line": 1007
+          "line": 1011,
+          "end_line": 1017,
+          "block_line": 1008
         },
         {
           "id": "visual",
@@ -13520,9 +13587,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 1020,
-          "end_line": 1085,
-          "block_line": 1017
+          "line": 1021,
+          "end_line": 1086,
+          "block_line": 1018
         },
         {
           "id": "visual.i.1",
@@ -13530,9 +13597,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1025,
-          "end_line": 1035,
-          "block_line": 1022
+          "line": 1026,
+          "end_line": 1036,
+          "block_line": 1023
         },
         {
           "id": "visual.ii.1",
@@ -13540,9 +13607,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1039,
-          "end_line": 1085,
-          "block_line": 1036
+          "line": 1040,
+          "end_line": 1086,
+          "block_line": 1037
         }
       ]
     },
@@ -13591,7 +13658,7 @@
           "status": "filled",
           "level": 2,
           "line": 41,
-          "end_line": 163,
+          "end_line": 164,
           "block_line": 38
         },
         {
@@ -13690,7 +13757,7 @@
         },
         {
           "id": "history.episodes.item-4",
-          "title": "II.2.4. Стратегический перелом: отказ от решающего сражения (после 3300)",
+          "title": "II.2.4. Стратегический перелом: отказ от решающего сражения (после 3301)",
           "slots": [
             "II.2.4"
           ],
@@ -13709,7 +13776,7 @@
           "status": "filled",
           "level": 3,
           "line": 131,
-          "end_line": 148,
+          "end_line": 149,
           "block_line": 128
         },
         {
@@ -13720,9 +13787,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 152,
-          "end_line": 163,
-          "block_line": 149
+          "line": 153,
+          "end_line": 164,
+          "block_line": 150
         },
         {
           "id": "biology",
@@ -13732,9 +13799,9 @@
           ],
           "status": "not_applicable",
           "level": 2,
-          "line": 167,
-          "end_line": 259,
-          "block_line": 164
+          "line": 168,
+          "end_line": 260,
+          "block_line": 165
         },
         {
           "id": "architecture",
@@ -13762,9 +13829,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 174,
-          "end_line": 259,
-          "block_line": 171
+          "line": 175,
+          "end_line": 260,
+          "block_line": 172
         },
         {
           "id": "architecture.substrate",
@@ -13774,9 +13841,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 179,
-          "end_line": 182,
-          "block_line": 176
+          "line": 180,
+          "end_line": 183,
+          "block_line": 177
         },
         {
           "id": "architecture.energy",
@@ -13786,9 +13853,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 186,
-          "end_line": 189,
-          "block_line": 183
+          "line": 187,
+          "end_line": 190,
+          "block_line": 184
         },
         {
           "id": "architecture.senses",
@@ -13798,9 +13865,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 193,
-          "end_line": 196,
-          "block_line": 190
+          "line": 194,
+          "end_line": 197,
+          "block_line": 191
         },
         {
           "id": "architecture.communication",
@@ -13810,9 +13877,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 200,
-          "end_line": 203,
-          "block_line": 197
+          "line": 201,
+          "end_line": 204,
+          "block_line": 198
         },
         {
           "id": "architecture.repair",
@@ -13822,9 +13889,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 207,
-          "end_line": 210,
-          "block_line": 204
+          "line": 208,
+          "end_line": 211,
+          "block_line": 205
         },
         {
           "id": "architecture.life-cycle",
@@ -13834,9 +13901,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 214,
-          "end_line": 217,
-          "block_line": 211
+          "line": 215,
+          "end_line": 218,
+          "block_line": 212
         },
         {
           "id": "architecture.vulnerabilities",
@@ -13846,9 +13913,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 221,
-          "end_line": 229,
-          "block_line": 218
+          "line": 222,
+          "end_line": 230,
+          "block_line": 219
         },
         {
           "id": "architecture.unique-traits",
@@ -13858,9 +13925,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 233,
-          "end_line": 234,
-          "block_line": 230
+          "line": 234,
+          "end_line": 235,
+          "block_line": 231
         },
         {
           "id": "architecture.unique-traits.item-1",
@@ -13870,9 +13937,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 238,
-          "end_line": 245,
-          "block_line": 235
+          "line": 239,
+          "end_line": 246,
+          "block_line": 236
         },
         {
           "id": "architecture.unique-traits.item-2",
@@ -13882,9 +13949,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 249,
-          "end_line": 252,
-          "block_line": 246
+          "line": 250,
+          "end_line": 253,
+          "block_line": 247
         },
         {
           "id": "architecture.unique-traits.item-3",
@@ -13894,9 +13961,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 256,
-          "end_line": 259,
-          "block_line": 253
+          "line": 257,
+          "end_line": 260,
+          "block_line": 254
         },
         {
           "id": "homeworld",
@@ -13906,9 +13973,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 263,
-          "end_line": 301,
-          "block_line": 260
+          "line": 264,
+          "end_line": 302,
+          "block_line": 261
         },
         {
           "id": "group.iv-1-iv-11",
@@ -13928,9 +13995,9 @@
           ],
           "status": "needs_development",
           "level": 3,
-          "line": 270,
-          "end_line": 273,
-          "block_line": 267
+          "line": 271,
+          "end_line": 274,
+          "block_line": 268
         },
         {
           "id": "homeworld.settlements",
@@ -13940,9 +14007,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 277,
-          "end_line": 287,
-          "block_line": 274
+          "line": 278,
+          "end_line": 288,
+          "block_line": 275
         },
         {
           "id": "homeworld.demography",
@@ -13952,9 +14019,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 291,
-          "end_line": 294,
-          "block_line": 288
+          "line": 292,
+          "end_line": 295,
+          "block_line": 289
         },
         {
           "id": "homeworld.cultural-influence",
@@ -13964,9 +14031,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 298,
-          "end_line": 301,
-          "block_line": 295
+          "line": 299,
+          "end_line": 302,
+          "block_line": 296
         },
         {
           "id": "nutrition",
@@ -13976,9 +14043,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 305,
-          "end_line": 308,
-          "block_line": 302
+          "line": 306,
+          "end_line": 309,
+          "block_line": 303
         },
         {
           "id": "language",
@@ -13988,9 +14055,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 312,
-          "end_line": 371,
-          "block_line": 309
+          "line": 313,
+          "end_line": 372,
+          "block_line": 310
         },
         {
           "id": "language.speech",
@@ -14000,9 +14067,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 317,
-          "end_line": 341,
-          "block_line": 314
+          "line": 318,
+          "end_line": 342,
+          "block_line": 315
         },
         {
           "id": "language.speech.item-1",
@@ -14012,9 +14079,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 322,
-          "end_line": 325,
-          "block_line": 319
+          "line": 323,
+          "end_line": 326,
+          "block_line": 320
         },
         {
           "id": "language.speech.item-2",
@@ -14024,9 +14091,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 329,
-          "end_line": 332,
-          "block_line": 326
+          "line": 330,
+          "end_line": 333,
+          "block_line": 327
         },
         {
           "id": "language.speech.item-3",
@@ -14036,9 +14103,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 336,
-          "end_line": 341,
-          "block_line": 333
+          "line": 337,
+          "end_line": 342,
+          "block_line": 334
         },
         {
           "id": "language.writing",
@@ -14048,9 +14115,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 345,
-          "end_line": 348,
-          "block_line": 342
+          "line": 346,
+          "end_line": 349,
+          "block_line": 343
         },
         {
           "id": "language.communication-technology",
@@ -14060,9 +14127,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 352,
-          "end_line": 355,
-          "block_line": 349
+          "line": 353,
+          "end_line": 356,
+          "block_line": 350
         },
         {
           "id": "language.lingua",
@@ -14072,9 +14139,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 359,
-          "end_line": 364,
-          "block_line": 356
+          "line": 360,
+          "end_line": 365,
+          "block_line": 357
         },
         {
           "id": "language.names",
@@ -14084,9 +14151,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 368,
-          "end_line": 371,
-          "block_line": 365
+          "line": 369,
+          "end_line": 372,
+          "block_line": 366
         },
         {
           "id": "psychology",
@@ -14096,9 +14163,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 375,
-          "end_line": 406,
-          "block_line": 372
+          "line": 376,
+          "end_line": 407,
+          "block_line": 373
         },
         {
           "id": "psychology.trait-1",
@@ -14108,9 +14175,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 382,
-          "end_line": 385,
-          "block_line": 379
+          "line": 383,
+          "end_line": 386,
+          "block_line": 380
         },
         {
           "id": "psychology.trait-2",
@@ -14120,9 +14187,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 389,
-          "end_line": 392,
-          "block_line": 386
+          "line": 390,
+          "end_line": 393,
+          "block_line": 387
         },
         {
           "id": "psychology.trait-3",
@@ -14132,9 +14199,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 396,
-          "end_line": 399,
-          "block_line": 393
+          "line": 397,
+          "end_line": 400,
+          "block_line": 394
         },
         {
           "id": "psychology.trait-4",
@@ -14144,9 +14211,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 403,
-          "end_line": 406,
-          "block_line": 400
+          "line": 404,
+          "end_line": 407,
+          "block_line": 401
         },
         {
           "id": "culture",
@@ -14156,9 +14223,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 410,
-          "end_line": 460,
-          "block_line": 407
+          "line": 411,
+          "end_line": 461,
+          "block_line": 408
         },
         {
           "id": "culture.science",
@@ -14168,9 +14235,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 415,
-          "end_line": 418,
-          "block_line": 412
+          "line": 416,
+          "end_line": 419,
+          "block_line": 413
         },
         {
           "id": "culture.art",
@@ -14180,9 +14247,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 422,
-          "end_line": 425,
-          "block_line": 419
+          "line": 423,
+          "end_line": 426,
+          "block_line": 420
         },
         {
           "id": "culture.beliefs",
@@ -14192,9 +14259,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 429,
-          "end_line": 432,
-          "block_line": 426
+          "line": 430,
+          "end_line": 433,
+          "block_line": 427
         },
         {
           "id": "culture.artificial-intelligence",
@@ -14204,9 +14271,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 436,
-          "end_line": 439,
-          "block_line": 433
+          "line": 437,
+          "end_line": 440,
+          "block_line": 434
         },
         {
           "id": "culture.clothing",
@@ -14216,9 +14283,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 443,
-          "end_line": 446,
-          "block_line": 440
+          "line": 444,
+          "end_line": 447,
+          "block_line": 441
         },
         {
           "id": "culture.visual-style",
@@ -14228,9 +14295,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 450,
-          "end_line": 453,
-          "block_line": 447
+          "line": 451,
+          "end_line": 454,
+          "block_line": 448
         },
         {
           "id": "culture.leisure",
@@ -14240,9 +14307,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 457,
-          "end_line": 460,
-          "block_line": 454
+          "line": 458,
+          "end_line": 461,
+          "block_line": 455
         },
         {
           "id": "unique-institution",
@@ -14252,9 +14319,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 464,
-          "end_line": 467,
-          "block_line": 461
+          "line": 465,
+          "end_line": 468,
+          "block_line": 462
         },
         {
           "id": "society",
@@ -14264,9 +14331,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 471,
-          "end_line": 542,
-          "block_line": 468
+          "line": 472,
+          "end_line": 543,
+          "block_line": 469
         },
         {
           "id": "society.government",
@@ -14276,9 +14343,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 476,
-          "end_line": 514,
-          "block_line": 473
+          "line": 477,
+          "end_line": 515,
+          "block_line": 474
         },
         {
           "id": "society.government.item-1",
@@ -14288,9 +14355,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 483,
-          "end_line": 486,
-          "block_line": 480
+          "line": 484,
+          "end_line": 487,
+          "block_line": 481
         },
         {
           "id": "society.government.item-2",
@@ -14300,9 +14367,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 490,
-          "end_line": 493,
-          "block_line": 487
+          "line": 491,
+          "end_line": 494,
+          "block_line": 488
         },
         {
           "id": "society.government.item-3",
@@ -14312,9 +14379,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 497,
-          "end_line": 500,
-          "block_line": 494
+          "line": 498,
+          "end_line": 501,
+          "block_line": 495
         },
         {
           "id": "society.government.item-4",
@@ -14324,9 +14391,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 504,
-          "end_line": 507,
-          "block_line": 501
+          "line": 505,
+          "end_line": 508,
+          "block_line": 502
         },
         {
           "id": "society.government.item-5",
@@ -14336,9 +14403,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 511,
-          "end_line": 514,
-          "block_line": 508
+          "line": 512,
+          "end_line": 515,
+          "block_line": 509
         },
         {
           "id": "society.conflicts",
@@ -14348,9 +14415,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 518,
-          "end_line": 521,
-          "block_line": 515
+          "line": 519,
+          "end_line": 522,
+          "block_line": 516
         },
         {
           "id": "society.economy",
@@ -14360,9 +14427,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 525,
-          "end_line": 528,
-          "block_line": 522
+          "line": 526,
+          "end_line": 529,
+          "block_line": 523
         },
         {
           "id": "society.military",
@@ -14372,9 +14439,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 532,
-          "end_line": 535,
-          "block_line": 529
+          "line": 533,
+          "end_line": 536,
+          "block_line": 530
         },
         {
           "id": "group.x-5-x-17",
@@ -14396,9 +14463,9 @@
           ],
           "status": "not_applicable",
           "level": 3,
-          "line": 539,
-          "end_line": 542,
-          "block_line": 536
+          "line": 540,
+          "end_line": 543,
+          "block_line": 537
         },
         {
           "id": "technology",
@@ -14408,9 +14475,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 546,
-          "end_line": 575,
-          "block_line": 543
+          "line": 547,
+          "end_line": 576,
+          "block_line": 544
         },
         {
           "id": "technology.materials",
@@ -14420,9 +14487,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 551,
-          "end_line": 554,
-          "block_line": 548
+          "line": 552,
+          "end_line": 555,
+          "block_line": 549
         },
         {
           "id": "technology.energy",
@@ -14432,9 +14499,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 558,
-          "end_line": 561,
-          "block_line": 555
+          "line": 559,
+          "end_line": 562,
+          "block_line": 556
         },
         {
           "id": "technology.spaceflight",
@@ -14444,9 +14511,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 565,
-          "end_line": 568,
-          "block_line": 562
+          "line": 566,
+          "end_line": 569,
+          "block_line": 563
         },
         {
           "id": "technology.special-practices",
@@ -14456,9 +14523,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 572,
-          "end_line": 575,
-          "block_line": 569
+          "line": 573,
+          "end_line": 576,
+          "block_line": 570
         },
         {
           "id": "reputation",
@@ -14468,9 +14535,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 579,
-          "end_line": 608,
-          "block_line": 576
+          "line": 580,
+          "end_line": 609,
+          "block_line": 577
         },
         {
           "id": "reputation.ridicule",
@@ -14480,9 +14547,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 584,
-          "end_line": 587,
-          "block_line": 581
+          "line": 585,
+          "end_line": 588,
+          "block_line": 582
         },
         {
           "id": "reputation.pride",
@@ -14492,9 +14559,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 591,
-          "end_line": 594,
-          "block_line": 588
+          "line": 592,
+          "end_line": 595,
+          "block_line": 589
         },
         {
           "id": "reputation.recognition",
@@ -14504,9 +14571,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 598,
-          "end_line": 601,
-          "block_line": 595
+          "line": 599,
+          "end_line": 602,
+          "block_line": 596
         },
         {
           "id": "reputation.hidden-problem",
@@ -14516,9 +14583,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 605,
-          "end_line": 608,
-          "block_line": 602
+          "line": 606,
+          "end_line": 609,
+          "block_line": 603
         },
         {
           "id": "relations",
@@ -14528,9 +14595,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 612,
-          "end_line": 643,
-          "block_line": 609
+          "line": 613,
+          "end_line": 644,
+          "block_line": 610
         },
         {
           "id": "gameplay.fleet",
@@ -14540,9 +14607,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 647,
-          "end_line": 650,
-          "block_line": 644
+          "line": 648,
+          "end_line": 651,
+          "block_line": 645
         },
         {
           "id": "gameplay.rewards",
@@ -14552,9 +14619,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 654,
-          "end_line": 657,
-          "block_line": 651
+          "line": 655,
+          "end_line": 658,
+          "block_line": 652
         },
         {
           "id": "gameplay.quests",
@@ -14564,9 +14631,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 661,
-          "end_line": 672,
-          "block_line": 658
+          "line": 662,
+          "end_line": 673,
+          "block_line": 659
         },
         {
           "id": "people",
@@ -14576,9 +14643,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 676,
-          "end_line": 685,
-          "block_line": 673
+          "line": 677,
+          "end_line": 686,
+          "block_line": 674
         },
         {
           "id": "visual",
@@ -14586,9 +14653,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 689,
-          "end_line": 694,
-          "block_line": 686
+          "line": 690,
+          "end_line": 698,
+          "block_line": 687
         },
         {
           "id": "visual.i.1",
@@ -14596,9 +14663,29 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 694,
-          "end_line": 694,
-          "block_line": 691
+          "line": 695,
+          "end_line": 698,
+          "block_line": 692
+        },
+        {
+          "id": null,
+          "title": "Примечание разработчика: итоговые состояния после войны и вариативность концовок (14.11.2026)",
+          "slots": [],
+          "status": null,
+          "level": 2,
+          "line": 699,
+          "end_line": 715,
+          "block_line": 699
+        },
+        {
+          "id": null,
+          "title": "Согласованные итоги войны 3300–3350 (15.11.2026)",
+          "slots": [],
+          "status": null,
+          "level": 2,
+          "line": 716,
+          "end_line": 720,
+          "block_line": 716
         }
       ]
     },
@@ -14722,7 +14809,7 @@
         },
         {
           "id": "history.episodes.item-1",
-          "title": "II.2.1. Приближение к пространству Содружества (ок. −3 000 – ~3365)",
+          "title": "II.2.1. Приближение к пространству Содружества (ок. −3 000 – ~3565)",
           "slots": [
             "II.2.1"
           ],
@@ -14746,7 +14833,7 @@
         },
         {
           "id": "history.commonwealth",
-          "title": "II.4. ЭПОХА СОДРУЖЕСТВА (2800–3400)",
+          "title": "II.4. ЭПОХА СОДРУЖЕСТВА (2800–3600)",
           "slots": [
             "II.4"
           ],
@@ -19276,7 +19363,7 @@
           "status": "filled",
           "level": 2,
           "line": 305,
-          "end_line": 489,
+          "end_line": 490,
           "block_line": 302
         },
         {
@@ -19396,7 +19483,7 @@
           "status": "filled",
           "level": 3,
           "line": 381,
-          "end_line": 389,
+          "end_line": 390,
           "block_line": 378
         },
         {
@@ -19407,9 +19494,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 393,
-          "end_line": 396,
-          "block_line": 390
+          "line": 394,
+          "end_line": 397,
+          "block_line": 391
         },
         {
           "id": "biology.reproduction",
@@ -19419,9 +19506,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 400,
-          "end_line": 403,
-          "block_line": 397
+          "line": 401,
+          "end_line": 404,
+          "block_line": 398
         },
         {
           "id": "biology.life-cycle",
@@ -19431,9 +19518,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 407,
-          "end_line": 413,
-          "block_line": 404
+          "line": 408,
+          "end_line": 414,
+          "block_line": 405
         },
         {
           "id": "biology.pain",
@@ -19443,9 +19530,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 417,
-          "end_line": 420,
-          "block_line": 414
+          "line": 418,
+          "end_line": 421,
+          "block_line": 415
         },
         {
           "id": "biology.substances",
@@ -19455,9 +19542,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 424,
-          "end_line": 427,
-          "block_line": 421
+          "line": 425,
+          "end_line": 428,
+          "block_line": 422
         },
         {
           "id": "biology.environment",
@@ -19467,9 +19554,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 431,
-          "end_line": 442,
-          "block_line": 428
+          "line": 432,
+          "end_line": 443,
+          "block_line": 429
         },
         {
           "id": "biology.comfort-temperature",
@@ -19479,9 +19566,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 446,
-          "end_line": 449,
-          "block_line": 443
+          "line": 447,
+          "end_line": 450,
+          "block_line": 444
         },
         {
           "id": "biology.variation",
@@ -19491,9 +19578,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 453,
-          "end_line": 456,
-          "block_line": 450
+          "line": 454,
+          "end_line": 457,
+          "block_line": 451
         },
         {
           "id": "biology.unique-traits",
@@ -19503,9 +19590,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 460,
-          "end_line": 489,
-          "block_line": 457
+          "line": 461,
+          "end_line": 490,
+          "block_line": 458
         },
         {
           "id": "biology.unique-traits.item-1",
@@ -19515,9 +19602,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 465,
-          "end_line": 468,
-          "block_line": 462
+          "line": 466,
+          "end_line": 469,
+          "block_line": 463
         },
         {
           "id": "biology.unique-traits.item-2",
@@ -19527,9 +19614,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 472,
-          "end_line": 475,
-          "block_line": 469
+          "line": 473,
+          "end_line": 476,
+          "block_line": 470
         },
         {
           "id": "biology.unique-traits.item-3",
@@ -19539,9 +19626,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 479,
-          "end_line": 482,
-          "block_line": 476
+          "line": 480,
+          "end_line": 483,
+          "block_line": 477
         },
         {
           "id": "biology.unique-traits.item-4",
@@ -19551,9 +19638,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 486,
-          "end_line": 489,
-          "block_line": 483
+          "line": 487,
+          "end_line": 490,
+          "block_line": 484
         },
         {
           "id": "homeworld",
@@ -19563,9 +19650,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 493,
-          "end_line": 641,
-          "block_line": 490
+          "line": 494,
+          "end_line": 644,
+          "block_line": 491
         },
         {
           "id": "homeworld.overview",
@@ -19575,9 +19662,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 498,
-          "end_line": 501,
-          "block_line": 495
+          "line": 501,
+          "end_line": 504,
+          "block_line": 498
         },
         {
           "id": "homeworld.star",
@@ -19587,9 +19674,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 505,
-          "end_line": 508,
-          "block_line": 502
+          "line": 508,
+          "end_line": 511,
+          "block_line": 505
         },
         {
           "id": "homeworld.parameters",
@@ -19599,9 +19686,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 512,
-          "end_line": 515,
-          "block_line": 509
+          "line": 515,
+          "end_line": 518,
+          "block_line": 512
         },
         {
           "id": "homeworld.atmosphere",
@@ -19611,9 +19698,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 519,
-          "end_line": 522,
-          "block_line": 516
+          "line": 522,
+          "end_line": 525,
+          "block_line": 519
         },
         {
           "id": "homeworld.climate",
@@ -19623,9 +19710,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 526,
-          "end_line": 529,
-          "block_line": 523
+          "line": 529,
+          "end_line": 532,
+          "block_line": 526
         },
         {
           "id": "homeworld.geology",
@@ -19635,9 +19722,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 533,
-          "end_line": 536,
-          "block_line": 530
+          "line": 536,
+          "end_line": 539,
+          "block_line": 533
         },
         {
           "id": "homeworld.landscape",
@@ -19647,9 +19734,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 540,
-          "end_line": 543,
-          "block_line": 537
+          "line": 543,
+          "end_line": 546,
+          "block_line": 540
         },
         {
           "id": "homeworld.flora",
@@ -19659,9 +19746,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 547,
-          "end_line": 560,
-          "block_line": 544
+          "line": 550,
+          "end_line": 563,
+          "block_line": 547
         },
         {
           "id": "homeworld.fauna",
@@ -19671,9 +19758,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 564,
-          "end_line": 577,
-          "block_line": 561
+          "line": 567,
+          "end_line": 580,
+          "block_line": 564
         },
         {
           "id": "homeworld.evolution",
@@ -19683,9 +19770,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 581,
-          "end_line": 584,
-          "block_line": 578
+          "line": 584,
+          "end_line": 587,
+          "block_line": 581
         },
         {
           "id": "homeworld.resources",
@@ -19695,9 +19782,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 588,
-          "end_line": 591,
-          "block_line": 585
+          "line": 591,
+          "end_line": 594,
+          "block_line": 588
         },
         {
           "id": "homeworld.settlements",
@@ -19707,9 +19794,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 595,
-          "end_line": 626,
-          "block_line": 592
+          "line": 598,
+          "end_line": 629,
+          "block_line": 595
         },
         {
           "id": "homeworld.settlements.first-five",
@@ -19719,9 +19806,9 @@
           ],
           "status": "filled",
           "level": 4,
-          "line": 603,
-          "end_line": 626,
-          "block_line": 600
+          "line": 606,
+          "end_line": 629,
+          "block_line": 603
         },
         {
           "id": "homeworld.demography",
@@ -19731,9 +19818,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 630,
-          "end_line": 634,
-          "block_line": 627
+          "line": 633,
+          "end_line": 637,
+          "block_line": 630
         },
         {
           "id": "homeworld.cultural-influence",
@@ -19743,9 +19830,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 638,
-          "end_line": 641,
-          "block_line": 635
+          "line": 641,
+          "end_line": 644,
+          "block_line": 638
         },
         {
           "id": "nutrition",
@@ -19755,9 +19842,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 645,
-          "end_line": 660,
-          "block_line": 642
+          "line": 648,
+          "end_line": 663,
+          "block_line": 645
         },
         {
           "id": "nutrition.diet",
@@ -19767,9 +19854,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 650,
-          "end_line": 653,
-          "block_line": 647
+          "line": 653,
+          "end_line": 656,
+          "block_line": 650
         },
         {
           "id": "nutrition.history",
@@ -19779,9 +19866,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 657,
-          "end_line": 660,
-          "block_line": 654
+          "line": 660,
+          "end_line": 663,
+          "block_line": 657
         },
         {
           "id": "language",
@@ -19791,9 +19878,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 664,
-          "end_line": 713,
-          "block_line": 661
+          "line": 667,
+          "end_line": 737,
+          "block_line": 664
         },
         {
           "id": "language.speech",
@@ -19803,9 +19890,21 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 669,
-          "end_line": 679,
-          "block_line": 666
+          "line": 672,
+          "end_line": 699,
+          "block_line": 669
+        },
+        {
+          "id": null,
+          "title": "VI.1.4. Историческая эволюция языка (исследовательские заметки)",
+          "slots": [
+            "VI.1.4"
+          ],
+          "status": null,
+          "level": 4,
+          "line": 683,
+          "end_line": 699,
+          "block_line": 683
         },
         {
           "id": "language.writing",
@@ -19815,9 +19914,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 683,
-          "end_line": 686,
-          "block_line": 680
+          "line": 703,
+          "end_line": 706,
+          "block_line": 700
         },
         {
           "id": "language.communication-technology",
@@ -19827,9 +19926,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 690,
-          "end_line": 693,
-          "block_line": 687
+          "line": 710,
+          "end_line": 713,
+          "block_line": 707
         },
         {
           "id": "language.lingua",
@@ -19839,9 +19938,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 697,
-          "end_line": 702,
-          "block_line": 694
+          "line": 717,
+          "end_line": 722,
+          "block_line": 714
         },
         {
           "id": "language.names",
@@ -19851,9 +19950,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 706,
-          "end_line": 713,
-          "block_line": 703
+          "line": 726,
+          "end_line": 737,
+          "block_line": 723
         },
         {
           "id": "psychology",
@@ -19863,9 +19962,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 717,
-          "end_line": 753,
-          "block_line": 714
+          "line": 741,
+          "end_line": 777,
+          "block_line": 738
         },
         {
           "id": "psychology.trait-1",
@@ -19875,9 +19974,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 722,
-          "end_line": 725,
-          "block_line": 719
+          "line": 746,
+          "end_line": 749,
+          "block_line": 743
         },
         {
           "id": "psychology.trait-2",
@@ -19887,9 +19986,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 729,
-          "end_line": 732,
-          "block_line": 726
+          "line": 753,
+          "end_line": 756,
+          "block_line": 750
         },
         {
           "id": "psychology.trait-3",
@@ -19899,9 +19998,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 736,
-          "end_line": 739,
-          "block_line": 733
+          "line": 760,
+          "end_line": 763,
+          "block_line": 757
         },
         {
           "id": "psychology.trait-4",
@@ -19911,9 +20010,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 743,
-          "end_line": 746,
-          "block_line": 740
+          "line": 767,
+          "end_line": 770,
+          "block_line": 764
         },
         {
           "id": "psychology.trait-5",
@@ -19923,9 +20022,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 750,
-          "end_line": 753,
-          "block_line": 747
+          "line": 774,
+          "end_line": 777,
+          "block_line": 771
         },
         {
           "id": "culture",
@@ -19935,9 +20034,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 757,
-          "end_line": 836,
-          "block_line": 754
+          "line": 781,
+          "end_line": 860,
+          "block_line": 778
         },
         {
           "id": "culture.science",
@@ -19947,9 +20046,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 762,
-          "end_line": 765,
-          "block_line": 759
+          "line": 786,
+          "end_line": 789,
+          "block_line": 783
         },
         {
           "id": "culture.art",
@@ -19959,9 +20058,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 769,
-          "end_line": 772,
-          "block_line": 766
+          "line": 793,
+          "end_line": 796,
+          "block_line": 790
         },
         {
           "id": "culture.beliefs",
@@ -19971,9 +20070,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 776,
-          "end_line": 796,
-          "block_line": 773
+          "line": 800,
+          "end_line": 820,
+          "block_line": 797
         },
         {
           "id": "culture.artificial-intelligence",
@@ -19983,9 +20082,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 800,
-          "end_line": 805,
-          "block_line": 797
+          "line": 824,
+          "end_line": 829,
+          "block_line": 821
         },
         {
           "id": "culture.clothing",
@@ -19995,9 +20094,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 809,
-          "end_line": 822,
-          "block_line": 806
+          "line": 833,
+          "end_line": 846,
+          "block_line": 830
         },
         {
           "id": "culture.visual-style",
@@ -20007,9 +20106,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 826,
-          "end_line": 829,
-          "block_line": 823
+          "line": 850,
+          "end_line": 853,
+          "block_line": 847
         },
         {
           "id": "culture.leisure",
@@ -20019,9 +20118,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 833,
-          "end_line": 836,
-          "block_line": 830
+          "line": 857,
+          "end_line": 860,
+          "block_line": 854
         },
         {
           "id": "unique-institution",
@@ -20031,9 +20130,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 840,
-          "end_line": 852,
-          "block_line": 837
+          "line": 864,
+          "end_line": 876,
+          "block_line": 861
         },
         {
           "id": "society",
@@ -20043,9 +20142,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 856,
-          "end_line": 982,
-          "block_line": 853
+          "line": 880,
+          "end_line": 1006,
+          "block_line": 877
         },
         {
           "id": "society.government",
@@ -20055,9 +20154,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 861,
-          "end_line": 865,
-          "block_line": 858
+          "line": 885,
+          "end_line": 889,
+          "block_line": 882
         },
         {
           "id": "society.conflicts",
@@ -20067,9 +20166,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 869,
-          "end_line": 872,
-          "block_line": 866
+          "line": 893,
+          "end_line": 896,
+          "block_line": 890
         },
         {
           "id": "society.economy",
@@ -20079,9 +20178,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 876,
-          "end_line": 879,
-          "block_line": 873
+          "line": 900,
+          "end_line": 903,
+          "block_line": 897
         },
         {
           "id": "society.military",
@@ -20091,9 +20190,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 883,
-          "end_line": 891,
-          "block_line": 880
+          "line": 907,
+          "end_line": 915,
+          "block_line": 904
         },
         {
           "id": "society.kinship",
@@ -20103,9 +20202,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 895,
-          "end_line": 898,
-          "block_line": 892
+          "line": 919,
+          "end_line": 922,
+          "block_line": 916
         },
         {
           "id": "society.stratification",
@@ -20115,9 +20214,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 902,
-          "end_line": 905,
-          "block_line": 899
+          "line": 926,
+          "end_line": 929,
+          "block_line": 923
         },
         {
           "id": "society.gender-age",
@@ -20127,9 +20226,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 909,
-          "end_line": 912,
-          "block_line": 906
+          "line": 933,
+          "end_line": 936,
+          "block_line": 930
         },
         {
           "id": "society.education",
@@ -20139,9 +20238,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 916,
-          "end_line": 919,
-          "block_line": 913
+          "line": 940,
+          "end_line": 943,
+          "block_line": 937
         },
         {
           "id": "society.life-course",
@@ -20151,9 +20250,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 923,
-          "end_line": 926,
-          "block_line": 920
+          "line": 947,
+          "end_line": 950,
+          "block_line": 944
         },
         {
           "id": "society.law",
@@ -20163,9 +20262,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 930,
-          "end_line": 933,
-          "block_line": 927
+          "line": 954,
+          "end_line": 957,
+          "block_line": 951
         },
         {
           "id": "society.everyday-life",
@@ -20175,9 +20274,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 937,
-          "end_line": 940,
-          "block_line": 934
+          "line": 961,
+          "end_line": 964,
+          "block_line": 958
         },
         {
           "id": "society.work",
@@ -20187,9 +20286,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 944,
-          "end_line": 947,
-          "block_line": 941
+          "line": 968,
+          "end_line": 971,
+          "block_line": 965
         },
         {
           "id": "society.etiquette",
@@ -20199,9 +20298,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 951,
-          "end_line": 954,
-          "block_line": 948
+          "line": 975,
+          "end_line": 978,
+          "block_line": 972
         },
         {
           "id": "society.deviance",
@@ -20211,9 +20310,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 958,
-          "end_line": 961,
-          "block_line": 955
+          "line": 982,
+          "end_line": 985,
+          "block_line": 979
         },
         {
           "id": "society.diaspora",
@@ -20223,9 +20322,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 965,
-          "end_line": 968,
-          "block_line": 962
+          "line": 989,
+          "end_line": 992,
+          "block_line": 986
         },
         {
           "id": "society.health",
@@ -20235,9 +20334,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 972,
-          "end_line": 975,
-          "block_line": 969
+          "line": 996,
+          "end_line": 999,
+          "block_line": 993
         },
         {
           "id": "society.information",
@@ -20247,9 +20346,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 979,
-          "end_line": 982,
-          "block_line": 976
+          "line": 1003,
+          "end_line": 1006,
+          "block_line": 1000
         },
         {
           "id": "technology",
@@ -20259,9 +20358,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 986,
-          "end_line": 1017,
-          "block_line": 983
+          "line": 1010,
+          "end_line": 1041,
+          "block_line": 1007
         },
         {
           "id": "technology.materials",
@@ -20271,9 +20370,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 991,
-          "end_line": 994,
-          "block_line": 988
+          "line": 1015,
+          "end_line": 1018,
+          "block_line": 1012
         },
         {
           "id": "technology.energy",
@@ -20283,9 +20382,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 998,
-          "end_line": 1002,
-          "block_line": 995
+          "line": 1022,
+          "end_line": 1026,
+          "block_line": 1019
         },
         {
           "id": "technology.spaceflight",
@@ -20295,9 +20394,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 1006,
-          "end_line": 1010,
-          "block_line": 1003
+          "line": 1030,
+          "end_line": 1034,
+          "block_line": 1027
         },
         {
           "id": "technology.special-practices",
@@ -20307,9 +20406,9 @@
           ],
           "status": "filled",
           "level": 3,
-          "line": 1014,
-          "end_line": 1017,
-          "block_line": 1011
+          "line": 1038,
+          "end_line": 1041,
+          "block_line": 1035
         },
         {
           "id": "reputation",
@@ -20319,9 +20418,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 1021,
-          "end_line": 1039,
-          "block_line": 1018
+          "line": 1045,
+          "end_line": 1063,
+          "block_line": 1042
         },
         {
           "id": "relations",
@@ -20331,9 +20430,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 1043,
-          "end_line": 1074,
-          "block_line": 1040
+          "line": 1067,
+          "end_line": 1098,
+          "block_line": 1064
         },
         {
           "id": "gameplay",
@@ -20345,9 +20444,9 @@
           ],
           "status": "needs_development",
           "level": 2,
-          "line": 1078,
-          "end_line": 1081,
-          "block_line": 1075
+          "line": 1102,
+          "end_line": 1105,
+          "block_line": 1099
         },
         {
           "id": "people",
@@ -20357,9 +20456,9 @@
           ],
           "status": "filled",
           "level": 2,
-          "line": 1085,
-          "end_line": 1092,
-          "block_line": 1082
+          "line": 1109,
+          "end_line": 1116,
+          "block_line": 1106
         },
         {
           "id": "visual",
@@ -20367,19 +20466,19 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 1096,
-          "end_line": 1241,
-          "block_line": 1093
+          "line": 1120,
+          "end_line": 1265,
+          "block_line": 1117
         },
         {
           "id": "visual.i.1",
-          "title": "В.I.1. НДЗЕРАК (ЕДИНСТВЕННАЯ ФОРМА — ПОПУЛЯЦИОННЫХ ЛИНИЙ НЕТ)",
+          "title": "В.I.1. Ндзерак (ЕДИНСТВЕННАЯ ФОРМА — ПОПУЛЯЦИОННЫХ ЛИНИЙ НЕТ)",
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1101,
-          "end_line": 1111,
-          "block_line": 1098
+          "line": 1125,
+          "end_line": 1135,
+          "block_line": 1122
         },
         {
           "id": "visual.ii.1",
@@ -20387,9 +20486,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1115,
-          "end_line": 1124,
-          "block_line": 1112
+          "line": 1139,
+          "end_line": 1148,
+          "block_line": 1136
         },
         {
           "id": "visual.ii.2",
@@ -20397,9 +20496,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1128,
-          "end_line": 1137,
-          "block_line": 1125
+          "line": 1152,
+          "end_line": 1161,
+          "block_line": 1149
         },
         {
           "id": "visual.ii.3",
@@ -20407,9 +20506,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1141,
-          "end_line": 1150,
-          "block_line": 1138
+          "line": 1165,
+          "end_line": 1174,
+          "block_line": 1162
         },
         {
           "id": "visual.ii.4",
@@ -20417,9 +20516,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1154,
-          "end_line": 1163,
-          "block_line": 1151
+          "line": 1178,
+          "end_line": 1187,
+          "block_line": 1175
         },
         {
           "id": "visual.ii.5",
@@ -20427,9 +20526,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1167,
-          "end_line": 1176,
-          "block_line": 1164
+          "line": 1191,
+          "end_line": 1200,
+          "block_line": 1188
         },
         {
           "id": "visual.ii.6",
@@ -20437,9 +20536,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1180,
-          "end_line": 1189,
-          "block_line": 1177
+          "line": 1204,
+          "end_line": 1213,
+          "block_line": 1201
         },
         {
           "id": "visual.ii.7",
@@ -20447,9 +20546,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1193,
-          "end_line": 1202,
-          "block_line": 1190
+          "line": 1217,
+          "end_line": 1226,
+          "block_line": 1214
         },
         {
           "id": "visual.ii.8",
@@ -20457,9 +20556,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1206,
-          "end_line": 1215,
-          "block_line": 1203
+          "line": 1230,
+          "end_line": 1239,
+          "block_line": 1227
         },
         {
           "id": "visual.ii.9",
@@ -20467,9 +20566,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1219,
-          "end_line": 1228,
-          "block_line": 1216
+          "line": 1243,
+          "end_line": 1252,
+          "block_line": 1240
         },
         {
           "id": "visual.ii.10",
@@ -20477,9 +20576,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 1232,
-          "end_line": 1241,
-          "block_line": 1229
+          "line": 1256,
+          "end_line": 1265,
+          "block_line": 1253
         }
       ]
     },
@@ -29327,7 +29426,7 @@
           "status": "filled",
           "level": 2,
           "line": 18,
-          "end_line": 301,
+          "end_line": 303,
           "block_line": 15,
           "labels": [
             "I"
@@ -29571,7 +29670,7 @@
           "status": "filled",
           "level": 3,
           "line": 226,
-          "end_line": 262,
+          "end_line": 264,
           "block_line": 223,
           "labels": [
             "I.5-доп"
@@ -29583,9 +29682,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 251,
-          "end_line": 262,
-          "block_line": 248
+          "line": 253,
+          "end_line": 264,
+          "block_line": 250
         },
         {
           "id": "theory.waves",
@@ -29593,9 +29692,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 266,
-          "end_line": 273,
-          "block_line": 263,
+          "line": 268,
+          "end_line": 275,
+          "block_line": 265,
           "labels": [
             "I.6"
           ]
@@ -29606,9 +29705,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 277,
-          "end_line": 286,
-          "block_line": 274,
+          "line": 279,
+          "end_line": 288,
+          "block_line": 276,
           "labels": [
             "I.6-доп"
           ]
@@ -29619,9 +29718,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 290,
-          "end_line": 301,
-          "block_line": 287,
+          "line": 292,
+          "end_line": 303,
+          "block_line": 289,
           "labels": [
             "I.7"
           ]
@@ -29632,9 +29731,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 305,
-          "end_line": 632,
-          "block_line": 302,
+          "line": 307,
+          "end_line": 634,
+          "block_line": 304,
           "labels": [
             "II"
           ]
@@ -29645,9 +29744,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 310,
-          "end_line": 327,
-          "block_line": 307,
+          "line": 312,
+          "end_line": 329,
+          "block_line": 309,
           "labels": [
             "II.1"
           ]
@@ -29658,9 +29757,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 331,
-          "end_line": 355,
-          "block_line": 328,
+          "line": 333,
+          "end_line": 357,
+          "block_line": 330,
           "labels": [
             "II.1-доп"
           ]
@@ -29671,9 +29770,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 336,
-          "end_line": 341,
-          "block_line": 333
+          "line": 338,
+          "end_line": 343,
+          "block_line": 335
         },
         {
           "id": "technology.sublight.manyovrovyy-reaktivnyy-dvigatel",
@@ -29681,9 +29780,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 345,
-          "end_line": 348,
-          "block_line": 342
+          "line": 347,
+          "end_line": 350,
+          "block_line": 344
         },
         {
           "id": "technology.sublight.skorost-sveta",
@@ -29691,9 +29790,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 352,
-          "end_line": 355,
-          "block_line": 349
+          "line": 354,
+          "end_line": 357,
+          "block_line": 351
         },
         {
           "id": "technology.implementations",
@@ -29701,9 +29800,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 359,
-          "end_line": 405,
-          "block_line": 356,
+          "line": 361,
+          "end_line": 407,
+          "block_line": 358,
           "labels": [
             "II.2"
           ]
@@ -29714,9 +29813,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 364,
-          "end_line": 367,
-          "block_line": 361
+          "line": 366,
+          "end_line": 369,
+          "block_line": 363
         },
         {
           "id": "technology.implementations.sinapty-2250",
@@ -29724,9 +29823,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 371,
-          "end_line": 374,
-          "block_line": 368
+          "line": 373,
+          "end_line": 376,
+          "block_line": 370
         },
         {
           "id": "technology.implementations.lyudi-2300",
@@ -29734,9 +29833,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 378,
-          "end_line": 381,
-          "block_line": 375
+          "line": 380,
+          "end_line": 383,
+          "block_line": 377
         },
         {
           "id": "technology.implementations.ksenopody-2330",
@@ -29744,9 +29843,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 385,
-          "end_line": 392,
-          "block_line": 382
+          "line": 387,
+          "end_line": 394,
+          "block_line": 384
         },
         {
           "id": "technology.implementations.eteriane",
@@ -29754,9 +29853,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 396,
-          "end_line": 405,
-          "block_line": 393
+          "line": 398,
+          "end_line": 407,
+          "block_line": 395
         },
         {
           "id": "technology.gates",
@@ -29764,9 +29863,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 409,
-          "end_line": 453,
-          "block_line": 406,
+          "line": 411,
+          "end_line": 455,
+          "block_line": 408,
           "labels": [
             "II.2-доп"
           ]
@@ -29777,9 +29876,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 416,
-          "end_line": 423,
-          "block_line": 413
+          "line": 418,
+          "end_line": 425,
+          "block_line": 415
         },
         {
           "id": "technology.gates.energetika-vrat",
@@ -29787,9 +29886,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 427,
-          "end_line": 430,
-          "block_line": 424
+          "line": 429,
+          "end_line": 432,
+          "block_line": 426
         },
         {
           "id": "technology.gates.klyuchi-i-monopoliya",
@@ -29797,9 +29896,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 434,
-          "end_line": 437,
-          "block_line": 431
+          "line": 436,
+          "end_line": 439,
+          "block_line": 433
         },
         {
           "id": "technology.gates.ingibitory-giperpryzhka",
@@ -29807,9 +29906,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 441,
-          "end_line": 446,
-          "block_line": 438
+          "line": 443,
+          "end_line": 448,
+          "block_line": 440
         },
         {
           "id": "technology.gates.glushilki-sheyki-v-sodruzhestve",
@@ -29817,9 +29916,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 450,
-          "end_line": 453,
-          "block_line": 447
+          "line": 452,
+          "end_line": 455,
+          "block_line": 449
         },
         {
           "id": "technology.limitations",
@@ -29827,9 +29926,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 457,
-          "end_line": 495,
-          "block_line": 454,
+          "line": 459,
+          "end_line": 497,
+          "block_line": 456,
           "labels": [
             "II.3"
           ]
@@ -29840,9 +29939,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 462,
-          "end_line": 465,
-          "block_line": 459
+          "line": 464,
+          "end_line": 467,
+          "block_line": 461
         },
         {
           "id": "technology.limitations.navigatsionnyy-dreyf",
@@ -29850,9 +29949,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 469,
-          "end_line": 472,
-          "block_line": 466
+          "line": 471,
+          "end_line": 474,
+          "block_line": 468
         },
         {
           "id": "technology.limitations.energeticheskiy-porog",
@@ -29860,9 +29959,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 476,
-          "end_line": 479,
-          "block_line": 473
+          "line": 478,
+          "end_line": 481,
+          "block_line": 475
         },
         {
           "id": "technology.limitations.svyaz-mezhdu-sistemami",
@@ -29870,9 +29969,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 483,
-          "end_line": 486,
-          "block_line": 480
+          "line": 485,
+          "end_line": 488,
+          "block_line": 482
         },
         {
           "id": "technology.limitations.obnaruzhenie-tsivilizatsiy",
@@ -29880,9 +29979,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 490,
-          "end_line": 495,
-          "block_line": 487
+          "line": 492,
+          "end_line": 497,
+          "block_line": 489
         },
         {
           "id": "technology.parking",
@@ -29890,9 +29989,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 499,
-          "end_line": 541,
-          "block_line": 496,
+          "line": 501,
+          "end_line": 543,
+          "block_line": 498,
           "labels": [
             "II.3-доп"
           ]
@@ -29903,9 +30002,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 506,
-          "end_line": 513,
-          "block_line": 503
+          "line": 508,
+          "end_line": 515,
+          "block_line": 505
         },
         {
           "id": "technology.parking.odinochnaya-stoyanka-na-sobstvennom-puzyre",
@@ -29913,9 +30012,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 517,
-          "end_line": 520,
-          "block_line": 514
+          "line": 519,
+          "end_line": 522,
+          "block_line": 516
         },
         {
           "id": "technology.parking.svyaz-i-skrytnost",
@@ -29923,9 +30022,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 524,
-          "end_line": 527,
-          "block_line": 521
+          "line": 526,
+          "end_line": 529,
+          "block_line": 523
         },
         {
           "id": "technology.parking.takticheskiy-smysl",
@@ -29933,9 +30032,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 531,
-          "end_line": 534,
-          "block_line": 528
+          "line": 533,
+          "end_line": 536,
+          "block_line": 530
         },
         {
           "id": "technology.parking.primenenie",
@@ -29943,9 +30042,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 538,
-          "end_line": 541,
-          "block_line": 535
+          "line": 540,
+          "end_line": 543,
+          "block_line": 537
         },
         {
           "id": "technology.communications",
@@ -29953,9 +30052,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 545,
-          "end_line": 632,
-          "block_line": 542,
+          "line": 547,
+          "end_line": 634,
+          "block_line": 544,
           "labels": [
             "II.4"
           ]
@@ -29966,9 +30065,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 550,
-          "end_line": 557,
-          "block_line": 547
+          "line": 552,
+          "end_line": 559,
+          "block_line": 549
         },
         {
           "id": "technology.communications.evolyutsiya-tehnologii",
@@ -29976,9 +30075,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 561,
-          "end_line": 568,
-          "block_line": 558
+          "line": 563,
+          "end_line": 570,
+          "block_line": 560
         },
         {
           "id": "technology.communications.arhitektura-seti",
@@ -29986,9 +30085,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 572,
-          "end_line": 581,
-          "block_line": 569
+          "line": 574,
+          "end_line": 583,
+          "block_line": 571
         },
         {
           "id": "technology.communications.dostupnost-i-primenenie",
@@ -29996,9 +30095,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 585,
-          "end_line": 590,
-          "block_line": 582
+          "line": 587,
+          "end_line": 592,
+          "block_line": 584
         },
         {
           "id": "technology.communications.ogranicheniya-i-uyazvimosti",
@@ -30006,9 +30105,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 594,
-          "end_line": 595,
-          "block_line": 591
+          "line": 596,
+          "end_line": 597,
+          "block_line": 593
         },
         {
           "id": "technology.communications.pokrytie",
@@ -30016,9 +30115,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 599,
-          "end_line": 602,
-          "block_line": 596
+          "line": 601,
+          "end_line": 604,
+          "block_line": 598
         },
         {
           "id": "technology.communications.uyazvimost-infrastruktury",
@@ -30026,9 +30125,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 606,
-          "end_line": 609,
-          "block_line": 603
+          "line": 608,
+          "end_line": 611,
+          "block_line": 605
         },
         {
           "id": "technology.communications.metricheskie-shtormy",
@@ -30036,9 +30135,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 613,
-          "end_line": 616,
-          "block_line": 610
+          "line": 615,
+          "end_line": 618,
+          "block_line": 612
         },
         {
           "id": "technology.communications.gravitatsionnye-kolodtsy",
@@ -30046,9 +30145,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 620,
-          "end_line": 623,
-          "block_line": 617
+          "line": 622,
+          "end_line": 625,
+          "block_line": 619
         },
         {
           "id": "technology.communications.kurerskaya-svyaz",
@@ -30056,9 +30155,9 @@
           "slots": [],
           "status": "filled",
           "level": 4,
-          "line": 627,
-          "end_line": 632,
-          "block_line": 624
+          "line": 629,
+          "end_line": 634,
+          "block_line": 626
         },
         {
           "id": "open-questions",
@@ -30066,9 +30165,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 636,
-          "end_line": 700,
-          "block_line": 633,
+          "line": 638,
+          "end_line": 702,
+          "block_line": 635,
           "labels": [
             "III"
           ]
@@ -30079,9 +30178,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 641,
-          "end_line": 644,
-          "block_line": 638
+          "line": 643,
+          "end_line": 646,
+          "block_line": 640
         },
         {
           "id": "open-questions.2-tsentr-gipershara",
@@ -30089,9 +30188,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 648,
-          "end_line": 651,
-          "block_line": 645
+          "line": 650,
+          "end_line": 653,
+          "block_line": 647
         },
         {
           "id": "open-questions.3-mezhgalakticheskaya-navigatsiya",
@@ -30099,9 +30198,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 655,
-          "end_line": 658,
-          "block_line": 652
+          "line": 657,
+          "end_line": 660,
+          "block_line": 654
         },
         {
           "id": "open-questions.4-rasa-y-ventary",
@@ -30109,9 +30208,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 662,
-          "end_line": 665,
-          "block_line": 659
+          "line": 664,
+          "end_line": 667,
+          "block_line": 661
         },
         {
           "id": "open-questions.5-naklon-sloyov-odnovremennosti",
@@ -30119,9 +30218,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 669,
-          "end_line": 672,
-          "block_line": 666
+          "line": 671,
+          "end_line": 674,
+          "block_line": 668
         },
         {
           "id": "open-questions.6-drugie-galaktiki",
@@ -30129,9 +30228,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 676,
-          "end_line": 679,
-          "block_line": 673
+          "line": 678,
+          "end_line": 681,
+          "block_line": 675
         },
         {
           "id": "open-questions.7-nekislorodnaya-zhizn",
@@ -30139,9 +30238,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 683,
-          "end_line": 686,
-          "block_line": 680
+          "line": 685,
+          "end_line": 688,
+          "block_line": 682
         },
         {
           "id": "open-questions.8-nezavisimye-obladateli-giperdvizheniya-vne-sodruzhestva",
@@ -30149,9 +30248,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 690,
-          "end_line": 693,
-          "block_line": 687
+          "line": 692,
+          "end_line": 695,
+          "block_line": 689
         },
         {
           "id": "open-questions.9-alternativnye-biohimii-za-predelami-ugleroda",
@@ -30159,9 +30258,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 697,
-          "end_line": 700,
-          "block_line": 694
+          "line": 699,
+          "end_line": 702,
+          "block_line": 696
         },
         {
           "id": "life-support",
@@ -30169,9 +30268,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 704,
-          "end_line": 747,
-          "block_line": 701,
+          "line": 706,
+          "end_line": 749,
+          "block_line": 703,
           "labels": [
             "IV"
           ]
@@ -30182,9 +30281,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 709,
-          "end_line": 714,
-          "block_line": 706,
+          "line": 711,
+          "end_line": 716,
+          "block_line": 708,
           "labels": [
             "IV.1"
           ]
@@ -30195,9 +30294,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 718,
-          "end_line": 732,
-          "block_line": 715,
+          "line": 720,
+          "end_line": 734,
+          "block_line": 717,
           "labels": [
             "IV.2"
           ]
@@ -30208,9 +30307,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 736,
-          "end_line": 747,
-          "block_line": 733,
+          "line": 738,
+          "end_line": 749,
+          "block_line": 735,
           "labels": [
             "IV.3"
           ]
@@ -31187,12 +31286,12 @@
         },
         {
           "id": "late-commonwealth",
-          "title": "III.6. Поздняя эпоха содружества (2996–3500)",
+          "title": "III.6. Поздняя эпоха содружества (2996–3700)",
           "slots": [],
           "status": "filled",
           "level": 2,
           "line": 428,
-          "end_line": 534,
+          "end_line": 563,
           "block_line": 425,
           "labels": [
             "III.6"
@@ -31329,24 +31428,44 @@
           "block_line": 514
         },
         {
-          "id": "late-commonwealth.date-3400",
-          "title": "3400",
+          "id": "late-commonwealth.date-3350-3600",
+          "title": "3350–3600. Мирное развитие Содружества",
           "slots": [],
           "status": "filled",
           "level": 3,
           "line": 524,
-          "end_line": 527,
+          "end_line": 529,
           "block_line": 521
         },
         {
-          "id": "late-commonwealth.date-3500",
-          "title": "~3500",
+          "id": null,
+          "title": "Общество, экономика и институты в мирную эпоху (согласованное обобщение)",
+          "slots": [],
+          "status": null,
+          "level": 3,
+          "line": 530,
+          "end_line": 549,
+          "block_line": 530
+        },
+        {
+          "id": "late-commonwealth.date-3600",
+          "title": "3600",
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 531,
-          "end_line": 534,
-          "block_line": 528
+          "line": 553,
+          "end_line": 556,
+          "block_line": 550
+        },
+        {
+          "id": "late-commonwealth.date-3700",
+          "title": "~3700",
+          "slots": [],
+          "status": "filled",
+          "level": 3,
+          "line": 560,
+          "end_line": 563,
+          "block_line": 557
         },
         {
           "id": "sagittarius-expedition",
@@ -31354,9 +31473,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 538,
-          "end_line": 562,
-          "block_line": 535,
+          "line": 567,
+          "end_line": 591,
+          "block_line": 564,
           "labels": [
             "III.7"
           ]
@@ -31367,9 +31486,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 543,
-          "end_line": 548,
-          "block_line": 540,
+          "line": 572,
+          "end_line": 577,
+          "block_line": 569,
           "labels": [
             "III.7.1"
           ]
@@ -31380,9 +31499,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 552,
-          "end_line": 555,
-          "block_line": 549,
+          "line": 581,
+          "end_line": 584,
+          "block_line": 578,
           "labels": [
             "III.7.2"
           ]
@@ -31393,9 +31512,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 559,
-          "end_line": 562,
-          "block_line": 556,
+          "line": 588,
+          "end_line": 591,
+          "block_line": 585,
           "labels": [
             "III.7.3"
           ]
@@ -31406,9 +31525,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 566,
-          "end_line": 601,
-          "block_line": 563,
+          "line": 595,
+          "end_line": 630,
+          "block_line": 592,
           "labels": [
             "III.8"
           ]
@@ -31419,9 +31538,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 571,
-          "end_line": 574,
-          "block_line": 568,
+          "line": 600,
+          "end_line": 603,
+          "block_line": 597,
           "labels": [
             "III.8.1"
           ]
@@ -31432,9 +31551,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 578,
-          "end_line": 583,
-          "block_line": 575,
+          "line": 607,
+          "end_line": 612,
+          "block_line": 604,
           "labels": [
             "III.8.2"
           ]
@@ -31445,9 +31564,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 587,
-          "end_line": 594,
-          "block_line": 584,
+          "line": 616,
+          "end_line": 623,
+          "block_line": 613,
           "labels": [
             "III.8.3"
           ]
@@ -31458,9 +31577,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 598,
-          "end_line": 601,
-          "block_line": 595,
+          "line": 627,
+          "end_line": 630,
+          "block_line": 624,
           "labels": [
             "III.8.4"
           ]
@@ -31471,9 +31590,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 605,
-          "end_line": 649,
-          "block_line": 602,
+          "line": 634,
+          "end_line": 678,
+          "block_line": 631,
           "labels": [
             "III.9"
           ]
@@ -31484,9 +31603,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 612,
-          "end_line": 617,
-          "block_line": 609,
+          "line": 641,
+          "end_line": 646,
+          "block_line": 638,
           "labels": [
             "III.9.1"
           ]
@@ -31497,9 +31616,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 621,
-          "end_line": 624,
-          "block_line": 618,
+          "line": 650,
+          "end_line": 653,
+          "block_line": 647,
           "labels": [
             "III.9.2"
           ]
@@ -31510,9 +31629,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 628,
-          "end_line": 631,
-          "block_line": 625,
+          "line": 657,
+          "end_line": 660,
+          "block_line": 654,
           "labels": [
             "III.9.3"
           ]
@@ -31523,9 +31642,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 635,
-          "end_line": 638,
-          "block_line": 632,
+          "line": 664,
+          "end_line": 667,
+          "block_line": 661,
           "labels": [
             "III.9.4"
           ]
@@ -31536,9 +31655,9 @@
           "slots": [],
           "status": "filled",
           "level": 3,
-          "line": 642,
-          "end_line": 649,
-          "block_line": 639,
+          "line": 671,
+          "end_line": 678,
+          "block_line": 668,
           "labels": [
             "III.9.5"
           ]
@@ -31549,9 +31668,9 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 653,
-          "end_line": 659,
-          "block_line": 650,
+          "line": 682,
+          "end_line": 688,
+          "block_line": 679,
           "labels": [
             "III.10"
           ]
@@ -31562,11 +31681,34 @@
           "slots": [],
           "status": "filled",
           "level": 2,
-          "line": 663,
-          "end_line": 668,
-          "block_line": 660,
+          "line": 692,
+          "end_line": 711,
+          "block_line": 689,
           "labels": [
             "III.11"
+          ]
+        },
+        {
+          "id": null,
+          "title": "Примечание к войне с ИИ Древних: инварианты итогов и игровые варианты",
+          "slots": [],
+          "status": null,
+          "level": 3,
+          "line": 701,
+          "end_line": 708,
+          "block_line": 701
+        },
+        {
+          "id": null,
+          "title": "III.9.6. Военные, социальные и технологические последствия",
+          "slots": [],
+          "status": null,
+          "level": 3,
+          "line": 709,
+          "end_line": 711,
+          "block_line": 709,
+          "labels": [
+            "III.9.6"
           ]
         }
       ]
