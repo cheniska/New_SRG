@@ -15,21 +15,21 @@ ROOT = Path(__file__).resolve().parent
 G17 = ROOT / "active_lexicon_register_G17_2026-11-26.md"
 ROW = re.compile(r"^\|\s*\*\*(.+?)\*\*\s*\|\s*([^|]+?)\s*\|")
 
-COPULA = "лэно"  # G19 candidate, NOT yet approved by the author
-EXPERIENCE = "мдзэкор"  # G19 candidate, NOT yet approved
+COPULA = "лдзо"  # Author-selected G19/V2 copula spelling/function
+EXPERIENCE = "мдзэкор"  # G19 trial, NOT yet approved
 LICENSED_N_TO_V = {"мцив"}  # G19 suggested individual exception only
 VOWELS = set("аэиоу")
 
 # (sentence, expect well-formed predicate head in this specific G19 model)
 FIXTURES = [
-    ("Ицэ Цраг Лэно", True),
-    ("Ицэ Цвирак Лэно", True),
-    ("Дзорон Эцан Лэно", True),
-    ("Цвэк Рацэн Лэно", True),
-    ("Цвэк Цвирак Лэно", True),
-    ("Ицэ Цраг Тцу Лэно", True),
-    ("Ицэ Цраг Лэно Цо", True),
-    ("Ицэ Мцари Зэ Цворэт Лэно", True),
+    ("Ицэ Цраг Лдзо", True),
+    ("Ицэ Цвирак Лдзо", True),
+    ("Дзорон Эцан Лдзо", True),
+    ("Цвэк Рацэн Лдзо", True),
+    ("Цвэк Цвирак Лдзо", True),
+    ("Ицэ Цраг Тцу Лдзо", True),
+    ("Ицэ Цраг Лдзо Цо", True),
+    ("Ицэ Мцари Зэ Цворэт Лдзо", True),
     ("Мцари Пцак Мдзэкор", True),
     ("Мцари Мцот Мдзэкор", True),
     ("Мцари Дзуна Мдзэкор", True),
@@ -38,7 +38,7 @@ FIXTURES = [
     ("Дзорон Мцив", True),
     ("Мцари Пцак", False),
     ("Ицэ Цраг", False),  # an NP, not a full clause
-    ("Ицэ Црагок Лэно", False),
+    ("Ицэ Црагок Лдзо", False),
     ("Мцари Цвирак", False),
 ]
 
@@ -51,7 +51,7 @@ def load_lexicon() -> dict[str, str]:
         if match := ROW.match(line):
             name, pos = match.groups()
             out[name.casefold()] = pos.strip()
-    assert len(out) == 113, "G17 form count changed; review the G19 fixtures"
+    assert len(out) == 114, "Active G17 form count changed; review G19 fixtures"
     return out
 
 def is_verb(token: str, d: dict[str, str]) -> bool:
