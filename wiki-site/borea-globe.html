@@ -8,6 +8,7 @@
 <script src="borea-data.js" defer></script>
 <script src="borea-natural.js" defer></script>
 <script src="borea-settlement.js" defer></script>
+<script src="borea-world.js" defer></script>
 <script src="borea-globe.js" defer></script>
 </head>
 <body>
@@ -15,9 +16,9 @@
 <header class="heading"><div><span class="eyebrow">NEW SRG / ПЛАНЕТОЛОГИЯ / 3290</span><h1>Борея</h1></div><span class="badge">Рабочий атлас</span></header>
 <p class="intro">Вращайте планету и исследуйте её природные слои. Контуры материков и тектоника согласованы предварительно; природный облик, высоты и сезонные кромки льда — рабочие предложения.</p>
 <div class="controls">
-<label>Карта<select id="layer"><option value="geography">География</option><option value="tectonics">Тектоника и рельеф</option><option value="climate">Климат</option><option value="ice">Морской лёд</option><option value="relief">Физическая карта высот и глубин</option><option value="heat">Геотермальные поля и оазисы</option><option value="cities">Узлы городов и расселения</option><option value="population">Плотность населения (относительная)</option><option value="space">Вид из космоса · с атмосферой</option><option value="surface">Поверхность · без атмосферы</option></select></label>
+<label>Карта<select id="layer"><option value="geography">География</option><option value="tectonics">Тектоника и рельеф</option><option value="climate">Климат</option><option value="ice">Морской лёд</option><option value="hydrology">Гидрография · моря, лёд, воды</option><option value="relief">Физическая карта высот и глубин</option><option value="heat">Геотермальные поля и оазисы</option><option value="cities">Узлы городов и расселения</option><option value="transport">Наземные магистрали</option><option value="population">Плотность населения (относительная)</option><option value="space">Вид из космоса · с атмосферой</option><option value="surface">Природная поверхность · без атмосферы</option><option value="day">Дневная поверхность · города и дороги</option><option value="night">Ночная поверхность · города и дороги</option></select></label>
 <label>Сезон<select id="season"><option value="overview">Годовой обзор</option><option value="spring">Весна на севере</option><option value="summer">Лето на севере</option><option value="autumn">Осень на севере</option><option value="winter">Зима на севере</option></select></label>
-<label class="grid-toggle"><input id="grid" type="checkbox" checked> Координатная сетка</label>
+<label>Разрешение<select id="resolution"><option value="standard">1536×768 · быстро</option><option value="high">3072×1536 · HD (тяжелее)</option></select></label><label class="grid-toggle"><input id="grid" type="checkbox" checked> Координатная сетка</label><label class="grid-toggle"><input id="oasisMarks" type="checkbox"> Метки оазисов</label>
 </div>
 <div class="texture-action"><button id="downloadTexture" hidden>Скачать плоскую текстуру (PNG, 2:1)</button></div>
 <div class="stage" id="stage">

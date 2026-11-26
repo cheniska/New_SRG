@@ -17,7 +17,7 @@ function noiseGrid(nx,ny,seed){
  return (u,v)=>{u=((u%1)+1)%1*nx;v=clamp(v)*ny;const ax=Math.floor(u),ay=Math.min(ny-1,Math.floor(v)),bx=(ax+1)%nx,tx=u-ax,ty=v-ay,fx=tx*tx*(3-2*tx),fy=ty*ty*(3-2*ty);return mix(mix(p[ay*nx+ax],p[ay*nx+bx],fx),mix(p[(ay+1)*nx+ax],p[(ay+1)*nx+bx],fx),fy)};
 }
 function create({W,H,isLand,isNorth,scores,lats,tect,surface,xy,phases,weights}){
- const N=W*H,S=W/1152,dat=new Float32Array(N),hazard=new Float32Array(N),shade=new Float32Array(N),macro=new Float32Array(N),detail=new Float32Array(N),filament=new Float32Array(N);
+ const N=W*H,S=W/1152,dat=new Float32Array(N),hazard=new Float32Array(N),shade=new Float32Array(N),warm=new Float32Array(N),glaciers=new Uint8Array(N),macro=new Float32Array(N),detail=new Float32Array(N),filament=new Float32Array(N);
  const n1=noiseGrid(12,6,487127),n2=noiseGrid(30,15,492483),n3=noiseGrid(67,34,82191),n4=noiseGrid(142,71,33489),n5=noiseGrid(310,155,78194),n6=noiseGrid(650,325,941377);
  const c1=noiseGrid(9,5,13515),c2=noiseGrid(23,12,82731),c3=noiseGrid(59,30,88327),c4=noiseGrid(138,69,79161),c5=noiseGrid(330,165,62192);
  function raster(cats,stroke=false){let c=surface(),ctx=c.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.strokeStyle='#fff';ctx.lineWidth=2*S;ctx.lineCap='round';ctx.lineJoin='round';
@@ -60,6 +60,12 @@ function create({W,H,isLand,isNorth,scores,lats,tect,surface,xy,phases,weights})
    depth=mix(depth,-(6800+1450*macro[k]),trenchFactor*smooth(1.5,5.0,dc));
    dat[k]=clamp(depth,-8500,-30);
   }
+  if(isLand[k]){
+   // At the global resolution, show a broken, cartographically enlarged warm district; not a uniform heated region.
+   let o=0;for(const q of oases){const dy=lat-q.lat,dx=delta(lon,q.lon)*metric;if(Math.abs(dy)>1.7||Math.abs(dx)>1.7)continue;const ds=dx*dx+dy*dy;const f=Math.exp(-ds/.51)*(.70+.30*detail[k]);o=Math.max(o,f)}warm[k]=o;
+   const snowline=Math.max(330,2750-27*Math.abs(lat)+400*(.5-macro[k])+180*(detail[k]-.5));
+   glaciers[k]=dat[k]>snowline&&warm[k]<.26?1:0;
+  }
   min=Math.min(min,dat[k]);max=Math.max(max,dat[k]);
  }}
  for(let y=0;y<H;y++){for(let x=0;x<W;x++){let k=y*W+x,left=y*W+(x+W-1)%W,right=y*W+(x+1)%W,up=Math.max(0,y-1)*W+x,dn=Math.min(H-1,y+1)*W+x;
@@ -74,23 +80,32 @@ function create({W,H,isLand,isNorth,scores,lats,tect,surface,xy,phases,weights})
  cloud+=.035*Math.cos(lat*Math.PI/30)+.025*Math.cos(lat*Math.PI/11+4*a);cloudField[k]=cloud;
  }}
  function relief(buf){for(let k=0;k<N;k++){const c=palette(dat[k]<0?DEPTH:ELEV,dat[k]),q=4*k,f=1+.13*shade[k];buf[q]=c[0]*f;buf[q+1]=c[1]*f;buf[q+2]=c[2]*f;buf[q+3]=255}}
+ const hems={spring:-.32,summer:1,autumn:.50,winter:-1};
+ function seasonSnow(k,lat,p){const a=Math.abs(lat),seasonal=hems[p]*Math.sin(lat*Math.PI/180);let v=(a-13)/48+dat[k]/5300-.32*seasonal+.5*(macro[k]-.48)+.36*(detail[k]-.48);return Math.max(glaciers[k]?.93:0,smooth(.11,.85,v))*(1-.94*warm[k])}
+ function cryosphere(buf,phase){const overview=phase==='overview',p=overview?'summer':phase,ph=phases[p];let sea=0,open=0,land=0,g=0,snow=0;
+  for(let y=0;y<H;y++){let lat=lats[y],limit=overview?1:clamp(ph.bias+ph.hem*clamp(lat/20,-1,1),.18,1);for(let x=0;x<W;x++){let k=y*W+x,q=k*4,c;const w=weights[y];
+   if(isLand[k]){land+=w;let n=overview?Math.max(seasonSnow(k,lat,'summer'),seasonSnow(k,lat,'winter')):seasonSnow(k,lat,p);if(glaciers[k]){c=[142,190,222];g+=w}else if(n>.52){c=[233,239,237];snow+=w}else c=[183,173,145];if(warm[k]>.35)c=[87,126,89]}else{sea+=w;if(isNorth[k]||scores[k]>1)c=[177,211,224];else if(scores[k]<=limit){c=[36,89,126];open+=w}else c=[219,235,237]}
+   buf[q]=c[0];buf[q+1]=c[1];buf[q+2]=c[2];buf[q+3]=255;
+  }}return {sea,open,land,glacier:g,snow}
+ }
  function optical(buf,mode,phase){
   // An annual envelope is not a physical snapshot. Use northern summer for the optical overview.
-  const p=phase==='overview'?'summer':phase,ph=phases[p],hems={spring:-.32,summer:1,autumn:.50,winter:-1};let visible=0,cloudCount=0;
+  const p=phase==='overview'?'summer':phase,ph=phases[p];let visible=0,cloudCount=0;
   const cloudMode=mode==='space',cloudAlpha=new Float32Array(N);
   for(let y=0;y<H;y++){const lat=lats[y],ab=Math.abs(lat),seasonal=hems[p]*Math.sin(lat*Math.PI/180),limit=clamp(ph.bias+ph.hem*clamp(lat/20,-1,1),.18,1);for(let x=0;x<W;x++){
    const k=y*W+x,q=k*4,m=macro[k],d=detail[k],z=dat[k],sh=shade[k];let R,G,B;
    if(isLand[k]){
     let snowPotential=(ab-13)/48+z/5300-.32*seasonal+.5*(m-.48)+.36*(d-.48);
-    const snow=smooth(.11,.85,snowPotential);
+    const snow=seasonSnow(k,lat,p);
     const rock=smooth(.25,.85,z/3200),wet=smooth(0,1,(m-.3)*2.2),earth=[mix(118,105,rock)-12*wet,mix(86,99,rock)-7*wet,mix(84,102,rock)-2*wet];
     let speck=1+(d-.5)*.66+.22*sh;
     // Red-brown/purplish cold flora on exposed ground, not Earth-green forests.
     const tundra=smooth(9,30,ab)*(1-smooth(54,72,ab))*(1-rock)*wet;
     earth[0]+=12*tundra;earth[1]-=13*tundra;earth[2]-=3*tundra;
+    const oasis=clamp(warm[k]*1.24);earth[0]=mix(earth[0],46+25*d,oasis);earth[1]=mix(earth[1],79+20*m,oasis);earth[2]=mix(earth[2],48+18*d,oasis);
     if(ab>70)speck*=.92+.18*d;
     let snowTone=[211+28*d,218+26*d,224+23*d],glacier=.12*smooth(.75,1,snow)*smooth(.35,.8,filament[k]);
-    snowTone[0]-=25*glacier;snowTone[1]-=13*glacier;
+    snowTone[0]-=25*glacier;snowTone[1]-=13*glacier;if(glaciers[k]){snowTone[0]-=12;snowTone[1]-=4;snowTone[2]+=5}
     R=mix(earth[0]*speck,snowTone[0]*(1+.20*sh),snow);G=mix(earth[1]*speck,snowTone[1]*(1+.16*sh),snow);B=mix(earth[2]*speck,snowTone[2]*(1+.11*sh),snow);
    }else{
     const open=!isNorth[k]&&scores[k]<=limit;
@@ -116,7 +131,7 @@ function create({W,H,isLand,isNorth,scores,lats,tect,surface,xy,phases,weights})
   }}
   return {visible,cloudCount,phase:p,cloudAlpha};
  }
- return {relief,optical,height:dat,hazard,range:[min,max],meanLand:sumLand/landCount};
+ return {relief,optical,cryosphere,height:dat,hazard,warm,glaciers,range:[min,max],meanLand:sumLand/landCount};
 }
 return {create};
 })();
