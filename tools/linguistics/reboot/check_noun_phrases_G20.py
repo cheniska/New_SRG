@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Regression fixtures for the proposed G20 neutral noun-phrase order.
+"""Regression fixtures for the author-approved G20 neutral noun-phrase order.
 
 This is a small structural test, not a natural-language parser. No external
 packages; run from any working directory:
     python3 tools/linguistics/reboot/check_noun_phrases_G20.py
 
-G20 NP proposal: [DET] [OWNER Зэ] [NUM|ORD] [REL] NOUN
-Approval: this order is an experimental recommendation; preexisting words,
-the G4/G5 forms, ordinal -ир, SOV and G9 postpositions are the sources.
+G20 approved neutral NP: [DET] [OWNER Зэ] [NUM|ORD] [REL] NOUN
+Approval: the NEUTRAL slot order is accepted by the author. Other word
+classes, composition, marked inversions and plural morphology may remain open.
 """
 from __future__ import annotations
 import re
@@ -132,7 +132,7 @@ def main() -> None:
         assert check_postphrase(text, pos), f"POST: {text}"
     count = len(cases) + len(SOV_ACCEPT) + len(POST_ACCEPT)
     print(f"G20: {count} structural fixtures pass; 114-entry G17 lexicon loaded")
-    print("Warning: syntax/semantics of G20 ordering remain to be approved by the author.")
+    print("Warning: only neutral G20 order is approved; complete syntax remains open.")
 
 if __name__ == "__main__":
     main()
