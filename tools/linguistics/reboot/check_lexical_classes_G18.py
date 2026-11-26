@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Limited POS regression checker for the working Ndzeraк lexicon.
 
-Checks dictionary coverage (114 forms), the primary POS and predicate-slot
+Checks dictionary coverage (118 forms), the primary POS and predicate-slot
 consistency of curated G18 examples. It is NOT a general grammar parser and
 does not validate pronunciation, transitivity or every constituent position.
 Run: python3 tools/linguistics/reboot/check_lexical_classes_G18.py
