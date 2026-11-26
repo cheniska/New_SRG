@@ -77,6 +77,14 @@ def valid_line(coords,n):return all(valid_segment(a,b,n) for a,b in zip(coords,c
 def line(cat,coords,**p):return {'type':'Feature','properties':{'category':cat,'status':'proposed',**p},'geometry':{'type':'LineString','coordinates':coords}}
 def point(cat,c,**p):return {'type':'Feature','properties':{'category':cat,'status':'proposed',**p},'geometry':{'type':'Point','coordinates':c}}
 hydro=[];rivers=[];used=set()
+# Preserve previously published watercourse and lake IDs on each mainland. Slots for northern shapes
+# that disappeared are not reused on another continent; new northern tributary has T17.
+trib_slots={1:['T01','T02'],2:['T03'],3:['T04'],4:['T05','T06','T07'],5:['T17'],6:['T08','T09','T10','T11'],7:['T12','T13','T14','T15'],8:['T16']}
+lake_slots={1:['L01','L02','L03'],4:['L04'],5:['L05'],6:['L06','L07','L08'],7:['L09','L10','L11'],8:['L12']}
+def local_id(cat,n,slots,prefix):
+ i=sum(f['properties']['category']==cat and f['properties']['continent']==n for f in hydro)
+ choices=slots.get(n,[])
+ return choices[i] if i<len(choices) else f'{prefix}{n}-{i+1:02}'
 limits={1:6,2:2,3:2,4:2,5:2,6:8,7:9,8:4}
 for n in range(1,9):
  selected=[]
@@ -102,7 +110,7 @@ for a,rid,n in rivers:
   if len(branch)<7 or any(i in used for i in branch[:-1]):continue
   coords=[xy(i) for i in simplify(branch)]
   if not valid_line(coords,n):continue
-  id=f'T{sum(f["properties"]["category"]=="tributary" for f in hydro)+1:02}'
+  id=local_id('tributary',n,trib_slots,'T')
   hydro.append(line('tributary',coords,id=id,continent=int(n),joins=rid,kind='tributary',flow_index=round(float(score),2),note='Conditional tributary, same drainage model.'))
   used.update(branch)
 # Depressions large enough to warrant investigating lakes. These are proposed water bodies, not actual
@@ -120,7 +128,7 @@ for n in range(1,9):
   w=float(np.sum(metric[ys]));score=w*math.sqrt(float(np.mean(d)))*(.4+.6*math.exp(-(abs(lat[y])/45)**2))
   cands.append((score,label,x,y,len(xs),w,float(np.max(d))))
  for score,label,x,y,count,w,deep in sorted(cands,reverse=True)[:(3 if n in (1,6,7) else 1)]:
-  id=f'L{len(lakelist)+1:02}';rad=min(.62,max(.17,.13*math.sqrt(w)))
+  id=local_id('lake_candidate',n,lake_slots,'L');rad=min(.62,max(.17,.13*math.sqrt(w)))
   # Avoid depicting all coarse depression cells as water: point symbol plus illustrative footprint.
   c=xy(idx(x,y));lakelist.append((c,rad));lakegrid|=(labeled==label)
   hydro.append(point('lake_candidate',c,id=id,continent=n,radius_deg=round(rad,2),height_m=int(z[y,x]),depression_depth_m=int(deep),note='Potential lake/impounded basin, symbolic extent only; water budget and actual shoreline not modeled.'))
