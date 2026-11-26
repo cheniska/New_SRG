@@ -118,13 +118,13 @@ function historyBase(buf){
 const historyStats={
  ancestry:'Три древние природные линии · B01 сформировался после −7000',
  refugia:(history.validation?.surface_refuge_candidates??0)+' кандидатов поверхностных очагов · один подземный',
- historyRegions:(history.validation?.historical_region_anchors??0)+' рабочих региональных ориентиров · кандидат Дераданской земли',
+ historyRegions:(history.validation?.historical_region_anchors??0)+' рабочих региональных ориентиров · район Дерадана согласован',
  modernHeritage:(history.validation?.modern_nodes??0)+' смешанных хозяйственных узлов · доли линий не определены'
 };
 const historyNotes={
  ancestry:'Природные области формирования, а не точная карта древних популяций. Использован современный рельеф как ориентир. Пересечения обозначают переходные зоны; B01 — отдельный поздний очаг.',
  refugia:'≈−7000…−2000. Точки — возможные пережившие катастрофу районы возле тепла. Береговые линии и северный морской лёд показаны современными для ориентира, древнее оледенение не реконструировано.',
- historyRegions:'Рабочие историко-хозяйственные ядра; не государства и не административные границы. Контур на материке 7 — существующая низменность как кандидат природного ядра Дерадана, не территория диктатуры. Нажмите на метку.',
+ historyRegions:'Рабочие историко-хозяйственные ядра; не государства и не административные границы. Контур на материке 7 — существующая низменность как согласованный природный район Дерадана, не граница диктатуры. Центр пока предварительный. Нажмите на метку.',
  modernHeritage:'Все узлы смешанные. Цветное кольцо обозначает вероятное историческое наследие окружающей местности, а не принадлежность населения к линии, её долю или большинство. B01 — место происхождения, не распределение потомков.'
 };
 const regionalStats={
@@ -241,7 +241,7 @@ function draw(){pending=false;if(!raw)return;const rect=size(),w=rect.width,h=re
    const r=drawHistoryMarker(ctxO,q.x,q.y,p);
    if((p.kind==='bunker'||p.kind==='deradan'||(zoom>1.25&&mode!=='modernHeritage'))&&q.z>.28){
     ctxO.font='bold 10px system-ui';ctxO.textAlign='left';ctxO.textBaseline='middle';ctxO.strokeStyle='#162b3b';ctxO.lineWidth=3;
-    const label=p.kind==='deradan'?'Дерадан?':p.id;ctxO.strokeText(label,q.x+r+2,q.y);ctxO.fillStyle='#fff4de';ctxO.fillText(label,q.x+r+2,q.y);
+    const label=p.kind==='deradan'?'Дерадан':p.id;ctxO.strokeText(label,q.x+r+2,q.y);ctxO.fillStyle='#fff4de';ctxO.fillText(label,q.x+r+2,q.y);
    }visibleMarkers.push({f,x:q.x,y:q.y,r});continue;
   }const node=p.category==='settlement_node',peak=p.category==='high_peak',lake=p.category==='lake_candidate',r=node?(p.kind==='major'?6.5:p.kind==='regional'?5:3.8):peak?5.8:mode==='cities'?2.7:5;
   ctxO.beginPath();if(peak){ctxO.moveTo(q.x,q.y-r-2);ctxO.lineTo(q.x-r,q.y+r-1);ctxO.lineTo(q.x+r,q.y+r-1);ctxO.closePath()}else if(!node){ctxO.moveTo(q.x,q.y-r);ctxO.lineTo(q.x+r,q.y);ctxO.lineTo(q.x,q.y+r);ctxO.lineTo(q.x-r,q.y);ctxO.closePath()}else ctxO.arc(q.x,q.y,r,0,TAU);

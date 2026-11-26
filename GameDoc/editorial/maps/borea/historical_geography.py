@@ -68,14 +68,14 @@ def feat(id,category,kind,coords,name,description,views,**extra):
     return {"type":"Feature","properties":{"id":id,"category":category,"kind":kind,"name":name,"description":description,
             "views":views,"status":"proposed",**extra},"geometry":{"type":"Point","coordinates":coords}}
 B=[-104,-13]
-# B01 is a search-area center, NOT an entrance or the footprint of the underground network.
+# B01 is the center of the approved broad location, NOT an entrance or the footprint of the underground network.
 # Site is inside the stable eastern massif, outside active zones.
 mf=next(f for f in tect if f["properties"].get("name")=="Восточный устойчивый массив материка 6")
 assert MPath(mf["geometry"]["coordinates"][0]).contains_point(B)
 iy,ix=index_at(B)
 assert land[iy,ix] and hazard[iy,ix]<.15 and water[iy,ix]>=2
-items=[feat("B01","historical_site","bunker",B,"Кандидат единого бункерного анклава",
-    "Западный склон восточного устойчивого массива материка 6. Один исторический очаг после катастрофы около −7000; точное положение и глубинная подпитка сети требуют согласования. Метка показывает район, не площадь убежищ.",
+items=[feat("B01","historical_site","bunker",B,"Исторический район единого бункерного анклава",
+    "Западный склон восточного устойчивого массива материка 6. Один исторический очаг после катастрофы около −7000; район согласован, точное положение и глубинная подпитка сети требуют разработки. Метка показывает район, не площадь убежищ.",
     ["ancestry","refugia","historyRegions","modernHeritage"],continent=6,
     view_notes={"ancestry":"Бункерная линия сформировалась после −7000; не относится к докатастрофическим природным ареалам.",
         "refugia":"Относительно небольшой уцелевший анклав одной большой сети; самостоятельное подземное хозяйство до массового расселения 1500–2000.",
@@ -106,7 +106,7 @@ regions=[
 ("HR07","U08","Материк 6 · восточные низменности","Равнинные сельские традиции, поселения на вновь освоенной после ледников суше, поздняя аграрная и промышленная специализация; близость к бункерному району не означает общего происхождения."),
 ("HR08","U23","Материк 6 · южное рифтовое предгорье","Тепловые, рудные и пастбищно-промысловые районы, более суровый климат и разреженные поселения."),
 ("HR09","U05","Материк 7 · западная прибрежная дуга","Древние очаги долинных популяций, тепло, вода и минерализация; исторические города с разными местными традициями, ныне крупнейший агломерационный пояс."),
-("HR10","U12","Дераданская земля · кандидат исторического ядра","Северные низменности и северный край устойчивого массива материка 7; U11–U13 — современные ориентиры хозяйственного региона. U12 — возможный историко-административный центр, не утверждённая столица."),
+("HR10","U12","Дераданская земля · согласованный исторический район","Согласованный район — северные низменности и северный край устойчивого массива материка 7; U11–U13 — современные ориентиры хозяйственного региона. U12 — возможный историко-административный центр, не утверждённая столица."),
 ("HR11","U24","Материк 7 · внутренние предгорья","Тыловая связь западных тепловых городов с внутренними землями, смешанные сельскохозяйственные и промышленные районы; местные исторические объединения."),
 ("HR12","U25","Материк 7 · южные тепловые земли","Более холодные и менее густо населённые территории; промышленность и промысел вокруг отдельных тепловых узлов."),
 ("HR13","U26","Материк 8 · северный оазис","Самостоятельный очаг на другом материке; более локальная сеть земледелия и тепловых поселений."),
@@ -119,8 +119,13 @@ for id,u,name,desc in regions:
 # An actual existing lowland polygon, explicitly a geographic core not a state boundary.
 low=next(f for f in tect if f["properties"].get("name")=="Северные низменности материка 7")
 items.append({"type":"Feature","properties":{"id":"HR10-area","category":"historical_extent","kind":"deradan",
-    "name":"Северные низменности — кандидат природного ядра Дераданской земли","views":["historyRegions"],"status":"proposed",
+    "name":"Северные низменности — согласованное природное ядро Дераданской земли","views":["historyRegions"],"status":"proposed",
     "description":"Контур существующей географической низменности, а не граница исторического государства."},"geometry":low["geometry"]})
+# Approval is of the broad locations, not of precise coordinates, borders or historic capital.
+for f in items:
+    if f["properties"]["id"]=="B01":f["properties"]["status"]="region_approved"
+    elif f["properties"]["id"]=="HR10":f["properties"]["status"]="region_approved_center_proposed"
+    elif f["properties"]["id"]=="HR10-area":f["properties"]["status"]="region_approved_not_boundary"
 # 3290: EVERY city is mixed; markers indicate regional heritage and context, not genetic frequencies.
 valley_nodes={"U01","U02","U03","U04","U05","U06","U07","U23","U24","U26"}
 plain_nodes={"U08","U09","U10","U11","U12","U13"}
@@ -146,8 +151,8 @@ for f in items:
 assert len([f for f in items if f["properties"]["kind"]=="bunker"])==1
 assert len([f for f in items if f["properties"]["category"]=="heritage_node"])==28
 assert len([f for f in items if f["properties"]["category"]=="historical_refuge"])==6
-result={"status":"proposed","year":3290,"grid":[W,H],"projection":"equirectangular",
-        "note":"Working spatial hypotheses; modern DEM reused only as a geographic analog. No exact historical coast, ice front, state boundaries or demographic percentages inferred.",
+result={"status":"historical_regions_approved_general_details_proposed","year":3290,"grid":[W,H],"projection":"equirectangular",
+        "note":"Broad ancestral areas, B01 and Deradan region approved 2026-11-26; coordinates and further spatial hypotheses remain working. Modern DEM reused only as a geographic analog. No exact historical coast, ice front, state boundaries or demographic percentages inferred.",
         "layers":{"ancestry":{"runs":rle(ancestry),"colors":palette,"labels":labels}},
         "features":items,
         "validation":{"bunker_site":{"center":B,"height_m":round(float(height[iy,ix])),"hazard_index":round(float(hazard[iy,ix]),3),"water_class":int(water[iy,ix]),"stable_massif":True},
@@ -163,7 +168,7 @@ style={
 views={
  "ancestry":("history_origins.png","Исторические природные ареалы формирования", "Схема природных условий трёх древних линий; B01 относится к отдельной эпохе после −7000. Не границы реальных популяций."),
  "refugia":("history_refugia.png","Кандидаты очагов выживания после катастрофы (≈−7000…−2000)","Современные береговые линии — ориентир; древний ледник не реконструирован. Шесть поверхностных вариантов и единственный B01."),
- "historyRegions":("history_regions.png","Исторические региональные ядра · до объединения / наследие","14 опорных районов для сюжетной разработки, не число государств. Красная звезда и контур низменности — кандидат Дераданской земли."),
+ "historyRegions":("history_regions.png","Исторические региональные ядра · до объединения / наследие","14 опорных районов для сюжетной разработки, не число государств. Контур — согласованный район Дерадана; красная звезда — кандидат центра."),
  "modernHeritage":("history_3290.png","3290 · современное смешанное население и историческое наследие","Все городские узлы смешанные. Цвет обводки — вероятная местная традиция, а не доля или большинство популяционной линии.")
 }
 for view,(name,title,note) in views.items():
