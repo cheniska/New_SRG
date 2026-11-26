@@ -6,6 +6,9 @@ G20 noun-phrase slots, but candidate G21 noun plural -к/-эк and optional
 quantifier slot are NOT YET approved by the author.
 Run: python3 tools/linguistics/reboot/check_plural_G21.py
 """
+# NOTE G21/A1: the -к/-эк plural scheme here is an **archived comparison**
+# after the author highlighted overuse of -к. No plural suffix is approved yet.
+# This fixture only checks its internal slot consistency, not preferred canon.
 from pathlib import Path
 import re
 
