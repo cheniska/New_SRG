@@ -22,11 +22,12 @@ SOURCES = (
     ("G3", "everyday_lexicon_trial_34_2026-11-25.md"),
     ("G16", "numerals_ordinals_decimal_marker_trial_G16_2026-11-26.md"),
 )
-# Separate selected grammatical forms, as opposed to archival variants.
+# Separate current grammatical, quantifier and measure forms, excluding archived variants.
 GRAMMAR = (
     "Зэ", "Дзрэн", "Цвэри", "Цвэра", "Цвэрин", "Цвэрот",
     "Цвэтан", "Цвэнац", "Цвэшиц", "Тцэна", "Пцэро",
     "Нцави", "Нцэшар", "Пцэран", "Тэ", "Лдзо",
+    "Тцавир", "Дзэшин", "Пзотц", "Цваран",
 )
 NAMES = (
     "Ндзерак", "Дзерак", "Црэмин", "Мцаш", "Мцквар",
