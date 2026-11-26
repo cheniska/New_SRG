@@ -8,7 +8,7 @@ const PI=Math.PI, RAD=PI/180, TAU=2*PI, W=1536,H=768;
 const wrap=x=>((x+180)%360+360)%360-180, clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const land=data.continents.features.filter(f=>['continent','island'].includes(f.properties.category));
 const north=data.continents.features.find(f=>f.properties.category==='schematic_northern_perennial_ice_extent');
-const tect=data.tectonics.features, cl=data.climate;
+const tect=data.tectonics.features, cl=data.climate,nodes=data.settlements?.features??[],fields=tect.filter(f=>f.properties.category==='geothermal'),summits=tect.filter(f=>f.properties.category==='high_peak');
 const landLabels=[[-122,58],[-30,68],[31,69],[94,69],[154,68],[-127,-34],[52,-22],[146,-37]];
 function surface(){const c=document.createElement('canvas');c.width=W;c.height=H;return c}
 function xy(lon,lat){return[(lon+180)*W/360,(90-lat)*H/180]}
@@ -25,14 +25,17 @@ for(let j=0;j<H;j++){let lat=90-(j+.5)*180/H;lats[j]=lat;weights[j]=Math.cos(lat
  scores[k]=best;if(best<=1)potentialWeight+=weights[j];
  }}
 const texture=surface(),tc=texture.getContext('2d',{willReadFrequently:true});
-const C={land:'#d8d0b1',sea:'#365d74',north:'#b4d5df',mild:'#a7b17a',cold:'#d2bf94',tundra:'#b9c5cd',polar:'#e8e4e0',ice:'#9fc5d6',seasonal:'#d3e7ec',open:'#30647e',stable:'#8eb18e',low:'#e8e2a0',mount:'#957256',converge:'#f07150',rift:'#38ccea',riftLand:'#159cbf',transform:'#c99ce8',geo:'#ffbd50',snow:'#d7e0e4',rock:'#8d6668',water:'#254969',floe:'#a5c5d1',cloud:'#f2f5f7',deep:'#163963',slope:'#458eb0',shelf:'#addce1',plain:'#7ab47d',hill:'#d5cc84',upland:'#d4a05c',peak:'#975236'};
+const C={land:'#d8d0b1',sea:'#365d74',north:'#b4d5df',mild:'#a7b17a',cold:'#d2bf94',tundra:'#b9c5cd',polar:'#e8e4e0',ice:'#9fc5d6',seasonal:'#d3e7ec',open:'#30647e',stable:'#8eb18e',low:'#e8e2a0',mount:'#957256',converge:'#f07150',rift:'#38ccea',riftLand:'#159cbf',transform:'#c99ce8',geo:'#ffbd50',snow:'#d7e0e4',rock:'#8d6668',water:'#254969',floe:'#a5c5d1',cloud:'#f2f5f7',deep:'#163963',slope:'#458eb0',shelf:'#addce1',plain:'#7ab47d',hill:'#d5cc84',upland:'#d4a05c',peak:'#a65c35',veryHigh:'#60311f',arc:'#dc7359',oasis:'#66c77a',majorCity:'#b43745',regionalCity:'#d88935',smallCity:'#7c619d',pop0:'#e8ebe8',pop1:'#cfdfda',pop2:'#a4c4be',pop3:'#eede8b',pop4:'#f4a752',pop5:'#d04f46',pop6:'#ad4158',pop7:'#8b2b5f',pop8:'#421853'};
 const rgba=Object.fromEntries(Object.entries(C).map(([k,v])=>[k,[parseInt(v.slice(1,3),16),parseInt(v.slice(3,5),16),parseInt(v.slice(5,7),16)]]));
 const legends={
  geography:[['land','Суша'],['sea','Океан'],['north','Северный ледовый регион']],
- tectonics:[['converge','Сближение плит'],['rift','Океанический рифт'],['riftLand','Континентальный рифт'],['transform','Сдвиговой пояс'],['mount','Горы'],['stable','Устойчивые массивы'],['low','Низменности'],['geo','Геотермальные поля']],
+ tectonics:[['converge','Сближение плит'],['rift','Океанический рифт'],['riftLand','Континентальный рифт'],['transform','Сдвиговой пояс'],['mount','Горы'],['stable','Устойчивые массивы'],['low','Низменности'],['arc','Вулканическая дуга'],['geo','Тепловые поля'],['oasis','Кандидаты оазисов'],['veryHigh','Пики >8,85 км']],
  climate:[['mild','Наиболее мягкая суша'],['cold','Холодная сезонная суша'],['tundra','Тундра / мерзлота'],['polar','Полярная суша'],['ice','Многолетний морской лёд'],['seasonal','Сезонный лёд'],['open','Открытие моря'],['geo','Геотермальные поля']],
  ice:[['land','Суша'],['ice','Многолетний лёд'],['seasonal','Сезонный лёд'],['open','Открытие моря'],['north','Северный ледовый регион']],
- relief:[['deep','−8,5…−6 км'],['slope','−6…−1,2 км'],['shelf','−1,2…0 км'],['plain','0…250 м'],['hill','250…750 м'],['upland','0,75…2,5 км'],['peak','2,5…5,5 км']],
+ relief:[['deep','−8,5…−6 км'],['slope','−6…−1,2 км'],['shelf','−1,2…0 км'],['plain','0…250 м'],['hill','250…750 м'],['upland','0,75…2,5 км'],['peak','2,5…5,5 км'],['veryHigh','5,5…10 км']],
+ heat:[['oasis','Естественный оазис (кандидат)'],['geo','Промышленное тепловое поле'],['arc','Вулканическая дуга'],['converge','Конвергенция'],['riftLand','Рифт']],
+ cities:[['majorCity','Крупнейший агломерационный узел'],['regionalCity','Региональный узел'],['smallCity','Специализированный узел'],['oasis','Тепловой оазис'],['geo','Промышленное поле']],
+ population:[['pop0','0'],['pop1','0,01'],['pop2','0,1'],['pop3','0,5'],['pop4','2'],['pop5','8'],['pop6','25'],['pop7','60'],['pop8','100']],
  surface:[['rock','Открытый грунт и тундра'],['snow','Снег и ледники'],['floe','Морской лёд'],['water','Открытая вода']],
  space:[['rock','Открытый грунт и тундра'],['snow','Снег и ледники'],['floe','Морской лёд'],['water','Открытая вода'],['cloud','Облачность']]
 };
@@ -41,20 +44,21 @@ const legends={
 // The phase and thermal lag are editorial choices, not inferred meteorology.
 const phases=cl.seasonal_preview_parameters;
 const isOptical=m=>m==='space'||m==='surface';
-let raw=null, renderTex=null, yaw=-112,pitch=10,zoom=1, pending=false,natural=null,prevMode=layer.value,mapGrid=grid.checked,options=null;
+let raw=null, renderTex=null, yaw=-112,pitch=10,zoom=1, pending=false,natural=null,settlement=null,visibleMarkers=[],prevMode=layer.value,mapGrid=grid.checked,options=null;
 if(typeof location!=='undefined'){options=new URLSearchParams(location.search);const view=options.get('view'),p=options.get('season');if(view&&Object.hasOwn(legends,view)){layer.value=view;prevMode=view;if(isOptical(view))grid.checked=false;}if(p&&['overview',...Object.keys(phases)].includes(p))season.value=p;}
 function getNatural(){if(!natural)natural=BoreaNatural.create({W,H,isLand,isNorth,scores,lats,tect,surface,xy,phases,weights});return natural}
+function getSettlement(){if(!settlement)settlement=BoreaSettlement.create({W,H,isLand,isNorth,lats,weights,natural:getNatural(),tect,nodes});return settlement}
 function textureFor(){
- const mode=layer.value, phase=season.value, optical=isOptical(mode), relief=mode==='relief', seasonal=mode==='climate'||mode==='ice'||optical, overview=phase==='overview';
+ const mode=layer.value, phase=season.value, optical=isOptical(mode), relief=mode==='relief', pop=mode==='population', seasonal=mode==='climate'||mode==='ice'||optical, overview=phase==='overview';
  season.disabled=!seasonal;
  const pixels=tc.createImageData(W,H), buf=pixels.data;let openWeight=0,opticalStatus=null;
- if(optical){opticalStatus=getNatural().optical(buf,mode,phase);openWeight=opticalStatus.visible;}else if(relief)getNatural().relief(buf);else{
+ if(optical){opticalStatus=getNatural().optical(buf,mode,phase);openWeight=opticalStatus.visible;}else if(relief)getNatural().relief(buf);else if(pop)getSettlement().draw(buf);else{
  for(let j=0;j<H;j++){const lat=lats[j],a=Math.abs(lat),[t1,t2,t3]=cl.land_zones_abs_lat_degrees;
    const landColor=a<=t1?'mild':a<=t2?'cold':a<=t3?'tundra':'polar';
    const ph=phases[phase],limit=overview?1:clamp(ph.bias+ph.hem*clamp(lat/20,-1,1),.18,1);
    for(let i=0;i<W;i++){const k=j*W+i;
      let name;if(isLand[k])name=mode==='climate'?landColor:'land';
-     else if(mode==='geography'||mode==='tectonics')name=isNorth[k]?'north':'sea';
+     else if(['geography','tectonics','heat','cities'].includes(mode))name=isNorth[k]?'north':'sea';
      else if(isNorth[k])name=mode==='ice'?'north':'ice';
      else if(scores[k]<=limit){name='open';openWeight+=weights[j]}
      else if(scores[k]<=1)name='seasonal';else name='ice';
@@ -64,15 +68,16 @@ function textureFor(){
  tc.putImageData(pixels,0,0);
  if(grid.checked){tc.lineWidth=.85;tc.strokeStyle='#58778765';for(let la=-60;la<=60;la+=30){path(tc,[[-180,la],[180,la]]);tc.stroke()}for(let lo=-150;lo<180;lo+=30){path(tc,[[lo,-90],[lo,90]]);tc.stroke()}}
  // Borders of all actual continents and islands. The texture adheres to geographic coordinates.
- if(!optical&&!relief){tc.lineWidth=1.2;tc.strokeStyle='#405867';for(const f of land){path(tc,f.geometry.coordinates[0],true);tc.stroke()}}
- if(mode==='tectonics'||mode==='climate'){
+ if(!optical&&!relief&&!pop){tc.lineWidth=1.2;tc.strokeStyle='#405867';for(const f of land){path(tc,f.geometry.coordinates[0],true);tc.stroke()}}
+ if(['tectonics','climate','heat','cities'].includes(mode)){
   for(const f of tect){let p=f.properties,cat=p.category,coords=f.geometry.coordinates;
-    if(mode==='tectonics'&&['stable_massif','lowland'].includes(cat)){tc.fillStyle=C[cat==='stable_massif'?'stable':'low'];tc.strokeStyle='#526f60';tc.lineWidth=.9;path(tc,coords[0],true);tc.fill();tc.stroke()}
+    if(['tectonics','heat','cities'].includes(mode)&&['stable_massif','lowland'].includes(cat)){tc.fillStyle=C[cat==='stable_massif'?'stable':'low'];tc.strokeStyle='#526f60';tc.lineWidth=.9;path(tc,coords[0],true);tc.fill();tc.stroke()}
   }
   for(const f of tect){let p=f.properties,cat=p.category,coords=f.geometry.coordinates;
     if(['mountain_belt','old_mountain_belt'].includes(cat)){tc.strokeStyle=C.mount;tc.lineWidth=5;tc.lineJoin='round';tc.lineCap='round';path(tc,coords);tc.stroke();tc.strokeStyle='#f1d9b7';tc.lineWidth=1.1;tc.stroke()}
-    if(mode==='tectonics'&&['convergence','ocean_rift','continental_rift','transform'].includes(cat)){tc.strokeStyle='#233b4d';tc.lineWidth=5;path(tc,coords);tc.stroke();tc.strokeStyle=C[{convergence:'converge',ocean_rift:'rift',continental_rift:'riftLand',transform:'transform'}[cat]];tc.lineWidth=2.8;if(cat==='transform')tc.setLineDash([7,4]);tc.stroke();tc.setLineDash([])}
-    if(cat==='geothermal'){const [x,y]=xy(...coords);tc.fillStyle=C.geo;tc.strokeStyle='#604929';tc.lineWidth=1;tc.beginPath();tc.moveTo(x,y-4);tc.lineTo(x+4,y);tc.lineTo(x,y+4);tc.lineTo(x-4,y);tc.closePath();tc.fill();tc.stroke()}
+    if(['tectonics','heat'].includes(mode)&&['convergence','ocean_rift','continental_rift','transform'].includes(cat)){tc.strokeStyle='#233b4d';tc.lineWidth=5;path(tc,coords);tc.stroke();tc.strokeStyle=C[{convergence:'converge',ocean_rift:'rift',continental_rift:'riftLand',transform:'transform'}[cat]];tc.lineWidth=2.8;if(cat==='transform')tc.setLineDash([7,4]);tc.stroke();tc.setLineDash([])}
+    if(cat==='volcanic_arc'&&['tectonics','heat'].includes(mode)){tc.strokeStyle=C.arc;tc.lineWidth=2.8;tc.setLineDash([5,3]);path(tc,coords);tc.stroke();tc.setLineDash([])}
+    if(cat==='geothermal'&&mode==='climate'){const [x,y]=xy(...coords);tc.fillStyle=C[p.kind==='oasis'?'oasis':'geo'];tc.strokeStyle='#604929';tc.lineWidth=1;tc.beginPath();tc.moveTo(x,y-4);tc.lineTo(x+4,y);tc.lineTo(x,y+4);tc.lineTo(x-4,y);tc.closePath();tc.fill();tc.stroke()}
   }
  }
  raw=tc.getImageData(0,0,W,H).data;
@@ -80,9 +85,9 @@ function textureFor(){
  const items=legends[mode].filter(([key])=>!(overview&&key==='seasonal'));
  $('legend').replaceChildren(...items.map(([key,label])=>{const el=document.createElement('span');el.className='key';const sw=document.createElement('i');sw.className='swatch';sw.style.background=C[key];el.append(sw,document.createTextNode(label));if(overview&&key==='open')el.lastChild.textContent='Область возможного сезонного открытия';return el}));
  const rate=(100*(overview&&!optical?potentialWeight:openWeight)/oceanWeight);
- $('stats').textContent=relief?'Черновой диапазон: '+(getNatural().range[0]/1000).toFixed(1).replace('.',',')+'…+'+(getNatural().range[1]/1000).toFixed(1).replace('.',',')+' км':optical?(mode==='space'?'Орбитальный вид · облака и атмосферная дымка':'Поверхность · без облаков и атмосферы')+(overview?' · лето на севере':''):seasonal?(overview?'Возможное сезонное открытие: ':'Условная открытая вода: ')+rate.toFixed(1).replace('.',',')+'% площади океана':mode==='tectonics'?'6 основных тектонических поясов · рабочая схема':'8 основных материков · 40% суши / 60% океана';
- $('note').textContent=relief?'Цвета показывают условные отметки рельефа и глубины. Высоты — рабочая модель на основе тектоники, не утверждённые данные.':optical?'Схематическая природная текстура без городов. Снег и морской лёд зависят от выбранного сезона; атмосферный ореол рисуется отдельно.':seasonal?(overview?'Показан объединённый годовой ареал возможного открытия, а не одновременная свободная ото льда площадь.':'Приблизительная сезонная иллюстрация. Сезон обозначен для северного полушария; на юге он противоположный. Площади не утверждены.'):mode==='tectonics'?'Геотермальные поля не равны целым тёплым биомам. Границы плит, высоты и сейсмичность уточняются.':'Материки 1–5 соединены постоянным морским льдом, но лёд не считается сушей.';
- if($('downloadTexture'))$('downloadTexture').hidden=!(optical||relief);
+ $('stats').textContent=pop?'Относительная плотность населения · индекс 0–100':mode==='cities'?nodes.length+' опорных узлов расселения · черновая схема':mode==='heat'?fields.filter(f=>f.properties.kind==='oasis').length+' кандидатов естественных оазисов · '+fields.length+' тепловых районов':relief?'Черновой диапазон: '+(getNatural().range[0]/1000).toFixed(2).replace('.',',')+'…+'+(getNatural().range[1]/1000).toFixed(2).replace('.',',')+' км':optical?(mode==='space'?'Орбитальный вид · облака и атмосферная дымка':'Поверхность · без облаков и атмосферы')+(overview?' · лето на севере':''):seasonal?(overview?'Возможное сезонное открытие: ':'Условная открытая вода: ')+rate.toFixed(1).replace('.',',')+'% площади океана':mode==='tectonics'?'6 основных тектонических поясов · рабочая схема':'8 основных материков · 40% суши / 60% океана';
+ $('note').textContent=pop?'100 — наиболее плотная ячейка модели. Шкала нелинейная; это не число жителей и не процент населения.':mode==='cities'?'Узлы обозначают представительные агломерации и хозяйственные районы, не все города. Нажмите на маркер для описания.':mode==='heat'?'Зелёные точки — экваториальные кандидаты естественных оазисов; янтарные — тепловые ресурсы без гарантии тёплого микроклимата. Нажмите на маркер.':relief?'Цвета — высоты и глубины. Шесть редких вершин >8,85 км в поясах A, B и D; абсолютные отметки предварительные. Нажмите на маркер.':optical?'Схематическая природная текстура без городов. Снег и морской лёд зависят от выбранного сезона; атмосферный ореол рисуется отдельно.':seasonal?(overview?'Показан объединённый годовой ареал возможного открытия, а не одновременная свободная ото льда площадь.':'Приблизительная сезонная иллюстрация. Сезон обозначен для северного полушария; на юге он противоположный. Площади не утверждены.'):mode==='tectonics'?'Геотермальные поля не равны целым тёплым биомам. Границы плит, высоты и сейсмичность уточняются.':'Материки 1–5 соединены постоянным морским льдом, но лёд не считается сушей.';
+ if($('downloadTexture'))$('downloadTexture').hidden=!(optical||relief||pop);if($('selection')){$('selection').hidden=true;$('selection').textContent=''}
  requestDraw()
 }
 let gl=null;
@@ -122,23 +127,33 @@ function draw(){pending=false;if(!raw)return;const rect=size(),w=rect.width,h=re
  else drawCPU(w,h);
  syncSize(overlay,Math.round(w*dpr),Math.round(h*dpr));ctxO.setTransform(dpr,0,0,dpr,0,0);ctxO.clearRect(0,0,w,h);
  if(!isOptical(layer.value)||grid.checked)for(let n=0;n<landLabels.length;n++){const q=project(...landLabels[n],w,h);if(q.z<.23||q.x<10||q.y<10||q.x>w-10||q.y>h-10)continue;ctxO.beginPath();ctxO.arc(q.x,q.y,9.2,0,TAU);ctxO.fillStyle='#f0eddaed';ctxO.fill();ctxO.strokeStyle='#4c6979';ctxO.lineWidth=1;ctxO.stroke();ctxO.fillStyle='#233747';ctxO.font='bold 11px system-ui';ctxO.textAlign='center';ctxO.textBaseline='middle';ctxO.fillText(n+1,q.x,q.y+.3)}
+ visibleMarkers=[];
+ const mode=layer.value;
+ const markerSet=mode==='relief'?summits:mode==='tectonics'?[...fields,...summits]:mode==='heat'?fields:mode==='cities'?[...fields,...nodes]:[];
+ for(const f of markerSet){const p=f.properties,q=project(...f.geometry.coordinates,w,h);if(q.z<.16||q.x<5||q.y<5||q.x>w-5||q.y>h-5)continue;const node=p.category==='settlement_node',peak=p.category==='high_peak',r=node?(p.kind==='major'?6.5:p.kind==='regional'?5:3.8):peak?5.8:mode==='cities'?2.7:5;
+  ctxO.beginPath();if(peak){ctxO.moveTo(q.x,q.y-r-2);ctxO.lineTo(q.x-r,q.y+r-1);ctxO.lineTo(q.x+r,q.y+r-1);ctxO.closePath()}else if(!node){ctxO.moveTo(q.x,q.y-r);ctxO.lineTo(q.x+r,q.y);ctxO.lineTo(q.x,q.y+r);ctxO.lineTo(q.x-r,q.y);ctxO.closePath()}else ctxO.arc(q.x,q.y,r,0,TAU);
+  ctxO.fillStyle=peak?'#fff2d2':node?C[{major:'majorCity',regional:'regionalCity',specialized:'smallCity'}[p.kind]]:C[p.kind==='oasis'?'oasis':'geo'];ctxO.fill();ctxO.strokeStyle=node?'#fff6dc':'#263949';ctxO.lineWidth=node?1.65:1.15;ctxO.stroke();
+  if(mode==='relief'&&q.z>.4&&zoom>1.23){ctxO.font='bold 10px system-ui';ctxO.textAlign='left';ctxO.textBaseline='middle';ctxO.strokeStyle='#27323a';ctxO.lineWidth=3;const label=(p.height_m/1000).toFixed(2).replace('.',',')+' км';ctxO.strokeText(label,q.x+r+2,q.y);ctxO.fillStyle='#fff4de';ctxO.fillText(label,q.x+r+2,q.y)}
+  visibleMarkers.push({f,x:q.x,y:q.y,r});
+ }
  const formatted=(v,pos,neg)=>Math.abs(v).toFixed(0)+'° '+(v>=0?pos:neg);
  $('coords').textContent='Центр: '+formatted(pitch,'с.ш.','ю.ш.')+' · '+formatted(yaw,'в.д.','з.д.');
 }
 function requestDraw(){if(!pending){pending=true;requestAnimationFrame(draw)}}
 function setZoom(z){zoom=clamp(z,.65,2.4);requestDraw()}
 function reset(){yaw=-112;pitch=10;zoom=1;requestDraw()}
+function selectMarker(e){if(!$('selection'))return;const b=size(),x=e.clientX-b.left,y=e.clientY-b.top;const hits=visibleMarkers.map(m=>({m,d:Math.hypot(x-m.x,y-m.y)-(m.f.properties.category==='settlement_node'&&layer.value==='cities'?4:0)})).filter(m=>m.d<15).sort((a,b)=>a.d-b.d);if(!hits.length){$('selection').hidden=true;return}const p=hits[0].m.f.properties;let t;if(p.category==='high_peak')t=p.id+': '+p.height_m.toLocaleString('ru-RU')+' м, пояс '+p.zone+'; редкая вершина над утолщённой корой.';else if(p.category==='geothermal')t=p.id+' · '+p.name+' — '+(p.kind==='oasis'?'кандидат естественного оазиса':'тепловой ресурс, не естественный оазис')+'. '+p.heat_source+'.';else t=p.id+' · '+p.role+(p.thermal_field?' (связь с '+p.thermal_field+')':'')+'. Рабочий узел, точная площадка и название не утверждены.';$('selection').textContent=t;$('selection').hidden=false}
 const pointers=new Map();function gap(){const [a,b]=[...pointers.values()];return Math.hypot(a.x-b.x,a.y-b.y)}
-overlay.addEventListener('pointerdown',e=>{e.preventDefault();overlay.focus({preventScroll:true});overlay.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});});
-overlay.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const old=pointers.get(e.pointerId),before=pointers.size===2?gap():0;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2&&before>0){setZoom(zoom*gap()/before);return}if(pointers.size!==1)return;const b=size(),r=radius(b.width,b.height);yaw=wrap(yaw-(e.clientX-old.x)*55/r);pitch=clamp(pitch+(e.clientY-old.y)*55/r,-89,89);requestDraw()});
-function release(e){pointers.delete(e.pointerId)}overlay.addEventListener('pointerup',release);overlay.addEventListener('pointercancel',release);overlay.addEventListener('lostpointercapture',release);
+overlay.addEventListener('pointerdown',e=>{e.preventDefault();overlay.focus({preventScroll:true});overlay.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY});});
+overlay.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const old=pointers.get(e.pointerId),before=pointers.size===2?gap():0;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,sx:old.sx,sy:old.sy});if(pointers.size===2&&before>0){setZoom(zoom*gap()/before);return}if(pointers.size!==1)return;const b=size(),r=radius(b.width,b.height);yaw=wrap(yaw-(e.clientX-old.x)*55/r);pitch=clamp(pitch+(e.clientY-old.y)*55/r,-89,89);requestDraw()});
+function release(e){pointers.delete(e.pointerId)}overlay.addEventListener('pointerup',e=>{const p=pointers.get(e.pointerId);if(p&&pointers.size===1&&Math.hypot(e.clientX-p.sx,e.clientY-p.sy)<5)selectMarker(e);release(e)});overlay.addEventListener('pointercancel',release);overlay.addEventListener('lostpointercapture',release);
 overlay.addEventListener('wheel',e=>{e.preventDefault();setZoom(zoom*Math.exp(-e.deltaY*.0015))},{passive:false});
 overlay.addEventListener('keydown',e=>{let handled=true;switch(e.key){case 'ArrowLeft':yaw=wrap(yaw-10);break;case 'ArrowRight':yaw=wrap(yaw+10);break;case 'ArrowUp':pitch=clamp(pitch+10,-89,89);break;case 'ArrowDown':pitch=clamp(pitch-10,-89,89);break;case '+':case '=':setZoom(zoom*1.18);break;case '-':setZoom(zoom/1.18);break;case 'Home':reset();break;default:handled=false}if(handled){e.preventDefault();requestDraw()}});
 $('zoomIn').onclick=()=>setZoom(zoom*1.2);$('zoomOut').onclick=()=>setZoom(zoom/1.2);$('reset').onclick=reset;
 $('fullscreen').onclick=()=>{if(document.fullscreenElement){document.exitFullscreen();return}const a=document.querySelector('.atlas');if(a.requestFullscreen)a.requestFullscreen().catch(()=>{});else window.open(location.href,'_blank','noopener')};
 layer.addEventListener('change',()=>{const optical=isOptical(layer.value),was=isOptical(prevMode);if(optical&&!was){mapGrid=grid.checked;grid.checked=false;}else if(!optical&&was)grid.checked=mapGrid;prevMode=layer.value;textureFor()});
 for(const el of [season,grid])el.addEventListener('change',textureFor);
-if($('downloadTexture'))$('downloadTexture').onclick=()=>{const mode=layer.value;if(!isOptical(mode)&&mode!=='relief')return;const c=surface(),ctx=c.getContext('2d'),p=ctx.createImageData(W,H);if(mode==='relief')getNatural().relief(p.data);else getNatural().optical(p.data,mode,season.value);ctx.putImageData(p,0,0);c.toBlob(blob=>{if(!blob)return;const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='borea-'+mode+'-'+(season.value==='overview'?'summer':season.value)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)},'image/png')};
+if($('downloadTexture'))$('downloadTexture').onclick=()=>{const mode=layer.value;if(!isOptical(mode)&&mode!=='relief'&&mode!=='population')return;const c=surface(),ctx=c.getContext('2d'),p=ctx.createImageData(W,H);if(mode==='relief')getNatural().relief(p.data);else if(mode==='population')getSettlement().draw(p.data);else getNatural().optical(p.data,mode,season.value);ctx.putImageData(p,0,0);c.toBlob(blob=>{if(!blob)return;const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='borea-'+mode+'-'+(season.value==='overview'?'summer':season.value)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)},'image/png')};
 if('ResizeObserver'in window)new ResizeObserver(requestDraw).observe(stage);else addEventListener('resize',requestDraw);
 textureFor();
 })();

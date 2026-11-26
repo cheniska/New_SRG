@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="borea-globe.css">
 <script src="borea-data.js" defer></script>
 <script src="borea-natural.js" defer></script>
+<script src="borea-settlement.js" defer></script>
 <script src="borea-globe.js" defer></script>
 </head>
 <body>
@@ -14,7 +15,7 @@
 <header class="heading"><div><span class="eyebrow">NEW SRG / ПЛАНЕТОЛОГИЯ / 3290</span><h1>Борея</h1></div><span class="badge">Рабочий атлас</span></header>
 <p class="intro">Вращайте планету и исследуйте её природные слои. Контуры материков и тектоника согласованы предварительно; природный облик, высоты и сезонные кромки льда — рабочие предложения.</p>
 <div class="controls">
-<label>Карта<select id="layer"><option value="geography">География</option><option value="tectonics">Тектоника и рельеф</option><option value="climate">Климат</option><option value="ice">Морской лёд</option><option value="relief">Физическая карта высот и глубин</option><option value="space">Вид из космоса · с атмосферой</option><option value="surface">Поверхность · без атмосферы</option></select></label>
+<label>Карта<select id="layer"><option value="geography">География</option><option value="tectonics">Тектоника и рельеф</option><option value="climate">Климат</option><option value="ice">Морской лёд</option><option value="relief">Физическая карта высот и глубин</option><option value="heat">Геотермальные поля и оазисы</option><option value="cities">Узлы городов и расселения</option><option value="population">Плотность населения (относительная)</option><option value="space">Вид из космоса · с атмосферой</option><option value="surface">Поверхность · без атмосферы</option></select></label>
 <label>Сезон<select id="season"><option value="overview">Годовой обзор</option><option value="spring">Весна на севере</option><option value="summer">Лето на севере</option><option value="autumn">Осень на севере</option><option value="winter">Зима на севере</option></select></label>
 <label class="grid-toggle"><input id="grid" type="checkbox" checked> Координатная сетка</label>
 </div>
@@ -26,7 +27,7 @@
 <span class="coord" id="coords">Центр: 0°, 0°</span><span class="hint">Перетащите для вращения · щипок / колёсико для масштаба</span>
 <div id="error" role="alert" hidden>Не удалось загрузить данные атласа. Обновите страницу.</div>
 </div>
-<div class="readout"><div id="legend" aria-label="Условные обозначения"></div><div class="map-note"><p id="stats"></p><p id="note"></p></div></div>
+<div class="readout"><div id="legend" aria-label="Условные обозначения"></div><div class="map-note"><p id="stats"></p><p id="note"></p><p id="selection" hidden></p></div></div>
 <div class="foot"><a id="articleLink" href="race_grondary.html#borea-atlas" target="_top">← Статья о грондарах</a><span>География • климат не является результатом физического моделирования</span></div>
 <noscript><p>Для вращения глобуса требуется JavaScript.</p></noscript>
 </main>

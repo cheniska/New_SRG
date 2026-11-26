@@ -1,0 +1,463 @@
+{
+  "status": "working_model_3290_not_census",
+  "notes": [
+    "All coordinates are provisional, but belong to the agreed mainland polygons.",
+    "z = modeled altitude in meters above sea level; risk = relative model proximity to active features (0–1), not earthquake probability.",
+    "density = relative density index, 100 is max modeled cell. Diagnostics are internal model-weight fractions, not population shares."
+  ],
+  "diagnostics": {
+    "equatorialShare": 0.9073397718037637,
+    "urbanShare": 0.8936839800829152,
+    "majorShare": 0.7189687697273162
+  },
+  "range": [
+    -7972.77880859375,
+    9849.9599609375
+  ],
+  "sites": [
+    {
+      "id": "A1",
+      "cat": "high_peak",
+      "land": 1,
+      "z": 9650,
+      "risk": 0.6,
+      "density": 0
+    },
+    {
+      "id": "A2",
+      "cat": "high_peak",
+      "land": 1,
+      "z": 9250,
+      "risk": 0.72,
+      "density": 0
+    },
+    {
+      "id": "B1",
+      "cat": "high_peak",
+      "land": 1,
+      "z": 9850,
+      "risk": 0.72,
+      "density": 0
+    },
+    {
+      "id": "B2",
+      "cat": "high_peak",
+      "land": 1,
+      "z": 9420,
+      "risk": 0.6,
+      "density": 0
+    },
+    {
+      "id": "D1",
+      "cat": "high_peak",
+      "land": 1,
+      "z": 9180,
+      "risk": 0.72,
+      "density": 0
+    },
+    {
+      "id": "D2",
+      "cat": "high_peak",
+      "land": 1,
+      "z": 9320,
+      "risk": 0.72,
+      "density": 0
+    },
+    {
+      "id": "G01",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 1392,
+      "risk": 0.02,
+      "density": 4.03
+    },
+    {
+      "id": "G02",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 1684,
+      "risk": 0.01,
+      "density": 2.23
+    },
+    {
+      "id": "G03",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 2060,
+      "risk": 0.06,
+      "density": 3.07
+    },
+    {
+      "id": "G04",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 462,
+      "risk": 0.09,
+      "density": 89.06
+    },
+    {
+      "id": "G05",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 442,
+      "risk": 0.07,
+      "density": 83.13
+    },
+    {
+      "id": "G06",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 440,
+      "risk": 0.07,
+      "density": 74.84
+    },
+    {
+      "id": "G07",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 1017,
+      "risk": 0.05,
+      "density": 3.94
+    },
+    {
+      "id": "G08",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 486,
+      "risk": 0.45,
+      "density": 38.35
+    },
+    {
+      "id": "G09",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 510,
+      "risk": 0.01,
+      "density": 98.25
+    },
+    {
+      "id": "G10",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 617,
+      "risk": 0.31,
+      "density": 58.68
+    },
+    {
+      "id": "G11",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 534,
+      "risk": 0.02,
+      "density": 68.1
+    },
+    {
+      "id": "G12",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 1182,
+      "risk": 0.01,
+      "density": 3.22
+    },
+    {
+      "id": "G13",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 1840,
+      "risk": 0.02,
+      "density": 0.28
+    },
+    {
+      "id": "G14",
+      "cat": "geothermal",
+      "kind": "oasis",
+      "land": 1,
+      "z": 492,
+      "risk": 0.21,
+      "density": 8.45
+    },
+    {
+      "id": "G15",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 1080,
+      "risk": 0,
+      "density": 5.36
+    },
+    {
+      "id": "G16",
+      "cat": "geothermal",
+      "kind": "industrial",
+      "land": 1,
+      "z": 1238,
+      "risk": 0.01,
+      "density": 0.6
+    },
+    {
+      "id": "U01",
+      "cat": "settlement_node",
+      "kind": "major",
+      "land": 1,
+      "z": 511,
+      "risk": 0.06,
+      "density": 95.55
+    },
+    {
+      "id": "U02",
+      "cat": "settlement_node",
+      "kind": "major",
+      "land": 1,
+      "z": 516,
+      "risk": 0.04,
+      "density": 95.26
+    },
+    {
+      "id": "U03",
+      "cat": "settlement_node",
+      "kind": "major",
+      "land": 1,
+      "z": 498,
+      "risk": 0.04,
+      "density": 85.29
+    },
+    {
+      "id": "U04",
+      "cat": "settlement_node",
+      "kind": "major",
+      "land": 1,
+      "z": 955,
+      "risk": 0.12,
+      "density": 74.62
+    },
+    {
+      "id": "U05",
+      "cat": "settlement_node",
+      "kind": "major",
+      "land": 1,
+      "z": 576,
+      "risk": 0.01,
+      "density": 100
+    },
+    {
+      "id": "U06",
+      "cat": "settlement_node",
+      "kind": "major",
+      "land": 1,
+      "z": 898,
+      "risk": 0.18,
+      "density": 65.49
+    },
+    {
+      "id": "U07",
+      "cat": "settlement_node",
+      "kind": "major",
+      "land": 1,
+      "z": 764,
+      "risk": 0.01,
+      "density": 80.31
+    },
+    {
+      "id": "U08",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 357,
+      "risk": 0,
+      "density": 22.93
+    },
+    {
+      "id": "U09",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 904,
+      "risk": 0,
+      "density": 18.8
+    },
+    {
+      "id": "U10",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 356,
+      "risk": 0,
+      "density": 22.35
+    },
+    {
+      "id": "U11",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 492,
+      "risk": 0,
+      "density": 23.71
+    },
+    {
+      "id": "U12",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 493,
+      "risk": 0,
+      "density": 24.3
+    },
+    {
+      "id": "U13",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 1406,
+      "risk": 0,
+      "density": 16.61
+    },
+    {
+      "id": "U14",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 1122,
+      "risk": 0.01,
+      "density": 10.8
+    },
+    {
+      "id": "U15",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 1461,
+      "risk": 0,
+      "density": 9.49
+    },
+    {
+      "id": "U16",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 1936,
+      "risk": 0.05,
+      "density": 6.99
+    },
+    {
+      "id": "U17",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 881,
+      "risk": 0.01,
+      "density": 3.32
+    },
+    {
+      "id": "U18",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 1074,
+      "risk": 0,
+      "density": 3.08
+    },
+    {
+      "id": "U19",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 1095,
+      "risk": 0,
+      "density": 2.37
+    },
+    {
+      "id": "U20",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 1573,
+      "risk": 0,
+      "density": 1.9
+    },
+    {
+      "id": "U21",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 1426,
+      "risk": 0,
+      "density": 2.02
+    },
+    {
+      "id": "U22",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 1491,
+      "risk": 0,
+      "density": 1.93
+    },
+    {
+      "id": "U23",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 963,
+      "risk": 0.01,
+      "density": 15.43
+    },
+    {
+      "id": "U24",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 1027,
+      "risk": 0,
+      "density": 15.82
+    },
+    {
+      "id": "U25",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 1508,
+      "risk": 0.01,
+      "density": 2.28
+    },
+    {
+      "id": "U26",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 455,
+      "risk": 0.1,
+      "density": 20.11
+    },
+    {
+      "id": "U27",
+      "cat": "settlement_node",
+      "kind": "regional",
+      "land": 1,
+      "z": 1068,
+      "risk": 0,
+      "density": 14.22
+    },
+    {
+      "id": "U28",
+      "cat": "settlement_node",
+      "kind": "specialized",
+      "land": 1,
+      "z": 1075,
+      "risk": 0,
+      "density": 2.57
+    }
+  ]
+}
