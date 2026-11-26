@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Limited POS regression checker for the working Ndzeraк lexicon.
 
-Checks dictionary coverage (113 forms), the primary POS and predicate-slot
+Checks dictionary coverage (114 forms), the primary POS and predicate-slot
 consistency of curated G18 examples. It is NOT a general grammar parser and
 does not validate pronunciation, transitivity or every constituent position.
 Run: python3 tools/linguistics/reboot/check_lexical_classes_G18.py
@@ -46,7 +46,7 @@ def lexicon() -> dict[str, str]:
             key = word.casefold()
             assert key not in entries, f"Duplicate lexeme: {word}"
             entries[key] = pos
-    assert len(entries) == 113, f"Unexpected number of entries: {len(entries)}"
+    assert len(entries) == 114, f"Unexpected number of entries: {len(entries)}"
     assert set(entries.values()).isdisjoint({"N/V", "N/ADV", "ADV/N"}), (
         "Ambiguous historical POS labels remain in G17")
     assert entries["мцив"] == "N" and entries["нцор"] == "V"
