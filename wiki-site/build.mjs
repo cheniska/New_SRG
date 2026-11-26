@@ -18,6 +18,7 @@ const pretty=h=>h.replace(/^[IVX]+(?:[.А-Яа-я\d–-]+)?\.\s*/,'').replace(/^
 const group=d=>d.race?'Цивилизации':'Справочники';
 function nav(){return '<a class="nav-home" href="index.html">Обзор энциклопедии</a>'+[true,false].map(r=>'<div class="nav-label">'+(r?'Цивилизации':'История и устройство мира')+'</div>'+docs.filter(d=>d.race===r).map(d=>'<a data-page="'+d.slug+'" href="'+d.slug+'">'+esc(d.title)+'</a>').join('')).join('');}
 function shell(title,slug,body,toc=''){return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} · New SRG</title><meta name="description" content="Энциклопедия вселенной New SRG: цивилизации, история, технологии и миры."><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="wiki-theme.css"></head><body data-page="${slug}"><header class="top"><button class="menu icon" aria-label="Открыть меню" aria-expanded="false">☰</button><a class="brand" href="index.html"><b>NS<span>·</span></b><span>NEW SRG<small>ЭНЦИКЛОПЕДИЯ</small></span></a><button class="search-open"><span>Поиск по энциклопедии</span><kbd>/</kbd></button><button class="theme icon" aria-label="Переключить тему">◐</button><a class="github" href="https://github.com/cheniska/New_SRG/tree/main/GameDoc">GitHub ↗</a></header><div class="shade"></div><aside class="sidebar"><div class="edition">МИРЫ · НАРОДЫ · ИСТОРИЯ</div>${nav()}<div class="sidefoot">New SRG<br><span>Материалы разработчика</span></div></aside><div class="layout"><main>${body}<footer>NEW SRG · ЭНЦИКЛОПЕДИЯ <a href="index.html">К оглавлению ↑</a></footer></main>${toc?'<aside class="toc"><div>НА ЭТОЙ СТРАНИЦЕ</div>'+toc+'</aside>':''}</div><dialog id="search"><div class="search-head"><input id="query" type="search" placeholder="Расы, события, технологии…" aria-label="Поиск по текстам"><button class="search-close icon" aria-label="Закрыть поиск">×</button></div><div id="results"><p>Введите название или несколько слов. Поиск работает по полным текстам статей.</p></div></dialog><script src="app.js" defer></script></body></html>`;}
+const boreaAtlas="<section id=\"borea-atlas\" class=\"article-section\"><h2>Интерактивный атлас Бореи<a class=\"anchor\" href=\"#borea-atlas\" aria-label=\"Ссылка на атлас\">#</a></h2><p>Рабочий срез: 3290 год. Вращайте глобус и переключайте карты географии, тектоники, климата и сезонного морского льда. Это карта в разработке, не окончательная география.</p><p><a href=\"borea-globe.html\" target=\"_blank\" rel=\"noopener\">Открыть атлас отдельно ↗</a></p><iframe title=\"Интерактивный глобус Бореи\" src=\"borea-globe.html\" loading=\"lazy\" allow=\"fullscreen\" allowfullscreen style=\"display:block;width:100%;height:clamp(690px,88vh,820px);border:1px solid #526b7c;border-radius:10px;background:#101c2a\"></iframe></section>";
 const abstracts={};
 for(const d of docs){
 const parts=d.md.split(/(?=<a id=")/);let body='',toc='',technical=false,groupOpen=false;
@@ -29,6 +30,7 @@ for(const part of parts){const id=part.match(/^<a id="([^"]+)"/)?.[1],hm=part.ma
 if(isTop&&groupOpen){body+='</div></details>';groupOpen=false;}
 let md=part.replace(/^<a id="[^"]+"><\/a>\s*/,'').replace(/<!-- section-status: [^>]*-->/g,'').replace(/^#{2,4} .+$/m,'').trim();
 const tech=isTop&&((d.race&&['biology','architecture','homeworld','technology'].includes(id))||['reference_gipersfera.md','reference_spravochnik_sistem.md'].includes(d.file));
+if(d.file==='race_grondary.md'&&id==='homeworld'){body+=boreaAtlas;toc+='<a href="#borea-atlas">Атлас Бореи</a>';}
 if(isTop){toc+='<a href="#'+id+'">'+esc(label)+'</a>';}
 if(tech){body+='<details class="technical" id="'+id+'"><summary><span class="detail-kicker">СПРАВОЧНЫЙ РАЗДЕЛ</span><span>'+esc(label)+'</span><i>+</i></summary><div class="detail-body">';groupOpen=true;body+=render(md);}
 else if(id==='overview.card'){body+='<details class="technical compact" id="'+id+'"><summary><span>Численные параметры и карточка расы</span><i>+</i></summary><div class="detail-body">'+render(md)+'</div></details>';}
@@ -38,7 +40,7 @@ if(groupOpen)body+='</div></details>';
 if(!parts.length)body=render(d.md.replace(/^# .+\n/,''));
 body=autoLinks(body,d.file);
 const related=d.race?['reference_period_2500_2800.md','reference_spravochnik_sistem.md','reference_gipersfera.md','reference_instituty_sodruzhestva.md']:['race_sinapty.md','race_ksenopody.md','reference_history_extended.md'];
-const hero='<div class="wiki-tabs"><span class="selected">Статья</span><a href="'+source(d.file)+'">Исходник ↗</a></div><div class="crumb"><a href="index.html">Энциклопедия</a><span>/</span>'+group(d)+'</div><div class="article-title"><div class="eyebrow">'+group(d)+'</div><h1>'+esc(d.title)+'</h1><div class="article-tools"><a href="'+source(d.file)+'">Исходная статья ↗</a><button id="expand">Раскрыть справочные блоки</button></div></div>';
+const hero='<div class="wiki-tabs"><span class="selected">Статья</span><a href="'+source(d.file)+'">Исходник ↗</a></div><div class="crumb"><a href="index.html">Энциклопедия</a><span>/</span>'+group(d)+'</div><div class="article-title"><div class="eyebrow">'+group(d)+'</div><h1>'+esc(d.title)+'</h1><div class="article-tools"><a href="'+source(d.file)+'">Исходная статья ↗</a>'+(d.file==='race_grondary.md'?'<a href="#borea-atlas">Атлас Бореи ↗</a>':'')+'<button id="expand">Раскрыть справочные блоки</button></div></div>';
 const lead=intro?'<div class="lead">'+render(intro)+'</div>':'';
 const links='<section class="related"><div class="eyebrow">ПРОДОЛЖИТЬ ЧТЕНИЕ</div>'+related.filter(n=>n!==d.file&&map.has(n)).map(n=>'<a href="'+map.get(n).slug+'">'+esc(map.get(n).title)+' <span>↗</span></a>').join('')+'</section>';
 fs.writeFileSync(path.join(out,d.slug),shell(d.title,d.slug,hero+lead+'<details class="mobile-toc"><summary>Содержание статьи</summary>'+toc+'</details><article>'+body+'</article>'+links,toc));
@@ -48,4 +50,14 @@ const home='<div class="wiki-tabs"><span class="selected">Главная</span><
 fs.writeFileSync(path.join(out,'index.html'),shell('Энциклопедия','index.html',home));
 fs.writeFileSync(path.join(out,'search.json'),JSON.stringify(docs.map(d=>({title:d.title,url:d.slug,text:plain(d.md)}))));
 for(const n of ['style.css','wiki-theme.css','app.js'])fs.copyFileSync(n,path.join(out,n));
+// Borea atlas: use the authoritative, separately editable working layers.
+// Generated assets are included in the same flat publication as the article.
+const boreaMapDir=path.join(input,'editorial','maps','borea');
+const boreaData={
+  continents:JSON.parse(fs.readFileSync(path.join(boreaMapDir,'continents_draft.geojson'),'utf8')),
+  tectonics:JSON.parse(fs.readFileSync(path.join(boreaMapDir,'tectonics_draft.geojson'),'utf8')),
+  climate:JSON.parse(fs.readFileSync(path.join(boreaMapDir,'climate_draft.json'),'utf8'))
+};
+for(const n of ['borea-globe.html','borea-globe.css','borea-globe.js'])fs.copyFileSync(n,path.join(out,n));
+fs.writeFileSync(path.join(out,'borea-data.js'),'globalThis.BOREA_DATA = '+JSON.stringify(boreaData)+';\n');
 console.log('Built '+docs.length+' articles and index.');

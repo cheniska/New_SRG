@@ -1,0 +1,94 @@
+{
+  "status": "proposed",
+  "year": 3290,
+  "projection": "cylindrical equal-area; y=90*sin(latitude)",
+  "basis": [
+    "continents_draft.geojson",
+    "tectonics_draft.geojson"
+  ],
+  "land_zones_abs_lat_degrees": [
+    18,
+    38,
+    65
+  ],
+  "potential_seasonal_opening_basins": [
+    {
+      "id": "I",
+      "name": "Экваториальное море между 6 и 7",
+      "center": [
+        -44,
+        0
+      ],
+      "axes": [
+        43,
+        18
+      ],
+      "phase": 0.8
+    },
+    {
+      "id": "II",
+      "name": "Море между 1 и 6",
+      "center": [
+        -119,
+        13
+      ],
+      "axes": [
+        49,
+        11
+      ],
+      "phase": 2.0
+    },
+    {
+      "id": "III",
+      "name": "Восточный океанический бассейн",
+      "center": [
+        122,
+        0
+      ],
+      "axes": [
+        41,
+        18
+      ],
+      "phase": 3.3
+    },
+    {
+      "id": "IV",
+      "name": "Западный океанический сектор",
+      "center": [
+        178,
+        -3
+      ],
+      "axes": [
+        26,
+        14
+      ],
+      "phase": 4.6
+    }
+  ],
+  "seasonal_preview_parameters": {
+    "spring": {
+      "bias": 0.48,
+      "hem": -0.12
+    },
+    "summer": {
+      "bias": 0.72,
+      "hem": 0.25
+    },
+    "autumn": {
+      "bias": 0.77,
+      "hem": 0.11
+    },
+    "winter": {
+      "bias": 0.61,
+      "hem": -0.27
+    }
+  },
+  "potential_opening_envelope_ocean_percent": 24.3,
+  "potential_opening_envelope_million_km2": 125.6,
+  "notes": [
+    "Not a simulation; no instantaneous ice-free area or fixed annual-min/max implied.",
+    "Exclude land and the approved northern perennial ice region.",
+    "Wind arrows are an illustrative west-to-east trade-wind analog and east-to-west midlatitude analog for retrograde rotation; actual circulation remains open.",
+    "Polar land class does not imply complete coverage by continental glaciers. Geothermal markers do not depict areas of warm climate."
+  ]
+}
