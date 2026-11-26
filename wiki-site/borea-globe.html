@@ -6,17 +6,19 @@
 <title>Атлас Бореи · New SRG</title>
 <link rel="stylesheet" href="borea-globe.css">
 <script src="borea-data.js" defer></script>
+<script src="borea-natural.js" defer></script>
 <script src="borea-globe.js" defer></script>
 </head>
 <body>
 <main class="atlas">
 <header class="heading"><div><span class="eyebrow">NEW SRG / ПЛАНЕТОЛОГИЯ / 3290</span><h1>Борея</h1></div><span class="badge">Рабочий атлас</span></header>
-<p class="intro">Вращайте планету и исследуйте её природные слои. Контуры материков и тектоника согласованы предварительно; климат и сезонные кромки льда — предложения.</p>
+<p class="intro">Вращайте планету и исследуйте её природные слои. Контуры материков и тектоника согласованы предварительно; природный облик, высоты и сезонные кромки льда — рабочие предложения.</p>
 <div class="controls">
-<label>Карта<select id="layer"><option value="geography">География</option><option value="tectonics">Тектоника и рельеф</option><option value="climate">Климат</option><option value="ice">Морской лёд</option></select></label>
+<label>Карта<select id="layer"><option value="geography">География</option><option value="tectonics">Тектоника и рельеф</option><option value="climate">Климат</option><option value="ice">Морской лёд</option><option value="relief">Физическая карта высот и глубин</option><option value="space">Вид из космоса · с атмосферой</option><option value="surface">Поверхность · без атмосферы</option></select></label>
 <label>Сезон<select id="season"><option value="overview">Годовой обзор</option><option value="spring">Весна на севере</option><option value="summer">Лето на севере</option><option value="autumn">Осень на севере</option><option value="winter">Зима на севере</option></select></label>
 <label class="grid-toggle"><input id="grid" type="checkbox" checked> Координатная сетка</label>
 </div>
+<div class="texture-action"><button id="downloadTexture" hidden>Скачать плоскую текстуру (PNG, 2:1)</button></div>
 <div class="stage" id="stage">
 <canvas id="globe" aria-hidden="true"></canvas>
 <canvas id="overlay" tabindex="0" role="img" aria-label="Интерактивный глобус Бореи. Перетаскивание вращает планету; стрелки и клавиши плюс и минус управляют видом."></canvas>
