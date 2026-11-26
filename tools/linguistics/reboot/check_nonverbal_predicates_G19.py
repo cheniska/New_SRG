@@ -18,7 +18,7 @@ ROW = re.compile(r"^\|\s*\*\*(.+?)\*\*\s*\|\s*([^|]+?)\s*\|")
 COPULA = "лдзо"  # Author-selected G19/V2 copula spelling/function
 EXPERIENCE = "мдзэкор"  # G19 trial, NOT yet approved
 LICENSED_N_TO_V = {"мцив"}  # G19 suggested individual exception only
-VOWELS = set("аэиоу")
+VOWELS = set("аэиоуе")
 
 # (sentence, expect well-formed predicate head in this specific G19 model)
 FIXTURES = [
