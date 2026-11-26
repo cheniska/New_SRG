@@ -43,6 +43,23 @@ jobs:
       - name: Build static wiki
         working-directory: wiki-site
         run: node export-github.mjs ../.pages
+      - name: Verify committed static wiki
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          root = Path('.pages')
+          stale = []
+          for file in root.rglob('*'):
+              if file.is_file():
+                  target = file.relative_to(root)
+                  if not target.is_file() or target.read_bytes() != file.read_bytes():
+                      stale.append(str(target))
+          if stale:
+              print('::error::Committed static wiki is outdated. Run cd wiki-site && node export-github.mjs and commit generated files.')
+              print('\n'.join(stale))
+              raise SystemExit(1)
+          print('Committed static wiki matches the generated publication.')
+          PY
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
