@@ -46,7 +46,7 @@ def lexicon() -> dict[str, str]:
             key = word.casefold()
             assert key not in entries, f"Duplicate lexeme: {word}"
             entries[key] = pos
-    assert len(entries) == 114, f"Unexpected number of entries: {len(entries)}"
+    assert len(entries) == 118, f"Unexpected number of entries: {len(entries)}"
     assert set(entries.values()).isdisjoint({"N/V", "N/ADV", "ADV/N"}), (
         "Ambiguous historical POS labels remain in G17")
     assert entries["мцив"] == "N" and entries["нцор"] == "V"
