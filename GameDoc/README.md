@@ -35,7 +35,8 @@
 
 ## Общие справочники
 
-- [reference_gipersfera.md](reference_gipersfera.md)
+- [Гиперсфера: фундаментальные законы и общие технологии](reference_gipersfera.md)
+- [Гипертехнологии: развитие и применение](reference_hypertechnology_history.md) — исторические поколения, инженерные школы, практические показатели и Галанет
 - [Глубинный транспортный хаб](reference_deep_transport_hub.md)
 - [reference_history_extended.md](reference_history_extended.md)
 - [Единый реестр дат эпохи контактов](reference_chronology.md) — автоматически из `data/chronology.json`; постоянные ID, точность дат и проверяемые привязки в статьях.
