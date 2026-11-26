@@ -1058,7 +1058,7 @@ status: "canonical"
     Прямого контакта не было: вентары были уничтожены аэтари задолго до межзвёздной эпохи тарнаев (см. «Вентары»).
 
 НАЭРЫ
-    Контакта не было: наэры исчезли около −27 000 во Внешнем рукаве, и Содружество о них не знает («Внешний рукав», [I.4](reference_vneshniy_rukav.md#geography.region-i-istoriya-sodruzhestva); «Наэры», XII).
+    Контакта не было: наэры исчезли около −1 500 во Внешнем рукаве, и Содружество о них не знает («Внешний рукав», [I.4](reference_vneshniy_rukav.md#geography.region-i-istoriya-sodruzhestva); «Наэры», XII).
 
 <a id="gameplay"></a>
 <!-- section-status: needs_development -->

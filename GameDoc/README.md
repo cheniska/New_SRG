@@ -36,6 +36,7 @@
 ## Общие справочники
 
 - [reference_gipersfera.md](reference_gipersfera.md)
+- [Глубинный транспортный хаб](reference_deep_transport_hub.md)
 - [reference_history_extended.md](reference_history_extended.md)
 - [Единый реестр дат эпохи контактов](reference_chronology.md) — автоматически из `data/chronology.json`; постоянные ID, точность дат и проверяемые привязки в статьях.
 - [Эпоха контактов и становления Содружества, 2500–2800](reference_period_2500_2800.md)
