@@ -1,0 +1,679 @@
+{
+  "land_area_million_km2": 346.44,
+  "agriculture_pct_by_class": [
+    2.93,
+    16.45,
+    37.75,
+    22.36,
+    20.51
+  ],
+  "open_best_million_km2": 10.14,
+  "open_conditional_million_km2": 56.99,
+  "precip_index_reference": "Logarithmic display index, 99th percentile of editorial modeled land precipitation = 100, capped; relative only",
+  "runoff_mass_balance_error": 2.9103830456733704e-11,
+  "continents": {
+    "1": {
+      "land_area_million_km2": 63.25,
+      "precip_index_mean": 10.2,
+      "water_index_mean": 9.2,
+      "agriculture_pct_by_class": [
+        0.09,
+        1.44,
+        15.22,
+        34.87,
+        48.38
+      ],
+      "open_candidates_million_km2": 0.97
+    },
+    "2": {
+      "land_area_million_km2": 10.32,
+      "precip_index_mean": 10.5,
+      "water_index_mean": 5.8,
+      "agriculture_pct_by_class": [
+        0.0,
+        0.0,
+        8.72,
+        59.41,
+        31.87
+      ],
+      "open_candidates_million_km2": 0.0
+    },
+    "3": {
+      "land_area_million_km2": 13.13,
+      "precip_index_mean": 9.3,
+      "water_index_mean": 7.4,
+      "agriculture_pct_by_class": [
+        0.0,
+        0.12,
+        7.18,
+        66.46,
+        26.24
+      ],
+      "open_candidates_million_km2": 0.02
+    },
+    "4": {
+      "land_area_million_km2": 14.58,
+      "precip_index_mean": 10.0,
+      "water_index_mean": 7.3,
+      "agriculture_pct_by_class": [
+        0.0,
+        0.0,
+        9.93,
+        66.09,
+        23.98
+      ],
+      "open_candidates_million_km2": 0.0
+    },
+    "5": {
+      "land_area_million_km2": 12.46,
+      "precip_index_mean": 10.9,
+      "water_index_mean": 6.5,
+      "agriculture_pct_by_class": [
+        0.0,
+        0.08,
+        12.23,
+        57.36,
+        30.33
+      ],
+      "open_candidates_million_km2": 0.01
+    },
+    "6": {
+      "land_area_million_km2": 87.98,
+      "precip_index_mean": 24.5,
+      "water_index_mean": 26.4,
+      "agriculture_pct_by_class": [
+        4.8,
+        31.48,
+        48.85,
+        8.48,
+        6.39
+      ],
+      "open_candidates_million_km2": 31.92
+    },
+    "7": {
+      "land_area_million_km2": 110.16,
+      "precip_index_mean": 21.5,
+      "water_index_mean": 24.0,
+      "agriculture_pct_by_class": [
+        4.14,
+        23.88,
+        53.27,
+        7.93,
+        10.77
+      ],
+      "open_candidates_million_km2": 30.87
+    },
+    "8": {
+      "land_area_million_km2": 30.81,
+      "precip_index_mean": 21.0,
+      "water_index_mean": 16.6,
+      "agriculture_pct_by_class": [
+        1.51,
+        5.81,
+        40.98,
+        22.64,
+        29.06
+      ],
+      "open_candidates_million_km2": 2.25
+    }
+  },
+  "thermal_fields": [
+    {
+      "id": "G01",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 10,
+      "nearby_ice_share_pct": 37.23,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G02",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 10,
+      "nearby_ice_share_pct": 61.37,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G03",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 8,
+      "nearby_ice_share_pct": 76.67,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G04",
+      "class": "умеренная",
+      "screen_index": 30,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G05",
+      "class": "умеренная",
+      "screen_index": 31,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G06",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 18,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G07",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 7,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G08",
+      "class": "относительно благоприятная",
+      "screen_index": 92,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G09",
+      "class": "относительно благоприятная",
+      "screen_index": 79,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G10",
+      "class": "относительно благоприятная",
+      "screen_index": 59,
+      "nearby_ice_share_pct": 28.75,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G11",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 15,
+      "nearby_ice_share_pct": 20.72,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G12",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 13,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G13",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 12,
+      "nearby_ice_share_pct": 57.62,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G14",
+      "class": "умеренная",
+      "screen_index": 37,
+      "nearby_ice_share_pct": 33.16,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G15",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 15,
+      "nearby_ice_share_pct": 0.0,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    },
+    {
+      "id": "G16",
+      "class": "ограниченная; нужен отдельный расчёт подпитки",
+      "screen_index": 9,
+      "nearby_ice_share_pct": 14.76,
+      "note": "Окно 400 км: условный потенциал осадков и вышележащих склонов; не установленная площадь водосбора или дебит."
+    }
+  ],
+  "settlement_nodes": [
+    {
+      "id": "U01",
+      "precip_index": 31,
+      "water_index": 38,
+      "near_open_candidate_pct": 70.35,
+      "resource_class": 1
+    },
+    {
+      "id": "U02",
+      "precip_index": 31,
+      "water_index": 43,
+      "near_open_candidate_pct": 96.3,
+      "resource_class": 1
+    },
+    {
+      "id": "U03",
+      "precip_index": 17,
+      "water_index": 25,
+      "near_open_candidate_pct": 58.16,
+      "resource_class": 1
+    },
+    {
+      "id": "U04",
+      "precip_index": 100,
+      "water_index": 71,
+      "near_open_candidate_pct": 38.29,
+      "resource_class": 1
+    },
+    {
+      "id": "U05",
+      "precip_index": 93,
+      "water_index": 73,
+      "near_open_candidate_pct": 44.46,
+      "resource_class": 1
+    },
+    {
+      "id": "U06",
+      "precip_index": 65,
+      "water_index": 54,
+      "near_open_candidate_pct": 4.92,
+      "resource_class": 3
+    },
+    {
+      "id": "U07",
+      "precip_index": 16,
+      "water_index": 25,
+      "near_open_candidate_pct": 17.35,
+      "resource_class": 1
+    },
+    {
+      "id": "U08",
+      "precip_index": 22,
+      "water_index": 26,
+      "near_open_candidate_pct": 87.66,
+      "resource_class": 1
+    },
+    {
+      "id": "U09",
+      "precip_index": 23,
+      "water_index": 14,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 2
+    },
+    {
+      "id": "U10",
+      "precip_index": 21,
+      "water_index": 22,
+      "near_open_candidate_pct": 74.09,
+      "resource_class": 1
+    },
+    {
+      "id": "U11",
+      "precip_index": 19,
+      "water_index": 14,
+      "near_open_candidate_pct": 46.99,
+      "resource_class": 1
+    },
+    {
+      "id": "U12",
+      "precip_index": 18,
+      "water_index": 33,
+      "near_open_candidate_pct": 64.21,
+      "resource_class": 2
+    },
+    {
+      "id": "U13",
+      "precip_index": 19,
+      "water_index": 13,
+      "near_open_candidate_pct": 8.63,
+      "resource_class": 2
+    },
+    {
+      "id": "U14",
+      "precip_index": 9,
+      "water_index": 11,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    },
+    {
+      "id": "U15",
+      "precip_index": 9,
+      "water_index": 6,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    },
+    {
+      "id": "U16",
+      "precip_index": 8,
+      "water_index": 1,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    },
+    {
+      "id": "U17",
+      "precip_index": 25,
+      "water_index": 14,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    },
+    {
+      "id": "U18",
+      "precip_index": 16,
+      "water_index": 12,
+      "near_open_candidate_pct": 1.03,
+      "resource_class": 1
+    },
+    {
+      "id": "U19",
+      "precip_index": 8,
+      "water_index": 6,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    },
+    {
+      "id": "U20",
+      "precip_index": 7,
+      "water_index": 1,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 2
+    },
+    {
+      "id": "U21",
+      "precip_index": 7,
+      "water_index": 1,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 2
+    },
+    {
+      "id": "U22",
+      "precip_index": 7,
+      "water_index": 1,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 2
+    },
+    {
+      "id": "U23",
+      "precip_index": 13,
+      "water_index": 14,
+      "near_open_candidate_pct": 16.24,
+      "resource_class": 1
+    },
+    {
+      "id": "U24",
+      "precip_index": 12,
+      "water_index": 14,
+      "near_open_candidate_pct": 23.7,
+      "resource_class": 1
+    },
+    {
+      "id": "U25",
+      "precip_index": 11,
+      "water_index": 12,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    },
+    {
+      "id": "U26",
+      "precip_index": 40,
+      "water_index": 31,
+      "near_open_candidate_pct": 23.91,
+      "resource_class": 1
+    },
+    {
+      "id": "U27",
+      "precip_index": 13,
+      "water_index": 53,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    },
+    {
+      "id": "U28",
+      "precip_index": 9,
+      "water_index": 24,
+      "near_open_candidate_pct": 0.0,
+      "resource_class": 1
+    }
+  ],
+  "river_outlets": [
+    {
+      "id": "R01",
+      "continent": 1,
+      "matched": true,
+      "model_catchment_km2": 18020000,
+      "relative_yield_index": 9.5
+    },
+    {
+      "id": "R02",
+      "continent": 1,
+      "matched": true,
+      "model_catchment_km2": 10967000,
+      "relative_yield_index": 6.2
+    },
+    {
+      "id": "R03",
+      "continent": 1,
+      "matched": true,
+      "model_catchment_km2": 3659000,
+      "relative_yield_index": 0.7
+    },
+    {
+      "id": "R04",
+      "continent": 1,
+      "matched": true,
+      "model_catchment_km2": 1485000,
+      "relative_yield_index": 1.9
+    },
+    {
+      "id": "R05",
+      "continent": 1,
+      "matched": true,
+      "model_catchment_km2": 907000,
+      "relative_yield_index": 0.8
+    },
+    {
+      "id": "R06",
+      "continent": 1,
+      "matched": true,
+      "model_catchment_km2": 1502000,
+      "relative_yield_index": 0.2
+    },
+    {
+      "id": "R07",
+      "continent": 2,
+      "matched": true,
+      "model_catchment_km2": 1140000,
+      "relative_yield_index": 0.5
+    },
+    {
+      "id": "R08",
+      "continent": 2,
+      "matched": true,
+      "model_catchment_km2": 634000,
+      "relative_yield_index": 0.4
+    },
+    {
+      "id": "R09",
+      "continent": 3,
+      "matched": true,
+      "model_catchment_km2": 1097000,
+      "relative_yield_index": 0.6
+    },
+    {
+      "id": "R10",
+      "continent": 3,
+      "matched": true,
+      "model_catchment_km2": 863000,
+      "relative_yield_index": 0.7
+    },
+    {
+      "id": "R11",
+      "continent": 4,
+      "matched": true,
+      "model_catchment_km2": 1733000,
+      "relative_yield_index": 0.8
+    },
+    {
+      "id": "R12",
+      "continent": 4,
+      "matched": true,
+      "model_catchment_km2": 999000,
+      "relative_yield_index": 0.7
+    },
+    {
+      "id": "R13",
+      "continent": 5,
+      "matched": true,
+      "model_catchment_km2": 1469000,
+      "relative_yield_index": 1.0
+    },
+    {
+      "id": "R14",
+      "continent": 5,
+      "matched": true,
+      "model_catchment_km2": 813000,
+      "relative_yield_index": 0.6
+    },
+    {
+      "id": "R15",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 25261000,
+      "relative_yield_index": 63.1
+    },
+    {
+      "id": "R16",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 22180000,
+      "relative_yield_index": 86.0
+    },
+    {
+      "id": "R17",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 4409000,
+      "relative_yield_index": 9.1
+    },
+    {
+      "id": "R18",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 2895000,
+      "relative_yield_index": 17.8
+    },
+    {
+      "id": "R19",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 1350000,
+      "relative_yield_index": 3.4
+    },
+    {
+      "id": "R20",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 734000,
+      "relative_yield_index": 3.1
+    },
+    {
+      "id": "R21",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 593000,
+      "relative_yield_index": 17.0
+    },
+    {
+      "id": "R22",
+      "continent": 6,
+      "matched": true,
+      "model_catchment_km2": 625000,
+      "relative_yield_index": 4.7
+    },
+    {
+      "id": "R23",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 37578000,
+      "relative_yield_index": 100.0
+    },
+    {
+      "id": "R24",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 20926000,
+      "relative_yield_index": 43.1
+    },
+    {
+      "id": "R25",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 7703000,
+      "relative_yield_index": 8.6
+    },
+    {
+      "id": "R26",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 3932000,
+      "relative_yield_index": 4.2
+    },
+    {
+      "id": "R27",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 2431000,
+      "relative_yield_index": 69.6
+    },
+    {
+      "id": "R28",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 2146000,
+      "relative_yield_index": 9.4
+    },
+    {
+      "id": "R29",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 3211000,
+      "relative_yield_index": 5.1
+    },
+    {
+      "id": "R30",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 1580000,
+      "relative_yield_index": 4.2
+    },
+    {
+      "id": "R31",
+      "continent": 7,
+      "matched": true,
+      "model_catchment_km2": 833000,
+      "relative_yield_index": 3.2
+    },
+    {
+      "id": "R32",
+      "continent": 8,
+      "matched": true,
+      "model_catchment_km2": 9388000,
+      "relative_yield_index": 25.2
+    },
+    {
+      "id": "R33",
+      "continent": 8,
+      "matched": true,
+      "model_catchment_km2": 4292000,
+      "relative_yield_index": 2.7
+    },
+    {
+      "id": "R34",
+      "continent": 8,
+      "matched": true,
+      "model_catchment_km2": 1879000,
+      "relative_yield_index": 4.3
+    },
+    {
+      "id": "R35",
+      "continent": 8,
+      "matched": true,
+      "model_catchment_km2": 961000,
+      "relative_yield_index": 0.9
+    }
+  ]
+}
