@@ -71,7 +71,7 @@ def load_pos() -> dict[str, str]:
             key = word.casefold()
             assert key not in out, f"Duplicate word: {word}"
             out[key] = pos.strip()
-    assert len(out) == 114, f"Expected 114 active words, found {len(out)}"
+    assert len(out) == 118, f"Expected 118 active words, found {len(out)}"
     return out
 
 def typ(word: str, pos: dict[str, str]) -> str | None:
@@ -131,7 +131,7 @@ def main() -> None:
     for text in POST_ACCEPT:
         assert check_postphrase(text, pos), f"POST: {text}"
     count = len(cases) + len(SOV_ACCEPT) + len(POST_ACCEPT)
-    print(f"G20: {count} structural fixtures pass; 114-entry G17 lexicon loaded")
+    print(f"G20: {count} structural fixtures pass; 118-entry G17 lexicon loaded")
     print("Warning: only neutral G20 order is approved; complete syntax remains open.")
 
 if __name__ == "__main__":
