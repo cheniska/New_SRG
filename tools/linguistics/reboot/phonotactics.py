@@ -21,11 +21,19 @@ ONSETS = {
         ("т", "ц"), ("ц", "ш"), ("ц", "х"), ("ч", "р"),
         ("м", "ц", "р"), ("к", "ц", "в"), ("н", "ц", "р")
     ],
-    "quiet": [(), ("р",), ("л",), ("г",), ("д",), ("с",), ("п",), ("дж",)]
+    "quiet": [(), ("р",), ("л",), ("г",), ("д",), ("с",), ("п",), ("дж",)],
+    # Author-approved rare initial лдз- (Лдзо): accepted, not productive in generation.
+    "rare_approved": [("л", "дз")],
 }
-NUCLEI = [("а",), ("э",), ("и",), ("о",), ("у",), ("R",), ("N",)]
+NUCLEI = [("а",), ("э",), ("и",), ("о",), ("у",), ("е",), ("R",), ("N",)]
 CODAS = [(), ("к",), ("т",), ("н",), ("р",), ("в",), ("ш",), ("г",),
          ("ц",), ("й",), ("р", "к"), ("н", "ц"), ("ц", "к")]
+# 26.11.2026: Cyrillic е is a permitted RARE vowel spelling (Цзен,
+# Пцэвен, Джев, Ндзерак). It may not yet have a separately approved
+# phonemic status relative to э; do not normalize selected names.
+# The weighted synapt-v1 generator uses rare е (weight 1 of total 19);
+# legacy chitter/balanced sampling stays unchanged for reproducibility.
+# Approved Лдзо uses a rare л+дз onset, validated but not generated freely.
 # Rare final г (Цраг), й (Нэй) and initial дж (Джев) are accepted
 # for selected roots; they remain absent from weighted V1 generation.
 # Rare final г is accepted for the author-selected root Цраг; it remains absent
@@ -33,7 +41,7 @@ CODAS = [(), ("к",), ("т",), ("н",), ("р",), ("в",), ("ш",), ("г",),
 # Forbidden token-sequences across syllable junctions: avoid accidental
 # adjacency of two affricates or unmanageably long consonant strings.
 AFFRICATES = {"ц", "дз", "ч", "дж"}
-VOWELS = {"а", "э", "и", "о", "у"}
+VOWELS = {"а", "э", "и", "о", "у", "е"}
 SYLLABIC = {"R", "N"}
 CONSONANTS = set(x for group in ONSETS.values() for onset in group for x in onset)
 CONSONANTS |= set(x for coda in CODAS for x in coda)
@@ -96,10 +104,10 @@ V1_RARE_CHITTER = [
 V1_SIMPLE = [("м",), ("н",), ("к",), ("т",), ("ц",),
              ("дз",), ("з",), ("в",), ("р",), ("л",),
              ("г",), ("д",), ("с",), ("п",), ()]
-V1_VOWELS = ["а", "э", "и", "о", "у"]
+V1_VOWELS = ["а", "э", "и", "о", "у", "е"]
 V1_CODAS = [(), (), (), (), ("н",), ("р",), ("в",),
             ("к",), ("т",), ("ц",), ("ш",)]
-V1_VOWEL_WEIGHTS = [5, 5, 3, 3, 2]
+V1_VOWEL_WEIGHTS = [5, 5, 3, 3, 2, 1]
 
 def choose_v1_syllable(
     rng: random.Random, *, first: bool, last: bool,
