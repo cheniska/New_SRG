@@ -63,7 +63,7 @@ def verb_surface(word: str, dictionary: dict[str, str]) -> bool:
     for form, pos in dictionary.items():
         if pos not in {"V", "V+ADV"}:
             continue
-        suffix = "к" if form.endswith(("а", "э", "и", "о", "у")) else "ок"
+        suffix = "к" if form.endswith(("а", "э", "и", "о", "у", "е")) else "ок"
         if w == form + suffix:
             return True
     return False
