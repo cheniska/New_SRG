@@ -51,7 +51,7 @@ def load_lexicon() -> dict[str, str]:
         if match := ROW.match(line):
             name, pos = match.groups()
             out[name.casefold()] = pos.strip()
-    assert len(out) == 114, "Active G17 form count changed; review G19 fixtures"
+    assert len(out) == 118, "Active G17 form count changed; review G19 fixtures"
     return out
 
 def is_verb(token: str, d: dict[str, str]) -> bool:
