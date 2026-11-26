@@ -5,8 +5,8 @@ Run from any working directory:
     python3 tools/linguistics/reboot/audit_active_lexicon_G17.py
     python3 tools/linguistics/reboot/audit_active_lexicon_G17.py --json
 
-The audit identifies Cyrillic edit-distance-1 pairs and known orthographic
-exceptions; it does NOT decide whether words are acoustically confusable.
+The audit identifies Cyrillic edit-distance-1 pairs and rare orthographic
+variants (including author-approved е and лдз-); it does NOT decide whether words are acoustically confusable.
 """
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ SOURCES = (
 GRAMMAR = (
     "Зэ", "Дзрэн", "Цвэри", "Цвэра", "Цвэрин", "Цвэрот",
     "Цвэтан", "Цвэнац", "Цвэшиц", "Тцэна", "Пцэро",
-    "Нцави", "Нцэшар", "Пцэран", "Тэ",
+    "Нцави", "Нцэшар", "Пцэран", "Тэ", "Лдзо",
 )
 NAMES = (
     "Ндзерак", "Дзерак", "Црэмин", "Мцаш", "Мцквар",
@@ -73,11 +73,12 @@ def audit() -> dict:
     near = [[x, y] for i, x in enumerate(words)
             for y in words[i + 1:] if levenshtein(x, y) == 1]
     unusual = {
-        "letter_e_outside_generator_vowels":
+        "rare_permitted_letter_e":
             [word for word in words if "е" in word.casefold()],
         "initial_cz": [w for w in words if w.lower().startswith("цз")],
         "initial_pz": [w for w in words if w.lower().startswith("пз")],
         "final_tc": [w for w in words if w.lower().endswith("тц")],
+        "rare_approved_copula_onset_ldz": [w for w in words if w.casefold().startswith("лдз")],
         "notable_proper_name_clusters":
             [w for w in words if w in ("Мцквар", "Дзгрэт")],
     }
